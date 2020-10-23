@@ -1,0 +1,101 @@
+{
+	"type": "object",
+	"properties": {
+		"phy": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"band": {
+						"type": "string",
+						"enum": [ "2", "5", "6" ]
+					},
+
+					"name": {
+						"type": "string",
+						"minLength": 1,
+						"maxLength": 16
+					},
+
+					"cfg": {
+						"type": "object",
+						"properties": {
+							"disabled": {
+								"type": "number",
+								"minimum": 0,
+								"maximum": 1
+							},
+
+							"country": {
+								"type": "string",
+								"minLength": 2,
+								"maxLength": 2
+							},
+
+							"channel": {
+								"type": "number",
+								"minimum": 0,
+								"maximum": 171
+							},
+
+							"txpower": {
+								"type": "number",
+								"minimum": 0,
+								"maximum": 30
+							},
+
+							"beacon_int":  {
+								"type": "number",
+								"minimum": 50,
+								"maximum": 200
+							},
+
+							"htmode": {
+								"type": "string",
+								"enum": [ "NOHT", "HT20", "HT40", "HT40+", "HT40-",
+									  "VHT20", "VHT40", "VHT80", "VHT160",
+									  "HE20", "HE40", "HE80", "HE160" ]
+							},
+	
+							"hwmode": {
+								"type": "string",
+								"enum": [ "11a", "11g"]
+							},
+
+							"chanbw": {
+								"type": "number",
+								"enum": [ 5, 10, 20 ]
+							},
+
+							"require_mode": {
+								"type": "string",
+								"enum": [ "g", "n", "ac", "ax" ]
+							},
+
+							"txantenna": {
+								"type": "number",
+								"minimum": 0,
+								"maximum": 255
+							},
+
+							"rxantenna": {
+								"type": "number",
+								"minimum": 0,
+								"maximum": 255
+							},
+
+							"legacy_rates": {
+								"type": "number",
+								"minimum": 0,
+								"maximum": 1
+							}
+						},
+						"required": [ "disabled" ]
+					}
+				}
+			}
+		},
+		"required": [ "name", "band" ]
+	},
+	"required": [ "phy" ]
+}

@@ -1,0 +1,129 @@
+{
+	"type": "object",
+	"properties": {
+		"ssid": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string",
+						"minLength": 1,
+						"maxLength": 16
+					},
+
+					"band": { "type": "array" },
+
+					"cfg": {
+						"type": "object",
+						"properties": {
+							"ssid": {
+								"type": "string",
+								"minLength": 1,
+								"maxLength": 32
+							},
+							"bssid": {
+								"type": "string",
+								"minLength": 17,
+								"maxLength": 17
+							},
+
+							"encryption": {
+								"type": "string",
+								"enum": [ "none", "psk", "psk2", "psk-mixed",
+									  "wpa", "wpa2", "wpa-mixed" ]
+							},
+							"key": {
+								"type": "string",
+								"minLength": 8,
+								"maxLength": 63
+							},
+							"server" : { "type": "string" },
+							"auth_secret" : { "type": "string" },
+							"mobility_domain" : { "type": "string" },
+							"port" : {
+								"type": "number",
+								"minimum": 1024,
+								"maximum": 65535
+							},
+							"ft_over_ds": {
+								"type": "number",
+								"minimum": 0,
+								"maximum": 1
+							},
+							"ft_psk_generate_local": {
+								"type": "number",
+								"minimum": 0,
+								"maximum": 1
+							},
+							"bss_transition": {
+								"type": "number",
+								"minimum": 0,
+								"maximum": 1
+							},
+
+							"network": { "type": "string" },
+							"mode": {
+								"type": "string",
+								"enum": [ "bridge", "nat", "captive" ]
+							},
+
+							"ieee80211r": {
+								"type": "number",
+								"minimum": 0,
+								"maximum": 1
+							},
+							"ieee80211w": {
+								"type": "number",
+								"minimum": 0,
+								"maximum": 1
+							},
+							"ieee80211v": {
+								"type": "number",
+								"minimum": 0,
+								"maximum": 1
+							},
+							"ieee80211k": {
+								"type": "number",
+								"minimum": 0,
+								"maximum": 1
+							},
+
+							"hidden": {
+								"type": "number",
+								"minimum": 0,
+								"maximum": 1
+							},
+							"isolate": {
+								"type": "number",
+								"minimum": 0,
+								"maximum": 1
+							},
+							"uapsd": {
+								"type": "number",
+								"minimum": 0,
+								"maximum": 1
+							},
+
+							"rts_threshold" : {
+								"type": "number",
+								"minimum": 1,
+								"maximum": 65535
+							},
+							"dtim_period" : {
+								"type": "number",
+								"minimum": 1,
+								"maximum": 255
+							}
+						},
+						"dependencies": {
+							"server": [ "auth_secret", "mobility_domain", "port" ]
+						},
+						"required": [ "ssid", "encryption"]
+					}
+				},
+				"required": [ "name", "band"]
+			}
+		}
+	}
+}
