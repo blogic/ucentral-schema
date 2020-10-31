@@ -4,6 +4,9 @@
  "description": "OpenWrt uSync schema",
  "type": "object",
  "properties": {
+  "uuid": {
+   "type": "string"
+  },
   "phy": {
    "type": "array",
    "items": {

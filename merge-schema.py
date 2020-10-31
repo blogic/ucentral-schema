@@ -7,7 +7,9 @@ merge = {
 	"$schema": "http://json-schema.org/draft-07/schema#",
 	"description": "OpenWrt uSync schema",
 	"type": "object",
-	"properties": {}
+	"properties": {
+		"uuid": { "type": "string" }
+	}
 }
 
 def schema_merge(name, path):
