@@ -1,9 +1,7 @@
-{%	fd = fs.open("wifi-phy.cfg");
-	phys = json(fd.read("all"));
-	fd = fs.open("wifi-ssid.cfg");
-	ssids = json(fd.read("all"));
+{%	fd = fs.open("usync.cfg");
+	cfg = json(fd.read("all"));
 
-	for (local phy in phys.phy):
+	for (local phy in cfg.phy):
 		for (local key in phy.cfg):
 			local val = phy.cfg[key];
 
@@ -11,7 +9,7 @@
 {%		endfor
 		print("\n");
 
-		for (local ssid in ssids.ssid):
+		for (local ssid in cfg.ssid):
 			for (local band in ssid.band):
 				if (band != phy.band)
 					continue;

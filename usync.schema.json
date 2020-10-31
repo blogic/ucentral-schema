@@ -1,0 +1,271 @@
+{
+ "$id": "https://openwrt.org/usync.schema.json",
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "description": "OpenWrt uSync schema",
+ "type": "object",
+ "properties": {
+  "phy": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "band": {
+      "type": "string",
+      "enum": [
+       "2",
+       "5",
+       "6"
+      ]
+     },
+     "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 16
+     },
+     "cfg": {
+      "type": "object",
+      "properties": {
+       "disabled": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+       },
+       "country": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 2
+       },
+       "channel": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 171
+       },
+       "txpower": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 30
+       },
+       "beacon_int": {
+        "type": "number",
+        "minimum": 50,
+        "maximum": 200
+       },
+       "htmode": {
+        "type": "string",
+        "enum": [
+         "NOHT",
+         "HT20",
+         "HT40",
+         "HT40+",
+         "HT40-",
+         "VHT20",
+         "VHT40",
+         "VHT80",
+         "VHT160",
+         "HE20",
+         "HE40",
+         "HE80",
+         "HE160"
+        ]
+       },
+       "hwmode": {
+        "type": "string",
+        "enum": [
+         "11a",
+         "11g"
+        ]
+       },
+       "chanbw": {
+        "type": "number",
+        "enum": [
+         5,
+         10,
+         20
+        ]
+       },
+       "require_mode": {
+        "type": "string",
+        "enum": [
+         "g",
+         "n",
+         "ac",
+         "ax"
+        ]
+       },
+       "txantenna": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 255
+       },
+       "rxantenna": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 255
+       },
+       "legacy_rates": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+       }
+      },
+      "required": [
+       "disabled"
+      ]
+     }
+    }
+   }
+  },
+  "required": [
+   "name",
+   "band"
+  ],
+  "ssid": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 16
+     },
+     "band": {
+      "type": "array"
+     },
+     "cfg": {
+      "type": "object",
+      "properties": {
+       "ssid": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32
+       },
+       "bssid": {
+        "type": "string",
+        "minLength": 17,
+        "maxLength": 17
+       },
+       "encryption": {
+        "type": "string",
+        "enum": [
+         "none",
+         "psk",
+         "psk2",
+         "psk-mixed",
+         "wpa",
+         "wpa2",
+         "wpa-mixed"
+        ]
+       },
+       "key": {
+        "type": "string",
+        "minLength": 8,
+        "maxLength": 63
+       },
+       "server": {
+        "type": "string"
+       },
+       "auth_secret": {
+        "type": "string"
+       },
+       "mobility_domain": {
+        "type": "string"
+       },
+       "port": {
+        "type": "number",
+        "minimum": 1024,
+        "maximum": 65535
+       },
+       "ft_over_ds": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+       },
+       "ft_psk_generate_local": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+       },
+       "bss_transition": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+       },
+       "network": {
+        "type": "string"
+       },
+       "mode": {
+        "type": "string",
+        "enum": [
+         "bridge",
+         "nat",
+         "captive"
+        ]
+       },
+       "ieee80211r": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+       },
+       "ieee80211w": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+       },
+       "ieee80211v": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+       },
+       "ieee80211k": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+       },
+       "hidden": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+       },
+       "isolate": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+       },
+       "uapsd": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+       },
+       "rts_threshold": {
+        "type": "number",
+        "minimum": 1,
+        "maximum": 65535
+       },
+       "dtim_period": {
+        "type": "number",
+        "minimum": 1,
+        "maximum": 255
+       }
+      },
+      "dependencies": {
+       "server": [
+        "auth_secret",
+        "mobility_domain",
+        "port"
+       ]
+      },
+      "required": [
+       "ssid",
+       "encryption"
+      ]
+     }
+    },
+    "required": [
+     "name",
+     "band"
+    ]
+   }
+  }
+ }
+}
