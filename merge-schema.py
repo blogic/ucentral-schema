@@ -8,7 +8,7 @@ merge = {
 	"description": "OpenWrt uSync schema",
 	"type": "object",
 	"properties": {
-		"uuid": { "type": "string" }
+		"uuid": { "type": "integer" }
 	}
 }
 

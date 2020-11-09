@@ -5,7 +5,7 @@
  "type": "object",
  "properties": {
   "uuid": {
-   "type": "string"
+   "type": "integer"
   },
   "phy": {
    "type": "array",
