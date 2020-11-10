@@ -1,6 +1,4 @@
-{%	fd = fs.open("usync.cfg");
-	cfg = json(fd.read("all"));
-
+{%
 	for (local phy in cfg.phy):
 		for (local key in phy.cfg):
 			local val = phy.cfg[key];
