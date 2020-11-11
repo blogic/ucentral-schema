@@ -1,5 +1,6 @@
 {%
 	state = {};
+	state.uuid = time();
 	state.cfg_uuid = cfg.uuid;
 	ctx = ubus.connect();
 	state.system = ctx.call("system", "info");
