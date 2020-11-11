@@ -65,7 +65,7 @@
 							"network": { "type": "string" },
 							"mode": {
 								"type": "string",
-								"enum": [ "bridge", "nat", "captive" ]
+								"enum": [ "ap" ]
 							},
 
 							"ieee80211r": {

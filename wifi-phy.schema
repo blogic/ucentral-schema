@@ -8,7 +8,7 @@
 				"properties": {
 					"band": {
 						"type": "string",
-						"enum": [ "2", "5", "6" ]
+						"enum": [ "2", "5", "5u", "5l", "6" ]
 					},
 
 					"name": {

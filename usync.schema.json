@@ -17,6 +17,8 @@
       "enum": [
        "2",
        "5",
+       "5u",
+       "5l",
        "6"
       ]
      },
@@ -200,9 +202,7 @@
        "mode": {
         "type": "string",
         "enum": [
-         "bridge",
-         "nat",
-         "captive"
+         "ap"
         ]
        },
        "ieee80211r": {

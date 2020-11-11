@@ -1,7 +1,9 @@
 {%
 
-function generate_ssid(wifi, ssid, name) {
-	wifi[name] = {".type": "wifi-iface" };
+function generate_ssid(wifi, radio, ssid, name) {
+	local name = radio + "_" + ssid.name;
+
+	wifi[name] = {".type": "wifi-iface", "device": radio };
 	for (local key in ssid.cfg):
 		local val = ssid.cfg[key];
 		wifi[name][key] = val;
@@ -24,7 +26,7 @@ function generate_phy(wifi, x) {
 			for (local band in ssid.band):
 				if (band != phy.band)
 					continue;
-				generate_ssid(wifi, ssid, x.uci + "_" + ssid.name);
+				generate_ssid(wifi, x.uci, ssid);
 			endfor
 		endfor
 		return true;
