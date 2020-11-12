@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import json
 
@@ -31,4 +31,8 @@ def schema_write():
 schema_merge("network", "network.schema")
 schema_merge("phy", "wifi-phy.schema")
 schema_merge("ssid", "wifi-ssid.schema")
+schema_merge("system", "system.schema")
+schema_merge("log", "log.schema")
+schema_merge("ntp", "ntp.schema")
+schema_merge("ssh", "ssh.schema")
 schema_write()

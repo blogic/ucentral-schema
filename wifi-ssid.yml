@@ -1,16 +1,17 @@
 type: object
 properties:
   ssid:
+    description:
+      This is a list of all our SSIDs that shall be configured. Mapping of PHY/SSID is done via the
+      "band" property.
     type: array
     items:
       type: object
       properties:
         band:
+          description:
+            The list of wifi bands that the SSID should be broadcasted on. This value can be [ 2, 5, 5l, 5u, 6 ].
           type: array
-        name:
-          maxLength: 16
-          minLength: 1
-          type: string
         cfg:
           type: object
           properties:

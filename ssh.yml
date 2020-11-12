@@ -1,0 +1,17 @@
+type: object
+properties:
+  ssh:
+    type: object
+    properties:
+      enable:
+        description:
+          Enable this option if you would like to enable the SSH server on the unit.
+        type: number
+        maximum: 1
+        minimum: 0
+      Port:
+        description:
+          This option defines which port the SSH server shall be available on.
+        type: number
+        maximum: 65535
+        minimum: 1

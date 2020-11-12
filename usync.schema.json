@@ -8,56 +8,119 @@
    "type": "integer"
   },
   "network": {
+   "description": "Network Configuration",
    "type": "array",
    "items": {
+    "description": "This section allows you to configure your networks.",
     "type": "object",
     "properties": {
      "mode": {
+      "description": "This defines if the network interface shall be bridged directly with the WAN side or shall be NAT'ed out from LAN.",
       "type": "string",
       "enum": [
-       "bridge",
-       "nat"
+       "wan",
+       "lan",
+       "nat",
+       "guest"
       ]
+     },
+     "vlan": {
+      "description": "The VID that shall be assign to packets leaving this network interface.",
+      "type": "number",
+      "maximum": 4095,
+      "minimum": 16
+     },
+     "name": {
+      "description": "This option allows us to override the uci naming for NAT and guest networks.",
+      "type": "string"
      },
      "cfg": {
       "type": "object",
-      "required": [
-       "disabled"
-      ],
       "properties": {
        "proto": {
+        "description": "The configuration that shall be run on the network interface.",
         "type": "string",
         "enum": [
+         "none",
          "dhcp",
          "static"
         ]
        },
        "ipaddr": {
+        "description": "The IPv4 address that shall be assigned to the network interface.",
         "type": "string"
        },
        "netmask": {
+        "description": "The IPv4 netmask that shall be assigned to the network interface.",
         "type": "string"
        },
        "gateway": {
+        "description": "The IPv4 gateway that shall be assigned to the network interface.",
         "type": "string"
        },
        "dns": {
+        "description": "The IPv4 DNS server that shall be assigned to the network interface.",
         "type": "string"
        },
        "mtu": {
+        "description": "The MTU that shall be used by the network interface.",
         "type": "number",
         "maximum": 65535,
         "minimum": 256
        },
        "disabled": {
+        "description": "This option allows use to disable a network interface.",
         "type": "number",
         "maximum": 1,
         "minimum": 0
        },
        "ip6assign": {
+        "description": "The prefix delegation mask that the interface shall use.",
         "type": "number",
         "maximum": 96,
         "minimum": 0
+       },
+       "dhcp": {
+        "description": "The DHCP configuration of the network interface.",
+        "type": "object",
+        "properties": {
+         "start": {
+          "description": "This defines which number shall be used as the first leasable IP address.",
+          "type": "number",
+          "maximum": 254,
+          "minimum": 1
+         },
+         "limit": {
+          "description": "This defines how many leasable IP addresses are available.",
+          "type": "number",
+          "minimum": 10
+         },
+         "leasetime": {
+          "description": "This defines how many hours the leases should be valid for. (12h, 30m, ...)",
+          "type": "string"
+         }
+        }
+       },
+       "leases": {
+        "description": "A list of static dhcp leases assigned to the interface.",
+        "type": "array",
+        "items": {
+         "type": "object",
+         "properties": {
+          "ip": {
+           "description": "The IP address used by this static lease.",
+           "type": "string"
+          },
+          "mac": {
+           "description": "The MAC address used by this static lease.",
+           "type": "string"
+          },
+          "hostname": {
+           "description": "The hostname address used by this static lease.",
+           "type": "string"
+          }
+         }
+        }
        }
       }
      }
@@ -173,17 +236,14 @@
    }
   },
   "ssid": {
+   "description": "This is a list of all our SSIDs that shall be configured. Mapping of PHY/SSID is done via the \"band\" property.",
    "type": "array",
    "items": {
     "type": "object",
     "properties": {
      "band": {
+      "description": "The list of wifi bands that the SSID should be broadcasted on. This value can be [ 2, 5, 5l, 5u, 6 ].",
       "type": "array"
-     },
-     "name": {
-      "maxLength": 16,
-      "minLength": 1,
-      "type": "string"
      },
      "cfg": {
       "type": "object",
@@ -300,6 +360,89 @@
        }
       }
      }
+    }
+   }
+  },
+  "system": {
+   "type": "object",
+   "properties": {
+    "hostname": {
+     "description": "This allows you to change the hostname of the device.",
+     "type": "string"
+    },
+    "timezone": {
+     "description": "This allows you to change the TZ of the device.",
+     "type": "string"
+    }
+   }
+  },
+  "log": {
+   "type": "object",
+   "properties": {
+    "log_ip": {
+     "description": "IP address of a syslog server to which the log messages should be sent in addition to the local destination.",
+     "type": "string"
+    },
+    "log_port": {
+     "description": "Port number of the remote syslog server specified with log_ip.",
+     "type": "number",
+     "maximum": 65535,
+     "minimum": 100
+    },
+    "log_proto": {
+     "description": "Sets the protocol to use for the connection, either tcp or udp.",
+     "type": "string",
+     "enum": [
+      "tcp",
+      "udp"
+     ]
+    },
+    "log_hostname": {
+     "description": "Hostname to send to remote syslog. If none is provided, the actual hostname is send.",
+     "type": "string"
+    },
+    "log_size": {
+     "description": "Size of the file based log buffer in KiB. This value is used as the fallback value for log_buffer_size if the latter is not specified.",
+     "type": "number",
+     "minimum": 32
+    }
+   }
+  },
+  "ntp": {
+   "type": "object",
+   "properties": {
+    "enabled": {
+     "description": "Enable this option to tell the unit that it shall get its time from an upstream NTP server. The servers are defined by the <servers> attribute.",
+     "type": "number",
+     "maximum": 1,
+     "minimum": 0
+    },
+    "enable_server": {
+     "description": "Enable this option if you would like the unit to enable a downstream NTP server for its connected clients.",
+     "type": "number",
+     "maximum": 1,
+     "minimum": 0
+    },
+    "server": {
+     "description": "This is an array of URL/IP of the upstream NTP servers that the unit shall use to acquire its current time.",
+     "type": "array"
+    }
+   }
+  },
+  "ssh": {
+   "type": "object",
+   "properties": {
+    "enable": {
+     "description": "Enable this option if you would like to enable the SSH server on the unit.",
+     "type": "number",
+     "maximum": 1,
+     "minimum": 0
+    },
+    "Port": {
+     "description": "This option defines which port the SSH server shall be available on.",
+     "type": "number",
+     "maximum": 65535,
+     "minimum": 1
     }
    }
   }

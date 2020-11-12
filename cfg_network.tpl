@@ -1,0 +1,192 @@
+{%
+function fw_generate_zone(x, n, masq) {
+	local u = uci_new_section(x, n, "zone", {"name": n, "network": n});
+
+	if (masq) {
+		u.input = "REJECT";
+		u.output = "ACCEPT";
+		u.forward = "REJECT";
+		u.masq = 1;
+		u.mtu_fix = 1;
+	} else {
+		u.input = "ACCEPT";
+		u.output = "ACCEPT";
+		u.forward = "ACCEPT";
+	}
+}
+
+function fw_generate_fwd(x, src, dest) {
+	local name = sprintf("%s_%s", src, dest);
+
+	uci_new_section(x, name, "forwarding", {"src": src, "dest": dest});
+}
+
+function fw_generate_guest(x, src, ipaddr) {
+	local allow = sprintf("%s_allow", src);
+	local block = sprintf("%s_block", src);
+
+	if (ipaddr)
+		uci_new_section(x, allow, "rule", {"src": src, "family": "ipv4",
+					  "dest_ip": ipaddr,
+					  "proto": "tcp udp", "target": "ACCEPT" });
+
+	uci_new_section(x, block, "rule", {"src": src, "family": "ipv4",
+					  "dest_ip": "192.168.0.0/16 172.16.0.0/24 10.0.0.0/24",
+					  "proto": "tcp udp", "target": "REJECT" });
+}
+
+function bridge_generate_vlan(x, n, vid) {
+	local name = sprintf("%s_vlan", n);
+	local ports = "";
+
+	uci_new_section(x, name, "bridge-vlan", {"device": "bridge", "vlan": vid,
+						 "ports": capab.network.wan.ifname + ":t"});
+}
+
+function dhcp_generate(x, v, n) {
+	local u = uci_new_section(x, n, "dhcp", {"interface": n});
+
+	if (!v) {
+		u.ignore = 1;
+		return;
+	}
+	uci_defaults(v, { "start": 100, "limit": 100, "leasetime": "12h" });
+	uci_set_options(u, v, ["start", "limit", "leasetime"]);
+}
+
+function lease_generate(x, v) {
+	if (!uci_requires(v, [ "hostname", "mac", "ip" ]))
+		return;
+	
+	uci_new_section(x, v.hostname, "host", {
+		"hostname": v.hostname, 
+		"ip": v.ip, 
+		"mac":v.mac  
+	});
+}
+
+function network_generate_vlan_rule(x, v, n) {
+	if (!v.vlan)
+		return;
+	local name = sprintf("%s_route", n);
+
+	uci_new_section(x, name, "rule", {"in": n, "lookup": v.vlan});
+}
+
+function network_generate_name(n, v) {
+	if (v.name && n in ["guest", "nat"])
+		n = v.name;
+	return v.vlan ? sprintf("%s%d", n, v.vlan) : n;
+}
+
+function network_generate_static(x, v, n) {
+	local u = uci_new_section(x, n, "interface", {"proto": "static"});
+
+	uci_defaults(v, {"netmask": "255.255.255.0"});
+	uci_set_options(u, v, ["ipaddr", "netmask", "gateway", "dns"]);
+
+	return u;
+}
+
+function network_generate_dhcp(x, v, n) {
+	local u = uci_new_section(x, n, "interface", {"proto": "dhcp"});
+
+	return u;
+}
+
+function network_generate_base(x, v, n) {
+	local u;
+	
+	switch(v.proto) {
+	case "dhcp":
+		u = network_generate_dhcp(x.network, v, n);
+		break;
+	case "static":
+		u = network_generate_static(x.network, v, n);
+		break;
+	default:
+		warn("Unhandled network proto\n");
+		return;
+	}
+
+	uci_set_options(u, v, ["mtu", "ip6assign", "disabled"]);
+
+	return u;
+}
+
+function network_generate_wan(x, v) {
+	local name = network_generate_name("wan", v);
+	local u;
+
+	u = network_generate_base(x, v.cfg, name);
+	if (v.vlan) {
+		u.ifname = sprintf("bridge.%d", v.vlan);
+		u.ip4table = v.vlan;
+		u.ip6table = v.vlan;
+		bridge_generate_vlan(x.network, name, v.vlan);
+		fw_generate_zone(x.firewall, name, true);
+	}
+	dhcp_generate(x.dhcp, false, name);
+}
+
+function network_generate_lan(x, c, n) {
+	local name = network_generate_name(n, c);
+	local u;
+
+	u = network_generate_base(x, c.cfg, name);
+	dhcp_generate(x.dhcp, c.cfg.dhcp, name);
+	for (local k, v in c.cfg.leases)
+		lease_generate(x.dhcp, v);
+	network_generate_vlan_rule(x.network, c, name); 
+	return u;
+}
+
+function network_generate_nat(x, c, n) {
+	local name = network_generate_name(n, c);
+	local wan = network_generate_name("wan", c);
+	local u;
+
+	u = network_generate_lan(x, c, n);
+	u.type = "bridge";
+
+	fw_generate_zone(x.firewall, name);
+	fw_generate_fwd(x.firewall, name, wan);
+}
+
+function network_generate_guest(x, c) {
+	local name = network_generate_name("guest", c);
+
+	network_generate_nat(x, c, "guest");
+	fw_generate_guest(x.firewall, name, c.cfg.ipaddr);
+}
+
+function network_generate() {
+	local uci = {
+		"network": {},
+		"dhcp": {},
+		"firewall": {}
+	};
+
+        for (local k, v in cfg.network) {
+		switch (v.mode) {
+		case "wan":
+			network_generate_wan(uci, v);
+			break;
+		case "nat":
+			network_generate_nat(uci, v, "nat");
+			break;
+		case "lan":
+			network_generate_lan(uci, v, "lan");
+			break;
+		case "guest":
+			network_generate_guest(uci, v);
+			break;
+		}
+	}
+	uci_render("network", uci.network);
+	uci_render("dhcp", uci.dhcp);
+	uci_render("firewall", uci.firewall);
+}
+
+network_generate();
+%}

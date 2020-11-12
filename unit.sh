@@ -29,12 +29,15 @@ schema_test() {
 	[ $? -eq 0 ] || error_inc
 }
 
+./generate
+
+schema_test network
 schema_test wifi-phy
 schema_test wifi-ssid
-
-test_inc
-utpl -m fs -i wifi.tpl
-[ $? -eq 0 ] || error_inc
+schema_test ntp
+schema_test ssh
+schema_test system
+schema_test log
 
 echo $error/$test failed
 
