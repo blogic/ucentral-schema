@@ -37,13 +37,18 @@ function generate_phy(wifi, x) {
 function generate_wifi() {
 	local wifi= {};
 
-	cursor = uci.cursor();
-        cursor.load("wireless");
-        cursor.foreach("wireless", "wifi-device", function(d) {
-                capab.wifi[d.path]["uci"] = d[".name"];
-        });
+	if (!capab.wifi)
+		return;
 
-        for (local path in capab.wifi):
+	cursor = uci.cursor();
+	cursor.load("wireless");
+	cursor.foreach("wireless", "wifi-device", function(d) {
+		if (!capab.wifi[d.path])
+			continue;
+		capab.wifi[d.path]["uci"] = d[".name"];
+	});
+
+	for (local path in capab.wifi):
 		local phy = capab.wifi[path];
 
 		if (generate_phy(wifi, phy) === false):
