@@ -28,6 +28,7 @@ def schema_write():
 	except:
 		print("failed to write usync.schema.json")
 
+schema_merge("network", "network.schema")
 schema_merge("phy", "wifi-phy.schema")
 schema_merge("ssid", "wifi-ssid.schema")
 schema_write()

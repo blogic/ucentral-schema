@@ -1,0 +1,42 @@
+type: object
+properties:
+  network:
+    type: array
+    items:
+      type: object
+      properties:
+        mode:
+          type: string
+          enum:
+          - 'bridge'
+          - 'nat'
+        cfg:
+          type: object
+          required:
+          - disabled
+          properties:
+            proto:
+              type: string
+              enum:
+              - "dhcp"
+              - "static"
+            ipaddr:
+              type: string
+            netmask:
+              type: string
+            gateway:
+              type: string
+            dns:
+              type: string
+            mtu:
+              type: number
+              maximum: 65535
+              minimum: 256
+            disabled:
+              type: number
+              maximum: 1
+              minimum: 0
+            ip6assign:
+              type: number
+              maximum: 96
+              minimum: 0
