@@ -19,6 +19,8 @@ properties:
           - 'lan'
           - 'nat'
           - 'guest'
+          - 'batman'
+          - 'mesh'
         vlan:
           description:
             The VID that shall be assign to packets leaving this network interface.

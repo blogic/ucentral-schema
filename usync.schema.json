@@ -21,7 +21,9 @@
        "wan",
        "lan",
        "nat",
-       "guest"
+       "guest",
+       "batman",
+       "mesh"
       ]
      },
      "vlan": {
@@ -328,7 +330,8 @@
        },
        "mode": {
         "enum": [
-         "ap"
+         "ap",
+         "mesh"
         ],
         "type": "string"
        },

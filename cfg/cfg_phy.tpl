@@ -2,10 +2,28 @@
 function ssid_generate(x, v, radio)  {
 	local crypto = "none";
 
-	if (!uci_requires(v, [ "network", "ssid", "mode", "encryption"])) {
+	if (!uci_requires(v, [ "network", "mode", "encryption"])) {
 		warn("ssid is missing a required option\n");
 		return;
 	}
+
+	switch(v.mode) {
+	case "ap":
+	case "sta":
+		if (!uci_requires(v, [ "ssid" ])) {
+			warn("missing ssid field\n");
+			return;
+		}
+		break;
+	case "mesh":
+		uci_defaults(v, { "mesh_fwding": 0, "mcast_rate": 24000	 });
+		if (!uci_requires(v, [ "mesh_id" ])) {
+			warn("missing mesh fields\n");
+			return;
+		}
+		break;
+	}
+
 	if (v.encryption in [ "psk", "psk2", "psk-mixed" ]) {
 		if (!uci_requires(v, [ "key"])) {
 			warn("ssid has invalid psk options\n");
@@ -19,18 +37,30 @@ function ssid_generate(x, v, radio)  {
 		}
 		crypto = "wpa";
 	}
+
 	local name = sprintf("%s_%s", radio, v.network);
 	local u = uci_new_section(x, name, "wifi-iface", { "device": radio });
 	uci_set_options(u, v, ["ssid", "network", "mode", "dtim_period", "hidden",
 			"ieee80211k", "ieee80211k", "ieee80211v", "ieee80211w",
 			"isolate", "rts_threshold", "uapsd", "ft_over_ds",
-			"ft_psk_generate_local", "mobility_domain" ]);
+			"ft_psk_generate_local", "mobility_domain", "encryption"]);
+
 	switch(crypto) {
 	case "psk":
 		uci_set_option(u, v, "key");
 		break;
 	case "wpa":
 		uci_set_options(u, v, [ "server", "port", "auth_secret" ]);
+		break;
+	}
+
+	switch(v.mode) {
+	case "ap":
+	case "sta":
+		uci_set_option(u, v, "ssid");
+		break;
+	case "mesh":
+		uci_set_options(u, v, [ "mesh_fwding", "mesh_id", "mcast_rate" ]);
 		break;
 	}
 }

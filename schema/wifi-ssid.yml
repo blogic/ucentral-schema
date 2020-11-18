@@ -80,6 +80,7 @@ properties:
             mode:
               enum:
               - ap
+              - mesh
               type: string
             network:
               type: string

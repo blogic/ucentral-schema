@@ -74,7 +74,7 @@ function network_generate_vlan_rule(x, v, n) {
 }
 
 function network_generate_name(n, v) {
-	if (v.name && n in ["guest", "nat"])
+	if (v.name && n in ["guest", "nat", "mesh"])
 		n = v.name;
 	return v.vlan ? sprintf("%s%d", n, v.vlan) : n;
 }
@@ -160,6 +160,22 @@ function network_generate_guest(x, c) {
 	fw_generate_guest(x.firewall, name, c.cfg.ipaddr);
 }
 
+function network_generate_batman(x, v) {
+	local u = uci_new_section(x.network, "bat0", "interface", {"proto": "batadv"});
+
+	uci_defaults(v, {"multicast_mode": 0, "distributed_arp_table": 0, "orig_interval": 5000});
+	uci_set_options(u, v, ["multicast_mode", "distributed_arp_table", "orig_interval"]);
+}
+
+function network_generate_mesh(x, v) {
+	local name = network_generate_name("mesh", v);
+	local u;
+
+	u = uci_new_section(x.network, name, "interface", {"proto": "batadv_hardif", "master": "bat0"});
+	uci_defaults(v, {"mtu": 1532});
+	uci_set_options(u, v, ["mtu"]);
+}
+
 function network_generate() {
 	local uci = {
 		"network": {},
@@ -180,6 +196,12 @@ function network_generate() {
 			break;
 		case "guest":
 			network_generate_guest(uci, v);
+			break;
+		case "batman":
+			network_generate_batman(uci, v);
+			break;
+		case "mesh":
+			network_generate_mesh(uci, v);
 			break;
 		}
 	}
