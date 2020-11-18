@@ -41,7 +41,7 @@ function ssid_generate(x, v, radio)  {
 	local name = sprintf("%s_%s", radio, v.network);
 	local u = uci_new_section(x, name, "wifi-iface", { "device": radio });
 	uci_set_options(u, v, ["ssid", "network", "mode", "dtim_period", "hidden",
-			"ieee80211k", "ieee80211k", "ieee80211v", "ieee80211w",
+			"ieee80211r", "ieee80211k", "ieee80211v", "ieee80211w",
 			"isolate", "rts_threshold", "uapsd", "ft_over_ds",
 			"ft_psk_generate_local", "mobility_domain", "encryption"]);
 

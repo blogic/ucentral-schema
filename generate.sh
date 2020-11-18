@@ -9,6 +9,7 @@ yaml2json schema/ntp.yml ntp.schema
 yaml2json schema/ssh.yml ssh.schema
 yaml2json schema/wifi-phy.yml wifi-phy.schema
 yaml2json schema/wifi-ssid.yml wifi-ssid.schema
+yaml2json schema/steer.yml steer.schema
 ./merge-schema.py
 mkdir -p docs
 jsonschema2md usync.schema.json docs/usync-schema.md

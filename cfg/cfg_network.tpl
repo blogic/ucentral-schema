@@ -37,7 +37,6 @@ function fw_generate_guest(x, src, ipaddr) {
 
 function bridge_generate_vlan(x, n, vid) {
 	local name = sprintf("%s_vlan", n);
-	local ports = "";
 
 	uci_new_section(x, name, "bridge-vlan", {"device": "bridge", "vlan": vid,
 						 "ports": capab.network.wan.ifname + ":t"});
@@ -165,6 +164,8 @@ function network_generate_batman(x, v) {
 
 	uci_defaults(v, {"multicast_mode": 0, "distributed_arp_table": 0, "orig_interval": 5000});
 	uci_set_options(u, v, ["multicast_mode", "distributed_arp_table", "orig_interval"]);
+	uci_new_section(x.network, "wan_vlan", "bridge-vlan",
+			{"ports": capab.network.wan.ifname + " " + "bat0"});
 }
 
 function network_generate_mesh(x, v) {
