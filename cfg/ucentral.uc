@@ -62,10 +62,18 @@ fails = {};
 failed = false;
 
 for (key in cfg) {
+
 	if (key in ["uuid", "ssid"])
 		continue;
+
+	let file = sprintf("/usr/share/ucentral/cfg_%s.uc", key);
+	let stat = fs.stat(file);
+
+	if (stat === null || stat.type != "file")
+		continue;
+
 	try {
-		include(sprintf("cfg_%s.uc", key));
+		include(file);
 	} catch (e) {
 		failed = true;
 		fails[key] = e;
