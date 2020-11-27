@@ -15,6 +15,13 @@
 		warn("ucentral-upgrade: firmware file validation failed\n");
 		return;
 	}
+
+	let keep_redirector = "";
+	if (cmd.keep_redirector) {
+		keep_redirector = "-f /tmp/sysupgrade.tgz";
+		fs.popen(sprintf('tar czf /tmp/sysupgrade.tgz /etc/config/ucentral /etc/ucentral/*.pem /etc/ucentral/*.crt'), 'r').close();
+	}
+
 	fs.popen(sprintf('/etc/init.d/network stop'), 'r').close();
-	fs.popen(sprintf('/sbin/sysupgrade %s', path), 'r').close();
+	fs.popen(sprintf('/sbin/sysupgrade %s %s', keep_redirector, path), 'r').close();
 %}
