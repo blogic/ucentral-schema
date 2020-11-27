@@ -56,7 +56,7 @@ function dhcp_generate(x, v, n) {
 function lease_generate(x, v) {
 	if (!uci_requires(v, [ "hostname", "mac", "ip" ]))
 		return;
-	
+
 	uci_new_section(x, v.hostname, "host", {
 		"hostname": v.hostname, 
 		"ip": v.ip, 
@@ -95,7 +95,7 @@ function network_generate_dhcp(x, v, n) {
 
 function network_generate_base(x, v, n) {
 	local u;
-	
+
 	switch(v.proto) {
 	case "dhcp":
 		u = network_generate_dhcp(x.network, v, n);
