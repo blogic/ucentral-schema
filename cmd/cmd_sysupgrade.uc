@@ -15,5 +15,6 @@
 		warn("ucentral-upgrade: firmware file validation failed\n");
 		return;
 	}
+	fs.popen(sprintf('/etc/init.d/network stop'), 'r').close();
 	fs.popen(sprintf('/sbin/sysupgrade %s', path), 'r').close();
 %}
