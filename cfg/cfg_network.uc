@@ -27,10 +27,10 @@ function fw_generate_guest(x, src, ipaddr) {
 
 	if (ipaddr)
 		uci_new_section(x, allow, "rule", {"src": src, "family": "ipv4",
-					  "dest_ip": ipaddr,
+					  "dest_ip": ipaddr, "dest": "*",
 					  "proto": "tcp udp", "target": "ACCEPT" });
 
-	uci_new_section(x, block, "rule", {"src": src, "family": "ipv4",
+	uci_new_section(x, block, "rule", {"src": src, "family": "ipv4", "dest": "*",
 					  "dest_ip": "192.168.0.0/16 172.16.0.0/24 10.0.0.0/24",
 					  "proto": "tcp udp", "target": "REJECT" });
 }
