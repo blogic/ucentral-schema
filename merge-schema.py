@@ -3,9 +3,9 @@
 import json
 
 merge = {
-	"$id": "https://openwrt.org/usync.schema.json",
+	"$id": "https://openwrt.org/ucentral.schema.json",
 	"$schema": "http://json-schema.org/draft-07/schema#",
-	"description": "OpenWrt uSync schema",
+	"description": "OpenWrt uCentral schema",
 	"type": "object",
 	"properties": {
 		"uuid": { "type": "integer" }
@@ -23,10 +23,10 @@ def schema_merge(name, path):
 
 def schema_write():
 	try:
-		with open(f"usync.schema.json", 'w') as outfile:
+		with open(f"ucentral.schema.json", 'w') as outfile:
 			json.dump(merge, outfile, indent=True)
 	except:
-		print("failed to write usync.schema.json")
+		print("failed to write ucentral.schema.json")
 
 schema_merge("network", "network.schema")
 schema_merge("phy", "wifi-phy.schema")

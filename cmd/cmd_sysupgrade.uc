@@ -1,9 +1,9 @@
 {%
 	if (!cmd.url) {
-		warn("usync-upgrade: invalid FW URL\n");
+		warn("ucentral-upgrade: invalid FW URL\n");
 		return;
 	}
-	path = "/tmp/usync.upgrade";
+	path = "/tmp/ucentral.upgrade";
 	fs.popen(sprintf('wget %s -O %s', cmd.url, path), 'r').close();
 
 	ctx = ubus.connect();
@@ -11,8 +11,8 @@
 
 	if (!fw.valid) {
 		ctx = ubus.connect();
-		ctx.call("usync", "log", {"error": "firmware file validation failed", "data": fw});
-		warn("usync-upgrade: firmware file validation failed\n");
+		ctx.call("ucentral", "log", {"error": "firmware file validation failed", "data": fw});
+		warn("ucentral-upgrade: firmware file validation failed\n");
 		return;
 	}
 	fs.popen(sprintf('/sbin/sysupgrade %s', path), 'r').close();

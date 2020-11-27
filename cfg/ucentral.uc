@@ -65,7 +65,7 @@ for (key in cfg) {
 	if (key in ["uuid", "ssid"])
 		continue;
 	try {
-		include(sprintf("cfg_%s.tpl", key));
+		include(sprintf("cfg_%s.uc", key));
 	} catch (e) {
 		failed = true;
 		fails[key] = e;
@@ -75,7 +75,7 @@ for (key in cfg) {
 
 if (failed) {
 	ctx = ubus.connect();
-	ctx.call("usync", "log", {"error": "failed to apply config", "data": fails});
+	ctx.call("ucentral", "log", {"error": "failed to apply config", "data": fails});
 	ctx.disconnect();
 	exit(1);
 }

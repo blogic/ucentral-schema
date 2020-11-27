@@ -12,5 +12,5 @@ yaml2json schema/wifi-ssid.yml wifi-ssid.schema
 yaml2json schema/steer.yml steer.schema
 ./merge-schema.py
 mkdir -p docs
-jsonschema2md usync.schema.json docs/usync-schema.md
-generate-schema-doc usync.schema.json docs/usync-schema.html
+jsonschema2md ucentral.schema.json docs/ucentral-schema.md
+generate-schema-doc ucentral.schema.json docs/ucentral-schema.html
