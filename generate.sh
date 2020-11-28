@@ -11,6 +11,7 @@ yaml2json schema/wifi-phy.yml wifi-phy.schema
 yaml2json schema/wifi-ssid.yml wifi-ssid.schema
 yaml2json schema/steer.yml steer.schema
 yaml2json schema/poe.yml poe.schema
+yaml2json schema/lldp.yml lldp.schema
 ./merge-schema.py
 mkdir -p docs
 jsonschema2md ucentral.schema.json docs/ucentral-schema.md
