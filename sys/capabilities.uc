@@ -3,7 +3,10 @@
 	ctx = ubus.connect();
 	capa.model = board.model;
 	capa.network = board.network;
-	capa["switch"] = board["switch"];
-	capa.wifi = ctx.call("wifi", "phy");
+	if (board["switch"])
+		capa["switch"] = board["switch"];
+	wifi = ctx.call("wifi", "phy");
+	if (length(wifi))
+		capa.wifi = wifi;
 	print(capa);
 %}
