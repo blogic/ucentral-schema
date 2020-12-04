@@ -1,17 +1,17 @@
 type: object
 properties:
-  ntp:
+  lldp:
     type: object
     properties:
-      description:
+      lldp_description:
         description:
           The content that we shall announce inside the description field.
-	type: string
+        type: string
       location:
         description:
           The content that we shall announce inside the location field.
-	type: string
+        type: string
       interface:
         description:
           The interfaces that we want to run lldp on.
-	type: array
+        type: array

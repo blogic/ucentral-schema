@@ -1,14 +1,5 @@
 {%
 
-copied_files = {};
-
-function copy_file(file) {
-	let stat = fs.stat(file);
-
-	if (stat === null || stat.type != "file")
-		continue;
-}
-
 function uci_defaults(o, d) {
 	for (local k, v in d)
 		if (!o[k])
@@ -23,9 +14,6 @@ function uci_requires(o, d) {
 }
 
 function uci_render(file, obj) {
-	if (!copied_files[file])
-		copy_file(file);
-
 	for (local sname in obj):
 		local section = obj[sname];
 

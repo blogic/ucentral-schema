@@ -474,6 +474,46 @@
      "type": "array"
     }
    }
+  },
+  "lldp": {
+   "type": "object",
+   "properties": {
+    "lldp_description": {
+     "description": "The content that we shall announce inside the description field.",
+     "type": "string"
+    },
+    "location": {
+     "description": "The content that we shall announce inside the location field.",
+     "type": "string"
+    },
+    "interface": {
+     "description": "The interfaces that we want to run lldp on.",
+     "type": "array"
+    }
+   }
+  },
+  "rtty": {
+   "type": "object",
+   "properties": {
+    "interface": {
+     "description": "The interface that shall be used to connect to the server.",
+     "type": "string"
+    },
+    "host": {
+     "description": "The server that we want to connect to",
+     "type": "string"
+    },
+    "port": {
+     "description": "This option defines the port that we connect to.",
+     "type": "number",
+     "maximum": 65535,
+     "minimum": 1
+    },
+    "token": {
+     "description": "The security token that we use to authenticate with the server.",
+     "type": "string"
+    }
+   }
   }
  }
 }
