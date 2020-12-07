@@ -125,9 +125,8 @@ function wifi_generate() {
 	cursor = uci.cursor();
 	cursor.load("wireless");
 	cursor.foreach("wireless", "wifi-device", function(d) {
-		if (!capab.wifi[d.path])
-			continue;
-		capab.wifi[d.path]["uci"] = d[".name"];
+		if (capab.wifi[d.path])
+			capab.wifi[d.path]["uci"] = d[".name"];
 	});
 
 	for (local path in capab.wifi):
