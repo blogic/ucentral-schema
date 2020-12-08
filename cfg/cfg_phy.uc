@@ -1,5 +1,5 @@
 {%
-function ssid_generate(x, v, radio)  {
+function ssid_generate(x, v, radio, c)  {
 	local crypto = "none";
 
 	if (!uci_requires(v, [ "network", "mode", "encryption"])) {
@@ -37,6 +37,9 @@ function ssid_generate(x, v, radio)  {
 		}
 		crypto = "wpa";
 	}
+
+	if (x.he_capa)
+		uci_defaults(v, { "he_bss_color": 64, "multiple_bssid": 0, "ema": 0 });
 
 	local name = sprintf("%s_%s", radio, v.network);
 	local u = uci_new_section(x, name, "wifi-iface", { "device": radio });
@@ -101,14 +104,14 @@ function phy_generate(wifi, x) {
 	for (local phy in cfg.phy):
 		if (phy.band in x.band === false)
 			continue;
-	
+
 		phy_generate_options(wifi, x, phy.cfg);
 
 		for (local ssid in cfg.ssid):
 			for (local band in ssid.band):
 				if (band != phy.band)
 					continue;
-				ssid_generate(wifi, ssid.cfg, x.uci);
+				ssid_generate(wifi, ssid.cfg, x.uci, x);
 			endfor
 		endfor
 		return true;

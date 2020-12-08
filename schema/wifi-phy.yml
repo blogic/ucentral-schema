@@ -84,3 +84,22 @@ properties:
               type: number
               maximum: 30
               minimum: 0
+            multiple_bssid:
+              description:
+                Enabling this option will make the phy broadcast its BSSs using the multiple BSSID beacon IE.
+              type: number
+              maximum: 1
+              minimum: 0
+            ema:
+              description:
+                Enableing this option will make the phy broadcast its multiple BSSID beacons using EMA.
+              type: number
+              maximum: 1
+              minimum: 0
+            he_bss_color:
+              description:
+                This enables BSS Coloring on the PHY. setting it to 0 disables the feature 1-63 sets the color
+                and 64 will make hostapd pick a random color.
+              type: number
+              maximum: 64
+              minimum: 0
