@@ -38,7 +38,7 @@ function ssid_generate(x, v, radio, c)  {
 		crypto = "wpa";
 	}
 
-	if (x.he_capa)
+	if (x.he_mac_capa)
 		uci_defaults(v, { "he_bss_color": 64, "multiple_bssid": 0, "ema": 0 });
 
 	local name = sprintf("%s_%s", radio, v.network);
@@ -69,7 +69,7 @@ function ssid_generate(x, v, radio, c)  {
 }
 
 function phy_htmode_verify(c, v) {
-	if (index(v, "HE") == 0 && c.he_capa)
+	if (index(v, "HE") == 0 && c.he_mac_capa)
 		return v;
 	if (index(v, "VHT") == 0 && c.vht_capa)
 		return v;
