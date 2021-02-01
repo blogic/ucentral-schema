@@ -13,6 +13,7 @@ yaml2json schema/steer.yml steer.schema
 yaml2json schema/poe.yml poe.schema
 yaml2json schema/lldp.yml lldp.schema
 yaml2json schema/rtty.yml rtty.schema
+yaml2json schema/stats.yml stats.schema
 ./merge-schema.py
 mkdir -p docs
 jsonschema2md ucentral.schema.json docs/ucentral-schema.md

@@ -532,6 +532,71 @@
      "type": "string"
     }
    }
+  },
+  "stats": {
+   "type": "object",
+   "description": "This section defines what stats and metric the unit should send to the cloud backend.",
+   "properties": {
+    "interval": {
+     "description": "This allows use to define how often the data should be sent. Values are in minutes. A value of 0 disables stats/metric reporting.",
+     "type": "number",
+     "minimum": 0
+    },
+    "neighbours": {
+     "description": "The unit shall report its learned neighbour table.",
+     "type": "number",
+     "minimum": 0,
+     "maximum": 1
+    },
+    "traffic": {
+     "description": "The unit shall report its network traffic counters.",
+     "type": "number",
+     "minimum": 0,
+     "maximum": 1
+    },
+    "wifiiface": {
+     "description": "The unit shall report its wifi ifaces.",
+     "type": "number",
+     "minimum": 0,
+     "maximum": 1
+    },
+    "wifistation": {
+     "description": "The unit shall report its wifi stations.",
+     "type": "number",
+     "minimum": 0,
+     "maximum": 1
+    },
+    "pids": {
+     "description": "The unit shall report its process table.",
+     "type": "number",
+     "minimum": 0,
+     "maximum": 1
+    },
+    "serviceprobe": {
+     "description": "The unit shall report its service probe results (dhcp, dns, radius, ...).",
+     "type": "number",
+     "minimum": 0,
+     "maximum": 1
+    },
+    "lldp": {
+     "description": "The unit shall report its LLDP neighbours.",
+     "type": "number",
+     "minimum": 0,
+     "maximum": 1
+    },
+    "system": {
+     "description": "The unit shall report its basic system info (load, memory consumption, ...).",
+     "type": "number",
+     "minimum": 0,
+     "maximum": 1
+    },
+    "poe": {
+     "description": "The unit shall report its current PoE state.",
+     "type": "number",
+     "minimum": 0,
+     "maximum": 1
+    }
+   }
   }
  }
 }
