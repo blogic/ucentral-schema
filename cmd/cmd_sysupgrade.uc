@@ -11,7 +11,8 @@
 
 	if (!fw.valid) {
 		ctx = ubus.connect();
-		ctx.call("ucentral", "log", {"error": "firmware file validation failed", "data": fw});
+		log = {"error": "firmware file validation failed", "data": fw};
+		ctx.call("ucentral", "send", {"log": log});
 		warn("ucentral-upgrade: firmware file validation failed\n");
 		return;
 	}
@@ -22,6 +23,7 @@
 		fs.popen(sprintf('tar czf /tmp/sysupgrade.tgz /etc/config/ucentral /etc/ucentral/*.pem /etc/ucentral/*.crt'), 'r').close();
 	}
 
+	ctx.call("ucentral", "log", {"msg": "upgrading fw"});
 	fs.popen(sprintf('/etc/init.d/network stop'), 'r').close();
 	fs.popen(sprintf('/sbin/sysupgrade %s %s', keep_redirector, path), 'r').close();
 %}

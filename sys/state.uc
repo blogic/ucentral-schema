@@ -46,7 +46,7 @@ if (stats.serviceprobe == 1) {
 		warn("failed to invoke service probing " + e);
 	}
 }
-ctx.call("ucentral", "state", state);
+ctx.call("ucentral", "send", {"state": state});
 
 print(state);
 %}

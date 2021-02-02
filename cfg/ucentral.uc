@@ -84,7 +84,8 @@ for (key in cfg) {
 
 if (failed) {
 	ctx = ubus.connect();
-	ctx.call("ucentral", "log", {"error": "failed to apply config", "data": fails});
+	log = {"error": "failed to apply config", "data": fails};
+	ctx.call("ucentral", "send", {"log": log});
 	ctx.disconnect();
 	exit(1);
 }
