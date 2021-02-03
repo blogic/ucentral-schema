@@ -1,4 +1,10 @@
 {%
+ctx = ubus.connect();
+
+function cfg_error(msg) {
+	ctx.call("ucentral", "log", {"msg": msg});
+	warn(sprint("%s\n", msg));
+}
 
 function uci_defaults(o, d) {
 	for (local k, v in d)

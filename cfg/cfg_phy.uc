@@ -3,7 +3,7 @@ function ssid_generate(x, v, radio, c)  {
 	local crypto = "none";
 
 	if (!uci_requires(v, [ "network", "mode", "encryption"])) {
-		warn("ssid is missing a required option\n");
+		cfg_error("ssid is missing a required option");
 		return;
 	}
 
@@ -11,14 +11,14 @@ function ssid_generate(x, v, radio, c)  {
 	case "ap":
 	case "sta":
 		if (!uci_requires(v, [ "ssid" ])) {
-			warn("missing ssid field\n");
+			cfg_error("missing ssid field");
 			return;
 		}
 		break;
 	case "mesh":
 		uci_defaults(v, { "mesh_fwding": 0, "mcast_rate": 24000	 });
 		if (!uci_requires(v, [ "mesh_id" ])) {
-			warn("missing mesh fields\n");
+			cfg_error("missing mesh fields");
 			return;
 		}
 		break;
@@ -26,13 +26,13 @@ function ssid_generate(x, v, radio, c)  {
 
 	if (v.encryption in [ "psk", "psk2", "psk-mixed" ]) {
 		if (!uci_requires(v, [ "key"])) {
-			warn("ssid has invalid psk options\n");
+			cfg_error("ssid has invalid psk options");
 			return;
 		}
 		crypto = "psk";
-	} else if (v.encryption in [ "wpa", "wpa2", "wpa-mixed" ]) {
+	} else if (v.encryption in [ "wpa", "wpa2", "wpa-mixed", "sae", "sae-mixed" ]) {
 		if (!uci_requires(v, [ "server", "port", "auth_secret" ])) {
-			warn("ssid has invalid wpa options\n");
+			cfg_error("ssid has invalid wpa options");
 			return;
 		}
 		crypto = "wpa";
@@ -75,6 +75,7 @@ function phy_htmode_verify(c, v) {
 		return v;
 	if (index(v, "HT") == 0 && c.ht_capa)
 		return v;
+	cfg_error("invalid htmode, dropping to ht20");
 	return "HT20";
 }
 

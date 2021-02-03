@@ -104,7 +104,7 @@ function network_generate_base(x, v, n) {
 		u = network_generate_static(x.network, v, n);
 		break;
 	default:
-		warn("Unhandled network proto\n");
+		cfg_error(sprintf("Unhandled network proto: %s", v.proto));
 		return;
 	}
 
