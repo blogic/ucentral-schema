@@ -3,7 +3,7 @@ ctx = ubus.connect();
 
 function cfg_error(msg) {
 	ctx.call("ucentral", "log", {"msg": msg});
-	warn(sprint("%s\n", msg));
+	warn(sprintf("%s\n", msg));
 }
 
 function uci_defaults(o, d) {

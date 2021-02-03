@@ -23,7 +23,8 @@
        "nat",
        "guest",
        "batman",
-       "mesh"
+       "mesh",
+       "gre"
       ]
      },
      "vlan": {
@@ -81,6 +82,10 @@
         "type": "number",
         "maximum": 96,
         "minimum": 0
+       },
+       "peeraddr": {
+        "description": "The remote GRE endpoint that we want to connect to.",
+        "type": "string"
        },
        "dhcp": {
         "description": "The DHCP configuration of the network interface.",

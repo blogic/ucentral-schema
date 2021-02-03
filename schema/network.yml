@@ -21,6 +21,7 @@ properties:
           - 'guest'
           - 'batman'
           - 'mesh'
+          - 'gre'
         vlan:
           description:
             The VID that shall be assign to packets leaving this network interface.
@@ -76,6 +77,10 @@ properties:
               type: number
               maximum: 96
               minimum: 0
+            peeraddr:
+              description:
+                The remote GRE endpoint that we want to connect to.
+              type: string
             dhcp:
               description:
                 The DHCP configuration of the network interface.

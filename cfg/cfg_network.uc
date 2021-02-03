@@ -73,7 +73,7 @@ function network_generate_vlan_rule(x, v, n) {
 }
 
 function network_generate_name(n, v) {
-	if (v.name && n in ["guest", "nat", "mesh"])
+	if (v.name && n in ["guest", "nat", "mesh", "gre"])
 		n = v.name;
 	return v.vlan ? sprintf("%s%d", n, v.vlan) : n;
 }
@@ -136,7 +136,7 @@ function network_generate_lan(x, c, n) {
 	dhcp_generate(x.dhcp, c.cfg.dhcp, name);
 	for (local k, v in c.cfg.leases)
 		lease_generate(x.dhcp, v);
-	network_generate_vlan_rule(x.network, c, name); 
+	network_generate_vlan_rule(x.network, c, name);
 	return u;
 }
 
@@ -177,6 +177,27 @@ function network_generate_mesh(x, v) {
 	uci_set_options(u, v, ["mtu"]);
 }
 
+function network_generate_gre(x, v) {
+	if (!uci_requires(v.cfg, [ "peeraddr" ])) {
+		cfg_error("missing gre options");
+		return;
+	}
+	uci_defaults(v.cfg, {"tunlink": "wan" });
+
+	local name = network_generate_name("gre", v);
+	local tun_name = sprintf("%stun", name);
+	local ifname = sprintf("gre4t-%s", name);
+	if (v.cfg.vid) {
+		tun_name = sprintf("%s_%d", tun_name, v.cfg.vid);
+		ifname = sprintf("%s.%d", ifname, v.cfg.vid);
+	}
+	local u = uci_new_section(x.network, name, "interface", {"proto": "gretap", "type": "gre"});
+	uci_set_options(u, v.cfg, ["ipaddr", "peeraddr", "tunlink"]);
+
+	uci_new_section(x.network, tun_name, "interface", {"proto": "static", "type": "bridge",
+						    "ifname": ifname});
+}
+
 function network_generate() {
 	local uci = {
 		"network": {},
@@ -203,6 +224,12 @@ function network_generate() {
 			break;
 		case "mesh":
 			network_generate_mesh(uci, v);
+			break;
+		case "gre":
+			network_generate_gre(uci, v);
+			break;
+		default:
+			cfg_error(sprintf("trying to create network with unknown mode %s", v.mode));
 			break;
 		}
 	}
