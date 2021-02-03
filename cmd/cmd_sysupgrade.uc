@@ -20,7 +20,8 @@
 	let keep_redirector = "";
 	if (cmd.keep_redirector) {
 		keep_redirector = "-f /tmp/sysupgrade.tgz";
-		fs.popen(sprintf('tar czf /tmp/sysupgrade.tgz /etc/config/ucentral /etc/ucentral/*.pem /etc/ucentral/*.crt'), 'r').close();
+		fs.popen(sprintf('tar czf /tmp/sysupgrade.tgz /etc/config/ucentral /etc/ucentral/*.pem /etc/ucentral/*.crt /etc/ucentral/ucentral.active %s',
+			 fs.readlink("/etc/ucentral/ucentral.active")), 'r').close();
 	}
 
 	ctx.call("ucentral", "log", {"msg": "upgrading fw"});
