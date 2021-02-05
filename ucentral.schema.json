@@ -602,6 +602,36 @@
      "maximum": 1
     }
    }
+  },
+  "mqtt": {
+   "description": "The option that configure which mqtt server the unit should connect to.",
+   "type": "object",
+   "properties": {
+    "enable": {
+     "description": "Enable this option if you would like the unit to connect to the MQTT backend.",
+     "type": "number",
+     "maximum": 1,
+     "minimum": 0
+    },
+    "server": {
+     "description": "the IP/URL of the MQTT server.",
+     "type": "string"
+    },
+    "port": {
+     "description": "This option defines the port that we connect to.",
+     "type": "number",
+     "maximum": 65535,
+     "minimum": 1
+    },
+    "username": {
+     "description": "The username that is used to authenticate.",
+     "type": "string"
+    },
+    "password": {
+     "description": "The password that is used to authenticate.",
+     "type": "string"
+    }
+   }
   }
  }
 }
