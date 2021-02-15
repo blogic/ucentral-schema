@@ -80,13 +80,10 @@ function phy_htmode_verify(c, v) {
 }
 
 function phy_channel_verify(c, v) {
-	if (v <= 16 && "2" in c.band)
+	if (v in c.channels)
 		return v;
-	if (v >= 32 && v <= 68 && ("5" in c.band || "5l" in c.band))
-		return v;
-	if (v >= 96 && v <= 173 && ("5" in c.band || "5u" in c.band))
-		return v;
-	return 0;
+	cfg_error(sprintf("invalid channel, falling back to %d", c.channels[0]));
+	return c.channels[0];
 }
 
 function phy_generate_options(x, c, v) {
