@@ -69,13 +69,20 @@ function ssid_generate(x, v, radio, c)  {
 }
 
 function phy_htmode_verify(c, v) {
-	if (index(v, "HE") == 0 && c.he_mac_capa)
+	if (v in c.htmode)
 		return v;
-	if (index(v, "VHT") == 0 && c.vht_capa)
-		return v;
-	if (index(v, "HT") == 0 && c.ht_capa)
-		return v;
-	cfg_error("invalid htmode, dropping to ht20");
+	cfg_error("invalid htmode, dropping to HT20");
+	return "HT20";
+}
+
+function phy_htmode_best(c, v) {
+	for (a in [ "HE", "VHT", "HT"]) {
+		local htmode = sprintf("%s%s", a, v);
+
+		if (htmode in c.htmode)
+			return htmode;
+	}
+	cfg_error("invalid htwidth, dropping to HT20");
 	return "HT20";
 }
 
@@ -91,6 +98,8 @@ function phy_generate_options(x, c, v) {
 
 	if (v.htmode)
 		u.htmode = phy_htmode_verify(c, v.htmode);
+	else if (v.htwidth)
+		u.htmode = phy_htmode_best(c, v.htwidth);
 	if (v.channel)
 		u.channel = phy_channel_verify(c, v.channel);
 

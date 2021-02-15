@@ -201,6 +201,15 @@
          "HE160"
         ]
        },
+       "htwidth": {
+        "type": "string",
+        "enum": [
+         20,
+         40,
+         80,
+         160
+        ]
+       },
        "hwmode": {
         "type": "string",
         "enum": [
