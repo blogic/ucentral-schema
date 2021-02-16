@@ -119,12 +119,17 @@ function network_generate_wan(x, v) {
 
 	u = network_generate_base(x, v.cfg, name);
 	if (v.vlan) {
-		u.ifname = sprintf("bridge.%d", v.vlan);
+		if (capab["bridge-vlan"] === true)
+			u.ifname = sprintf("bridge.%d", v.vlan);
+		else
+			u.ifname = sprintf("@wan.%d", v.vlan);
 		u.ip4table = v.vlan;
 		u.ip6table = v.vlan;
-		bridge_generate_vlan(x.network, name, v.vlan);
+		if (capab["bridge-vlan"])
+			bridge_generate_vlan(x.network, name, v.vlan);
 		fw_generate_zone(x.firewall, name, true);
-	}
+	} else if (!capab["bridge-vlan"])
+		u.type = "bridge";
 	dhcp_generate(x.dhcp, false, name);
 }
 
