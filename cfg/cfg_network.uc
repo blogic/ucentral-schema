@@ -169,8 +169,13 @@ function network_generate_batman(x, v) {
 
 	uci_defaults(v, {"multicast_mode": 0, "distributed_arp_table": 0, "orig_interval": 5000});
 	uci_set_options(u, v, ["multicast_mode", "distributed_arp_table", "orig_interval"]);
-	uci_new_section(x.network, "wan_vlan", "bridge-vlan",
+	if (capab["bridge-vlan"] === true)
+		uci_new_section(x.network, "wan_vlan", "bridge-vlan",
 			{"ports": capab.network.wan.ifname + " " + "bat0"});
+	else
+		uci_new_section(x.network, "wan", "interface",
+			{"ifname": capab.network.wan.ifname + " " + "bat0"});
+
 }
 
 function network_generate_mesh(x, v) {
