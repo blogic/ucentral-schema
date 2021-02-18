@@ -308,7 +308,11 @@
          "psk-mixed",
          "wpa",
          "wpa2",
-         "wpa-mixed"
+         "wpa-mixed",
+         "sae",
+         "sae-mixed",
+         "wpa3",
+         "wpa3-mixed"
         ],
         "type": "string"
        },

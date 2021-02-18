@@ -38,6 +38,10 @@ properties:
               - wpa
               - wpa2
               - wpa-mixed
+              - sae
+              - sae-mixed
+              - wpa3
+              - wpa3-mixed
               type: string
             ft_over_ds:
               maximum: 1
