@@ -46,7 +46,9 @@ function uci_render(file, obj) {
 }
 
 function uci_new_section(x, name, type, vals) {
-	x[name] = { ".type": type };
+	if (!x[name])
+		x[name] = {};
+	x[name][".type"] = type;
 
 	if (vals)
 		for(local k,v in vals)
