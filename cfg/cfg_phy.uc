@@ -161,7 +161,8 @@ function wifi_generate() {
 
 	for (local path in capab.wifi):
 		local phy = capab.wifi[path];
-
+		if (!phy.uci)
+			continue;
 		if (phy_generate(wifi, phy) === false):
 			wifi[phy.uci] = {"disabled": "1"};
 		endif
