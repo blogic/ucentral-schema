@@ -79,14 +79,14 @@ properties:
               - n
               - ac
               - ax
-            rxantenna:
-              type: number
-              maximum: 255
-              minimum: 0
-            txantenna:
-              type: number
-              maximum: 255
-              minimum: 0
+            mimo:
+              type: string
+              enum:
+              - 1x1
+              - 2x2
+              - 3x3
+              - 4x4
+              - 8x8
             txpower:
               type: number
               maximum: 30

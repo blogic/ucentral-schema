@@ -93,6 +93,18 @@ function phy_channel_verify(c, v) {
 	return c.channels[0];
 }
 
+local mimo = { "1x1": 1, "2x2": 3, "3x3": 8, "4x4": 15, "8x8": 255};
+
+function phy_get_mimo(request, max) {
+	local v = mimo[request];
+
+	if (!v || v > max) {
+		cfg_error(sprintf("invalid mimo setting, using %d", max));
+		return max;
+	}
+	return v;
+}
+
 function phy_generate_options(x, c, v) {
 	local u = uci_new_section(x, c.uci, "wifi-device");
 
@@ -102,9 +114,12 @@ function phy_generate_options(x, c, v) {
 		u.htmode = phy_htmode_best(c, v.htwidth);
 	if (v.channel)
 		u.channel = phy_channel_verify(c, v.channel);
-
+	if (v.mimo) {
+		u.txantenna = phy_get_mimo(v.mimo, c.tx_ant);
+		u.rxantenna = phy_get_mimo(v.mimo, c.rx_ant);
+	}
 	uci_set_options(u, v, ["disabled", "country", "beacon_int", "txpower",
-		"chanbw", "require_mode", "txantenna", "rxantenna", "legacy_rates"]);
+		"chanbw", "require_mode", "legacy_rates"]);
 }
 
 function phy_generate(wifi, x) {
