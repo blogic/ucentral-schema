@@ -24,19 +24,22 @@ function ssid_generate(x, v, radio, c)  {
 		break;
 	}
 
-	if (v.encryption in [ "psk", "psk2", "psk-mixed" ]) {
+	if (v.encryption in [ "psk", "psk2", "psk-mixed", "sae", "sae-mixed" ]) {
 		if (!uci_requires(v, [ "key"])) {
 			cfg_error("ssid has invalid psk options");
 			return;
 		}
 		crypto = "psk";
-	} else if (v.encryption in [ "wpa", "wpa2", "wpa-mixed", "sae", "sae-mixed" ]) {
+	} else if (v.encryption in [ "wpa", "wpa2", "wpa-mixed", "wpa3", "wpa3-mixed" ]) {
 		if (!uci_requires(v, [ "server", "port", "auth_secret" ])) {
 			cfg_error("ssid has invalid wpa options");
 			return;
 		}
 		crypto = "wpa";
 	}
+
+	if (v.encryption in [ "sae", "sae-mixed", "wpa3", "wpa3-mixed" ])
+		v.ieee80211w = 2;
 
 	if (x.he_mac_capa)
 		uci_defaults(v, { "he_bss_color": 64, "multiple_bssid": 0, "ema": 0 });
