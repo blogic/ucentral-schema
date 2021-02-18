@@ -79,6 +79,8 @@ function phy_htmode_verify(c, v) {
 }
 
 function phy_htmode_best(c, v) {
+	local a;
+
 	for (a in [ "HE", "VHT", "HT"]) {
 		local htmode = sprintf("%s%s", a, v);
 
