@@ -7,7 +7,7 @@ function generate_stats() {
 			     "serviceprobe": 0, "lldp": 0, "system": 0,
 			     "poe": 0 } );
 
-	cfg.stats *= 60;
+	cfg.stats.interval *= 60;
 	uci_set_options(stats, cfg.stats, [ "interval", "neighbours", "traffic",
 			     "wifiiface", "wifistation", "pids",
 			     "serviceprobe", "lldp", "system",
