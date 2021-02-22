@@ -44,7 +44,10 @@ function ssid_generate(x, v, radio, c)  {
 	if (x.he_mac_capa)
 		uci_defaults(v, { "he_bss_color": 64, "multiple_bssid": 0, "ema": 0 });
 
-	local name = sprintf("%s_%s", radio, v.network);
+	if (!v.name)
+		v.name = v.network;
+
+	local name = sprintf("%s_%s", radio, v.name);
 	local u = uci_new_section(x, name, "wifi-iface", { "device": radio });
 	uci_set_options(u, v, ["ssid", "network", "mode", "dtim_period", "hidden",
 			"ieee80211r", "ieee80211k", "ieee80211v", "ieee80211w",

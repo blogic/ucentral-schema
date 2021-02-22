@@ -396,6 +396,11 @@
         "maximum": 1,
         "minimum": 0,
         "type": "number"
+       },
+       "name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 16
        }
       }
      }
