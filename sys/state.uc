@@ -49,4 +49,7 @@ if (stats.serviceprobe == 1) {
 ctx.call("ucentral", "send", {"state": state});
 
 print(state);
+f = fs.open("/tmp/ucentral.state");
+f.write(state);
+f.close();
 %}
