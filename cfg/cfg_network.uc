@@ -118,6 +118,7 @@ function network_generate_wan(x, v) {
 	local u;
 
 	u = network_generate_base(x, v.cfg, name);
+	u.metric = 100;
 	if (v.vlan) {
 		if (capab["bridge-vlan"] === true)
 			u.ifname = sprintf("bridge.%d", v.vlan);
