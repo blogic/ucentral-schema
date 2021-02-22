@@ -22,8 +22,11 @@ for (name, iface in wifi) {
 		health[iface.ssid] = 1;
 }
 
-if (length(health))
+if (length(health)) {
 	ctx.call("ucentral", "send", {"uuid": time(), "error": "ssid did not start", "ssid": health});
-else
+	warn("ssids did not start " + health);
+} else {
 	ctx.call("ucentral", "log", {"msg": "wifi started successfully"});
+	warn("wifi started successfully");
+}
 %}
