@@ -24,4 +24,6 @@ for (name, iface in wifi) {
 
 if (length(health))
 	ctx.call("ucentral", "send", {"uuid": time(), "error": "ssid did not start", "ssid": health});
+else
+	ctx.call("ucentral", "log", {"msg": "wifi started successfully"});
 %}
