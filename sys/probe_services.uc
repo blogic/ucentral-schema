@@ -32,10 +32,10 @@ function service_probe() {
 		lookup_ip(d.interface);
 	});
 
-	for (local iface, ips in dns) {
-		local failed = 1;
-		for (local ip in ips) {
-			local ret = fs.popen(sprintf('/usr/sbin/dnsprobe -s %s', ip), 'r').close();
+	for (let iface, ips in dns) {
+		let failed = 1;
+		for (let ip in ips) {
+			let ret = fs.popen(sprintf('/usr/sbin/dnsprobe -s %s', ip), 'r').close();
 			if (ret)
 				continue;
 			failed = 0;
@@ -47,8 +47,8 @@ function service_probe() {
 		fail.dns[iface] = ips;
 	}
 
-	for (local iface, dev in dhcp) {
-		local ret = fs.popen(sprintf('/usr/sbin/dhcpdiscover -i %s -t 5', dev), 'r').close();
+	for (let iface, dev in dhcp) {
+		let ret = fs.popen(sprintf('/usr/sbin/dhcpdiscover -i %s -t 5', dev), 'r').close();
 		if (!ret)
 			continue;
 		if (fail.dhcp == null)

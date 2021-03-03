@@ -14,7 +14,7 @@ ctx = ubus.connect();
 function ubus_call(class, name, object, method) {
 	try {
 		if (stats[class] == 1) {
-			local tmp = ctx.call(object, method);
+			let tmp = ctx.call(object, method);
 			if (length(tmp))
 				state[name] = tmp;
 		}

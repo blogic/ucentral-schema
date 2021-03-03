@@ -1,6 +1,6 @@
 {%
 function fw_generate_zone(x, n, masq) {
-	local u = uci_new_section(x, n, "zone", {"name": n, "network": n});
+	let u = uci_new_section(x, n, "zone", {"name": n, "network": n});
 
 	if (masq) {
 		u.input = "REJECT";
@@ -16,14 +16,14 @@ function fw_generate_zone(x, n, masq) {
 }
 
 function fw_generate_fwd(x, src, dest) {
-	local name = sprintf("%s_%s", src, dest);
+	let name = sprintf("%s_%s", src, dest);
 
 	uci_new_section(x, name, "forwarding", {"src": src, "dest": dest});
 }
 
 function fw_generate_guest(x, src, ipaddr) {
-	local allow = sprintf("%s_allow", src);
-	local block = sprintf("%s_block", src);
+	let allow = sprintf("%s_allow", src);
+	let block = sprintf("%s_block", src);
 
 	if (ipaddr)
 		uci_new_section(x, allow, "rule", {"src": src, "family": "ipv4",
@@ -36,14 +36,14 @@ function fw_generate_guest(x, src, ipaddr) {
 }
 
 function bridge_generate_vlan(x, n, vid) {
-	local name = sprintf("%s_vlan", n);
+	let name = sprintf("%s_vlan", n);
 
 	uci_new_section(x, name, "bridge-vlan", {"device": "bridge", "vlan": vid,
 						 "ports": capab.network.wan.ifname + ":t"});
 }
 
 function dhcp_generate(x, v, n) {
-	local u = uci_new_section(x, n, "dhcp", {"interface": n});
+	let u = uci_new_section(x, n, "dhcp", {"interface": n});
 
 	if (!v) {
 		u.ignore = 1;
@@ -67,7 +67,7 @@ function lease_generate(x, v) {
 function network_generate_vlan_rule(x, v, n) {
 	if (!v.vlan)
 		return;
-	local name = sprintf("%s_route", n);
+	let name = sprintf("%s_route", n);
 
 	uci_new_section(x, name, "rule", {"in": n, "lookup": v.vlan});
 }
@@ -79,7 +79,7 @@ function network_generate_name(n, v) {
 }
 
 function network_generate_static(x, v, n) {
-	local u = uci_new_section(x, n, "interface", {"proto": "static"});
+	let u = uci_new_section(x, n, "interface", {"proto": "static"});
 
 	uci_defaults(v, {"netmask": "255.255.255.0"});
 	uci_set_options(u, v, ["ipaddr", "netmask", "gateway", "dns"]);
@@ -88,13 +88,13 @@ function network_generate_static(x, v, n) {
 }
 
 function network_generate_dhcp(x, v, n) {
-	local u = uci_new_section(x, n, "interface", {"proto": "dhcp"});
+	let u = uci_new_section(x, n, "interface", {"proto": "dhcp"});
 
 	return u;
 }
 
 function network_generate_base(x, v, n) {
-	local u;
+	let u;
 
 	switch(v.proto) {
 	case "dhcp":
@@ -114,8 +114,8 @@ function network_generate_base(x, v, n) {
 }
 
 function network_generate_wan(x, v) {
-	local name = network_generate_name("wan", v);
-	local u;
+	let name = network_generate_name("wan", v);
+	let u;
 
 	u = network_generate_base(x, v.cfg, name);
 	u.metric = 100;
@@ -135,21 +135,21 @@ function network_generate_wan(x, v) {
 }
 
 function network_generate_lan(x, c, n) {
-	local name = network_generate_name(n, c);
-	local u;
+	let name = network_generate_name(n, c);
+	let u;
 
 	u = network_generate_base(x, c.cfg, name);
 	dhcp_generate(x.dhcp, c.cfg.dhcp, name);
-	for (local k, v in c.cfg.leases)
+	for (let k, v in c.cfg.leases)
 		lease_generate(x.dhcp, v);
 	network_generate_vlan_rule(x.network, c, name);
 	return u;
 }
 
 function network_generate_nat(x, c, n) {
-	local name = network_generate_name(n, c);
-	local wan = network_generate_name("wan", c);
-	local u;
+	let name = network_generate_name(n, c);
+	let wan = network_generate_name("wan", c);
+	let u;
 
 	u = network_generate_lan(x, c, n);
 	u.type = "bridge";
@@ -159,14 +159,14 @@ function network_generate_nat(x, c, n) {
 }
 
 function network_generate_guest(x, c) {
-	local name = network_generate_name("guest", c);
+	let name = network_generate_name("guest", c);
 
 	network_generate_nat(x, c, "guest");
 	fw_generate_guest(x.firewall, name, c.cfg.ipaddr);
 }
 
 function network_generate_batman(x, v) {
-	local u = uci_new_section(x.network, "bat0", "interface", {"proto": "batadv"});
+	let u = uci_new_section(x.network, "bat0", "interface", {"proto": "batadv"});
 
 	uci_defaults(v, {"multicast_mode": 0, "distributed_arp_table": 0, "orig_interval": 5000});
 	uci_set_options(u, v, ["multicast_mode", "distributed_arp_table", "orig_interval"]);
@@ -180,8 +180,8 @@ function network_generate_batman(x, v) {
 }
 
 function network_generate_mesh(x, v) {
-	local name = network_generate_name("mesh", v);
-	local u;
+	let name = network_generate_name("mesh", v);
+	let u;
 
 	u = uci_new_section(x.network, name, "interface", {"proto": "batadv_hardif", "master": "bat0"});
 	uci_defaults(v, {"mtu": 1532});
@@ -195,14 +195,14 @@ function network_generate_gre(x, v) {
 	}
 	uci_defaults(v.cfg, {"tunlink": "wan" });
 
-	local name = network_generate_name("gre", v);
-	local tun_name = sprintf("%stun", name);
-	local ifname = sprintf("gre4t-%s", name);
+	let name = network_generate_name("gre", v);
+	let tun_name = sprintf("%stun", name);
+	let ifname = sprintf("gre4t-%s", name);
 	if (v.cfg.vid) {
 		tun_name = sprintf("%s_%d", tun_name, v.cfg.vid);
 		ifname = sprintf("%s.%d", ifname, v.cfg.vid);
 	}
-	local u = uci_new_section(x.network, name, "interface", {"proto": "gretap", "type": "gre"});
+	let u = uci_new_section(x.network, name, "interface", {"proto": "gretap", "type": "gre"});
 	uci_set_options(u, v.cfg, ["ipaddr", "peeraddr", "tunlink"]);
 
 	uci_new_section(x.network, tun_name, "interface", {"proto": "static", "type": "bridge",
@@ -210,13 +210,13 @@ function network_generate_gre(x, v) {
 }
 
 function network_generate() {
-	local uci = {
+	let uci = {
 		"network": {},
 		"dhcp": {},
 		"firewall": {}
 	};
 
-        for (local k, v in cfg.network) {
+        for (let k, v in cfg.network) {
 		switch (v.mode) {
 		case "wan":
 			network_generate_wan(uci, v);

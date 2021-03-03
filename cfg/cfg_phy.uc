@@ -1,6 +1,6 @@
 {%
 function ssid_generate(x, v, radio, c)  {
-	local crypto = "none";
+	let crypto = "none";
 
 	if (!uci_requires(v, [ "network", "mode", "encryption"])) {
 		cfg_error("ssid is missing a required option");
@@ -47,8 +47,8 @@ function ssid_generate(x, v, radio, c)  {
 	if (!v.name)
 		v.name = v.network;
 
-	local name = sprintf("%s_%s", radio, v.name);
-	local u = uci_new_section(x, name, "wifi-iface", { "device": radio });
+	let name = sprintf("%s_%s", radio, v.name);
+	let u = uci_new_section(x, name, "wifi-iface", { "device": radio });
 	uci_set_options(u, v, ["ssid", "network", "mode", "dtim_period", "hidden",
 			"ieee80211r", "ieee80211k", "ieee80211v", "ieee80211w",
 			"isolate", "rts_threshold", "uapsd", "ft_over_ds",
@@ -82,10 +82,10 @@ function phy_htmode_verify(c, v) {
 }
 
 function phy_htmode_best(c, v) {
-	local a;
+	let a;
 
 	for (a in [ "HE", "VHT", "HT"]) {
-		local htmode = sprintf("%s%s", a, v);
+		let htmode = sprintf("%s%s", a, v);
 
 		if (htmode in c.htmode)
 			return htmode;
@@ -101,10 +101,10 @@ function phy_channel_verify(c, v) {
 	return c.channels[0];
 }
 
-local mimo = { "1x1": 1, "2x2": 3, "3x3": 8, "4x4": 15, "8x8": 255};
+let mimo = { "1x1": 1, "2x2": 3, "3x3": 8, "4x4": 15, "8x8": 255};
 
 function phy_get_mimo(request, max) {
-	local v = mimo[request];
+	let v = mimo[request];
 
 	if (!v || v > max) {
 		cfg_error(sprintf("invalid mimo setting, using %d", max));
@@ -114,7 +114,7 @@ function phy_get_mimo(request, max) {
 }
 
 function phy_generate_options(x, c, v) {
-	local u = uci_new_section(x, c.uci, "wifi-device");
+	let u = uci_new_section(x, c.uci, "wifi-device");
 
 	if (v.htmode)
 		u.htmode = phy_htmode_verify(c, v.htmode);
@@ -131,14 +131,14 @@ function phy_generate_options(x, c, v) {
 }
 
 function phy_generate(wifi, x) {
-	for (local phy in cfg.phy):
+	for (let phy in cfg.phy):
 		if (phy.band in x.band === false)
 			continue;
 
 		phy_generate_options(wifi, x, phy.cfg);
 
-		for (local ssid in cfg.ssid):
-			for (local band in ssid.band):
+		for (let ssid in cfg.ssid):
+			for (let band in ssid.band):
 				if (band != phy.band)
 					continue;
 				ssid_generate(wifi, ssid.cfg, x.uci, x);
@@ -150,7 +150,7 @@ function phy_generate(wifi, x) {
 }
 
 function wifi_generate() {
-	local wifi= {};
+	let wifi= {};
 
 	if (!capab.wifi)
 		return;
@@ -162,8 +162,8 @@ function wifi_generate() {
 			capab.wifi[d.path]["uci"] = d[".name"];
 	});
 
-	for (local path in capab.wifi):
-		local phy = capab.wifi[path];
+	for (let path in capab.wifi):
+		let phy = capab.wifi[path];
 		if (!phy.uci)
 			continue;
 		if (phy_generate(wifi, phy) === false):

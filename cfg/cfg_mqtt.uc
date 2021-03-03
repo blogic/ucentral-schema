@@ -1,6 +1,6 @@
 {%
 function generate_mqtt() {
-	local mqtt = {};
+	let mqtt = {};
 
 	uci_defaults(cfg.mqtt, {"enable": 0});
 	if (cfg.mqtt.enable == 1 &&

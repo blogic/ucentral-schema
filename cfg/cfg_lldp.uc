@@ -1,6 +1,6 @@
 {%
 function generate_lldp() {
-	local lldp= {};
+	let lldp= {};
 
 	cfg.description = cfg.lldp_description;
 	uci_defaults(lldp, { "enable_cdp": 0, "enable_fdp": 0, "enable_sonmp": 0,

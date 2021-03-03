@@ -1,8 +1,8 @@
 {%
 function generate_poe() {
-	local poe = {};
+	let poe = {};
 
-	for (local k, v in cfg.poe.ports)
+	for (let k, v in cfg.poe.ports)
 		poe["port" + (k + 1)] = v;
 	uci_render("poe", { "poe": poe});
 }

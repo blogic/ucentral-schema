@@ -1,6 +1,6 @@
 {%
 function generate_log() {
-	local log = {};
+	let log = {};
 
 	uci_set_option(log, cfg.log, "log_size");
 

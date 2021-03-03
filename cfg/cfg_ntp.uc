@@ -1,6 +1,6 @@
 {%
 function generate_ntp() {
-	local ntp= {};
+	let ntp= {};
 
 	uci_set_option(ntp, cfg.ntp, "enabled");
 	uci_set_option(ntp, cfg.ntp, "enable_server");
