@@ -1,6 +1,6 @@
 {%
 function generate_ssh() {
-	local ssh= {};
+	let ssh= {};
 
 	uci_set_option(ssh, cfg.ssh, "enable");
 	uci_set_option(ssh, cfg.ssh, "Port");

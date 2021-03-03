@@ -9,7 +9,7 @@ ctx = ubus.connect();
 state = ctx.call("wifi", "iface");
 
 function find_ssid(ssid) {
-	for (local name, iface in state)
+	for (let name, iface in state)
 		if (ssid == iface.ssid)
 			return 0;
 	return 1;

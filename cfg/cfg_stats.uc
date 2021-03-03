@@ -1,6 +1,6 @@
 {%
 function generate_stats() {
-	local stats = {};
+	let stats = {};
 
 	uci_defaults(stats, { "interval": 0, "neighbours": 0, "traffic": 0,
 			     "wifiiface": 0, "wifistation": 0, "pids": 0,
