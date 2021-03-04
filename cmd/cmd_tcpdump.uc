@@ -1,33 +1,40 @@
 {%
-let ctx = ubus.connect();
-let cursor = uci.cursor();
+	let serial = cursor.get("ucentral", "config", "serial");
 
-cursor.load("ucentral");
-serial = cursor.get("ucentral", "config", "serial");
+	if (!serial)
+		return;
 
-if (!serial)
-	return;
+	if (args.network) {
+		let net = ctx.call("network.interface", "status", { interface: args.network });
 
-if (cmd.network) {
-	let net = ctx.call(sprintf("network.interface.%s", cmd.network), "status");
-	if (net && net.l3_device)
-		cmd.iface = net.l3_device;
-}
+		if (!net || !net.l3_device) {
+			log("Unable to resolve logical interface %s", args.network);
 
-if (!cmd.iface) {
-	ctx.call("ucentral", "log", {"msg": "failed to start tcpdump, unknown interface"});
-	return;
-}
+			return;
+		}
 
-if (!cmd.duration)
-	cmd.duration = 30;
+		args.iface = net.l3_device;
+	}
 
-let filename = sprintf("/tmp/pcap-%s-%d", serial, time);
-let ret = fs.popen(sprintf("/usr/sbin/tcpdump -c 1000 -G %d -W 1 -w %s -i %s",
-		     cmd.duration, filename, cmd.iface));
-if (ret) {
-	ctx.call("ucentral", "log", {"msg": sprintf("tcpdump returned: %d", ret)});
-	return;
-}
-ctx.call("ucentral", "log", {"msg": "tcpdump done, upload TBD"});
+	let duration = +args.duration || 30;
+	let filename = sprintf("/tmp/pcap-%s-%d", serial, time());
+
+	let rc = system([
+		'/usr/sbin/tcpdump',
+		'-c', '1000',
+		'-W', '1',
+		'-G', duration,
+		'-w', filename,
+		'-i', args.iface
+	]);
+
+	if (rc != 0) {
+		log("tcpdump command exited with non-zero code %d", rc);
+
+		return;
+	}
+
+	log("tcpdump command completed, upload TBD");
+
+	fs.unlink(filename);
 %}

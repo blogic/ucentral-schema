@@ -1,9 +1,15 @@
 {%
-ctx = ubus.connect();
-if (!cmd.lines)
-	cmd.lines = 100;
+	let log_data = ctx.call("log", "read", {
+		lines: +args.lines || 100,
+		oneshot: true,
+		stream: false
+	});
 
-log = ctx.call("log", "read",  {"lines": cmd.lines, "oneshot": true, "stream": false});
+	if (!log_data) {
+		log("Unable to obtain system log contents: %s", ubus.error());
 
-ctx.call("ucentral", "send", log);
+		return;
+	}
+
+	ctx.call("ucentral", "send", log_data);
 %}
