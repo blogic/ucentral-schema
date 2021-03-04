@@ -1,4 +1,3 @@
 {%
-stats = cmd.stats;
-include("./state.uc");
+	include("./state.uc", { stats: args.stats });
 %}
