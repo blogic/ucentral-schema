@@ -93,11 +93,14 @@
 	}
 
 	if (length(fails)) {
-		ctx = ubus.connect();
-		log = {"error": "failed to apply config", "data": fails};
-		ctx.call("ucentral", "send", {"log": log});
+		ctx.call("ucentral", "send", {
+			log: {
+				error: "Failed to apply configuration",
+				data: fails
+			}
+		});
+
 		ctx.disconnect();
 		exit(1);
 	}
-
 %}
