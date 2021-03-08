@@ -1,55 +1,81 @@
 {%
-state = {};
-state.uuid = time();
-state.cfg_uuid = cfg.uuid;
+	let statefile_path = "/tmp/ucentral.state";
 
-if (!length(stats)) {
-	cursor = uci.cursor();
-	cursor.load("ustats");
-	stats = cursor.get_all("ustats", "stats");
-}
+	let state = {
+		uuid: time(),
+		cfg_uuid: cfg.uuid
+	};
 
-ctx = ubus.connect();
+	if (!length(stats)) {
+		let cursor = uci.cursor();
+		cursor.load("ustats");
+		stats = cursor.get_all("ustats", "stats");
+	}
 
-function ubus_call(class, name, object, method) {
-	try {
-		if (stats[class] == 1) {
-			let tmp = ctx.call(object, method);
-			if (length(tmp))
-				state[name] = tmp;
+	if (!ctx)
+		ctx = ubus.connect();
+
+	function ubus_call(statclass, name, object, method) {
+		try {
+			if (stats[statclass] == 1) {
+				let tmp = ctx.call(object, method);
+
+				if (length(tmp))
+					state[name] = tmp;
+				else
+					warn("Statistics call %s/%s failed with status %s",
+						object, method, ctx.error());
+			}
 		}
-	} catch(e) {
-		warn("Exception while gathering stats: " + e);
+		catch(e) {
+			warn("Exception while gathering stats: " + e);
+		}
 	}
-}
 
-ubus_call("system", "system", "system", "info");
-ubus_call("wifiiface", "wifi-iface", "wifi", "iface");
-ubus_call("wifistation", "wifi-station", "wifi", "station");
-ubus_call("poe", "poe", "poe", "info");
-ubus_call("neighbours", "neighbours", "topology", "mac");
-ubus_call("traffic", "traffic", "topology", "port");
+	ubus_call("system", "system", "system", "info");
+	ubus_call("wifiiface", "wifi-iface", "wifi", "iface");
+	ubus_call("wifistation", "wifi-station", "wifi", "station");
+	ubus_call("poe", "poe", "poe", "info");
+	ubus_call("neighbours", "neighbours", "topology", "mac");
+	ubus_call("traffic", "traffic", "topology", "port");
 
-if (stats.lldp == 1) {
-	try {
-		lldp = fs.popen("lldpcli -f json show neighbors");
-		state.lldp = json(lldp.read("all")).lldp;
-	} catch(e) {
-		warn("failed to scarpe lldp output " + e);
+	if (stats.lldp == 1) {
+		try {
+			let lldp = fs.popen("lldpcli -f json show neighbors");
+
+			if (lldp) {
+				state.lldp = json(lldp.read("all")).lldp;
+				lldp.close();
+			}
+			else {
+				log("LLDP cli command failed: %s", fs.error());
+			}
+		}
+		catch(e) {
+			log("Failed to parse LLDP cli output: %s", e);
+		}
 	}
-}
 
-if (stats.serviceprobe == 1) {
-	try {
-		include("./probe_services.uc");
-	} catch(e) {
-		warn("failed to invoke service probing " + e);
+	if (stats.serviceprobe == 1) {
+		try {
+			include("./probe_services.uc");
+		}
+		catch(e) {
+			log("Failed to invoke service probing: %s", e);
+		}
 	}
-}
-ctx.call("ucentral", "send", {"state": state});
 
-print(state);
-f = fs.open("/tmp/ucentral.state");
-f.write(state);
-f.close();
+	ctx.call("ucentral", "send", { state });
+
+	print(state);
+
+	let f = fs.open(statefile_path, "w");
+
+	if (f) {
+		f.write(state);
+		f.close();
+	}
+	else {
+		log("Unable to open %s for writing: %s", statefile_path, fs.error());
+	}
 %}

@@ -1,101 +1,103 @@
 {%
-ctx = ubus.connect();
-
-function cfg_error(msg) {
-	ctx.call("ucentral", "log", {"msg": msg});
-	warn(sprintf("%s\n", msg));
-}
-
-function uci_defaults(o, d) {
-	for (let k, v in d)
-		if (!o[k])
-			o[k] = v;
-}
-
-function uci_requires(o, d) {
-	for (let k, v in d)
-		if (!o[v])
-			return false;
-	return true;
-}
-
-function uci_render(file, obj) {
-	for (let sname in obj):
-		let section = obj[sname];
-
-		if (section[".type"]):
--%}set {{file}}.{{ sname }}={{ section[".type"] }}
-{%		endif
-		for (let oname in section):
-			if (oname == ".type")
-				continue;
-			let option = section[oname];
-			if (type(option) == "array"):
--%}del {{file}}.{{ sname }}.{{ oname }}
-{%
-			for (let k, v in option):
--%}add_list {{file}}.{{ sname }}.{{ oname }}='{{ v }}'
-{%
-			endfor
-		else
--%}set {{file}}.{{ sname }}.{{ oname }}='{{ option }}'
-{%
-		endif
-		endfor
-	endfor
-}
-
-function uci_new_section(x, name, type, vals) {
-	if (!x[name])
-		x[name] = {};
-	x[name][".type"] = type;
-
-	if (vals)
-		for(let k,v in vals)
-			x[name][k] = v;
-
-	return x[name];
-}
-
-function uci_set_option(obj, cfg, key) {
-	if (exists(cfg, key))
-		obj[key] = cfg[key];
-}
-
-function uci_set_options(obj, cfg, key) {
-	for (let k, v in key)
-		uci_set_option(obj, cfg, v);
-}
-
-fails = {};
-failed = false;
-
-for (key in cfg) {
-
-	if (key in ["uuid", "ssid"])
-		continue;
-
-	let file = sprintf("/usr/share/ucentral/cfg_%s.uc", key);
-	let stat = fs.stat(file);
-
-	if (stat === null || stat.type != "file")
-		continue;
-
-	try {
-		include(file);
-	} catch (e) {
-		failed = true;
-		fails[key] = e;
-		warn("Exception while generating " + key + ": " + e + "\n");
-	}
-}
-
-if (failed) {
 	ctx = ubus.connect();
-	log = {"error": "failed to apply config", "data": fails};
-	ctx.call("ucentral", "send", {"log": log});
-	ctx.disconnect();
-	exit(1);
-}
+
+	let scope = {
+		cfg_error: function(fmt, ...args) {
+			let msg = sprintf(fmt, ...args);
+
+			warn(msg + "\n");
+
+			ctx.call("ucentral", "log", { msg });
+		},
+
+		uci_defaults: function(o, d) {
+			for (let k, v in d)
+				if (!o[k])
+					o[k] = v;
+		},
+
+		uci_requires: function(o, d) {
+			for (let k, v in d)
+				if (!o[v])
+					return false;
+			return true;
+		},
+
+		uci_render: function(file, obj) {
+			let esc = (s) => replace(s, "'", "'\\''");
+
+			for (let sid, section in obj) {
+				if (section['.type'])
+					printf("set %s.%s='%s'\n", file, sid, esc(section['.type']));
+
+				for (let option, value in section) {
+					if (index(option, '.') == 0)
+						continue;
+
+					if (type(value) == 'array') {
+						printf("del %s.%s.%s\n", file, sid, option);
+
+						for (let i, v in value)
+							printf("add_list %s.%s.%s='%s'\n", file, sid, option, esc(v));
+					}
+					else {
+						printf("set %s.%s.%s='%s'\n", file, sid, option, esc(value));
+					}
+				}
+			}
+		},
+
+		uci_new_section: function(x, name, type, vals) {
+			x[name] = x[name] || {};
+			x[name][".type"] = type;
+
+			if (vals)
+				for (let k, v in vals)
+					x[name][k] = v;
+
+			return x[name];
+		},
+
+		uci_set_option: function(obj, cfg, key) {
+			if (exists(cfg, key))
+				obj[key] = cfg[key];
+		},
+
+		uci_set_options: function(obj, cfg, key) {
+			for (let k, v in key)
+				uci_set_option(obj, cfg, v);
+		}
+	};
+
+	let fails = {};
+
+	for (let key in cfg) {
+		if (key in ["uuid", "ssid"])
+			continue;
+
+		let file = sprintf("/usr/share/ucentral/cfg_%s.uc", key);
+		let stat = fs.stat(file);
+
+		if (stat === null || stat.type != "file")
+			continue;
+
+		try {
+			include(file, scope);
+		}
+		catch (e) {
+			fails[key] = { ...e };
+
+			warn(sprintf("Exception while generating %s: %s\n%s\n",
+				key, e, e.stacktrace[0].context));
+		}
+	}
+
+	if (length(fails)) {
+		ctx = ubus.connect();
+		log = {"error": "failed to apply config", "data": fails};
+		ctx.call("ucentral", "send", {"log": log});
+		ctx.disconnect();
+		exit(1);
+	}
 
 %}

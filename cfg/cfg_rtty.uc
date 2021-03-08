@@ -1,10 +1,10 @@
 {%
-function generate_rtty() {
-	let x = {};
-	uci_set_options(x, cfg.rtty, ["host", "token", "port", "interface"]);
+	function generate_rtty() {
+		let x = {};
+		uci_set_options(x, cfg.rtty, [ "host", "token", "port", "interface" ]);
 
-	uci_render("rtty", {"@rtty[-1]": x});
-}
+		uci_render("rtty", { "@rtty[-1]": x });
+	}
 
-generate_rtty();
+	generate_rtty();
 %}
