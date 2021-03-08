@@ -1,11 +1,12 @@
 {%
-function generate_poe() {
-	let poe = {};
+	function generate_poe() {
+		let poe = {};
 
-	for (let k, v in cfg.poe.ports)
-		poe["port" + (k + 1)] = v;
-	uci_render("poe", { "poe": poe});
-}
+		for (let k, v in cfg.poe.ports)
+			poe["port" + (k + 1)] = v;
 
-generate_poe();
+		uci_render("poe", { poe });
+	}
+
+	generate_poe();
 %}
