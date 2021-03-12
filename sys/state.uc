@@ -22,13 +22,12 @@
 
 				if (length(tmp))
 					state[name] = tmp;
-				else
-					warn("Statistics call %s/%s failed with status %s",
-						object, method, ctx.error());
+				else if (!tmp)
+					log("Statistics call %s/%s failed: %s", object, method, ctx.error());
 			}
 		}
 		catch(e) {
-			warn("Exception while gathering stats: " + e);
+			log("Exception while gathering stats: %s\n%s\n", e, e.stacktrace[0].context);
 		}
 	}
 
@@ -52,7 +51,7 @@
 			}
 		}
 		catch(e) {
-			log("Failed to parse LLDP cli output: %s", e);
+			log("Failed to parse LLDP cli output: %s\n%s\n", e, e.stacktrace[0].context);
 		}
 	}
 
@@ -61,7 +60,7 @@
 			include("./probe_services.uc");
 		}
 		catch(e) {
-			log("Failed to invoke service probing: %s", e);
+			log("Failed to invoke service probing: %s\n%s\n", e, e.stacktrace[0].context);
 		}
 	}
 
