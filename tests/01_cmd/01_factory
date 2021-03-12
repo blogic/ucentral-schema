@@ -1,0 +1,31 @@
+Testing the factory module with backup retention.
+
+-- Testcase --
+{% include("./tests/mock.uc", { TESTFILE: "../cmd/cmd.uc" }) %}
+-- End --
+
+-- Environment --
+cmd={ "cmd": "factory", "keep_redirector": true }
+-- End --
+
+-- Expect stdout --
+fs.readlink() path </etc/ucentral/ucentral.active>
+system() command <[ "tar", "czf", "/sysupgrade.tgz", "/etc/config/ucentral", "/etc/ucentral/*.pem", "/etc/ucentral/*.crt", "/etc/ucentral/ucentral.active", "/etc/ucentral/ucentral.active-link" ]> timeout <(null)>
+system() command <[ "jffs2reset", "-r", "-y", "-k" ]> timeout <(null)>
+-- End --
+
+
+Testing the factory module without backup retention.
+
+-- Testcase --
+{{ include("./tests/mock.uc", { TESTFILE: "../cmd/cmd.uc" }) }}
+-- End --
+
+-- Environment --
+cmd={ "cmd": "factory", "keep_redirector": false }
+-- End --
+
+-- Expect stdout --
+system() command <[ "jffs2reset", "-r", "-y" ]> timeout <(null)>
+
+-- End --
