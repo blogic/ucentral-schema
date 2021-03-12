@@ -1,0 +1,64 @@
+Testing the tcpdump module with network argument.
+
+-- Testcase --
+{% include("./tests/mock.uc", { TESTFILE: "../cmd/cmd.uc" }) %}
+-- End --
+
+-- Environment --
+cmd={ "cmd": "tcpdump", "network": "testnet" }
+-- End --
+
+-- Expect stdout --
+ctx.call() object <network.interface> method <status> args <{ "interface": "testnet" }>
+fs.stat() path </sys/class/net/br-testnet>
+time()
+system() command <[ "/usr/sbin/tcpdump", "-c", "1000", "-W", "1", "-G", 30, "-w", "/tmp/pcap-001122334455-1615382640", "-i", "br-testnet" ]> timeout <(null)>
+ctx.call() object <ucentral> method <log> args <{ "msg": "tcpdump command completed, upload TBD" }>
+fs.unlink() path </tmp/pcap-001122334455-1615382640>
+-- End --
+
+-- Expect stderr --
+tcpdump command completed, upload TBD
+-- End --
+
+
+Testing the tcpdump module with iface argument.
+
+-- Testcase --
+{% include("./tests/mock.uc", { TESTFILE: "../cmd/cmd.uc" }) %}
+-- End --
+
+-- Environment --
+cmd={ "cmd": "tcpdump", "iface": "eth2" }
+-- End --
+
+-- Expect stdout --
+fs.stat() path </sys/class/net/eth2>
+time()
+system() command <[ "/usr/sbin/tcpdump", "-c", "1000", "-W", "1", "-G", 30, "-w", "/tmp/pcap-001122334455-1615382640", "-i", "eth2" ]> timeout <(null)>
+ctx.call() object <ucentral> method <log> args <{ "msg": "tcpdump command completed, upload TBD" }>
+fs.unlink() path </tmp/pcap-001122334455-1615382640>
+-- End --
+
+-- Expect stderr --
+tcpdump command completed, upload TBD
+-- End --
+
+
+Testing the tcpdump module with incomplete arguments.
+
+-- Testcase --
+{% include("./tests/mock.uc", { TESTFILE: "../cmd/cmd.uc" }) %}
+-- End --
+
+-- Environment --
+cmd={ "cmd": "tcpdump" }
+-- End --
+
+-- Expect stdout --
+ctx.call() object <ucentral> method <log> args <{ "msg": "Invalid network device specified" }>
+-- End --
+
+-- Expect stderr --
+Invalid network device specified
+-- End --

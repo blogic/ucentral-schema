@@ -1,0 +1,18 @@
+Testing the reboot module.
+
+-- Testcase --
+{% include("./tests/mock.uc", { TESTFILE: "../cmd/cmd.uc" }) %}
+-- End --
+
+-- Environment --
+cmd={ "cmd": "reboot" }
+-- End --
+
+-- Expect stdout --
+ctx.call() object <ucentral> method <log> args <{ "msg": "Initiating reboot" }>
+ctx.call() object <system> method <reboot> args <null>
+-- End --
+
+-- Expect stderr --
+Initiating reboot
+-- End --

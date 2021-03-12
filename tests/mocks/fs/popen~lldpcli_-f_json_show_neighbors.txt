@@ -1,0 +1,31 @@
+{
+  "lldp": {
+    "interface": {
+      "eno1": {
+        "chassis": {
+          "office1-switch23": {
+            "descr": "ProCurve J9280A Switch 2510G-48, revision Y.11.12, ROM N.10.02 (/sw/code/build/cod(cod11))",
+            "id": {
+              "type": "mac",
+              "value": "00:11:22:33:44:55"
+            },
+            "capability": {
+              "type": "Bridge",
+              "enabled": true
+            }
+          }
+        },
+        "via": "LLDP",
+        "rid": "1",
+        "age": "0 day, 00:53:23",
+        "port": {
+          "descr": "42",
+          "id": {
+            "type": "local",
+            "value": "42"
+          }
+        }
+      }
+    }
+  }
+}

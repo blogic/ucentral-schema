@@ -1,0 +1,58 @@
+Testing the stats module.
+
+-- Testcase --
+{%
+	let real_include = include;
+	let real_print = print;
+	let fs = require("fs");
+
+	include("./tests/mock.uc", {
+		TESTFILE: "../cmd/cmd.uc",
+
+		/* wrap include() to fixup the state.uc include path */
+		include: function(path, scope) {
+			if (path == "./state.uc")
+				path = "../sys/state.uc";
+
+			/* make path absolute */
+			if (index(path, "/") != 0) {
+				try {
+					die();
+				} catch(e) {
+					path = replace(e.stacktrace[1].filename, /\/[^\/]+$/, '') + '/' + path;
+				};
+			}
+
+			return real_include(path, scope);
+		}
+	})
+%}
+-- End --
+
+-- Environment --
+{ "cmd": { "cmd": "stats" }, "cfg": { } }
+-- End --
+
+-- Expect stdout --
+time()
+ctx.call() object <system> method <info> args <null>
+ctx.call() object <wifi> method <iface> args <null>
+ctx.call() object <wifi> method <station> args <null>
+ctx.call() object <poe> method <info> args <null>
+ctx.call() object <topology> method <mac> args <null>
+ctx.call() object <topology> method <port> args <null>
+fs.popen() cmdline <lldpcli -f json show neighbors> mode <(null)>
+ctx.call() object <network.interface.wan> method <status> args <null>
+ctx.call() object <network.interface> method <status> args <{ "interface": "lan" }>
+ctx.call() object <network.interface> method <status> args <{ "interface": "nat200" }>
+system() command <[ "/usr/sbin/dnsprobe", "-s", "127.0.0.1" ]> timeout <(null)>
+system() command <[ "/usr/sbin/dnsprobe", "-s", "192.168.26.1" ]> timeout <(null)>
+system() command <[ "/usr/sbin/dnsprobe", "-s", "192.168.1.1" ]> timeout <(null)>
+system() command <[ "/usr/sbin/dnsprobe", "-s", "192.168.16.1" ]> timeout <(null)>
+system() command <[ "/usr/sbin/dhcpdiscover", "-i", "br-wan", "-t", "5" ]> timeout <(null)>
+system() command <[ "/usr/sbin/dhcpdiscover", "-i", "br-lan", "-t", "5" ]> timeout <(null)>
+system() command <[ "/usr/sbin/dhcpdiscover", "-i", "br-nat200", "-t", "5" ]> timeout <(null)>
+ctx.call() object <ucentral> method <send> args <{ "state": { /* 8 keys */ } }>
+{ "cfg_uuid": null, "lldp": { /* 1 keys */ }, "neighbours": { /* 10 keys */ }, "system": { /* 5 keys */ }, "traffic": { /* 16 keys */ }, "uuid": 1615382640, "wifi-iface": { /* 4 keys */ }, "wifi-station": { /* 1 keys */ } }
+fs.open() path </tmp/ucentral.state> mode <w>
+-- End --

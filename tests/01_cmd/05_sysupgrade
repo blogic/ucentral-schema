@@ -1,0 +1,66 @@
+Testing the syslog module without URL argument.
+
+-- Testcase --
+{% include("./tests/mock.uc", { TESTFILE: "../cmd/cmd.uc" }) %}
+-- End --
+
+-- Environment --
+cmd={ "cmd": "sysupgrade" }
+-- End --
+
+-- Expect stdout --
+ctx.call() object <ucentral> method <log> args <{ "msg": "No firmware URL provided" }>
+-- End --
+
+-- Expect stderr --
+No firmware URL provided
+-- End --
+
+
+Testing the syslog module with URL argument.
+
+-- Testcase --
+{% include("./tests/mock.uc", { TESTFILE: "../cmd/cmd.uc" }) %}
+-- End --
+
+-- Environment --
+cmd={ "cmd": "sysupgrade", "url": "http://example.org/image.bin" }
+-- End --
+
+-- Expect stdout --
+system() command <[ "wget", "-O", "/tmp/ucentral.upgrade", "http://example.org/image.bin" ]> timeout <(null)>
+ctx.call() object <system> method <validate_firmware_image> args <{ "path": "/tmp/ucentral.upgrade" }>
+system() command <[ "tar", "czf", "/tmp/sysupgrade.tgz", "/etc/config/ucentral", "/etc/ucentral/*.pem", "/etc/ucentral/*.crt" ]> timeout <(null)>
+ctx.call() object <ucentral> method <log> args <{ "msg": "Upgrading firmware" }>
+system() command <[ "/etc/init.d/network", "stop" ]> timeout <(null)>
+system() command <[ "/sbin/sysupgrade", "/tmp/ucentral.upgrade" ]> timeout <(null)>
+-- End --
+
+-- Expect stderr --
+Upgrading firmware
+-- End --
+
+
+Testing the syslog module with URL argument and configuration keeping.
+
+-- Testcase --
+{% include("./tests/mock.uc", { TESTFILE: "../cmd/cmd.uc" }) %}
+-- End --
+
+-- Environment --
+cmd={ "cmd": "sysupgrade", "url": "http://example.org/image.bin", "keep_redirector": true }
+-- End --
+
+-- Expect stdout --
+system() command <[ "wget", "-O", "/tmp/ucentral.upgrade", "http://example.org/image.bin" ]> timeout <(null)>
+ctx.call() object <system> method <validate_firmware_image> args <{ "path": "/tmp/ucentral.upgrade" }>
+fs.readlink() path </etc/ucentral/ucentral.active>
+system() command <[ "tar", "czf", "/tmp/sysupgrade.tgz", "/etc/config/ucentral", "/etc/ucentral/*.pem", "/etc/ucentral/*.crt", "/etc/ucentral/ucentral.active", "/etc/ucentral/ucentral.active-link" ]> timeout <(null)>
+ctx.call() object <ucentral> method <log> args <{ "msg": "Upgrading firmware" }>
+system() command <[ "/etc/init.d/network", "stop" ]> timeout <(null)>
+system() command <[ "/sbin/sysupgrade", "-f", "/tmp/sysupgrade.tgz", "/tmp/ucentral.upgrade" ]> timeout <(null)>
+-- End --
+
+-- Expect stderr --
+Upgrading firmware
+-- End --

@@ -1,0 +1,30 @@
+Testing the syslog module with lines argument.
+
+-- Testcase --
+{% include("./tests/mock.uc", { TESTFILE: "../cmd/cmd.uc" }) %}
+-- End --
+
+-- Environment --
+cmd={ "cmd": "syslog", "lines": 10 }
+-- End --
+
+-- Expect stdout --
+ctx.call() object <log> method <read> args <{ "lines": 10, "oneshot": true, "stream": false }>
+ctx.call() object <ucentral> method <send> args <{ "log": [ /* 10 items */ ] }>
+-- End --
+
+
+Testing the syslog module without lines argument.
+
+-- Testcase --
+{% include("./tests/mock.uc", { TESTFILE: "../cmd/cmd.uc" }) %}
+-- End --
+
+-- Environment --
+cmd={ "cmd": "syslog"}
+-- End --
+
+-- Expect stdout --
+ctx.call() object <log> method <read> args <{ "lines": 100, "oneshot": true, "stream": false }>
+ctx.call() object <ucentral> method <send> args <{ "log": [ /* 100 items */ ] }>
+-- End --
