@@ -16,6 +16,12 @@
 		args.iface = net.l3_device;
 	}
 
+	if (!match(args.iface, /^[^\/]+$/) || (args.iface != "any" && !fs.stat("/sys/class/net/" + args.iface))) {
+		log("Invalid network device specified");
+
+		return;
+	}
+
 	let duration = +args.duration || 30;
 	let filename = sprintf("/tmp/pcap-%s-%d", serial, time());
 
