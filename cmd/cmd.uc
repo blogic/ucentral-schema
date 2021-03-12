@@ -27,14 +27,15 @@ let scope = {
 
 	/* command argument object */
 	args: cmd
-}
+};
 
 if (match(cmd.cmd, /^[A-Za-z0-9_]+$/)) {
 	try {
 		include(sprintf("cmd_%s.uc", cmd.cmd), scope);
 	}
 	catch (e) {
-		log("Exception invoking '%s' command module: %s", cmd.cmd, e);
+		log("Exception invoking '%s' command module: %s\n%s\n",
+			cmd.cmd, e, e.stacktrace[0].context);
 	}
 }
 else {
