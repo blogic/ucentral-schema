@@ -1,0 +1,36 @@
+{
+	"radio0": {
+		".type": "wifi-device",
+		"type": "mac80211",
+		"channel": "11",
+		"hwmode": "11g",
+		"path": "platform/18000000.wmac",
+		"htmode": "HT20",
+		"disabled": "1"
+	},
+	"default_radio0": {
+		".type": "wifi-iface",
+		"device": "radio0",
+		"network": "lan",
+		"mode": "ap",
+		"ssid": "OpenWrt",
+		"encryption": "none"
+	},
+	"radio1": {
+		".type": "wifi-device",
+		"type": "mac80211",
+		"channel": "36",
+		"hwmode": "11a",
+		"path": "1a143000.pcie/pci0000:00/0000:00:00.0/0000:01:00.0",
+		"htmode": "VHT80",
+		"disabled": "1"
+	},
+	"default_radio1": {
+		".type": "wifi-iface",
+		"device": "radio1",
+		"network": "lan",
+		"mode": "ap",
+		"ssid": "OpenWrt",
+		"encryption": "none"
+	}
+}
