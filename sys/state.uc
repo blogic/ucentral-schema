@@ -67,7 +67,7 @@
 		}
 	}
 
-	ctx.call("ucentral", "send", { "method": "state", "params": { "state": state }});
+	ctx.call("ucentral", "send", { "method": "state", "params": { "state": state } });
 
 	print(state);
 
