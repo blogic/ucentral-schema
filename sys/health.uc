@@ -18,7 +18,7 @@ function find_ssid(ssid) {
 for (name, iface in wifi) {
 	if (iface[".type"] != "wifi-iface")
 		continue;
-	if (!find_ssid(iface.ssid))
+	if (find_ssid(iface.ssid))
 		health[iface.ssid] = 1;
 }
 
