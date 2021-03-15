@@ -15,6 +15,9 @@
 	if (!ctx)
 		ctx = ubus.connect();
 
+	if (!log)
+		log = (fmt, ...args) => warn(sprintf(fmt + "\n", ...args));
+
 	function ubus_call(statclass, name, object, method) {
 		try {
 			if (stats[statclass] == 1) {
@@ -64,7 +67,7 @@
 		}
 	}
 
-	ctx.call("ucentral", "send", { state });
+	ctx.call("ucentral", "send", { "method": "state", "params": { "state": state }});
 
 	print(state);
 
