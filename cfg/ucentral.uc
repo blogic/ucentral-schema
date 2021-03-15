@@ -94,8 +94,9 @@
 
 	if (length(fails)) {
 		ctx.call("ucentral", "send", {
-			log: {
-				error: "Failed to apply configuration",
+			method: "log",
+			params: {
+				log: "Failed to apply configuration",
 				data: fails
 			}
 		});

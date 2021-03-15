@@ -16,6 +16,8 @@ function log(fmt, ...args) {
 	ctx.call("ucentral", "log", { msg: msg });
 }
 
+/* Convenience logger outputting to both stderr and remote central result */
+
 /* Scope of functions and ressources the command includes have access to */
 let scope = {
 	/* ressources */
@@ -26,7 +28,10 @@ let scope = {
 	log,
 
 	/* command argument object */
-	args: cmd
+	args: cmd,
+
+	/* cmd id */
+	id
 };
 
 if (match(cmd.cmd, /^[A-Za-z0-9_]+$/)) {
