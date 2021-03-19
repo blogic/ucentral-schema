@@ -1,7 +1,7 @@
 {%
 	let fail = {},
-	    dhcp = {},
-	    dns = { localhost: [ "127.0.0.1" ] };
+	dhcp = {},
+	dns = { localhost: [ "127.0.0.1" ] };
 
 	function lookup_wan() {
 		let i = ctx.call("network.interface.wan", "status");
