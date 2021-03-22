@@ -11,5 +11,10 @@
 		return;
 	}
 
-	ctx.call("ucentral", "send", log_data);
+	result({
+		"error": 0,
+		"text": "Success",
+		"resultCode": 0,
+		"resultData": log_data
+	});
 %}

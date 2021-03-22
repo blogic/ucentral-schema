@@ -8,7 +8,12 @@
 		let net = ctx.call("network.interface", "status", { interface: args.network });
 
 		if (!net || !net.l3_device) {
-			log("Unable to resolve logical interface %s", args.network);
+			result({
+				"error": 1,
+				"text": "Failed",
+				"resultCode": 1,
+				"resultText": sprintf("Unable to resolve logical interface %s", args.network)
+			});
 
 			return;
 		}
@@ -17,7 +22,12 @@
 	}
 
 	if (!match(args.iface, /^[^\/]+$/) || (args.iface != "any" && !fs.stat("/sys/class/net/" + args.iface))) {
-		log("Invalid network device specified");
+		result({
+			"error": 1,
+			"text": "Failed",
+			"resultCode": 1,
+			"resultText": "Invalid network device specified"
+		});
 
 		return;
 	}
@@ -26,7 +36,7 @@
 	let filename = sprintf("/tmp/pcap-%s-%d", serial, time());
 
 	let rc = system([
-		'/usr/sbin/tcpdump',
+		'tcpdump',
 		'-c', '1000',
 		'-W', '1',
 		'-G', duration,
@@ -35,12 +45,22 @@
 	]);
 
 	if (rc != 0) {
-		log("tcpdump command exited with non-zero code %d", rc);
+		result({
+			"error": 1,
+			"text": "Failed",
+			"resultCode": rc,
+			"resultText": "tcpdump command exited with non-zero code"
+		});
 
 		return;
 	}
 
-	log("tcpdump command completed, upload TBD");
-
 	fs.unlink(filename);
+
+	result({
+		"error": 0,
+		"text": "Success",
+		"resultCode": 0,
+		"resultText": "We need to figure out how to upload the pcap"
+	});
 %}

@@ -54,6 +54,9 @@ for (e in state)
 	if (length(state[e]))
 		sanity -= 10;
 
+if (sanity == 100)
+	state = {};
+
 warn(printf("health check reports sanity of %d%%", sanity));
 ctx.call("ucentral", "health", {sanity: sanity, data: state});
 %}

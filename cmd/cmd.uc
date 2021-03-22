@@ -16,6 +16,10 @@ function log(fmt, ...args) {
 	ctx.call("ucentral", "log", { msg: msg });
 }
 
+function result(status) {
+	ctx.call("ucentral", "result", {"id": id, "status": status});
+}
+
 /* Convenience logger outputting to both stderr and remote central result */
 
 /* Scope of functions and ressources the command includes have access to */
@@ -27,16 +31,19 @@ let scope = {
 	/* log helper */
 	log,
 
+	/* result helper */
+	result,
+
 	/* command argument object */
-	args: cmd,
+	args: cmd.payload,
 
 	/* cmd id */
 	id
 };
 
-if (match(cmd.cmd, /^[A-Za-z0-9_]+$/)) {
+if (match(cmd.command, /^[A-Za-z0-9_]+$/)) {
 	try {
-		include(sprintf("cmd_%s.uc", cmd.cmd), scope);
+		include(sprintf("cmd_%s.uc", cmd.command), scope);
 	}
 	catch (e) {
 		log("Exception invoking '%s' command module: %s\n%s\n",
