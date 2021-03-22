@@ -1,17 +1,17 @@
 {%
 	let statefile_path = "/tmp/ucentral.state";
 
-	let state = {
-		uuid: time(),
-		cfg_uuid: cfg.uuid
+	let cursor = uci.cursor();
+	let state = {};
+	let msg = {
+		uuid: cfg.uuid,
+		serial: cursor.get("ucentral", "config", "serial")
 	};
 
 	if (!length(stats)) {
-		let cursor = uci.cursor();
 		cursor.load("ustats");
 		stats = cursor.get_all("ustats", "stats");
 	}
-
 	if (!ctx)
 		ctx = ubus.connect();
 
@@ -60,21 +60,21 @@
 
 	if (stats.serviceprobe == 1) {
 		try {
-			include("./probe_services.uc");
+			include("./probe_services.uc", {state});
 		}
 		catch(e) {
 			log("Failed to invoke service probing: %s\n%s\n", e, e.stacktrace[0].context);
 		}
 	}
 
-	ctx.call("ucentral", "send", { "method": "state", "params": { "state": state } });
+	msg.state = state;
 
-	print(state);
+	ctx.call("ucentral", "stats", msg);
 
 	let f = fs.open(statefile_path, "w");
 
 	if (f) {
-		f.write(state);
+		f.write(msg);
 		f.close();
 	}
 	else {
