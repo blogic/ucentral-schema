@@ -189,4 +189,4 @@ for catdir in tests/[0-9][0-9]_*; do
 done
 
 printf "\nRan %d tests, %d okay, %d failures\n" $n_tests $((n_tests - n_fails)) $n_fails
-[ $n_fails -gt 0 ] && exit 1
+exit $n_fails
