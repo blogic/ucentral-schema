@@ -5,13 +5,15 @@
 		stream: false
 	});
 
-	if (!log_data) {
-		log("Unable to obtain system log contents: %s", ubus.error());
+	if (!log_data || !log_data.log) {
+		result(2, "Unable to obtain system log contents: %s", ubus.error());
 
 		return;
 	}
 
-	result({
+	warn(sprintf("Read %d lines\n", length(log_data.log)));
+
+	result_json({
 		"error": 0,
 		"text": "Success",
 		"resultCode": 0,

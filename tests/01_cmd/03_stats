@@ -30,11 +30,10 @@ Testing the stats module.
 -- End --
 
 -- Environment --
-{ "cmd": { "cmd": "stats" }, "cfg": { } }
+{ "cmd": { "command": "stats", "payload": { } }, "cfg": { } }
 -- End --
 
 -- Expect stdout --
-time()
 ctx.call() object <system> method <info> args <null>
 ctx.call() object <wifi> method <iface> args <null>
 ctx.call() object <wifi> method <station> args <null>
@@ -52,7 +51,7 @@ system() command <[ "/usr/sbin/dnsprobe", "-s", "192.168.16.1" ]> timeout <(null
 system() command <[ "/usr/sbin/dhcpdiscover", "-i", "br-wan", "-t", "5" ]> timeout <(null)>
 system() command <[ "/usr/sbin/dhcpdiscover", "-i", "br-lan", "-t", "5" ]> timeout <(null)>
 system() command <[ "/usr/sbin/dhcpdiscover", "-i", "br-nat200", "-t", "5" ]> timeout <(null)>
-ctx.call() object <ucentral> method <send> args <{ "state": { /* 8 keys */ } }>
-{ "cfg_uuid": null, "lldp": { /* 1 keys */ }, "neighbours": { /* 10 keys */ }, "system": { /* 5 keys */ }, "traffic": { /* 16 keys */ }, "uuid": 1615382640, "wifi-iface": { /* 4 keys */ }, "wifi-station": { /* 1 keys */ } }
+ctx.call() object <ucentral> method <stats> args <{ "serial": "001122334455", "state": { /* 6 keys */ }, "uuid": null }>
+{ "lldp": { /* 1 keys */ }, "neighbours": { /* 10 keys */ }, "system": { /* 5 keys */ }, "traffic": { /* 16 keys */ }, "wifi-iface": { /* 4 keys */ }, "wifi-station": { /* 1 keys */ } }
 fs.open() path </tmp/ucentral.state> mode <w>
 -- End --

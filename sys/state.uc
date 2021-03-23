@@ -67,9 +67,12 @@
 		}
 	}
 
+
 	msg.state = state;
 
 	ctx.call("ucentral", "stats", msg);
+
+	print(state);
 
 	let f = fs.open(statefile_path, "w");
 

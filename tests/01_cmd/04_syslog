@@ -5,12 +5,17 @@ Testing the syslog module with lines argument.
 -- End --
 
 -- Environment --
-cmd={ "cmd": "syslog", "lines": 10 }
+cmd={ "command": "syslog", "payload": { "lines": 10 } }
 -- End --
 
 -- Expect stdout --
 ctx.call() object <log> method <read> args <{ "lines": 10, "oneshot": true, "stream": false }>
-ctx.call() object <ucentral> method <send> args <{ "log": [ /* 10 items */ ] }>
+ctx.call() object <ucentral> method <result> args <{ "id": 0, "status": { /* 4 keys */ } }>
+-- End --
+
+-- Expect stderr --
+Read 10 lines
+Success
 -- End --
 
 
@@ -21,10 +26,15 @@ Testing the syslog module without lines argument.
 -- End --
 
 -- Environment --
-cmd={ "cmd": "syslog"}
+cmd={ "command": "syslog", "payload": { } }
 -- End --
 
 -- Expect stdout --
 ctx.call() object <log> method <read> args <{ "lines": 100, "oneshot": true, "stream": false }>
-ctx.call() object <ucentral> method <send> args <{ "log": [ /* 100 items */ ] }>
+ctx.call() object <ucentral> method <result> args <{ "id": 0, "status": { /* 4 keys */ } }>
+-- End --
+
+-- Expect stderr --
+Read 100 lines
+Success
 -- End --

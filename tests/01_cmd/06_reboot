@@ -5,7 +5,7 @@ Testing the reboot module.
 -- End --
 
 -- Environment --
-cmd={ "cmd": "reboot" }
+cmd={ "command": "reboot" }
 -- End --
 
 -- Expect stdout --

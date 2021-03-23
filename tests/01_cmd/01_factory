@@ -5,12 +5,13 @@ Testing the factory module with backup retention.
 -- End --
 
 -- Environment --
-cmd={ "cmd": "factory", "keep_redirector": true }
+cmd={ "command": "factory", "payload": {"keep_redirector": true }}
+id=1
 -- End --
 
 -- Expect stdout --
 fs.readlink() path </etc/ucentral/ucentral.active>
-system() command <[ "tar", "czf", "/sysupgrade.tgz", "/etc/config/ucentral", "/etc/ucentral/*.pem", "/etc/ucentral/*.crt", "/etc/ucentral/ucentral.active", "/etc/ucentral/ucentral.active-link" ]> timeout <(null)>
+system() command <[ "tar", "czf", "/sysupgrade.tgz", "/etc/config/ucentral", "/etc/ucentral/cert.pem", "/etc/ucentral/ucentral.active", "/etc/ucentral/ucentral.active-link" ]> timeout <(null)>
 system() command <[ "jffs2reset", "-r", "-y", "-k" ]> timeout <(null)>
 -- End --
 
@@ -22,7 +23,8 @@ Testing the factory module without backup retention.
 -- End --
 
 -- Environment --
-cmd={ "cmd": "factory", "keep_redirector": false }
+cmd={ "command": "factory", "payload": {"keep_redirector": false }}
+id=1
 -- End --
 
 -- Expect stdout --

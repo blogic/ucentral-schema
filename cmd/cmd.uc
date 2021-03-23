@@ -16,11 +16,26 @@ function log(fmt, ...args) {
 	ctx.call("ucentral", "log", { msg: msg });
 }
 
-function result(status) {
-	ctx.call("ucentral", "result", {"id": id, "status": status});
+function result(code, fmt, ...args) {
+	let text = sprintf(fmt, ...args);
+
+	ctx.call("ucentral", "result", {
+		"id": id,
+		"status": {
+			"error": code,
+			"text": text
+		}
+	});
+	warn(text + "\n");
 }
 
-/* Convenience logger outputting to both stderr and remote central result */
+function result_json(status) {
+	ctx.call("ucentral", "result", {"id": id, "status": status});
+	if (status.text)
+		warn(status.text + "\n");
+	if (status.resultText)
+		warn(status.resultText + "\n");
+}
 
 /* Scope of functions and ressources the command includes have access to */
 let scope = {
@@ -31,14 +46,15 @@ let scope = {
 	/* log helper */
 	log,
 
-	/* result helper */
+	/* result helpers */
 	result,
+	result_json,
 
 	/* command argument object */
-	args: cmd.payload,
+	args: (cmd.payload || {}),
 
 	/* cmd id */
-	id
+	id: (id || 0)
 };
 
 if (match(cmd.command, /^[A-Za-z0-9_]+$/)) {

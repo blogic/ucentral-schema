@@ -8,7 +8,7 @@
 		let net = ctx.call("network.interface", "status", { interface: args.network });
 
 		if (!net || !net.l3_device) {
-			result({
+			result_json({
 				"error": 1,
 				"text": "Failed",
 				"resultCode": 1,
@@ -22,7 +22,7 @@
 	}
 
 	if (!match(args.iface, /^[^\/]+$/) || (args.iface != "any" && !fs.stat("/sys/class/net/" + args.iface))) {
-		result({
+		result_json({
 			"error": 1,
 			"text": "Failed",
 			"resultCode": 1,
@@ -45,7 +45,7 @@
 	]);
 
 	if (rc != 0) {
-		result({
+		result_json({
 			"error": 1,
 			"text": "Failed",
 			"resultCode": rc,
@@ -57,7 +57,7 @@
 
 	fs.unlink(filename);
 
-	result({
+	result_json({
 		"error": 0,
 		"text": "Success",
 		"resultCode": 0,

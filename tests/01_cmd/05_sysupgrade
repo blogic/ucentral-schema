@@ -5,11 +5,11 @@ Testing the syslog module without URL argument.
 -- End --
 
 -- Environment --
-cmd={ "cmd": "sysupgrade" }
+cmd={ "command": "upgrade", "payload": { } }
 -- End --
 
 -- Expect stdout --
-ctx.call() object <ucentral> method <log> args <{ "msg": "No firmware URL provided" }>
+ctx.call() object <ucentral> method <result> args <{ "id": 0, "status": { /* 2 keys */ } }>
 -- End --
 
 -- Expect stderr --
@@ -24,16 +24,15 @@ Testing the syslog module with URL argument.
 -- End --
 
 -- Environment --
-cmd={ "cmd": "sysupgrade", "url": "http://example.org/image.bin" }
+cmd={ "command": "upgrade", "payload": { "uri": "http://example.org/image.bin" } }
 -- End --
 
 -- Expect stdout --
 system() command <[ "wget", "-O", "/tmp/ucentral.upgrade", "http://example.org/image.bin" ]> timeout <(null)>
 ctx.call() object <system> method <validate_firmware_image> args <{ "path": "/tmp/ucentral.upgrade" }>
-system() command <[ "tar", "czf", "/tmp/sysupgrade.tgz", "/etc/config/ucentral", "/etc/ucentral/*.pem", "/etc/ucentral/*.crt" ]> timeout <(null)>
-ctx.call() object <ucentral> method <log> args <{ "msg": "Upgrading firmware" }>
+system() command <[ "tar", "czf", "/tmp/sysupgrade.tgz", "/etc/config/ucentral", "/etc/ucentral/cert.pem" ]> timeout <(null)>
 system() command <[ "/etc/init.d/network", "stop" ]> timeout <(null)>
-system() command <[ "/sbin/sysupgrade", "/tmp/ucentral.upgrade" ]> timeout <(null)>
+system() command <[ "sysupgrade", "/tmp/ucentral.upgrade" ]> timeout <(null)>
 -- End --
 
 -- Expect stderr --
@@ -48,17 +47,16 @@ Testing the syslog module with URL argument and configuration keeping.
 -- End --
 
 -- Environment --
-cmd={ "cmd": "sysupgrade", "url": "http://example.org/image.bin", "keep_redirector": true }
+cmd={ "command": "upgrade", "payload": {"uri": "http://example.org/image.bin", "keep_redirector": true }}
 -- End --
 
 -- Expect stdout --
 system() command <[ "wget", "-O", "/tmp/ucentral.upgrade", "http://example.org/image.bin" ]> timeout <(null)>
 ctx.call() object <system> method <validate_firmware_image> args <{ "path": "/tmp/ucentral.upgrade" }>
 fs.readlink() path </etc/ucentral/ucentral.active>
-system() command <[ "tar", "czf", "/tmp/sysupgrade.tgz", "/etc/config/ucentral", "/etc/ucentral/*.pem", "/etc/ucentral/*.crt", "/etc/ucentral/ucentral.active", "/etc/ucentral/ucentral.active-link" ]> timeout <(null)>
-ctx.call() object <ucentral> method <log> args <{ "msg": "Upgrading firmware" }>
+system() command <[ "tar", "czf", "/tmp/sysupgrade.tgz", "/etc/config/ucentral", "/etc/ucentral/cert.pem", "/etc/ucentral/ucentral.active", "/etc/ucentral/ucentral.active-link" ]> timeout <(null)>
 system() command <[ "/etc/init.d/network", "stop" ]> timeout <(null)>
-system() command <[ "/sbin/sysupgrade", "-f", "/tmp/sysupgrade.tgz", "/tmp/ucentral.upgrade" ]> timeout <(null)>
+system() command <[ "sysupgrade", "-f", "/tmp/sysupgrade.tgz", "/tmp/ucentral.upgrade" ]> timeout <(null)>
 -- End --
 
 -- Expect stderr --
