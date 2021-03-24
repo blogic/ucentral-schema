@@ -20,7 +20,6 @@ function result(code, fmt, ...args) {
 	let text = sprintf(fmt, ...args);
 
 	ctx.call("ucentral", "result", {
-		"id": id,
 		"status": {
 			"error": code,
 			"text": text
