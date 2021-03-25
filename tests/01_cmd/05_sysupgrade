@@ -9,7 +9,7 @@ cmd={ "command": "upgrade", "payload": { } }
 -- End --
 
 -- Expect stdout --
-ctx.call() object <ucentral> method <result> args <{ "id": 0, "status": { /* 2 keys */ } }>
+ctx.call() object <ucentral> method <result> args <{ "status": { /* 2 keys */ } }>
 -- End --
 
 -- Expect stderr --
