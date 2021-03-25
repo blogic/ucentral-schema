@@ -22,6 +22,7 @@ properties:
           - 'batman'
           - 'mesh'
           - 'gre'
+          - 'vxlan'
         vlan:
           description:
             The VID that shall be assign to packets leaving this network interface.
@@ -79,7 +80,7 @@ properties:
               minimum: 0
             peeraddr:
               description:
-                The remote GRE endpoint that we want to connect to.
+                The remote tunnel endpoint that we want to connect to.
               type: string
             dhcp:
               description:
@@ -120,3 +121,9 @@ properties:
                     description:
                       The hostname address used by this static lease.
                     type: string
+            port:
+              description:
+                The network port that shall be used.
+              type: number
+              maximum: 65535
+              minimum: 256

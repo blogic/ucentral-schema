@@ -24,7 +24,8 @@
        "guest",
        "batman",
        "mesh",
-       "gre"
+       "gre",
+       "vxlan"
       ]
      },
      "vlan": {
@@ -84,7 +85,7 @@
         "minimum": 0
        },
        "peeraddr": {
-        "description": "The remote GRE endpoint that we want to connect to.",
+        "description": "The remote tunnel endpoint that we want to connect to.",
         "type": "string"
        },
        "dhcp": {
@@ -128,6 +129,12 @@
           }
          }
         }
+       },
+       "port": {
+        "description": "The network port that shall be used.",
+        "type": "number",
+        "maximum": 65535,
+        "minimum": 256
        }
       }
      }

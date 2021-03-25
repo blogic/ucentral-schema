@@ -88,7 +88,7 @@
 	}
 
 	function network_generate_name(n, v) {
-		if (v.name && n in ["guest", "nat", "mesh", "gre"])
+		if (v.name && n in ["guest", "nat", "mesh", "gre", "vxlan"])
 			n = v.name;
 
 		return v.vlan ? sprintf("%s%d", n, v.vlan) : n;
@@ -253,6 +253,32 @@
 		});
 	}
 
+	function network_generate_vxlan(x, v) {
+		if (!uci_requires(v.cfg, [ "peeraddr", "ipaddr", "netmask" ])) {
+			cfg_error("missing vxlan options");
+			return;
+		}
+
+		uci_defaults(v.cfg, {tunlink: "wan", port: 4789, "vid": 1});
+
+		let name = network_generate_name("vxlan", v);
+		let tun_name = sprintf("%speer", name);
+		let ifname = sprintf("@%s", name);
+
+		let u = uci_new_section(x.network, name, "interface", {
+			proto: "vxlan",
+		});
+
+		uci_set_options(u, v.cfg, [ "peeraddr", "tunlink", "port", "vid" ]);
+
+		u = uci_new_section(x.network, tun_name, "interface", {
+			proto: "static",
+			ifname: ifname,
+		});
+		warn(sprint("%s\n", tun_name));
+		uci_set_options(u, v.cfg, [ "ipaddr", "netmask" ]);
+	}
+
 	function network_generate() {
 		let uci = {
 			network: {},
@@ -288,6 +314,10 @@
 
 			case "gre":
 				network_generate_gre(uci, v);
+				break;
+
+			case "vxlan":
+				network_generate_vxlan(uci, v);
 				break;
 
 			default:
