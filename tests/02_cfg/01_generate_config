@@ -199,6 +199,16 @@ Testing the factory module with backup retention.
 					"proto" : "static"
 				},
 				"mode" : "guest"
+			},
+			{
+				"cfg" : {
+					"vid": 1,
+					"peeraddr": "192.168.0.10",
+					"ipaddr": "10.0.0.1",
+					"netmask": "255.255.255.0",
+					"port": 4789,
+				},
+				"mode" : "vxlan"
 			}
 		],
 		"ntp" : {
@@ -399,6 +409,18 @@ set network.guest.ipaddr='192.168.12.11'
 set network.guest.netmask='255.255.255.0'
 set network.guest.metric='10'
 set network.guest.type='bridge'
+set network.vxlan='interface'
+set network.vxlan.proto='vxlan'
+set network.vxlan.peeraddr='192.168.0.10'
+set network.vxlan.tunlink='wan'
+set network.vxlan.port='4789'
+set network.vxlan.vid='1'
+set network.vxlanpeer='interface'
+set network.vxlanpeer.type='bridge'
+set network.vxlanpeer.proto='static'
+set network.vxlanpeer.ifname='@vxlan'
+set network.vxlanpeer.ipaddr='10.0.0.1'
+set network.vxlanpeer.netmask='255.255.255.0'
 set dhcp.wan='dhcp'
 set dhcp.wan.interface='wan'
 set dhcp.wan.ignore='1'
@@ -459,6 +481,11 @@ add_list firewall.guest_block.dest_ip='192.168.0.0/16'
 add_list firewall.guest_block.dest_ip='172.16.0.0/24'
 add_list firewall.guest_block.dest_ip='10.0.0.0/24'
 set firewall.guest_block.target='REJECT'
+set firewall.vxlan_accept='rule'
+set firewall.vxlan_accept.src='wan'
+set firewall.vxlan_accept.proto='udp'
+set firewall.vxlan_accept.port='4789'
+set firewall.vxlan_accept.target='ACCEPT'
 fs.stat() path </usr/share/ucentral/cfg_ntp.uc>
 set system.ntp.enabled='1'
 set system.ntp.enable_server='1'
