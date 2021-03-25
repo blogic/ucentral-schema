@@ -126,7 +126,8 @@
 			return;
 		}
 
-		uci_set_options(u, v, ["mtu", "ip6assign", "disabled"]);
+		u.metric = 10;
+		uci_set_options(u, v, ["mtu", "ip6assign", "disabled", "metric"]);
 
 		return u;
 	}
@@ -136,7 +137,7 @@
 		let u;
 
 		u = network_generate_base(x, v.cfg, name);
-		u.metric = 100;
+		u.metric = 1;
 
 		if (v.vlan) {
 			if (capab["bridge-vlan"] === true)

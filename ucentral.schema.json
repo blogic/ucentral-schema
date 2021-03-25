@@ -135,6 +135,11 @@
         "type": "number",
         "maximum": 65535,
         "minimum": 256
+       },
+       "metric": {
+        "description": "The routing metric of an interface. Lower values have higher priority.",
+        "type": "number",
+        "maximum": 100
        }
       }
      }
