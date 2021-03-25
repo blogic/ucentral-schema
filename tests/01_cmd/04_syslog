@@ -1,7 +1,7 @@
 Testing the syslog module with lines argument.
 
 -- Testcase --
-{% include("./tests/mock.uc", { TESTFILE: "../cmd/cmd.uc" }) %}
+{% include("./cmd/cmd.uc", { TRACE_CALLS: "stdout" }) %}
 -- End --
 
 -- Environment --
@@ -9,8 +9,8 @@ cmd={ "command": "syslog", "payload": { "lines": 10 } }
 -- End --
 
 -- Expect stdout --
-ctx.call() object <log> method <read> args <{ "lines": 10, "oneshot": true, "stream": false }>
-ctx.call() object <ucentral> method <result> args <{ "id": 0, "status": { /* 4 keys */ } }>
+[call] ubusconn.call object <log> method <read> args <{ "lines": 10, "oneshot": true, "stream": false }>
+[call] ubusconn.call object <ucentral> method <result> args <{ "id": 0, "status": { /* 4 keys */ } }>
 -- End --
 
 -- Expect stderr --
@@ -22,7 +22,7 @@ Success
 Testing the syslog module without lines argument.
 
 -- Testcase --
-{% include("./tests/mock.uc", { TESTFILE: "../cmd/cmd.uc" }) %}
+{% include("./cmd/cmd.uc", { TRACE_CALLS: "stdout" }) %}
 -- End --
 
 -- Environment --
@@ -30,8 +30,8 @@ cmd={ "command": "syslog", "payload": { } }
 -- End --
 
 -- Expect stdout --
-ctx.call() object <log> method <read> args <{ "lines": 100, "oneshot": true, "stream": false }>
-ctx.call() object <ucentral> method <result> args <{ "id": 0, "status": { /* 4 keys */ } }>
+[call] ubusconn.call object <log> method <read> args <{ "lines": 100, "oneshot": true, "stream": false }>
+[call] ubusconn.call object <ucentral> method <result> args <{ "id": 0, "status": { /* 4 keys */ } }>
 -- End --
 
 -- Expect stderr --

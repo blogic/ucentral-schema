@@ -1,7 +1,7 @@
 Testing the reboot module.
 
 -- Testcase --
-{% include("./tests/mock.uc", { TESTFILE: "../cmd/cmd.uc" }) %}
+{% include("./cmd/cmd.uc", { TRACE_CALLS: "stdout" }) %}
 -- End --
 
 -- Environment --
@@ -9,8 +9,8 @@ cmd={ "command": "reboot" }
 -- End --
 
 -- Expect stdout --
-ctx.call() object <ucentral> method <log> args <{ "msg": "Initiating reboot" }>
-ctx.call() object <system> method <reboot> args <null>
+[call] ubusconn.call object <ucentral> method <log> args <{ "msg": "Initiating reboot" }>
+[call] ubusconn.call object <system> method <reboot> args <null>
 -- End --
 
 -- Expect stderr --

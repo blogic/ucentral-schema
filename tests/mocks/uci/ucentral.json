@@ -1,6 +1,6 @@
 {
-	"config": {
-		".type": "ucentral",
+	"ucentral": {
+		".name": "config",
 		"serial": "001122334455"
 	}
 }

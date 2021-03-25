@@ -4,8 +4,8 @@ Testing the factory module with backup retention.
 {%
 	let real_include = include;
 
-	include("./tests/mock.uc", {
-		TESTFILE: "../cfg/ucentral.uc",
+	include("./cfg/ucentral.uc", {
+		TRACE_CALLS: "stderr",
 
 		/* wrap include() to fixup the include paths */
 		include: function(path, scope) {
@@ -380,9 +380,57 @@ Testing the factory module with backup retention.
 }
 -- End --
 
+-- File fs/stat~_usr_share_ucentral_cfg_log_uc.json --
+{ "type": "file" }
+-- End --
+
+-- File fs/stat~_usr_share_ucentral_cfg_network_uc.json --
+{ "type": "file" }
+-- End --
+
+-- File fs/stat~_usr_share_ucentral_cfg_ntp_uc.json --
+{ "type": "file" }
+-- End --
+
+-- File fs/stat~_usr_share_ucentral_cfg_phy_uc.json --
+{ "type": "file" }
+-- End --
+
+-- File fs/stat~_usr_share_ucentral_cfg_rtty_uc.json --
+{ "type": "file" }
+-- End --
+
+-- File fs/stat~_usr_share_ucentral_cfg_ssh_uc.json --
+{ "type": "file" }
+-- End --
+
+-- File fs/stat~_usr_share_ucentral_cfg_stats_uc.json --
+{ "type": "file" }
+-- End --
+
+-- File fs/stat~_usr_share_ucentral_cfg_steer_uc.json --
+{ "type": "file" }
+-- End --
+
+-- File fs/stat~_usr_share_ucentral_cfg_system_uc.json --
+{ "type": "file" }
+-- End --
+
+-- Expect stderr --
+[call] fs.stat path </usr/share/ucentral/cfg_log.uc>
+[call] fs.stat path </usr/share/ucentral/cfg_network.uc>
+[call] fs.stat path </usr/share/ucentral/cfg_ntp.uc>
+[call] fs.stat path </usr/share/ucentral/cfg_phy.uc>
+[call] fs.stat path </usr/share/ucentral/cfg_rtty.uc>
+[call] fs.stat path </usr/share/ucentral/cfg_ssh.uc>
+[call] fs.open path </etc/dropbear/authorized_keys> mode <w>
+[call] fs.stat path </usr/share/ucentral/cfg_stats.uc>
+[call] fs.stat path </usr/share/ucentral/cfg_steer.uc>
+[call] fs.stat path </usr/share/ucentral/cfg_system.uc>
+[call] ubusconn.call object <ucentral> method <rejected> args <{ "rejected": [ /* 1 items */ ] }>
+-- End --
+
 -- Expect stdout --
-fs.stat() path </usr/share/ucentral/cfg_log.uc>
-fs.stat() path </usr/share/ucentral/cfg_network.uc>
 set network.wan='interface'
 set network.wan.proto='dhcp'
 set network.wan.metric='1'
@@ -508,13 +556,11 @@ set firewall.vxlan_accept.src='wan'
 set firewall.vxlan_accept.proto='udp'
 set firewall.vxlan_accept.port='4789'
 set firewall.vxlan_accept.target='ACCEPT'
-fs.stat() path </usr/share/ucentral/cfg_ntp.uc>
 set system.ntp.enabled='1'
 set system.ntp.enable_server='1'
 del system.ntp.server
 add_list system.ntp.server='0.openwrt.pool.ntp.org'
 add_list system.ntp.server='1.openwrt.pool.ntp.org'
-fs.stat() path </usr/share/ucentral/cfg_phy.uc>
 set wireless.radio1='wifi-device'
 set wireless.radio1.htmode='HE80'
 set wireless.radio1.txantenna='15'
@@ -584,11 +630,9 @@ set wireless.radio0_guest.ft_psk_generate_local='1'
 set wireless.radio0_guest.mobility_domain='4f57'
 set wireless.radio0_guest.encryption='psk2'
 set wireless.radio0_guest.key='12345678'
-fs.stat() path </usr/share/ucentral/cfg_rtty.uc>
 set rtty.@rtty[-1].host='websocket.example.org'
 set rtty.@rtty[-1].token='00000000000000000000000000000000'
 set rtty.@rtty[-1].interface='wan'
-fs.stat() path </usr/share/ucentral/cfg_ssh.uc>
 set dropbear.@dropbear[-1].enable='1'
 set dropbear.@dropbear[-1].Port='22'
 set dropbear.@dropbear[-1].RootPasswordAuth='1'
@@ -599,8 +643,6 @@ set firewall.allow_ssh_wan.src='wan'
 set firewall.allow_ssh_wan.port='22'
 set firewall.allow_ssh_wan.proto='tcp'
 set firewall.allow_ssh_wan.target='ACCEPT'
-fs.open() path </etc/dropbear/authorized_keys> mode <w>
-fs.stat() path </usr/share/ucentral/cfg_stats.uc>
 set ustats.stats.interval='3600'
 set ustats.stats.neighbours='1'
 set ustats.stats.traffic='1'
@@ -611,7 +653,6 @@ set ustats.stats.serviceprobe='1'
 set ustats.stats.lldp='1'
 set ustats.stats.system='1'
 set ustats.stats.poe='1'
-fs.stat() path </usr/share/ucentral/cfg_steer.uc>
 set usteer.@usteer[-1].enabled='1'
 set usteer.@usteer[-1].network='wan'
 set usteer.@usteer[-1].debug_level='0'
@@ -620,7 +661,5 @@ set firewall.usteer_wan.src='wan'
 set firewall.usteer_wan.proto='udp'
 set firewall.usteer_wan.target='ACCEPT'
 set firewall.usteer_wan.dest_port='16720'
-fs.stat() path </usr/share/ucentral/cfg_system.uc>
 set system.@system[-1].timezone='CET-1CEST,M3.5.0,M10.5.0/3'
-ctx.call() object <ucentral> method <rejected> args <{ "rejected": [ /* 1 items */ ] }>
 -- End --
