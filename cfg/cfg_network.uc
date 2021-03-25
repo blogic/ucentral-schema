@@ -273,11 +273,20 @@
 		uci_set_options(u, v.cfg, [ "peeraddr", "tunlink", "port", "vid" ]);
 
 		u = uci_new_section(x.network, tun_name, "interface", {
+			type: "bridge",
 			proto: "static",
 			ifname: ifname,
 		});
-		warn(sprint("%s\n", tun_name));
+
 		uci_set_options(u, v.cfg, [ "ipaddr", "netmask" ]);
+
+		if (v.cfg.tunlink == "wan")
+			uci_new_section(x.firewall, sprintf("%s_accept", name), "rule", {
+				src: "wan",
+				proto: "udp",
+				port: v.cfg.port,
+				target: "ACCEPT"
+			});
 	}
 
 	function network_generate() {
