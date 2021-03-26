@@ -15,6 +15,7 @@ yaml2json schema/lldp.yml lldp.schema
 yaml2json schema/rtty.yml rtty.schema
 yaml2json schema/stats.yml stats.schema
 yaml2json schema/mqtt.yml mqtt.schema
+yaml2json schema/captive.yml captive.schema
 ./merge-schema.py
 mkdir -p docs
 jsonschema2md ucentral.schema.json docs/ucentral-schema.md

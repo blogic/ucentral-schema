@@ -662,6 +662,46 @@
      "type": "string"
     }
    }
+  },
+  "captive": {
+   "description": "This section can be used to setup a captive portal on the AP.",
+   "type": "object",
+   "properties": {
+    "enabled": {
+     "description": "Enable this option to tell the unit that it shall start a captive portal.",
+     "type": "number",
+     "maximum": 1,
+     "minimum": 0
+    },
+    "gatewayname": {
+     "type": "string",
+     "description": "This name will be presented to connecting users in on the splash page."
+    },
+    "gatewayfqdn": {
+     "type": "string",
+     "description": "The fqdn used for the captive portal IP."
+    },
+    "maxclients": {
+     "type": "number",
+     "description": "The number of clients that we accept."
+    },
+    "uploadrate": {
+     "type": "number",
+     "description": "The maximum upload rate for a specific client."
+    },
+    "downloadrate": {
+     "type": "number",
+     "description": "The maximum download rate for a specific client."
+    },
+    "uploadquota": {
+     "type": "number",
+     "description": "The maximum upload quota for a specific client."
+    },
+    "downloadquota": {
+     "type": "number",
+     "description": "The maximum download quota for a specific client."
+    }
+   }
   }
  }
 }
