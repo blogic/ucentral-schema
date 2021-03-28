@@ -1,0 +1,22 @@
+type: object
+properties:
+  station:
+    type: array
+    items:
+      type: object
+      properties:
+        mac:
+          type: string
+          maxLength: 17
+          minLength: 17
+        key:
+          type: string
+          maxLength: 63
+          minLength: 1
+        ssid:
+          type: string
+          maxLength: 32
+          minLength: 1
+        vid:
+          type: number
+          maximum: 1000

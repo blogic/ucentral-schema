@@ -9,6 +9,8 @@ yaml2json schema/ntp.yml ntp.schema
 yaml2json schema/ssh.yml ssh.schema
 yaml2json schema/wifi-phy.yml wifi-phy.schema
 yaml2json schema/wifi-ssid.yml wifi-ssid.schema
+yaml2json schema/wifi-station.yml wifi-station.schema
+yaml2json schema/wifi-vlan.yml wifi-vlan.schema
 yaml2json schema/steer.yml steer.schema
 yaml2json schema/poe.yml poe.schema
 yaml2json schema/lldp.yml lldp.schema

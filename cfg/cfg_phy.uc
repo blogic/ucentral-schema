@@ -1,4 +1,33 @@
 {%
+	let station_count = 0;
+
+	function station_generate(x, cfg, iface, ssid) {
+		for (let sta in cfg) {
+			if (!uci_requires(sta, [ "ssid", "key" ]))
+				return;
+			if (sta.ssid != ssid)
+				return;
+			let u = uci_new_section(x, "station" + station_count++,
+						"wifi-station", { iface: iface });
+			uci_set_options(u, sta, [
+				"mac", "vid", "key"
+			]);
+		}
+	}
+
+	let vlan_count = 0;
+	function vlan_generate(x, cfg, iface, ssid, network) {
+		for (let vlan in cfg) {
+			if (!uci_requires(vlan, [ "ssid", "network", "vid" ]))
+				return;
+			if (vlan.ssid != ssid || vlan.network != network)
+				return;
+			uci_new_section(x, "vlan" + vlan_count++, "wifi-vlan",
+					{ iface: iface, name: vlan.network,
+					  network: vlan.network, vid: vlan.vid });
+		}
+	}
+
 	function ssid_generate(x, v, radio, c) {
 		let crypto = "none";
 
@@ -81,6 +110,7 @@
 			uci_set_options(u, v, [ "mesh_fwding", "mesh_id", "mcast_rate" ]);
 			break;
 		}
+		return name;
 	}
 
 	function phy_htmode_verify(c, v) {
@@ -160,7 +190,12 @@
 					if (band != phy.band)
 						continue;
 
-					ssid_generate(wifi, ssid.cfg, x.uci, x);
+					let name = ssid_generate(wifi, ssid.cfg, x.uci, x);
+					if (length(name)) {
+						station_generate(wifi, cfg.station, name, ssid.cfg.ssid);
+						vlan_generate(wifi, cfg["wifi-vlan"], name, ssid.cfg.ssid,
+							      ssid.cfg.network);
+					}
 				}
 			}
 
