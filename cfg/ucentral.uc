@@ -101,8 +101,8 @@
 	}
 
 	if (length(rejected))
-		ctx.call("ucentral", "rejected", rejected);
-	if (length(fails))
+		ctx.call("ucentral", "rejected", {rejected});
+	if (length(fails)) {
 		ctx.call("ucentral", "send", {
 			method: "log",
 			params: {
@@ -110,8 +110,6 @@
 				data: fails
 			}
 		});
-
-	if (length(rejected) || length(fails))
 		exit(1);
-
+	}
 %}
