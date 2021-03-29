@@ -1,7 +1,15 @@
 {%
 	ctx = ubus.connect();
+	let rejected = [];
 
 	let scope = {
+		rejected,
+
+		cfg_rejected: function(parameter, substitution, fmt, ...args) {
+			let reason = sprintf(fmt, ...args);
+			push(rejected, {parameter, substitution, reason});
+		},
+
 		cfg_error: function(fmt, ...args) {
 			let msg = sprintf(fmt, ...args);
 
@@ -92,7 +100,9 @@
 		}
 	}
 
-	if (length(fails)) {
+	if (length(rejected))
+		ctx.call("ucentral", "rejected", rejected);
+	if (length(fails))
 		ctx.call("ucentral", "send", {
 			method: "log",
 			params: {
@@ -101,7 +111,7 @@
 			}
 		});
 
-		ctx.disconnect();
+	if (length(rejected) || length(fails))
 		exit(1);
-	}
+
 %}

@@ -32,7 +32,7 @@
 		let crypto = "none";
 
 		if (!uci_requires(v, [ "network", "mode", "encryption"])) {
-			cfg_error("ssid is missing a required option");
+			cfg_rejected("wifi.ssid", "", "ssid is missing a required option");
 			return;
 		}
 
@@ -40,7 +40,7 @@
 		case "ap":
 		case "sta":
 			if (!uci_requires(v, [ "ssid" ])) {
-				cfg_error("missing ssid field");
+				cfg_rejected("wifi.ssid", "", "missing ssid field");
 				return;
 			}
 			break;
@@ -48,7 +48,7 @@
 		case "mesh":
 			uci_defaults(v, { mesh_fwding: 0, mcast_rate: 24000 });
 			if (!uci_requires(v, [ "mesh_id" ])) {
-				cfg_error("missing mesh fields");
+				cfg_rejected("wifi.mesh", "", "missing mesh fields");
 				return;
 			}
 			break;
@@ -56,7 +56,7 @@
 
 		if (v.encryption in [ "psk", "psk2", "psk-mixed", "sae", "sae-mixed" ]) {
 			if (!uci_requires(v, [ "key"])) {
-				cfg_error("ssid has invalid psk options");
+				cfg_rejected("wifi.ssid." + v.ssid, "", "ssid has invalid psk options");
 				return;
 			}
 
@@ -64,7 +64,7 @@
 		}
 		else if (v.encryption in [ "wpa", "wpa2", "wpa-mixed", "wpa3", "wpa3-mixed" ]) {
 			if (!uci_requires(v, [ "server", "port", "auth_secret" ])) {
-				cfg_error("ssid has invalid wpa options");
+				cfg_rejected("wifi.ssid." + v.ssid, "", "ssid has invalid wpa options");
 				return;
 			}
 
@@ -117,7 +117,7 @@
 		if (v in c.htmode)
 			return v;
 
-		cfg_error("invalid htmode, dropping to HT20");
+		cfg_rejected("phy.htmode", "", "invalid htmode, dropping to HT20");
 		return "HT20";
 	}
 
@@ -131,7 +131,7 @@
 				return htmode;
 		}
 
-		cfg_error("invalid htwidth, dropping to HT20");
+		cfg_rejected("phy.htmode", "", "invalid htwidth, dropping to HT20");
 		return "HT20";
 	}
 
@@ -139,7 +139,7 @@
 		if (v in c.channels)
 			return v;
 
-		cfg_error(sprintf("invalid channel, falling back to %d", c.channels[0]));
+		cfg_rejected("phy.channel", c.channels[0], "invalid channel, falling back to %d", c.channels[0]);
 		return c.channels[0];
 	}
 
@@ -149,7 +149,7 @@
 		let v = mimo[request];
 
 		if (!v || v > max) {
-			cfg_error(sprintf("invalid mimo setting, using %d", max));
+			cfg_rejected("phy.mimo", max, "invalid mimo setting, using %d", max);
 			return max;
 		}
 

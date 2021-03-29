@@ -493,7 +493,6 @@ del system.ntp.server
 add_list system.ntp.server='0.openwrt.pool.ntp.org'
 add_list system.ntp.server='1.openwrt.pool.ntp.org'
 fs.stat() path </usr/share/ucentral/cfg_phy.uc>
-ctx.call() object <ucentral> method <log> args <{ "msg": "invalid htmode, dropping to HT20" }>
 set wireless.radio1='wifi-device'
 set wireless.radio1.htmode='HE80'
 set wireless.radio1.txantenna='15'
@@ -592,8 +591,5 @@ set firewall.usteer_wan.target='ACCEPT'
 set firewall.usteer_wan.dest_port='16720'
 fs.stat() path </usr/share/ucentral/cfg_system.uc>
 set system.@system[-1].timezone='CET-1CEST,M3.5.0,M10.5.0/3'
--- End --
-
--- Expect stderr --
-invalid htmode, dropping to HT20
+ctx.call() object <ucentral> method <rejected> args <[, ", " ]>
 -- End --

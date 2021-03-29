@@ -122,7 +122,7 @@
 			break;
 
 		default:
-			cfg_error(sprintf("Unhandled network proto: %s", v.proto));
+			cfg_rejected("network.proto", "", "Unhandled network proto: %s", v.proto);
 			return;
 		}
 
@@ -225,7 +225,7 @@
 
 	function network_generate_gre(x, v) {
 		if (!uci_requires(v.cfg, [ "peeraddr" ])) {
-			cfg_error("missing gre options");
+			cfg_rejected("network.gre", "", "missing gre options");
 			return;
 		}
 
@@ -256,7 +256,7 @@
 
 	function network_generate_vxlan(x, v) {
 		if (!uci_requires(v.cfg, [ "peeraddr", "ipaddr", "netmask" ])) {
-			cfg_error("missing vxlan options");
+			cfg_rejected("network.vxlan", "", "missing vxlan options");
 			return;
 		}
 
@@ -331,7 +331,7 @@
 				break;
 
 			default:
-				cfg_error(sprintf("trying to create network with unknown mode %s", v.mode));
+				cfg_rejected("network", "","trying to create network with unknown mode %s", v.mode);
 				break;
 			}
 		}
