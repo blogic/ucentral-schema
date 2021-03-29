@@ -37,7 +37,10 @@
 	let archive_cmdline = [
 		'tar', 'czf', '/tmp/sysupgrade.tgz',
 		'/etc/config/ucentral',
-		'/etc/ucentral/cert.pem'
+		'/etc/ucentral/*.pem',
+		'/etc/ucentral/*.key',
+		'/etc/ucentral/*.json',
+		'/etc/ucentral/dev-id'
 	];
 
 	if (args.keep_redirector) {

@@ -117,7 +117,7 @@
 		if (v in c.htmode)
 			return v;
 
-		cfg_rejected("phy.htmode", "", "invalid htmode, dropping to HT20");
+		cfg_rejected("phy.htmode", "HT20", "invalid htmode, dropping to HT20");
 		return "HT20";
 	}
 

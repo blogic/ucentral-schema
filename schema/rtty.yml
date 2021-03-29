@@ -3,6 +3,10 @@ properties:
   rtty:
     type: object
     properties:
+      enable:
+        description:
+          Shall rtty be enabled ?
+        type: number
       interface:
         description:
           The interface that shall be used to connect to the server.

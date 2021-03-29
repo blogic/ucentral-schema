@@ -4,8 +4,11 @@
 	if (length(args) && args.keep_redirector) {
 		let archive_cmdline = [
 			'tar', 'czf', '/sysupgrade.tgz',
-			'/etc/config/ucentral',
-			'/etc/ucentral/cert.pem'
+			'/etc/ucentral/*.pem',
+			'/etc/ucentral/*.key',
+			'/etc/ucentral/*.json',
+			'/etc/ucentral/dev-id',
+			'/etc/config/ucentral'
 		];
 
 		let active_config = fs.readlink("/etc/ucentral/ucentral.active");
