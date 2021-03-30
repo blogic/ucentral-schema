@@ -7,7 +7,10 @@
 			"/etc/config/ucentral"
 		];
 
-		let files = [ "cert.key", "cert.pem", "redirector.json", "dev-id" ];
+		let files = [
+				"/etc/ucentral/cert.key", "/etc/ucentral/cert.pem",
+				"/etc/ucentral/redirector.json", "/etc/ucentral/dev-id"
+		];
 		for (let f in files)
 			if (fs.stat(f))
 				push(archive_cmdline, f);

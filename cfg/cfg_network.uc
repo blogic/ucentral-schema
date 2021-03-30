@@ -158,7 +158,7 @@
 			u.ifname = nil;
 		} else if (!capab["bridge-vlan"]) {
 			u.type = "bridge";
-			u.ifname = capab.network.wan;
+			u.ifname = capab.network.wan.ifname;
 		}
 
 		dhcp_generate(x.dhcp, false, name);

@@ -10,8 +10,12 @@ id=1
 -- End --
 
 -- Expect stdout --
+fs.stat() path </etc/ucentral/cert.key>
+fs.stat() path </etc/ucentral/cert.pem>
+fs.stat() path </etc/ucentral/redirector.json>
+fs.stat() path </etc/ucentral/dev-id>
 fs.readlink() path </etc/ucentral/ucentral.active>
-system() command <[ "tar", "czf", "/sysupgrade.tgz", "/etc/config/ucentral", "/etc/ucentral/cert.pem", "/etc/ucentral/ucentral.active", "/etc/ucentral/ucentral.active-link" ]> timeout <(null)>
+system() command <[ "tar", "czf", "/sysupgrade.tgz", "/etc/config/ucentral", "/etc/ucentral/cert.key", "/etc/ucentral/cert.pem", "/etc/ucentral/redirector.json", "/etc/ucentral/dev-id", "/etc/ucentral/ucentral.active", "/etc/ucentral/ucentral.active-link" ]> timeout <(null)>
 system() command <[ "jffs2reset", "-r", "-y", "-k" ]> timeout <(null)>
 -- End --
 

@@ -57,7 +57,7 @@
 	}
 
 	let ctx = ubus.connect();
-	ctx.call("ucentral", "upload", {file: filename, path: args.path, uuid: args.serial});
+	ctx.call("ucentral", "upload", {file: filename, uri: args.uri, uuid: args.serial});
 
 	fs.unlink(filename);
 

@@ -30,7 +30,11 @@ cmd={ "command": "upgrade", "payload": { "uri": "http://example.org/image.bin" }
 -- Expect stdout --
 system() command <[ "wget", "-O", "/tmp/ucentral.upgrade", "http://example.org/image.bin" ]> timeout <(null)>
 ctx.call() object <system> method <validate_firmware_image> args <{ "path": "/tmp/ucentral.upgrade" }>
-system() command <[ "tar", "czf", "/tmp/sysupgrade.tgz", "/etc/config/ucentral", "/etc/ucentral/cert.pem" ]> timeout <(null)>
+fs.stat() path </etc/ucentral/cert.key>
+fs.stat() path </etc/ucentral/cert.pem>
+fs.stat() path </etc/ucentral/redirector.json>
+fs.stat() path </etc/ucentral/dev-id>
+system() command <[ "tar", "czf", "/tmp/sysupgrade.tgz", "/etc/config/ucentral", "/etc/ucentral/cert.key", "/etc/ucentral/cert.pem", "/etc/ucentral/redirector.json", "/etc/ucentral/dev-id" ]> timeout <(null)>
 system() command <[ "/etc/init.d/network", "stop" ]> timeout <(null)>
 system() command <[ "sysupgrade", "/tmp/ucentral.upgrade" ]> timeout <(null)>
 -- End --
@@ -53,8 +57,12 @@ cmd={ "command": "upgrade", "payload": {"uri": "http://example.org/image.bin", "
 -- Expect stdout --
 system() command <[ "wget", "-O", "/tmp/ucentral.upgrade", "http://example.org/image.bin" ]> timeout <(null)>
 ctx.call() object <system> method <validate_firmware_image> args <{ "path": "/tmp/ucentral.upgrade" }>
+fs.stat() path </etc/ucentral/cert.key>
+fs.stat() path </etc/ucentral/cert.pem>
+fs.stat() path </etc/ucentral/redirector.json>
+fs.stat() path </etc/ucentral/dev-id>
 fs.readlink() path </etc/ucentral/ucentral.active>
-system() command <[ "tar", "czf", "/tmp/sysupgrade.tgz", "/etc/config/ucentral", "/etc/ucentral/cert.pem", "/etc/ucentral/ucentral.active", "/etc/ucentral/ucentral.active-link" ]> timeout <(null)>
+system() command <[ "tar", "czf", "/tmp/sysupgrade.tgz", "/etc/config/ucentral", "/etc/ucentral/cert.key", "/etc/ucentral/cert.pem", "/etc/ucentral/redirector.json", "/etc/ucentral/dev-id", "/etc/ucentral/ucentral.active", "/etc/ucentral/ucentral.active-link" ]> timeout <(null)>
 system() command <[ "/etc/init.d/network", "stop" ]> timeout <(null)>
 system() command <[ "sysupgrade", "-f", "/tmp/sysupgrade.tgz", "/tmp/ucentral.upgrade" ]> timeout <(null)>
 -- End --

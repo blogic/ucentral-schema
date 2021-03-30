@@ -383,6 +383,7 @@ set network.wan='interface'
 set network.wan.proto='dhcp'
 set network.wan.metric='1'
 set network.wan.type='bridge'
+set network.wan.ifname='wan'
 set network.gre='interface'
 set network.gre.proto='gretap'
 set network.gre.type='gre'
@@ -591,5 +592,5 @@ set firewall.usteer_wan.target='ACCEPT'
 set firewall.usteer_wan.dest_port='16720'
 fs.stat() path </usr/share/ucentral/cfg_system.uc>
 set system.@system[-1].timezone='CET-1CEST,M3.5.0,M10.5.0/3'
-ctx.call() object <ucentral> method <rejected> args <[, ", " ]>
+ctx.call() object <ucentral> method <rejected> args <{ "rejected": [ /* 1 items */ ] }>
 -- End --
