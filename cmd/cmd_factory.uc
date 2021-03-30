@@ -4,12 +4,13 @@
 	if (length(args) && args.keep_redirector) {
 		let archive_cmdline = [
 			'tar', 'czf', '/sysupgrade.tgz',
-			'/etc/ucentral/*.pem',
-			'/etc/ucentral/*.key',
-			'/etc/ucentral/*.json',
-			'/etc/ucentral/dev-id',
-			'/etc/config/ucentral'
+			"/etc/config/ucentral"
 		];
+
+		let files = [ "cert.key", "cert.pem", "redirector.json", "dev-id" ];
+		for (let f in files)
+			if (fs.stat(f))
+				push(archive_cmdline, f);
 
 		let active_config = fs.readlink("/etc/ucentral/ucentral.active");
 
