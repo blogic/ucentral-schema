@@ -147,14 +147,18 @@
 
 			u.ip4table = v.vlan;
 			u.ip6table = v.vlan;
+			u.type = nil;
 
 			if (capab["bridge-vlan"])
 				bridge_generate_vlan(x.network, name, v.vlan);
 
 			fw_generate_zone(x.firewall, name, true);
-		}
-		else if (!capab["bridge-vlan"]) {
+		} else if (v.cfg.repeater) {
+			u.type = nil;
+			u.ifname = nil;
+		} else if (!capab["bridge-vlan"]) {
 			u.type = "bridge";
+			u.ifname = capab.network.wan;
 		}
 
 		dhcp_generate(x.dhcp, false, name);

@@ -23,6 +23,7 @@ properties:
           - 'mesh'
           - 'gre'
           - 'vxlan'
+          - 'repeater'
         vlan:
           description:
             The VID that shall be assign to packets leaving this network interface.

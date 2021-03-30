@@ -48,6 +48,9 @@
 						for (let i, v in value)
 							printf("add_list %s.%s.%s='%s'\n", file, sid, option, esc(v));
 					}
+					else if (value == nil) {
+						printf("del %s.%s.%s\n", file, sid, option);
+					}
 					else {
 						printf("set %s.%s.%s='%s'\n", file, sid, option, esc(value));
 					}

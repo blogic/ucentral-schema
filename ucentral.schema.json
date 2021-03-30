@@ -25,7 +25,8 @@
        "batman",
        "mesh",
        "gre",
-       "vxlan"
+       "vxlan",
+       "repeater"
       ]
      },
      "vlan": {
@@ -379,6 +380,7 @@
        "mode": {
         "enum": [
          "ap",
+         "sta",
          "mesh"
         ],
         "type": "string"
