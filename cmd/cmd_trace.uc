@@ -33,11 +33,12 @@
 	}
 
 	let duration = +args.duration || 30;
+	let packets = +args.packets || 1000;
 	let filename = sprintf("/tmp/pcap-%s-%d", serial, time());
 
 	let rc = system([
 		'tcpdump',
-		'-c', '1000',
+		'-c', packets,
 		'-W', '1',
 		'-G', duration,
 		'-w', filename,
@@ -55,12 +56,15 @@
 		return;
 	}
 
+	let ctx = ubus.connect();
+	ctx.call("ucentral", "upload", {file: filename, path: args.path, uuid: args.serial});
+
 	fs.unlink(filename);
 
 	result_json({
 		"error": 0,
 		"text": "Success",
 		"resultCode": 0,
-		"resultText": "We need to figure out how to upload the pcap"
+		"resultText": "Uploading file"
 	});
 %}
