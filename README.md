@@ -4,8 +4,8 @@ the datamodel and rendering incoming cfg json into uci batch sequences.
 
 ### Dependencies:
 In order to run the test cases you will need the following tools
-* utpl
-* ucentral-jsonschema
+* [ucode](https://github.com/jow-/ucode)
+* [ucentral-jsonschema](https://github.com/blogic/ucentral-jsonschema)
 * jsonlint-php
 * pip3 install jsonschema2md
 * pip3 install json-schema-for-humans
@@ -13,5 +13,5 @@ In order to run the test cases you will need the following tools
 
 ### Unit testing
 ```sh
-	$./unit.sh
+	$./run_tests.sh
 ```
