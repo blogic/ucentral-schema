@@ -59,8 +59,6 @@
 	let ctx = ubus.connect();
 	ctx.call("ucentral", "upload", {file: filename, uri: args.uri, uuid: args.serial});
 
-	fs.unlink(filename);
-
 	result_json({
 		"error": 0,
 		"text": "Success",

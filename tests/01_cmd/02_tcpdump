@@ -13,8 +13,7 @@ ctx.call() object <network.interface> method <status> args <{ "interface": "test
 fs.stat() path </sys/class/net/br-testnet>
 time()
 system() command <[ "tcpdump", "-c", 1000, "-W", "1", "-G", 30, "-w", "/tmp/pcap-001122334455-1615382640", "-i", "br-testnet" ]> timeout <(null)>
-ctx.call() object <ucentral> method <upload> args <{ "file": "/tmp/pcap-001122334455-1615382640", "path": null, "uuid": null }>
-fs.unlink() path </tmp/pcap-001122334455-1615382640>
+ctx.call() object <ucentral> method <upload> args <{ "file": "/tmp/pcap-001122334455-1615382640", "uri": null, "uuid": null }>
 ctx.call() object <ucentral> method <result> args <{ "id": 0, "status": { /* 4 keys */ } }>
 -- End --
 
@@ -38,8 +37,7 @@ cmd={ "command": "trace", "payload": { "iface": "eth2" }}
 fs.stat() path </sys/class/net/eth2>
 time()
 system() command <[ "tcpdump", "-c", 1000, "-W", "1", "-G", 30, "-w", "/tmp/pcap-001122334455-1615382640", "-i", "eth2" ]> timeout <(null)>
-ctx.call() object <ucentral> method <upload> args <{ "file": "/tmp/pcap-001122334455-1615382640", "path": null, "uuid": null }>
-fs.unlink() path </tmp/pcap-001122334455-1615382640>
+ctx.call() object <ucentral> method <upload> args <{ "file": "/tmp/pcap-001122334455-1615382640", "uri": null, "uuid": null }>
 ctx.call() object <ucentral> method <result> args <{ "id": 0, "status": { /* 4 keys */ } }>
 -- End --
 
