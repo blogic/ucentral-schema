@@ -24,7 +24,7 @@ def schema_merge(name, path):
 def schema_write():
 	try:
 		with open(f"ucentral.schema.json", 'w') as outfile:
-			json.dump(merge, outfile, indent=True)
+			json.dump(merge, outfile, indent=True, sort_keys=True)
 	except:
 		print("failed to write ucentral.schema.json")
 
