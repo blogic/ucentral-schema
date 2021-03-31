@@ -1,15 +1,18 @@
 {%
-	function fw_generate_zone(x, n, masq) {
+	function fw_generate_zone(x, n, mode) {
 		let u = uci_new_section(x, n, "zone", { name: n, network: n });
 
-		if (masq) {
+		if (mode == "masq") {
 			u.input = "REJECT";
 			u.output = "ACCEPT";
 			u.forward = "REJECT";
 			u.masq = 1;
 			u.mtu_fix = 1;
-		}
-		else {
+		} else if (mode == "guest") {
+			u.input = "REJECT";
+			u.output = "ACCEPT";
+			u.forward = "ACCEPT";
+		} else {
 			u.input = "ACCEPT";
 			u.output = "ACCEPT";
 			u.forward = "ACCEPT";
@@ -26,17 +29,34 @@
 		let allow = sprintf("%s_allow", src);
 		let block = sprintf("%s_block", src);
 
-		if (ipaddr)
-			uci_new_section(x, allow, "rule", {
-				src,
-				dest: "*",
-				family: "ipv4",
-				proto: [ "tcp", "udp" ],
-				dest_ip: ipaddr,
-				target: "ACCEPT"
-			});
-
-		uci_new_section(x, block, "rule", {
+		uci_new_section(x, allow + "_dns", "rule", {
+			name: "Allow-DNS-Guest",
+			src,
+			dest: "*",
+			port: 53,
+			proto: [ "tcp", "udp" ],
+			target: "ACCEPT"
+		});
+		uci_new_section(x, allow + "_dhcp", "rule", {
+			name: "Allow-DHCP-Guest",
+			src,
+			dest: "*",
+			port: 67,
+			family: "ipv4",
+			proto: "udp",
+			target: "ACCEPT"
+		});
+		uci_new_section(x, allow + "dhcpv6", "rule", {
+			name: "Allow-DHCPv6-Guest",
+			src,
+			dest: "*",
+			dest_port: 547,
+			family: "ipv6",
+			proto: "udp",
+			target: "ACCEPT"
+		});
+		uci_new_section(x, block + "_local", "rule", {
+			name: "Block-local-Guest",
 			src,
 			dest: "*",
 			family: "ipv4",
@@ -152,7 +172,7 @@
 			if (capab["bridge-vlan"])
 				bridge_generate_vlan(x.network, name, v.vlan);
 
-			fw_generate_zone(x.firewall, name, true);
+			fw_generate_zone(x.firewall, name, "masq");
 		} else if (v.cfg.repeater) {
 			u.type = nil;
 			u.ifname = nil;
@@ -187,7 +207,7 @@
 		u = network_generate_lan(x, c, n);
 		u.type = "bridge";
 
-		fw_generate_zone(x.firewall, name);
+		fw_generate_zone(x.firewall, name, n);
 		fw_generate_fwd(x.firewall, name, wan);
 	}
 
