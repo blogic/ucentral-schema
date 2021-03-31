@@ -550,6 +550,22 @@
      "type": "number",
      "maximum": 65535,
      "minimum": 1
+    },
+    "authorized_keys": {
+     "description": "this allows the upload of public ssh keys. Keys need to be seperated by a newline.",
+     "type": "string"
+    },
+    "RootPasswordAuth": {
+     "description": "Define if password based auth is allowed or not for the root account.",
+     "type": "boolean"
+    },
+    "PasswordAuth": {
+     "description": "Define if password based auth is allowed or not for user accounts.",
+     "type": "boolean"
+    },
+    "allow_wan": {
+     "description": "Should the ssh server be made available on the wan port.",
+     "type": "boolean"
     }
    }
   },

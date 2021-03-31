@@ -269,7 +269,11 @@ Testing the factory module with backup retention.
 		},
 		"ssh" : {
 			"Port" : 22,
-			"enable" : 1
+			"enable" : 1,
+			"allow_wan": 1,
+			"RootPasswordAuth": 1,
+			"PasswordAuth": 0,
+			"authorized_keys": "secret"
 		},
 		"ssid" : [
 			{
@@ -587,6 +591,15 @@ set rtty.@rtty[-1].interface='wan'
 fs.stat() path </usr/share/ucentral/cfg_ssh.uc>
 set dropbear.@dropbear[-1].enable='1'
 set dropbear.@dropbear[-1].Port='22'
+set dropbear.@dropbear[-1].RootPasswordAuth='1'
+set dropbear.@dropbear[-1].PasswordAuth='0'
+set firewall.allow_ssh_wan='rule'
+set firewall.allow_ssh_wan.name='Allow-ssh-wan'
+set firewall.allow_ssh_wan.src='wan'
+set firewall.allow_ssh_wan.port='22'
+set firewall.allow_ssh_wan.proto='tcp'
+set firewall.allow_ssh_wan.target='ACCEPT'
+fs.open() path </etc/dropbear/authorized_keys> mode <w>
 fs.stat() path </usr/share/ucentral/cfg_stats.uc>
 set ustats.stats.interval='3600'
 set ustats.stats.neighbours='1'
