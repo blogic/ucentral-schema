@@ -1,0 +1,15 @@
+type: object
+properties:
+  mdns:
+    description: Configure MDNS support.
+    type: object
+    properties:
+      enable:
+        description:
+          Enable this option if you would like to enable the SSH server on the unit.
+        type: number
+        maximum: 1
+        minimum: 0
+      network:
+        description: The networks that mdns shall be configured for. This will most likely just be WAN.
+        type: array

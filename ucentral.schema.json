@@ -2,21 +2,238 @@
  "$id": "https://openwrt.org/ucentral.schema.json",
  "$schema": "http://json-schema.org/draft-07/schema#",
  "description": "OpenWrt uCentral schema",
- "type": "object",
  "properties": {
-  "uuid": {
-   "type": "integer"
+  "captive": {
+   "description": "This section can be used to setup a captive portal on the AP.",
+   "properties": {
+    "downloadquota": {
+     "description": "The maximum download quota for a specific client.",
+     "type": "number"
+    },
+    "downloadrate": {
+     "description": "The maximum download rate for a specific client.",
+     "type": "number"
+    },
+    "enabled": {
+     "description": "Enable this option to tell the unit that it shall start a captive portal.",
+     "maximum": 1,
+     "minimum": 0,
+     "type": "number"
+    },
+    "gatewayfqdn": {
+     "description": "The fqdn used for the captive portal IP.",
+     "type": "string"
+    },
+    "gatewayname": {
+     "description": "This name will be presented to connecting users in on the splash page.",
+     "type": "string"
+    },
+    "maxclients": {
+     "description": "The number of clients that we accept.",
+     "type": "number"
+    },
+    "uploadquota": {
+     "description": "The maximum upload quota for a specific client.",
+     "type": "number"
+    },
+    "uploadrate": {
+     "description": "The maximum upload rate for a specific client.",
+     "type": "number"
+    }
+   },
+   "type": "object"
+  },
+  "lldp": {
+   "properties": {
+    "interface": {
+     "description": "The interfaces that we want to run lldp on.",
+     "type": "array"
+    },
+    "lldp_description": {
+     "description": "The content that we shall announce inside the description field.",
+     "type": "string"
+    },
+    "location": {
+     "description": "The content that we shall announce inside the location field.",
+     "type": "string"
+    }
+   },
+   "type": "object"
+  },
+  "log": {
+   "properties": {
+    "log_hostname": {
+     "description": "Hostname to send to remote syslog. If none is provided, the actual hostname is send.",
+     "type": "string"
+    },
+    "log_ip": {
+     "description": "IP address of a syslog server to which the log messages should be sent in addition to the local destination.",
+     "type": "string"
+    },
+    "log_port": {
+     "description": "Port number of the remote syslog server specified with log_ip.",
+     "maximum": 65535,
+     "minimum": 100,
+     "type": "number"
+    },
+    "log_proto": {
+     "description": "Sets the protocol to use for the connection, either tcp or udp.",
+     "enum": [
+      "tcp",
+      "udp"
+     ],
+     "type": "string"
+    },
+    "log_size": {
+     "description": "Size of the file based log buffer in KiB. This value is used as the fallback value for log_buffer_size if the latter is not specified.",
+     "minimum": 32,
+     "type": "number"
+    }
+   },
+   "type": "object"
+  },
+  "mqtt": {
+   "description": "The option that configure which mqtt server the unit should connect to.",
+   "properties": {
+    "enable": {
+     "description": "Enable this option if you would like the unit to connect to the MQTT backend.",
+     "maximum": 1,
+     "minimum": 0,
+     "type": "number"
+    },
+    "password": {
+     "description": "The password that is used to authenticate.",
+     "type": "string"
+    },
+    "port": {
+     "description": "This option defines the port that we connect to.",
+     "maximum": 65535,
+     "minimum": 1,
+     "type": "number"
+    },
+    "server": {
+     "description": "the IP/URL of the MQTT server.",
+     "type": "string"
+    },
+    "username": {
+     "description": "The username that is used to authenticate.",
+     "type": "string"
+    }
+   },
+   "type": "object"
   },
   "network": {
    "description": "Network Configuration",
-   "type": "array",
    "items": {
     "description": "This section allows you to configure your networks.",
-    "type": "object",
     "properties": {
+     "cfg": {
+      "properties": {
+       "dhcp": {
+        "description": "The DHCP configuration of the network interface.",
+        "properties": {
+         "leasetime": {
+          "description": "This defines how many hours the leases should be valid for. (12h, 30m, ...)",
+          "type": "string"
+         },
+         "limit": {
+          "description": "This defines how many leasable IP addresses are available.",
+          "minimum": 10,
+          "type": "number"
+         },
+         "start": {
+          "description": "This defines which number shall be used as the first leasable IP address.",
+          "maximum": 254,
+          "minimum": 1,
+          "type": "number"
+         }
+        },
+        "type": "object"
+       },
+       "disabled": {
+        "description": "This option allows use to disable a network interface.",
+        "maximum": 1,
+        "minimum": 0,
+        "type": "number"
+       },
+       "dns": {
+        "description": "The IPv4 DNS server that shall be assigned to the network interface.",
+        "type": "string"
+       },
+       "gateway": {
+        "description": "The IPv4 gateway that shall be assigned to the network interface.",
+        "type": "string"
+       },
+       "ip6assign": {
+        "description": "The prefix delegation mask that the interface shall use.",
+        "maximum": 96,
+        "minimum": 0,
+        "type": "number"
+       },
+       "ipaddr": {
+        "description": "The IPv4 address that shall be assigned to the network interface.",
+        "type": "string"
+       },
+       "leases": {
+        "description": "A list of static dhcp leases assigned to the interface.",
+        "items": {
+         "properties": {
+          "hostname": {
+           "description": "The hostname address used by this static lease.",
+           "type": "string"
+          },
+          "ip": {
+           "description": "The IP address used by this static lease.",
+           "type": "string"
+          },
+          "mac": {
+           "description": "The MAC address used by this static lease.",
+           "type": "string"
+          }
+         },
+         "type": "object"
+        },
+        "type": "array"
+       },
+       "metric": {
+        "description": "The routing metric of an interface. Lower values have higher priority.",
+        "maximum": 100,
+        "type": "number"
+       },
+       "mtu": {
+        "description": "The MTU that shall be used by the network interface.",
+        "maximum": 65535,
+        "minimum": 256,
+        "type": "number"
+       },
+       "netmask": {
+        "description": "The IPv4 netmask that shall be assigned to the network interface.",
+        "type": "string"
+       },
+       "peeraddr": {
+        "description": "The remote tunnel endpoint that we want to connect to.",
+        "type": "string"
+       },
+       "port": {
+        "description": "The network port that shall be used.",
+        "maximum": 65535,
+        "minimum": 256,
+        "type": "number"
+       },
+       "proto": {
+        "description": "The configuration that shall be run on the network interface.",
+        "enum": [
+         "none",
+         "dhcp",
+         "static"
+        ],
+        "type": "string"
+       }
+      },
+      "type": "object"
+     },
      "mode": {
       "description": "This defines if the network interface shall be bridged directly with the WAN side or shall be NAT'ed out from LAN.",
-      "type": "string",
       "enum": [
        "wan",
        "lan",
@@ -27,177 +244,101 @@
        "gre",
        "vxlan",
        "repeater"
-      ]
-     },
-     "vlan": {
-      "description": "The VID that shall be assign to packets leaving this network interface.",
-      "type": "number",
-      "maximum": 4095,
-      "minimum": 16
+      ],
+      "type": "string"
      },
      "name": {
       "description": "This option allows us to override the uci naming for NAT and guest networks.",
       "type": "string"
      },
-     "cfg": {
-      "type": "object",
-      "properties": {
-       "proto": {
-        "description": "The configuration that shall be run on the network interface.",
-        "type": "string",
-        "enum": [
-         "none",
-         "dhcp",
-         "static"
-        ]
-       },
-       "ipaddr": {
-        "description": "The IPv4 address that shall be assigned to the network interface.",
-        "type": "string"
-       },
-       "netmask": {
-        "description": "The IPv4 netmask that shall be assigned to the network interface.",
-        "type": "string"
-       },
-       "gateway": {
-        "description": "The IPv4 gateway that shall be assigned to the network interface.",
-        "type": "string"
-       },
-       "dns": {
-        "description": "The IPv4 DNS server that shall be assigned to the network interface.",
-        "type": "string"
-       },
-       "mtu": {
-        "description": "The MTU that shall be used by the network interface.",
-        "type": "number",
-        "maximum": 65535,
-        "minimum": 256
-       },
-       "disabled": {
-        "description": "This option allows use to disable a network interface.",
-        "type": "number",
-        "maximum": 1,
-        "minimum": 0
-       },
-       "ip6assign": {
-        "description": "The prefix delegation mask that the interface shall use.",
-        "type": "number",
-        "maximum": 96,
-        "minimum": 0
-       },
-       "peeraddr": {
-        "description": "The remote tunnel endpoint that we want to connect to.",
-        "type": "string"
-       },
-       "dhcp": {
-        "description": "The DHCP configuration of the network interface.",
-        "type": "object",
-        "properties": {
-         "start": {
-          "description": "This defines which number shall be used as the first leasable IP address.",
-          "type": "number",
-          "maximum": 254,
-          "minimum": 1
-         },
-         "limit": {
-          "description": "This defines how many leasable IP addresses are available.",
-          "type": "number",
-          "minimum": 10
-         },
-         "leasetime": {
-          "description": "This defines how many hours the leases should be valid for. (12h, 30m, ...)",
-          "type": "string"
-         }
-        }
-       },
-       "leases": {
-        "description": "A list of static dhcp leases assigned to the interface.",
-        "type": "array",
-        "items": {
-         "type": "object",
-         "properties": {
-          "ip": {
-           "description": "The IP address used by this static lease.",
-           "type": "string"
-          },
-          "mac": {
-           "description": "The MAC address used by this static lease.",
-           "type": "string"
-          },
-          "hostname": {
-           "description": "The hostname address used by this static lease.",
-           "type": "string"
-          }
-         }
-        }
-       },
-       "port": {
-        "description": "The network port that shall be used.",
-        "type": "number",
-        "maximum": 65535,
-        "minimum": 256
-       },
-       "metric": {
-        "description": "The routing metric of an interface. Lower values have higher priority.",
-        "type": "number",
-        "maximum": 100
-       }
-      }
+     "vlan": {
+      "description": "The VID that shall be assign to packets leaving this network interface.",
+      "maximum": 4095,
+      "minimum": 16,
+      "type": "number"
      }
+    },
+    "type": "object"
+   },
+   "type": "array"
+  },
+  "ntp": {
+   "properties": {
+    "enable_server": {
+     "description": "Enable this option if you would like the unit to enable a downstream NTP server for its connected clients.",
+     "maximum": 1,
+     "minimum": 0,
+     "type": "number"
+    },
+    "enabled": {
+     "description": "Enable this option to tell the unit that it shall get its time from an upstream NTP server. The servers are defined by the <servers> attribute.",
+     "maximum": 1,
+     "minimum": 0,
+     "type": "number"
+    },
+    "server": {
+     "description": "This is an array of URL/IP of the upstream NTP servers that the unit shall use to acquire its current time.",
+     "type": "array"
     }
-   }
+   },
+   "type": "object"
   },
   "phy": {
-   "type": "array",
    "items": {
-    "type": "object",
     "properties": {
      "band": {
-      "type": "string",
       "enum": [
        "2",
        "5",
        "5u",
        "5l",
        "6"
-      ]
+      ],
+      "type": "string"
      },
      "cfg": {
-      "type": "object",
-      "required": [
-       "disabled"
-      ],
       "properties": {
        "beacon_int": {
-        "type": "number",
         "maximum": 200,
-        "minimum": 50
+        "minimum": 50,
+        "type": "number"
        },
        "chanbw": {
-        "type": "number",
         "enum": [
          5,
          10,
          20
-        ]
+        ],
+        "type": "number"
        },
        "channel": {
-        "type": "number",
         "maximum": 171,
-        "minimum": 0
+        "minimum": 0,
+        "type": "number"
        },
        "country": {
-        "type": "string",
         "maxLength": 2,
-        "minLength": 2
+        "minLength": 2,
+        "type": "string"
        },
        "disabled": {
-        "type": "number",
         "maximum": 1,
-        "minimum": 0
+        "minimum": 0,
+        "type": "number"
+       },
+       "ema": {
+        "description": "Enableing this option will make the phy broadcast its multiple BSSID beacons using EMA.",
+        "maximum": 1,
+        "minimum": 0,
+        "type": "number"
+       },
+       "he_bss_color": {
+        "description": "This enables BSS Coloring on the PHY. setting it to 0 disables the feature 1-63 sets the color and 64 will make hostapd pick a random color.",
+        "maximum": 64,
+        "minimum": 0,
+        "type": "number"
        },
        "htmode": {
-        "type": "string",
         "enum": [
          "NOHT",
          "HT20",
@@ -212,106 +353,154 @@
          "HE40",
          "HE80",
          "HE160"
-        ]
+        ],
+        "type": "string"
        },
        "htwidth": {
-        "type": "string",
         "enum": [
          20,
          40,
          80,
          160
-        ]
+        ],
+        "type": "string"
        },
        "hwmode": {
-        "type": "string",
         "enum": [
          "11a",
          "11g"
-        ]
+        ],
+        "type": "string"
        },
        "legacy_rates": {
-        "type": "number",
         "maximum": 1,
-        "minimum": 0
-       },
-       "require_mode": {
-        "type": "string",
-        "enum": [
-         "g",
-         "n",
-         "ac",
-         "ax"
-        ]
+        "minimum": 0,
+        "type": "number"
        },
        "mimo": {
-        "type": "string",
         "enum": [
          "1x1",
          "2x2",
          "3x3",
          "4x4",
          "8x8"
-        ]
-       },
-       "txpower": {
-        "type": "number",
-        "maximum": 30,
-        "minimum": 0
+        ],
+        "type": "string"
        },
        "multiple_bssid": {
         "description": "Enabling this option will make the phy broadcast its BSSs using the multiple BSSID beacon IE.",
-        "type": "number",
         "maximum": 1,
-        "minimum": 0
+        "minimum": 0,
+        "type": "number"
        },
-       "ema": {
-        "description": "Enableing this option will make the phy broadcast its multiple BSSID beacons using EMA.",
-        "type": "number",
-        "maximum": 1,
-        "minimum": 0
+       "require_mode": {
+        "enum": [
+         "g",
+         "n",
+         "ac",
+         "ax"
+        ],
+        "type": "string"
        },
-       "he_bss_color": {
-        "description": "This enables BSS Coloring on the PHY. setting it to 0 disables the feature 1-63 sets the color and 64 will make hostapd pick a random color.",
-        "type": "number",
-        "maximum": 64,
-        "minimum": 0
+       "txpower": {
+        "maximum": 30,
+        "minimum": 0,
+        "type": "number"
        }
-      }
+      },
+      "required": [
+       "disabled"
+      ],
+      "type": "object"
      }
+    },
+    "type": "object"
+   },
+   "type": "array"
+  },
+  "poe": {
+   "description": "This Object allows you to en/disable PoE on a network port.",
+   "properties": {
+    "ports": {
+     "description": "This is an array of the PoE state of the ports. any value other than 0 will enable PoE on a port.",
+     "type": "array"
     }
-   }
+   },
+   "type": "object"
+  },
+  "rtty": {
+   "properties": {
+    "enable": {
+     "description": "Shall rtty be enabled ?",
+     "type": "number"
+    },
+    "host": {
+     "description": "The server that we want to connect to",
+     "type": "string"
+    },
+    "interface": {
+     "description": "The interface that shall be used to connect to the server.",
+     "type": "string"
+    },
+    "port": {
+     "description": "This option defines the port that we connect to.",
+     "maximum": 65535,
+     "minimum": 1,
+     "type": "number"
+    },
+    "token": {
+     "description": "The security token that we use to authenticate with the server.",
+     "type": "string"
+    }
+   },
+   "type": "object"
+  },
+  "ssh": {
+   "properties": {
+    "PasswordAuth": {
+     "description": "Define if password based auth is allowed or not for user accounts.",
+     "type": "boolean"
+    },
+    "Port": {
+     "description": "This option defines which port the SSH server shall be available on.",
+     "maximum": 65535,
+     "minimum": 1,
+     "type": "number"
+    },
+    "RootPasswordAuth": {
+     "description": "Define if password based auth is allowed or not for the root account.",
+     "type": "boolean"
+    },
+    "allow_wan": {
+     "description": "Should the ssh server be made available on the wan port.",
+     "type": "boolean"
+    },
+    "authorized_keys": {
+     "description": "this allows the upload of public ssh keys. Keys need to be seperated by a newline.",
+     "type": "string"
+    },
+    "enable": {
+     "description": "Enable this option if you would like to enable the SSH server on the unit.",
+     "maximum": 1,
+     "minimum": 0,
+     "type": "number"
+    }
+   },
+   "type": "object"
   },
   "ssid": {
    "description": "This is a list of all our SSIDs that shall be configured. Mapping of PHY/SSID is done via the \"band\" property.",
-   "type": "array",
    "items": {
-    "type": "object",
     "properties": {
      "band": {
       "description": "The list of wifi bands that the SSID should be broadcasted on. This value can be [ 2, 5, 5l, 5u, 6 ].",
       "type": "array"
      },
      "cfg": {
-      "type": "object",
       "properties": {
-       "server": {
-        "description": "RADIUS server to handle client authentication.",
-        "type": "string"
-       },
-       "port": {
-        "description": "The RADIUS port.",
-        "maximum": 65535,
-        "minimum": 1024,
+       "acct_interval": {
+        "description": "RADIUS accounting interval.",
         "type": "number"
-       },
-       "auth_secret": {
-        "description": "Shared authentication RADIUS secret.",
-        "type": "string"
-       },
-       "acct_server": {
-        "description": "RADIUS accounting server to handle client authentication.",
-        "type": "string"
        },
        "acct_port": {
         "description": "RADIUS accounting port.",
@@ -323,9 +512,19 @@
         "description": "Shared accounting RADIUS secret.",
         "type": "string"
        },
-       "acct_interval": {
-        "description": "RADIUS accounting interval.",
+       "acct_server": {
+        "description": "RADIUS accounting server to handle client authentication.",
+        "type": "string"
+       },
+       "anqp_domain_id": {
+        "description": "ANQP Domain ID, An identifier for a set of APs in an ESS that share the same common ANQP information.",
+        "maximum": 65535,
+        "minimum": 0,
         "type": "number"
+       },
+       "auth_secret": {
+        "description": "Shared authentication RADIUS secret.",
+        "type": "string"
        },
        "bss_transition": {
         "description": "BSS Transition Management (11v).",
@@ -380,6 +579,16 @@
         "minimum": 0,
         "type": "number"
        },
+       "hs20": {
+        "description": "Enable Hotspot 2.0 support",
+        "maximum": 1,
+        "minimum": 0,
+        "type": "number"
+       },
+       "hs20_oper_friendly_name": {
+        "description": "This parameter can be used to configure one or more Operator Friendly Name Duples.",
+        "type": "string"
+       },
        "ieee80211k": {
         "description": "Enable 802.11k support.",
         "maximum": 1,
@@ -404,11 +613,51 @@
         "minimum": 0,
         "type": "number"
        },
+       "interworking": {
+        "description": "Enable Interworking service.",
+        "maximum": 1,
+        "minimum": 0,
+        "type": "number"
+       },
        "isolate": {
         "description": "Isolates wireless clients from each other",
         "maximum": 1,
         "minimum": 0,
         "type": "number"
+       },
+       "iw_domain_name": {
+        "description": "IEEE 802.11u Domain Name.",
+        "type": "string"
+       },
+       "iw_nai_realm": {
+        "description": "NAI Realm information",
+        "type": "string"
+       },
+       "iw_network_auth_type": {
+        "description": "Network Authentication Type. This parameter indicates what type of network authentication is used in the network.",
+        "maxLength": 2,
+        "minLength": 2,
+        "type": "string"
+       },
+       "iw_venue_group": {
+        "description": "Venue Info group. The available values are defined in IEEE Std 802.11u-2011, 7.3.1.34",
+        "maximum": 32,
+        "minimum": 0,
+        "type": "number"
+       },
+       "iw_venue_name": {
+        "description": "This parameter can be used to configure one or more Venue Name Duples for Venue Name ANQP information.",
+        "type": "string"
+       },
+       "iw_venue_type": {
+        "description": "Venue Info type. The available values are defined in IEEE Std 802.11u-2011, 7.3.1.34",
+        "maximum": 32,
+        "minimum": 0,
+        "type": "number"
+       },
+       "iw_venue_url": {
+        "description": "Venue URL information This parameter can be used to configure one or more Venue URL Duples to provide additional information corresponding to Venue Name information.",
+        "type": "string"
        },
        "key": {
         "description": "In any WPA-PSK mode, this is a string that specifies the pre-shared passphrase from which the pre-shared key will be derived.",
@@ -429,15 +678,54 @@
         ],
         "type": "string"
        },
+       "name": {
+        "maxLength": 16,
+        "minLength": 1,
+        "type": "string"
+       },
        "network": {
         "description": "Specifies the network interface to attach the wireless to.",
         "type": "string"
+       },
+       "operator_icon": {
+        "description": "Operator icons are specified using references to the hs20_icon entries.",
+        "type": "string"
+       },
+       "osen": {
+        "description": "OSU Server-Only Authenticated L2 Encryption Network",
+        "maximum": 1,
+        "minimum": 0,
+        "type": "number"
+       },
+       "port": {
+        "description": "The RADIUS port.",
+        "maximum": 65535,
+        "minimum": 1024,
+        "type": "number"
+       },
+       "radius_acct_req_attr": {
+        "description": "Additional Accounting-Request attributes",
+        "type": "string"
+       },
+       "radius_auth_req_attr": {
+        "description": "Additional Access-Request attributes",
+        "type": "string"
+       },
+       "request_cui": {
+        "description": "Request Chargeable-User-Identity (RFC 4372)",
+        "maximum": 1,
+        "minimum": 0,
+        "type": "number"
        },
        "rts_threshold": {
         "description": "Request to send threshold.",
         "maximum": 65535,
         "minimum": 1,
         "type": "number"
+       },
+       "server": {
+        "description": "RADIUS server to handle client authentication.",
+        "type": "string"
        },
        "ssid": {
         "description": "The broadcasted SSID of the wireless network and for for managed mode the SSID of the network you\u2019re connecting to",
@@ -449,148 +737,124 @@
         "maximum": 1,
         "minimum": 0,
         "type": "number"
-       },
-       "name": {
-        "type": "string",
-        "minLength": 1,
-        "maxLength": 16
-       },
-       "interworking": {
-        "description": "Enable Interworking service.",
-        "maximum": 1,
-        "minimum": 0,
-        "type": "number"
-       },
-       "iw_venue_name": {
-        "description": "This parameter can be used to configure one or more Venue Name Duples for Venue Name ANQP information.",
-        "type": "string"
-       },
-       "iw_venue_group": {
-        "description": "Venue Info group. The available values are defined in IEEE Std 802.11u-2011, 7.3.1.34",
-        "maximum": 32,
-        "minimum": 0,
-        "type": "number"
-       },
-       "iw_venue_type": {
-        "description": "Venue Info type. The available values are defined in IEEE Std 802.11u-2011, 7.3.1.34",
-        "maximum": 32,
-        "minimum": 0,
-        "type": "number"
-       },
-       "iw_venue_url": {
-        "description": "Venue URL information This parameter can be used to configure one or more Venue URL Duples to provide additional information corresponding to Venue Name information.",
-        "type": "string"
-       },
-       "iw_network_auth_type": {
-        "description": "Network Authentication Type. This parameter indicates what type of network authentication is used in the network.",
-        "type": "string",
-        "minLength": 2,
-        "maxLength": 2
-       },
-       "iw_domain_name": {
-        "description": "IEEE 802.11u Domain Name.",
-        "type": "string"
-       },
-       "iw_nai_realm": {
-        "description": "NAI Realm information",
-        "type": "string"
-       },
-       "hs20": {
-        "description": "Enable Hotspot 2.0 support",
-        "maximum": 1,
-        "minimum": 0,
-        "type": "number"
-       },
-       "osen": {
-        "description": "OSU Server-Only Authenticated L2 Encryption Network",
-        "maximum": 1,
-        "minimum": 0,
-        "type": "number"
-       },
-       "anqp_domain_id": {
-        "description": "ANQP Domain ID, An identifier for a set of APs in an ESS that share the same common ANQP information.",
-        "maximum": 65535,
-        "minimum": 0,
-        "type": "number"
-       },
-       "hs20_oper_friendly_name": {
-        "description": "This parameter can be used to configure one or more Operator Friendly Name Duples.",
-        "type": "string"
-       },
-       "operator_icon": {
-        "description": "Operator icons are specified using references to the hs20_icon entries.",
-        "type": "string"
-       },
-       "radius_auth_req_attr": {
-        "description": "Additional Access-Request attributes",
-        "type": "string"
-       },
-       "radius_acct_req_attr": {
-        "description": "Additional Accounting-Request attributes",
-        "type": "string"
-       },
-       "request_cui": {
-        "description": "Request Chargeable-User-Identity (RFC 4372)",
-        "maximum": 1,
-        "minimum": 0,
-        "type": "number"
        }
-      }
+      },
+      "type": "object"
      }
-    }
-   }
+    },
+    "type": "object"
+   },
+   "type": "array"
   },
   "station": {
-   "type": "array",
    "items": {
-    "type": "object",
     "properties": {
-     "mac": {
-      "type": "string",
-      "maxLength": 17,
-      "minLength": 17
-     },
      "key": {
-      "type": "string",
       "maxLength": 63,
-      "minLength": 1
+      "minLength": 1,
+      "type": "string"
+     },
+     "mac": {
+      "maxLength": 17,
+      "minLength": 17,
+      "type": "string"
      },
      "ssid": {
-      "type": "string",
       "maxLength": 32,
-      "minLength": 1
+      "minLength": 1,
+      "type": "string"
      },
      "vid": {
-      "type": "number",
-      "maximum": 1000
+      "maximum": 1000,
+      "type": "number"
      }
-    }
-   }
+    },
+    "type": "object"
+   },
+   "type": "array"
   },
-  "wifi-station": {
-   "type": "array",
-   "items": {
-    "type": "object",
-    "properties": {
-     "network": {
-      "type": "string",
-      "maxLength": 32,
-      "minLength": 1
-     },
-     "ssid": {
-      "type": "string",
-      "maxLength": 32,
-      "minLength": 1
-     },
-     "vid": {
-      "type": "number",
-      "maximum": 1000
-     }
+  "stats": {
+   "description": "This section defines what stats and metric the unit should send to the cloud backend.",
+   "properties": {
+    "interval": {
+     "description": "This allows use to define how often the data should be sent. Values are in minutes. A value of 0 disables stats/metric reporting.",
+     "minimum": 0,
+     "type": "number"
+    },
+    "lldp": {
+     "description": "The unit shall report its LLDP neighbours.",
+     "maximum": 1,
+     "minimum": 0,
+     "type": "number"
+    },
+    "neighbours": {
+     "description": "The unit shall report its learned neighbour table.",
+     "maximum": 1,
+     "minimum": 0,
+     "type": "number"
+    },
+    "pids": {
+     "description": "The unit shall report its process table.",
+     "maximum": 1,
+     "minimum": 0,
+     "type": "number"
+    },
+    "poe": {
+     "description": "The unit shall report its current PoE state.",
+     "maximum": 1,
+     "minimum": 0,
+     "type": "number"
+    },
+    "serviceprobe": {
+     "description": "The unit shall report its service probe results (dhcp, dns, radius, ...).",
+     "maximum": 1,
+     "minimum": 0,
+     "type": "number"
+    },
+    "system": {
+     "description": "The unit shall report its basic system info (load, memory consumption, ...).",
+     "maximum": 1,
+     "minimum": 0,
+     "type": "number"
+    },
+    "traffic": {
+     "description": "The unit shall report its network traffic counters.",
+     "maximum": 1,
+     "minimum": 0,
+     "type": "number"
+    },
+    "wifiiface": {
+     "description": "The unit shall report its wifi ifaces.",
+     "maximum": 1,
+     "minimum": 0,
+     "type": "number"
+    },
+    "wifistation": {
+     "description": "The unit shall report its wifi stations.",
+     "maximum": 1,
+     "minimum": 0,
+     "type": "number"
     }
-   }
+   },
+   "type": "object"
+  },
+  "steer": {
+   "description": "This section describes the band steering behaviour of the unit.",
+   "properties": {
+    "enabled": {
+     "description": "Enable this option to tell the unit that it shall paticipate in the netwrok wide steering",
+     "maximum": 1,
+     "minimum": 0,
+     "type": "number"
+    },
+    "network": {
+     "description": "The network that shall be used to communicate with the other peers.",
+     "type": "string"
+    }
+   },
+   "type": "object"
   },
   "system": {
-   "type": "object",
    "properties": {
     "hostname": {
      "description": "This allows you to change the hostname of the device.",
@@ -600,298 +864,34 @@
      "description": "This allows you to change the TZ of the device.",
      "type": "string"
     }
-   }
+   },
+   "type": "object"
   },
-  "log": {
-   "type": "object",
-   "properties": {
-    "log_ip": {
-     "description": "IP address of a syslog server to which the log messages should be sent in addition to the local destination.",
-     "type": "string"
-    },
-    "log_port": {
-     "description": "Port number of the remote syslog server specified with log_ip.",
-     "type": "number",
-     "maximum": 65535,
-     "minimum": 100
-    },
-    "log_proto": {
-     "description": "Sets the protocol to use for the connection, either tcp or udp.",
-     "type": "string",
-     "enum": [
-      "tcp",
-      "udp"
-     ]
-    },
-    "log_hostname": {
-     "description": "Hostname to send to remote syslog. If none is provided, the actual hostname is send.",
-     "type": "string"
-    },
-    "log_size": {
-     "description": "Size of the file based log buffer in KiB. This value is used as the fallback value for log_buffer_size if the latter is not specified.",
-     "type": "number",
-     "minimum": 32
-    }
-   }
+  "uuid": {
+   "type": "integer"
   },
-  "ntp": {
-   "type": "object",
-   "properties": {
-    "enabled": {
-     "description": "Enable this option to tell the unit that it shall get its time from an upstream NTP server. The servers are defined by the <servers> attribute.",
-     "type": "number",
-     "maximum": 1,
-     "minimum": 0
+  "wifi-station": {
+   "items": {
+    "properties": {
+     "network": {
+      "maxLength": 32,
+      "minLength": 1,
+      "type": "string"
+     },
+     "ssid": {
+      "maxLength": 32,
+      "minLength": 1,
+      "type": "string"
+     },
+     "vid": {
+      "maximum": 1000,
+      "type": "number"
+     }
     },
-    "enable_server": {
-     "description": "Enable this option if you would like the unit to enable a downstream NTP server for its connected clients.",
-     "type": "number",
-     "maximum": 1,
-     "minimum": 0
-    },
-    "server": {
-     "description": "This is an array of URL/IP of the upstream NTP servers that the unit shall use to acquire its current time.",
-     "type": "array"
-    }
-   }
-  },
-  "ssh": {
-   "type": "object",
-   "properties": {
-    "enable": {
-     "description": "Enable this option if you would like to enable the SSH server on the unit.",
-     "type": "number",
-     "maximum": 1,
-     "minimum": 0
-    },
-    "Port": {
-     "description": "This option defines which port the SSH server shall be available on.",
-     "type": "number",
-     "maximum": 65535,
-     "minimum": 1
-    },
-    "authorized_keys": {
-     "description": "this allows the upload of public ssh keys. Keys need to be seperated by a newline.",
-     "type": "string"
-    },
-    "RootPasswordAuth": {
-     "description": "Define if password based auth is allowed or not for the root account.",
-     "type": "boolean"
-    },
-    "PasswordAuth": {
-     "description": "Define if password based auth is allowed or not for user accounts.",
-     "type": "boolean"
-    },
-    "allow_wan": {
-     "description": "Should the ssh server be made available on the wan port.",
-     "type": "boolean"
-    }
-   }
-  },
-  "steer": {
-   "description": "This section describes the band steering behaviour of the unit.",
-   "type": "object",
-   "properties": {
-    "enabled": {
-     "description": "Enable this option to tell the unit that it shall paticipate in the netwrok wide steering",
-     "type": "number",
-     "maximum": 1,
-     "minimum": 0
-    },
-    "network": {
-     "description": "The network that shall be used to communicate with the other peers.",
-     "type": "string"
-    }
-   }
-  },
-  "poe": {
-   "description": "This Object allows you to en/disable PoE on a network port.",
-   "type": "object",
-   "properties": {
-    "ports": {
-     "description": "This is an array of the PoE state of the ports. any value other than 0 will enable PoE on a port.",
-     "type": "array"
-    }
-   }
-  },
-  "lldp": {
-   "type": "object",
-   "properties": {
-    "lldp_description": {
-     "description": "The content that we shall announce inside the description field.",
-     "type": "string"
-    },
-    "location": {
-     "description": "The content that we shall announce inside the location field.",
-     "type": "string"
-    },
-    "interface": {
-     "description": "The interfaces that we want to run lldp on.",
-     "type": "array"
-    }
-   }
-  },
-  "rtty": {
-   "type": "object",
-   "properties": {
-    "enable": {
-     "description": "Shall rtty be enabled ?",
-     "type": "number"
-    },
-    "interface": {
-     "description": "The interface that shall be used to connect to the server.",
-     "type": "string"
-    },
-    "host": {
-     "description": "The server that we want to connect to",
-     "type": "string"
-    },
-    "port": {
-     "description": "This option defines the port that we connect to.",
-     "type": "number",
-     "maximum": 65535,
-     "minimum": 1
-    },
-    "token": {
-     "description": "The security token that we use to authenticate with the server.",
-     "type": "string"
-    }
-   }
-  },
-  "stats": {
-   "type": "object",
-   "description": "This section defines what stats and metric the unit should send to the cloud backend.",
-   "properties": {
-    "interval": {
-     "description": "This allows use to define how often the data should be sent. Values are in minutes. A value of 0 disables stats/metric reporting.",
-     "type": "number",
-     "minimum": 0
-    },
-    "neighbours": {
-     "description": "The unit shall report its learned neighbour table.",
-     "type": "number",
-     "minimum": 0,
-     "maximum": 1
-    },
-    "traffic": {
-     "description": "The unit shall report its network traffic counters.",
-     "type": "number",
-     "minimum": 0,
-     "maximum": 1
-    },
-    "wifiiface": {
-     "description": "The unit shall report its wifi ifaces.",
-     "type": "number",
-     "minimum": 0,
-     "maximum": 1
-    },
-    "wifistation": {
-     "description": "The unit shall report its wifi stations.",
-     "type": "number",
-     "minimum": 0,
-     "maximum": 1
-    },
-    "pids": {
-     "description": "The unit shall report its process table.",
-     "type": "number",
-     "minimum": 0,
-     "maximum": 1
-    },
-    "serviceprobe": {
-     "description": "The unit shall report its service probe results (dhcp, dns, radius, ...).",
-     "type": "number",
-     "minimum": 0,
-     "maximum": 1
-    },
-    "lldp": {
-     "description": "The unit shall report its LLDP neighbours.",
-     "type": "number",
-     "minimum": 0,
-     "maximum": 1
-    },
-    "system": {
-     "description": "The unit shall report its basic system info (load, memory consumption, ...).",
-     "type": "number",
-     "minimum": 0,
-     "maximum": 1
-    },
-    "poe": {
-     "description": "The unit shall report its current PoE state.",
-     "type": "number",
-     "minimum": 0,
-     "maximum": 1
-    }
-   }
-  },
-  "mqtt": {
-   "description": "The option that configure which mqtt server the unit should connect to.",
-   "type": "object",
-   "properties": {
-    "enable": {
-     "description": "Enable this option if you would like the unit to connect to the MQTT backend.",
-     "type": "number",
-     "maximum": 1,
-     "minimum": 0
-    },
-    "server": {
-     "description": "the IP/URL of the MQTT server.",
-     "type": "string"
-    },
-    "port": {
-     "description": "This option defines the port that we connect to.",
-     "type": "number",
-     "maximum": 65535,
-     "minimum": 1
-    },
-    "username": {
-     "description": "The username that is used to authenticate.",
-     "type": "string"
-    },
-    "password": {
-     "description": "The password that is used to authenticate.",
-     "type": "string"
-    }
-   }
-  },
-  "captive": {
-   "description": "This section can be used to setup a captive portal on the AP.",
-   "type": "object",
-   "properties": {
-    "enabled": {
-     "description": "Enable this option to tell the unit that it shall start a captive portal.",
-     "type": "number",
-     "maximum": 1,
-     "minimum": 0
-    },
-    "gatewayname": {
-     "type": "string",
-     "description": "This name will be presented to connecting users in on the splash page."
-    },
-    "gatewayfqdn": {
-     "type": "string",
-     "description": "The fqdn used for the captive portal IP."
-    },
-    "maxclients": {
-     "type": "number",
-     "description": "The number of clients that we accept."
-    },
-    "uploadrate": {
-     "type": "number",
-     "description": "The maximum upload rate for a specific client."
-    },
-    "downloadrate": {
-     "type": "number",
-     "description": "The maximum download rate for a specific client."
-    },
-    "uploadquota": {
-     "type": "number",
-     "description": "The maximum upload quota for a specific client."
-    },
-    "downloadquota": {
-     "type": "number",
-     "description": "The maximum download quota for a specific client."
-    }
-   }
+    "type": "object"
+   },
+   "type": "array"
   }
- }
+ },
+ "type": "object"
 }
