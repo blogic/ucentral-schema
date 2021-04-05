@@ -96,7 +96,11 @@
 			break;
 
 		case "wpa":
-			uci_set_options(u, v, [ "server", "port", "auth_secret" ]);
+			uci_set_options(u, v, [ "server", "port", "auth_secret",
+						"acct_server", "acct_port", "acct_secret",
+						"acct_interval", "radius_auth_req_attr",
+						"radius_acct_req_attr", "request_cui"
+			]);
 			break;
 		}
 
@@ -110,6 +114,17 @@
 			uci_set_options(u, v, [ "mesh_fwding", "mesh_id", "mcast_rate" ]);
 			break;
 		}
+
+		if (v.interworking) {
+			uci_set_options(u, v, [ "interworking", "iw_venue_name", "iw_venue_group", "iw_venue_type",
+						"iw_venue_url", "iw_network_auth_type", "iw_domain_name", "iw_nai_realm"
+			]);
+		}
+
+		if (v.hs20) {
+			uci_set_options(u, v, [ "hs20", "osen", "anqp_domain_id", "hs20_oper_friendly_name", "operator_icon" ]);
+		}
+
 		return name;
 	}
 
