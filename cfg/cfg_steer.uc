@@ -11,6 +11,7 @@
 		let fw = {};
 
 		uci_new_section(fw, "usteer_wan", "rule", {
+			name: "Allow-uSteer-WAN",
 			src: "wan",
 			proto: "udp",
 			target: "ACCEPT",
