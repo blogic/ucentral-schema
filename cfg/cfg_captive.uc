@@ -8,7 +8,7 @@
 		uci_set_options(opennds, cfg.captive, [ "enabled", "gatewayname", "gatewayfqdn", "maxclients",
 							"authidletimeout", "uploadrate", "downloadrate",
 							"uploadquota", "downloadquota" ]);
-		uci_render("opennds", { opennds });
+		uci_render("opennds", { "@opennds[-1]": opennds });
 	}
 
 	generate_captive();
