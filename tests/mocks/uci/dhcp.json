@@ -1,6 +1,5 @@
 {
 	"dnsmasq": {
-		".type": "dnsmasq",
 		"domainneeded": "1",
 		"boguspriv": "1",
 		"filterwin2k": "0",
@@ -20,53 +19,50 @@
 		"ednspacket_max": "1232"
 	},
 
-	"lan": {
-		".type": "dhcp",
-		"interface": "lan",
-		"start": "100",
-		"limit": "150",
-		"leasetime": "12h",
-		"dhcpv4": "server",
-		"dhcpv6": "server",
-		"ra": "server",
-		"ra_slaac": "1",
-		"ra_flags": [ "managed-config", "other-config" ]
-	},
-
-	"wan": {
-		".type": "dhcp",
-		"interface": "wan",
-		"ignore": "1"
-	},
-
 	"odhcpd": {
-		".type": "odhcpd",
 		"maindhcp": "0",
 		"leasefile": "/tmp/hosts/odhcpd",
 		"leasetrigger": "/usr/sbin/odhcpd-update",
 		"loglevel": "4"
 	},
 
-	"nat200": {
-		".type": "dhcp",
-		"interface": "nat200",
-		"start": "10",
-		"limit": "100",
-		"leasetime": "6h"
-	},
+	"dhcp": [
+		{
+			".name": "lan",
+			"interface": "lan",
+			"start": "100",
+			"limit": "150",
+			"leasetime": "12h",
+			"dhcpv4": "server",
+			"dhcpv6": "server",
+			"ra": "server",
+			"ra_slaac": "1",
+			"ra_flags": [ "managed-config", "other-config" ]
+		},
+		{
+			".name": "wan",
+			"interface": "wan",
+			"ignore": "1"
+		},
+		{
+			".name": "nat200",
+			"interface": "nat200",
+			"start": "10",
+			"limit": "100",
+			"leasetime": "6h"
+		}
+	],
 
-	"test": {
-		".type": "host",
-		"ip": "192.168.100.2",
-		"mac": "00:11:22:33:44:55",
-		"hostname": "test"
-	},
-
-	"guest": {
-		".type": "host",
-		"interface": "guest",
-		"start": "10",
-		"limit": "100",
-		"leasetime": "6h"
-	}
+	"host": [
+		{
+			"ip": "192.168.100.2",
+			"mac": "00:11:22:33:44:55",
+			"hostname": "test"
+		},
+		{
+			"ip": "192.168.100.214",
+			"mac": "02:de:ad:be:ef:01",
+			"hostname": "guest"
+		}
+	]
 }
