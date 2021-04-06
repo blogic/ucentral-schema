@@ -247,3 +247,8 @@ properties:
               description: Stationary AP config indicates that the AP doesn't move.
               maximum: 1
               minimum: 0
+              type: number
+            time_zone:
+              description: The Timezone of the AP. Setting this value will enable the "Time Advertisement" IE int he beacon.
+              minLength: 2
+              type: string

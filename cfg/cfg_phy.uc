@@ -77,6 +77,9 @@
 		if (x.he_mac_capa)
 			uci_defaults(v, { he_bss_color: 64, multiple_bssid: 0, ema: 0 });
 
+		if (v.time_zone)
+			uci_defaults(v, { time_advertisement: 2 });
+
 		if (!v.name)
 			v.name = v.network;
 
@@ -88,7 +91,8 @@
 			"ieee80211r", "ieee80211k", "ieee80211v", "ieee80211w",
 			"isolate", "rts_threshold", "uapsd", "ft_over_ds",
 			"ft_psk_generate_local", "mobility_domain", "encryption",
-			"ftm_responder", "stationary_ap", "civic", "lci"
+			"ftm_responder", "stationary_ap", "civic", "lci",
+			"time_advertisement", "time_zone"
 		]);
 
 		switch(crypto) {
