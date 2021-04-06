@@ -1,6 +1,6 @@
 {
 	"stats": {
-		".type": "stats",
+		".name": "stats",
 		"interval": 3600,
 		"neighbours": 1,
 		"traffic": 1,

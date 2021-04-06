@@ -6,8 +6,8 @@ Testing the stats module.
 	let real_print = print;
 	let fs = require("fs");
 
-	include("./tests/mock.uc", {
-		TESTFILE: "../cmd/cmd.uc",
+	include("./cmd/cmd.uc", {
+		TRACE_CALLS: "stdout",
 
 		/* wrap include() to fixup the state.uc include path */
 		include: function(path, scope) {
@@ -33,25 +33,59 @@ Testing the stats module.
 { "cmd": { "command": "stats", "payload": { } }, "cfg": { } }
 -- End --
 
+-- File fs/popen~lldpcli_-f_json_show_neighbors.txt --
+{
+  "lldp": {
+    "interface": {
+      "eno1": {
+        "chassis": {
+          "office1-switch23": {
+            "descr": "ProCurve J9280A Switch 2510G-48, revision Y.11.12, ROM N.10.02 (/sw/code/build/cod(cod11))",
+            "id": {
+              "type": "mac",
+              "value": "00:11:22:33:44:55"
+            },
+            "capability": {
+              "type": "Bridge",
+              "enabled": true
+            }
+          }
+        },
+        "via": "LLDP",
+        "rid": "1",
+        "age": "0 day, 00:53:23",
+        "port": {
+          "descr": "42",
+          "id": {
+            "type": "local",
+            "value": "42"
+          }
+        }
+      }
+    }
+  }
+}
+-- End --
+
 -- Expect stdout --
-ctx.call() object <system> method <info> args <null>
-ctx.call() object <wifi> method <iface> args <null>
-ctx.call() object <wifi> method <station> args <null>
-ctx.call() object <poe> method <info> args <null>
-ctx.call() object <topology> method <mac> args <null>
-ctx.call() object <topology> method <port> args <null>
-fs.popen() cmdline <lldpcli -f json show neighbors> mode <(null)>
-ctx.call() object <network.interface.wan> method <status> args <null>
-ctx.call() object <network.interface> method <status> args <{ "interface": "lan" }>
-ctx.call() object <network.interface> method <status> args <{ "interface": "nat200" }>
-system() command <[ "/usr/sbin/dnsprobe", "-s", "127.0.0.1" ]> timeout <(null)>
-system() command <[ "/usr/sbin/dnsprobe", "-s", "192.168.26.1" ]> timeout <(null)>
-system() command <[ "/usr/sbin/dnsprobe", "-s", "192.168.1.1" ]> timeout <(null)>
-system() command <[ "/usr/sbin/dnsprobe", "-s", "192.168.16.1" ]> timeout <(null)>
-system() command <[ "/usr/sbin/dhcpdiscover", "-i", "br-wan", "-t", "5" ]> timeout <(null)>
-system() command <[ "/usr/sbin/dhcpdiscover", "-i", "br-lan", "-t", "5" ]> timeout <(null)>
-system() command <[ "/usr/sbin/dhcpdiscover", "-i", "br-nat200", "-t", "5" ]> timeout <(null)>
-ctx.call() object <ucentral> method <stats> args <{ "serial": "001122334455", "state": { /* 6 keys */ }, "uuid": null }>
+[call] ubusconn.call object <system> method <info> args <null>
+[call] ubusconn.call object <wifi> method <iface> args <null>
+[call] ubusconn.call object <wifi> method <station> args <null>
+[call] ubusconn.call object <poe> method <info> args <null>
+[call] ubusconn.call object <topology> method <mac> args <null>
+[call] ubusconn.call object <topology> method <port> args <null>
+[call] fs.popen cmdline <lldpcli -f json show neighbors> mode <null>
+[call] ubusconn.call object <network.interface.wan> method <status> args <null>
+[call] ubusconn.call object <network.interface> method <status> args <{ "interface": "lan" }>
+[call] ubusconn.call object <network.interface> method <status> args <{ "interface": "nat200" }>
+[call] system command <[ "/usr/sbin/dnsprobe", "-s", "127.0.0.1" ]> timeout <null>
+[call] system command <[ "/usr/sbin/dnsprobe", "-s", "192.168.26.1" ]> timeout <null>
+[call] system command <[ "/usr/sbin/dnsprobe", "-s", "192.168.1.1" ]> timeout <null>
+[call] system command <[ "/usr/sbin/dnsprobe", "-s", "192.168.16.1" ]> timeout <null>
+[call] system command <[ "/usr/sbin/dhcpdiscover", "-i", "br-wan", "-t", "5" ]> timeout <null>
+[call] system command <[ "/usr/sbin/dhcpdiscover", "-i", "br-lan", "-t", "5" ]> timeout <null>
+[call] system command <[ "/usr/sbin/dhcpdiscover", "-i", "br-nat200", "-t", "5" ]> timeout <null>
+[call] ubusconn.call object <ucentral> method <stats> args <{ "serial": "001122334455", "state": { /* 6 keys */ }, "uuid": null }>
 { "lldp": { /* 1 keys */ }, "neighbours": { /* 10 keys */ }, "system": { /* 5 keys */ }, "traffic": { /* 16 keys */ }, "wifi-iface": { /* 4 keys */ }, "wifi-station": { /* 1 keys */ } }
-fs.open() path </tmp/ucentral.state> mode <w>
+[call] fs.open path </tmp/ucentral.state> mode <w>
 -- End --

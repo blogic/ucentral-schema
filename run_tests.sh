@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 
 line='........................................'
-uenv='{ "REQUIRE_SEARCH_PATH": [ "/usr/local/lib/ucode/*.so", "/usr/lib/ucode/*.so", "./tests/*.uc" ] }'
+uenv='{
+	"REQUIRE_SEARCH_PATH": [
+		"./tests/lib/*.uc",
+		"/usr/local/lib/ucode/*.so",
+		"/usr/lib/ucode/*.so"
+	]
+}'
 
 extract_sections() {
 	local file=$1
@@ -30,6 +36,14 @@ extract_sections() {
 				outfile=$(printf "%s/%03d.%s" "$dir" $count "$tag")
 				printf "" > "$outfile"
 			;;
+			"-- File "*" --")
+				tag="file"
+				outfile="${line#-- File }"
+				outfile="$(echo "${outfile% --}" | xargs)"
+				outfile="$dir/files$(readlink -m "/${outfile:-file}")"
+				mkdir -p "$(dirname "$outfile")"
+				printf "" > "$outfile"
+			;;
 			"-- End --")
 				tag=""
 				outfile=""
@@ -55,7 +69,12 @@ run_testcase() {
 	local code=$7
 	local fail=0
 
-	ucode ${uenv:+-e "$uenv"} ${env:+-e "$(cat "$env")"} -i - <"$in" >"$dir/res.out" 2>"$dir/res.err"
+	ucode ${uenv:+-e "$uenv"} -e '{
+		"MOCK_SEARCH_PATH": [
+			"'"$dir"'/files",
+			"./tests/mocks"
+		]
+	}' ${env:+-e "$(cat "$env")"} -m mocklib -m ubus -m uci -m fs -i - <"$in" >"$dir/res.out" 2>"$dir/res.err"
 
 	printf "%d\n" $? > "$dir/res.code"
 
