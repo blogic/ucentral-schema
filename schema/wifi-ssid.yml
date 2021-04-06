@@ -232,3 +232,18 @@ properties:
               maximum: 1
               minimum: 0
               type: number
+            lci:
+              description: The content of a LCI measurement subelement
+              type: string
+            civic:
+              description: The content of a location civic measurement subelement
+              type: string
+            ftm_responder:
+              description: Publish fine timing measurement (FTM) responder functionality.
+              maximum: 1
+              minimum: 0
+              type: number
+            stationary_ap:
+              description: Stationary AP config indicates that the AP doesn't move.
+              maximum: 1
+              minimum: 0

@@ -538,6 +538,10 @@
         "minLength": 17,
         "type": "string"
        },
+       "civic": {
+        "description": "The content of a location civic measurement subelement",
+        "type": "string"
+       },
        "dtim_period": {
         "description": "Set the DTIM (delivery traffic information message) period. There will be one DTIM per this many beacon frames. This may be set between 1 and 255. This option only has an effect on ap wifi-ifaces.",
         "maximum": 255,
@@ -569,6 +573,12 @@
        },
        "ft_psk_generate_local": {
         "description": "Whether to generate FT response locally for PSK networks. This avoids use of PMK-R1 push/pull from other APs with FT-PSK networks as the required information (PSK and other session data) is already locally available.",
+        "maximum": 1,
+        "minimum": 0,
+        "type": "number"
+       },
+       "ftm_responder": {
+        "description": "Publish fine timing measurement (FTM) responder functionality.",
         "maximum": 1,
         "minimum": 0,
         "type": "number"
@@ -665,6 +675,10 @@
         "minLength": 8,
         "type": "string"
        },
+       "lci": {
+        "description": "The content of a LCI measurement subelement",
+        "type": "string"
+       },
        "mobility_domain": {
         "description": "Mobility Domain identifier (dot11FTMobilityDomainID, MDID).",
         "type": "string"
@@ -732,6 +746,11 @@
         "maxLength": 32,
         "minLength": 1,
         "type": "string"
+       },
+       "stationary_ap": {
+        "description": "Stationary AP config indicates that the AP doesn't move.",
+        "maximum": 1,
+        "minimum": 0
        },
        "uapsd": {
         "maximum": 1,

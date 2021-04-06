@@ -87,7 +87,8 @@
 			"ssid", "network", "mode", "dtim_period", "hidden",
 			"ieee80211r", "ieee80211k", "ieee80211v", "ieee80211w",
 			"isolate", "rts_threshold", "uapsd", "ft_over_ds",
-			"ft_psk_generate_local", "mobility_domain", "encryption"
+			"ft_psk_generate_local", "mobility_domain", "encryption",
+			"ftm_responder", "stationary_ap", "civic", "lci"
 		]);
 
 		switch(crypto) {
