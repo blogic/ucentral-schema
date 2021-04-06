@@ -36,6 +36,8 @@
 			return;
 		}
 
+		uci_defaults(v, { wpa_disable_eapol_key_retries: 1 });
+
 		switch(v.mode) {
 		case "ap":
 		case "sta":
