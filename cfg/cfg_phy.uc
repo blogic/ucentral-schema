@@ -76,9 +76,6 @@
 		if (v.encryption in [ "sae", "sae-mixed", "wpa3", "wpa3-mixed" ])
 			v.ieee80211w = 2;
 
-		if (x.he_mac_capa)
-			uci_defaults(v, { he_bss_color: 64, multiple_bssid: 0, ema: 0 });
-
 		if (v.time_zone)
 			uci_defaults(v, { time_advertisement: 2 });
 
@@ -194,9 +191,13 @@
 			u.rxantenna = phy_get_mimo(v.mimo, c.rx_ant);
 		}
 
+		if (c.he_mac_capa)
+			uci_defaults(v, { he_bss_color: 64, multiple_bssid: 0, ema: 0 });
+
 		uci_set_options(u, v, [
 			"disabled", "country", "beacon_int", "txpower",
-			"chanbw", "require_mode", "legacy_rates"
+			"chanbw", "require_mode", "legacy_rates",
+			"he_bss_color", "multiple_bssid", "ema"
 		]);
 	}
 
