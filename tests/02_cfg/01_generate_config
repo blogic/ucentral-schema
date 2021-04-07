@@ -387,6 +387,16 @@ Testing the factory module with backup retention.
 		"mdns" : {
 			"enable" : "1"
 		},
+		"captive": {
+			"gatewayname": "uCentral - Captive",
+			"gatewayfqdn": "captive.splash",
+			"maxclients": "32",
+			"authidletimeout": 100,
+			"uploadrate": 100,
+			"downloadrate": 100,
+			"uploadquota": 100,
+			"downloadquota": 100
+		},
 		"uuid" : 1614778970
 	}
 }
@@ -436,6 +446,10 @@ Testing the factory module with backup retention.
 { "type": "file" }
 -- End --
 
+-- File fs/stat~_usr_share_ucentral_cfg_captive_uc.json --
+{ "type": "file" }
+-- End --
+
 -- Expect stderr --
 [call] fs.stat path </usr/share/ucentral/cfg_log.uc>
 [call] fs.stat path </usr/share/ucentral/cfg_network.uc>
@@ -449,6 +463,7 @@ Testing the factory module with backup retention.
 [call] fs.stat path </usr/share/ucentral/cfg_system.uc>
 [call] fs.stat path </usr/share/ucentral/cfg_lldp.uc>
 [call] fs.stat path </usr/share/ucentral/cfg_mdns.uc>
+[call] fs.stat path </usr/share/ucentral/cfg_captive.uc>
 [call] ubusconn.call object <ucentral> method <rejected> args <{ "rejected": [ /* 1 items */ ] }>
 -- End --
 
@@ -701,4 +716,14 @@ set firewall.umdns_wan.src='wan'
 set firewall.umdns_wan.proto='udp'
 set firewall.umdns_wan.target='ACCEPT'
 set firewall.umdns_wan.dest_port='5353'
+set opennds.@opennds[-1].gatewayinterface='br-captive'
+set opennds.@opennds[-1].enabled='1'
+set opennds.@opennds[-1].gatewayname='uCentral - Captive'
+set opennds.@opennds[-1].gatewayfqdn='captive.splash'
+set opennds.@opennds[-1].maxclients='32'
+set opennds.@opennds[-1].authidletimeout='100'
+set opennds.@opennds[-1].uploadrate='100'
+set opennds.@opennds[-1].downloadrate='100'
+set opennds.@opennds[-1].uploadquota='100'
+set opennds.@opennds[-1].downloadquota='100'
 -- End --
