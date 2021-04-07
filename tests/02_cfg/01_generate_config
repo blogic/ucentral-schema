@@ -157,6 +157,13 @@ Testing the factory module with backup retention.
 			},
 			{
 				"cfg" : {
+					"proto" : "dhcp"
+				},
+				"vlan": 200,
+				"mode" : "wan"
+			},
+			{
+				"cfg" : {
 					"peeraddr" : "0.0.0.0",
 					"vid" : "50"
 				},
@@ -473,6 +480,13 @@ set network.wan.proto='dhcp'
 set network.wan.metric='1'
 set network.wan.type='bridge'
 set network.wan.ifname='wan'
+set network.wan200='interface'
+set network.wan200.proto='dhcp'
+set network.wan200.metric='1'
+set network.wan200.ifname='@wan.200'
+set network.wan200.ip4table='200'
+set network.wan200.ip6table='200'
+del network.wan200.type
 set network.gre='interface'
 set network.gre.proto='gretap'
 set network.gre.type='gre'
@@ -514,6 +528,9 @@ set network.vxlanpeer.netmask='255.255.255.0'
 set dhcp.wan='dhcp'
 set dhcp.wan.interface='wan'
 set dhcp.wan.ignore='1'
+set dhcp.wan200='dhcp'
+set dhcp.wan200.interface='wan200'
+set dhcp.wan200.ignore='1'
 set dhcp.nat200='dhcp'
 set dhcp.nat200.interface='nat200'
 set dhcp.nat200.start='10'
@@ -532,6 +549,14 @@ set dhcp.guest.interface='guest'
 set dhcp.guest.start='10'
 set dhcp.guest.limit='100'
 set dhcp.guest.leasetime='6h'
+set firewall.wan200='zone'
+set firewall.wan200.name='wan200'
+set firewall.wan200.network='wan200'
+set firewall.wan200.input='REJECT'
+set firewall.wan200.output='ACCEPT'
+set firewall.wan200.forward='REJECT'
+set firewall.wan200.masq='1'
+set firewall.wan200.mtu_fix='1'
 set firewall.nat200='zone'
 set firewall.nat200.name='nat200'
 set firewall.nat200.network='nat200'
