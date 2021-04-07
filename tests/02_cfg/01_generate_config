@@ -317,6 +317,16 @@ Testing the factory module with backup retention.
 						{
 							"key": "cccccccc"
 						}
+					],
+					"multi_vlan": [
+						{
+							"network": "guest",
+							"vid": 100
+						},
+						{
+							"network": "wan",
+							"vid": "101"
+						}
 					]
 				}
 			},
@@ -716,6 +726,16 @@ set wireless.station1.key='bbbbbbbb'
 set wireless.station2='wifi-station'
 set wireless.station2.iface='radio0_guest'
 set wireless.station2.key='cccccccc'
+set wireless.vlan0='wifi-vlan'
+set wireless.vlan0.iface='radio0_guest'
+set wireless.vlan0.name='guest'
+set wireless.vlan0.network='guest'
+set wireless.vlan0.vid='100'
+set wireless.vlan1='wifi-vlan'
+set wireless.vlan1.iface='radio0_guest'
+set wireless.vlan1.name='wan'
+set wireless.vlan1.network='wan'
+set wireless.vlan1.vid='101'
 set rtty.@rtty[-1].enable='1'
 set rtty.@rtty[-1].host='websocket.example.org'
 set rtty.@rtty[-1].token='00000000000000000000000000000000'

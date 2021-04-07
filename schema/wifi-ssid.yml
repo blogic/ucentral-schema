@@ -272,3 +272,19 @@ properties:
                   vid:
                     type: number
                     maximum: 1000
+            multi_vlan:
+              type: array
+              items:
+                type: object
+                properties:
+                  network:
+                    type: string
+                    maxLength: 32
+                    minLength: 1
+                  ssid:
+                    type: string
+                    maxLength: 32
+                    minLength: 1
+                  vid:
+                    type: number
+                    maximum: 1000

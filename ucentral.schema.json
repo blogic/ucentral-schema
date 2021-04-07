@@ -727,6 +727,28 @@
         },
         "type": "array"
        },
+       "multi_vlan": {
+        "items": {
+         "properties": {
+          "network": {
+           "maxLength": 32,
+           "minLength": 1,
+           "type": "string"
+          },
+          "ssid": {
+           "maxLength": 32,
+           "minLength": 1,
+           "type": "string"
+          },
+          "vid": {
+           "maximum": 1000,
+           "type": "number"
+          }
+         },
+         "type": "object"
+        },
+        "type": "array"
+       },
        "name": {
         "maxLength": 16,
         "minLength": 1,
@@ -902,28 +924,6 @@
   },
   "uuid": {
    "type": "integer"
-  },
-  "wifi-station": {
-   "items": {
-    "properties": {
-     "network": {
-      "maxLength": 32,
-      "minLength": 1,
-      "type": "string"
-     },
-     "ssid": {
-      "maxLength": 32,
-      "minLength": 1,
-      "type": "string"
-     },
-     "vid": {
-      "maximum": 1000,
-      "type": "number"
-     }
-    },
-    "type": "object"
-   },
-   "type": "array"
   }
  },
  "type": "object"

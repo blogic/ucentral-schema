@@ -31,7 +31,6 @@ def schema_write():
 schema_merge("network", "network.schema")
 schema_merge("phy", "wifi-phy.schema")
 schema_merge("ssid", "wifi-ssid.schema")
-schema_merge("wifi-vlan", "wifi-vlan.schema")
 schema_merge("system", "system.schema")
 schema_merge("log", "log.schema")
 schema_merge("ntp", "ntp.schema")

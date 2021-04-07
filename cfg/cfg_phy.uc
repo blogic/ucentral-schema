@@ -14,11 +14,10 @@
 	}
 
 	let vlan_count = 0;
-	function vlan_generate(x, cfg, iface, ssid, network) {
-		for (let vlan in cfg) {
-			if (!uci_requires(vlan, [ "ssid", "network", "vid" ]))
-				return;
-			if (vlan.ssid != ssid || vlan.network != network)
+
+	function vlan_generate(x, v, iface) {
+		for (let vlan in v) {
+			if (!uci_requires(vlan, [ "network", "vid" ]))
 				return;
 			uci_new_section(x, "vlan" + vlan_count++, "wifi-vlan",
 					{ iface: iface, name: vlan.network,
@@ -129,6 +128,9 @@
 
 		if (v.mode == "ap" && length(v.multi_psk))
 			station_generate(x, v.multi_psk, name);
+		if (v.mode == "ap" && length(v.multi_vlan))
+			vlan_generate(x, v.multi_vlan, name);
+
 	}
 
 	function phy_htmode_verify(c, v) {
@@ -212,11 +214,7 @@
 					if (band != phy.band)
 						continue;
 
-					let name = ssid_generate(wifi, ssid.cfg, x.uci, x);
-					if (length(name)) {
-						vlan_generate(wifi, cfg["wifi-vlan"], name, ssid.cfg.ssid,
-							      ssid.cfg.network);
-					}
+					ssid_generate(wifi, ssid.cfg, x.uci, x);
 				}
 			}
 
