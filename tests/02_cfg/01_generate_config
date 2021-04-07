@@ -267,6 +267,7 @@ Testing the factory module with backup retention.
 			}
 		],
 		"rtty" : {
+			"enable": 1,
 			"host" : "websocket.example.org",
 			"interface" : "wan",
 			"token" : "00000000000000000000000000000000"
@@ -648,6 +649,7 @@ set wireless.radio0_guest.ft_psk_generate_local='1'
 set wireless.radio0_guest.mobility_domain='4f57'
 set wireless.radio0_guest.encryption='psk2'
 set wireless.radio0_guest.key='12345678'
+set rtty.@rtty[-1].enable='1'
 set rtty.@rtty[-1].host='websocket.example.org'
 set rtty.@rtty[-1].token='00000000000000000000000000000000'
 set rtty.@rtty[-1].interface='wan'
