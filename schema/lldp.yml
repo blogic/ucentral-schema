@@ -11,7 +11,3 @@ properties:
         description:
           The content that we shall announce inside the location field.
         type: string
-      interface:
-        description:
-          The interfaces that we want to run lldp on.
-        type: array

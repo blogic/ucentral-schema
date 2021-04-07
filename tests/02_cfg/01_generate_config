@@ -149,7 +149,8 @@ Testing the factory module with backup retention.
 		"network" : [
 			{
 				"cfg" : {
-					"proto" : "dhcp"
+					"proto" : "dhcp",
+					"lldp": 1
 				},
 				"mode" : "wan"
 			},
@@ -196,7 +197,8 @@ Testing the factory module with backup retention.
 						"start" : 10
 					},
 					"ipaddr" : "192.168.12.11",
-					"proto" : "static"
+					"proto" : "static",
+					"lldp": 1
 				},
 				"mode" : "guest"
 			},
@@ -375,6 +377,10 @@ Testing the factory module with backup retention.
 		"system" : {
 			"timezone" : "CET-1CEST,M3.5.0,M10.5.0/3"
 		},
+		"lldp" : {
+			"lldp_location" : "Office",
+			"lldp_description" : "OpenWrt"
+		},
 		"uuid" : 1614778970
 	}
 }
@@ -416,6 +422,10 @@ Testing the factory module with backup retention.
 { "type": "file" }
 -- End --
 
+-- File fs/stat~_usr_share_ucentral_cfg_lldp_uc.json --
+{ "type": "file" }
+-- End --
+
 -- Expect stderr --
 [call] fs.stat path </usr/share/ucentral/cfg_log.uc>
 [call] fs.stat path </usr/share/ucentral/cfg_network.uc>
@@ -427,6 +437,7 @@ Testing the factory module with backup retention.
 [call] fs.stat path </usr/share/ucentral/cfg_stats.uc>
 [call] fs.stat path </usr/share/ucentral/cfg_steer.uc>
 [call] fs.stat path </usr/share/ucentral/cfg_system.uc>
+[call] fs.stat path </usr/share/ucentral/cfg_lldp.uc>
 [call] ubusconn.call object <ucentral> method <rejected> args <{ "rejected": [ /* 1 items */ ] }>
 -- End --
 
@@ -660,4 +671,13 @@ set firewall.usteer_wan.proto='udp'
 set firewall.usteer_wan.target='ACCEPT'
 set firewall.usteer_wan.dest_port='16720'
 set system.@system[-1].timezone='CET-1CEST,M3.5.0,M10.5.0/3'
+set lldpd.config.enable_cdp='0'
+set lldpd.config.enable_fdp='0'
+set lldpd.config.enable_sonmp='0'
+set lldpd.config.enable_edp='0'
+set lldpd.config.description='OpenWrt'
+set lldpd.config.lldp_location='Office'
+del lldpd.config.interface
+add_list lldpd.config.interface='wan'
+add_list lldpd.config.interface='guest'
 -- End --

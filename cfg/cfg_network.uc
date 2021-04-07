@@ -317,7 +317,7 @@
 			firewall: {}
 		};
 
-        for (let k, v in cfg.network) {
+	        for (let k, v in cfg.network) {
 			switch (v.mode) {
 			case "wan":
 				network_generate_wan(uci, v);

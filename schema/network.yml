@@ -133,3 +133,13 @@ properties:
                 The routing metric of an interface. Lower values have higher priority.
               type: number
               maximum: 100
+            lldp:
+              description: Should LLDP be started on this network.
+              type: number
+              maximum: 1
+              minimum: 0
+            mdns:
+              description: Should MDNS be started on this network.
+              type: number
+              maximum: 1
+              minimum: 0

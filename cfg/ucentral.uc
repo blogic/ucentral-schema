@@ -77,6 +77,13 @@
 		uci_set_options: function(obj, cfg, key) {
 			for (let k, v in key)
 				uci_set_option(obj, cfg, v);
+		},
+
+		network_generate_name: function(v) {
+			if (v.name && v.mode in ["guest", "nat", "mesh", "gre", "vxlan"])
+				n = v.name;
+
+			return v.vlan ? sprintf("%s%d", v.mode, v.vlan) : v.mode;
 		}
 	};
 
