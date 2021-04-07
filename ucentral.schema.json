@@ -782,6 +782,14 @@
         "description": "Additional Access-Request attributes",
         "type": "string"
        },
+       "rate_egress": {
+        "decription": "Stations will be limited to this egress rate given in mbit.",
+        "type": "number"
+       },
+       "rate_ingress": {
+        "decription": "Stations will be limited to this ingress rate given in mbit.",
+        "type": "number"
+       },
        "request_cui": {
         "description": "Request Chargeable-User-Identity (RFC 4372)",
         "maximum": 1,

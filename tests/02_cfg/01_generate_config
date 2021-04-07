@@ -305,6 +305,8 @@ Testing the factory module with backup retention.
 					"mode" : "ap",
 					"network" : "guest",
 					"ssid" : "uCentral.Guest",
+					"rate_ingress": 20,
+					"rate_egress": 10,
 					"multi_psk": [
 						{
 							"key": "aaaaaaaa",
@@ -736,6 +738,10 @@ set wireless.vlan1.iface='radio0_guest'
 set wireless.vlan1.name='wan'
 set wireless.vlan1.network='wan'
 set wireless.vlan1.vid='101'
+set ratelimit.rate0='rate'
+set ratelimit.rate0.ssid='uCentral.Guest'
+set ratelimit.rate0.ingress='20'
+set ratelimit.rate0.egress='10'
 set rtty.@rtty[-1].enable='1'
 set rtty.@rtty[-1].host='websocket.example.org'
 set rtty.@rtty[-1].token='00000000000000000000000000000000'

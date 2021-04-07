@@ -90,7 +90,7 @@
 	let fails = {};
 
 	for (let key in cfg) {
-		if (key in ["uuid", "ssid", "station", "wifi-vlan"])
+		if (key in ["uuid", "ssid"])
 			continue;
 
 		let file = sprintf("/usr/share/ucentral/cfg_%s.uc", key);

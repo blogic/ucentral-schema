@@ -25,7 +25,18 @@
 		}
 	}
 
-	function ssid_generate(x, v, radio, c) {
+	let rate_count = 0;
+
+	function rate_generate(rate, v) {
+		let vals = { ssid: v.ssid };
+		if (v.rate_ingress)
+			vals.ingress = v.rate_ingress;
+		if (v.rate_egress)
+			vals.egress = v.rate_egress;
+		uci_new_section(rate, "rate" + rate_count++, "rate", vals);
+	}
+
+	function ssid_generate(x, v, radio, c, rate) {
 		let crypto = "none";
 
 		if (!uci_requires(v, [ "network", "mode", "encryption"])) {
@@ -130,7 +141,8 @@
 			station_generate(x, v.multi_psk, name);
 		if (v.mode == "ap" && length(v.multi_vlan))
 			vlan_generate(x, v.multi_vlan, name);
-
+		if (v.rate_ingress || v.rate_egress)
+			rate_generate(rate, v);
 	}
 
 	function phy_htmode_verify(c, v) {
@@ -202,7 +214,7 @@
 		]);
 	}
 
-	function phy_generate(wifi, x) {
+	function phy_generate(wifi, x, rate) {
 		for (let phy in cfg.phy) {
 			if (phy.band in x.band === false)
 				continue;
@@ -214,7 +226,7 @@
 					if (band != phy.band)
 						continue;
 
-					ssid_generate(wifi, ssid.cfg, x.uci, x);
+					ssid_generate(wifi, ssid.cfg, x.uci, x, rate);
 				}
 			}
 
@@ -226,6 +238,7 @@
 
 	function wifi_generate() {
 		let wifi = {};
+		let rate = {};
 
 		if (!capab.wifi)
 			return;
@@ -243,11 +256,12 @@
 			if (!phy.uci)
 				continue;
 
-			if (phy_generate(wifi, phy) === false)
+			if (phy_generate(wifi, phy, rate) === false)
 				wifi[phy.uci] = { disabled: "1" };
 		}
 
 		uci_render("wireless", wifi);
+		uci_render("ratelimit", rate);
 	}
 
 	wifi_generate();

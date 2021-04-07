@@ -252,6 +252,12 @@ properties:
               description: The Timezone of the AP. Setting this value will enable the "Time Advertisement" IE int he beacon.
               minLength: 2
               type: string
+            rate_ingress:
+              decription: Stations will be limited to this ingress rate given in mbit.
+              type: number
+            rate_egress:
+              decription: Stations will be limited to this egress rate given in mbit.
+              type: number
             multi_psk:
               type: array
               items:
