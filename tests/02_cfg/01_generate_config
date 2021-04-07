@@ -150,6 +150,7 @@ Testing the factory module with backup retention.
 			{
 				"cfg" : {
 					"proto" : "dhcp",
+					"mdns": 1,
 					"lldp": 1
 				},
 				"mode" : "wan"
@@ -198,6 +199,7 @@ Testing the factory module with backup retention.
 					},
 					"ipaddr" : "192.168.12.11",
 					"proto" : "static",
+					"mdns": 1,
 					"lldp": 1
 				},
 				"mode" : "guest"
@@ -381,6 +383,9 @@ Testing the factory module with backup retention.
 			"lldp_location" : "Office",
 			"lldp_description" : "OpenWrt"
 		},
+		"mdns" : {
+			"enable" : "1"
+		},
 		"uuid" : 1614778970
 	}
 }
@@ -426,6 +431,10 @@ Testing the factory module with backup retention.
 { "type": "file" }
 -- End --
 
+-- File fs/stat~_usr_share_ucentral_cfg_mdns_uc.json --
+{ "type": "file" }
+-- End --
+
 -- Expect stderr --
 [call] fs.stat path </usr/share/ucentral/cfg_log.uc>
 [call] fs.stat path </usr/share/ucentral/cfg_network.uc>
@@ -438,6 +447,7 @@ Testing the factory module with backup retention.
 [call] fs.stat path </usr/share/ucentral/cfg_steer.uc>
 [call] fs.stat path </usr/share/ucentral/cfg_system.uc>
 [call] fs.stat path </usr/share/ucentral/cfg_lldp.uc>
+[call] fs.stat path </usr/share/ucentral/cfg_mdns.uc>
 [call] ubusconn.call object <ucentral> method <rejected> args <{ "rejected": [ /* 1 items */ ] }>
 -- End --
 
@@ -680,4 +690,13 @@ set lldpd.config.lldp_location='Office'
 del lldpd.config.interface
 add_list lldpd.config.interface='wan'
 add_list lldpd.config.interface='guest'
+del umdns.@umdns[-1].network
+add_list umdns.@umdns[-1].network='wan'
+add_list umdns.@umdns[-1].network='guest'
+set firewall.umdns_wan='rule'
+set firewall.umdns_wan.name='Allow-uMDNS-WAN'
+set firewall.umdns_wan.src='wan'
+set firewall.umdns_wan.proto='udp'
+set firewall.umdns_wan.target='ACCEPT'
+set firewall.umdns_wan.dest_port='5353'
 -- End --

@@ -10,6 +10,3 @@ properties:
         type: number
         maximum: 1
         minimum: 0
-      network:
-        description: The networks that mdns shall be configured for. This will most likely just be WAN.
-        type: array
