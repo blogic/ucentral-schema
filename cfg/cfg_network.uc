@@ -11,7 +11,7 @@
 		} else if (mode == "guest") {
 			u.input = "REJECT";
 			u.output = "ACCEPT";
-			u.forward = "ACCEPT";
+			u.forward = "REJECT";
 		} else {
 			u.input = "ACCEPT";
 			u.output = "ACCEPT";
@@ -32,16 +32,14 @@
 		uci_new_section(x, allow + "_dns", "rule", {
 			name: "Allow-DNS-Guest",
 			src,
-			dest: "*",
-			port: 53,
+			dest_port: 53,
 			proto: [ "tcp", "udp" ],
 			target: "ACCEPT"
 		});
 		uci_new_section(x, allow + "_dhcp", "rule", {
 			name: "Allow-DHCP-Guest",
 			src,
-			dest: "*",
-			port: 67,
+			dest_port: 67,
 			family: "ipv4",
 			proto: "udp",
 			target: "ACCEPT"
@@ -49,7 +47,6 @@
 		uci_new_section(x, allow + "dhcpv6", "rule", {
 			name: "Allow-DHCPv6-Guest",
 			src,
-			dest: "*",
 			dest_port: 547,
 			family: "ipv6",
 			proto: "udp",
