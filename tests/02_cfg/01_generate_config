@@ -304,7 +304,20 @@ Testing the factory module with backup retention.
 					"mobility_domain" : "4f57",
 					"mode" : "ap",
 					"network" : "guest",
-					"ssid" : "uCentral.Guest"
+					"ssid" : "uCentral.Guest",
+					"multi_psk": [
+						{
+							"key": "aaaaaaaa",
+							"vid": 100
+						},
+						{
+							"key": "bbbbbbbb",
+							"mac": "00:11:22:33:44:55"
+						},
+						{
+							"key": "cccccccc"
+						}
+					]
 				}
 			},
 			{
@@ -692,6 +705,17 @@ set wireless.radio0_guest.ft_psk_generate_local='1'
 set wireless.radio0_guest.mobility_domain='4f57'
 set wireless.radio0_guest.encryption='psk2'
 set wireless.radio0_guest.key='12345678'
+set wireless.station0='wifi-station'
+set wireless.station0.iface='radio0_guest'
+set wireless.station0.vid='100'
+set wireless.station0.key='aaaaaaaa'
+set wireless.station1='wifi-station'
+set wireless.station1.iface='radio0_guest'
+set wireless.station1.mac='00:11:22:33:44:55'
+set wireless.station1.key='bbbbbbbb'
+set wireless.station2='wifi-station'
+set wireless.station2.iface='radio0_guest'
+set wireless.station2.key='cccccccc'
 set rtty.@rtty[-1].enable='1'
 set rtty.@rtty[-1].host='websocket.example.org'
 set rtty.@rtty[-1].token='00000000000000000000000000000000'

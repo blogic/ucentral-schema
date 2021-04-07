@@ -1,12 +1,10 @@
 {%
 	let station_count = 0;
 
-	function station_generate(x, cfg, iface, ssid) {
-		for (let sta in cfg) {
-			if (!uci_requires(sta, [ "ssid", "key" ]))
-				return;
-			if (sta.ssid != ssid)
-				return;
+	function station_generate(x, v, iface) {
+		for (let sta in v) {
+			if (!uci_requires(sta, [ "key" ]))
+				continue;
 			let u = uci_new_section(x, "station" + station_count++,
 						"wifi-station", { iface: iface });
 			uci_set_options(u, sta, [
@@ -129,7 +127,8 @@
 			uci_set_options(u, v, [ "hs20", "osen", "anqp_domain_id", "hs20_oper_friendly_name", "operator_icon" ]);
 		}
 
-		return name;
+		if (v.mode == "ap" && length(v.multi_psk))
+			station_generate(x, v.multi_psk, name);
 	}
 
 	function phy_htmode_verify(c, v) {
@@ -215,7 +214,6 @@
 
 					let name = ssid_generate(wifi, ssid.cfg, x.uci, x);
 					if (length(name)) {
-						station_generate(wifi, cfg.station, name, ssid.cfg.ssid);
 						vlan_generate(wifi, cfg["wifi-vlan"], name, ssid.cfg.ssid,
 							      ssid.cfg.network);
 					}

@@ -45,10 +45,6 @@
   },
   "lldp": {
    "properties": {
-    "interface": {
-     "description": "The interfaces that we want to run lldp on.",
-     "type": "array"
-    },
     "lldp_description": {
      "description": "The content that we shall announce inside the description field.",
      "type": "string"
@@ -704,6 +700,33 @@
         ],
         "type": "string"
        },
+       "multi_psk": {
+        "items": {
+         "properties": {
+          "key": {
+           "maxLength": 63,
+           "minLength": 1,
+           "type": "string"
+          },
+          "mac": {
+           "maxLength": 17,
+           "minLength": 17,
+           "type": "string"
+          },
+          "ssid": {
+           "maxLength": 32,
+           "minLength": 1,
+           "type": "string"
+          },
+          "vid": {
+           "maximum": 1000,
+           "type": "number"
+          }
+         },
+         "type": "object"
+        },
+        "type": "array"
+       },
        "name": {
         "maxLength": 16,
         "minLength": 1,
@@ -777,33 +800,6 @@
        }
       },
       "type": "object"
-     }
-    },
-    "type": "object"
-   },
-   "type": "array"
-  },
-  "station": {
-   "items": {
-    "properties": {
-     "key": {
-      "maxLength": 63,
-      "minLength": 1,
-      "type": "string"
-     },
-     "mac": {
-      "maxLength": 17,
-      "minLength": 17,
-      "type": "string"
-     },
-     "ssid": {
-      "maxLength": 32,
-      "minLength": 1,
-      "type": "string"
-     },
-     "vid": {
-      "maximum": 1000,
-      "type": "number"
      }
     },
     "type": "object"
