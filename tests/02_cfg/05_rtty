@@ -1,4 +1,4 @@
-Testing the factory module with backup retention.
+Testing rtty configuration generation.
 
 -- Testcase --
 {%
@@ -31,6 +31,7 @@ Testing the factory module with backup retention.
 	"capab": {},
 	"cfg": {
 		"rtty" : {
+			"enable": 1,
 			"host" : "websocket.example.org",
 			"interface" : "wan",
 			"token" : "00000000000000000000000000000000"
@@ -48,6 +49,7 @@ Testing the factory module with backup retention.
 -- End --
 
 -- Expect stdout --
+set rtty.@rtty[-1].enable='1'
 set rtty.@rtty[-1].host='websocket.example.org'
 set rtty.@rtty[-1].token='00000000000000000000000000000000'
 set rtty.@rtty[-1].interface='wan'

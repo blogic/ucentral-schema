@@ -1,4 +1,4 @@
-Testing the factory module with backup retention.
+Testing interface configuration generation.
 
 -- Testcase --
 {%
@@ -48,6 +48,13 @@ Testing the factory module with backup retention.
 				"cfg" : {
 					"proto" : "dhcp"
 				},
+				"mode" : "wan"
+			},
+			{
+				"cfg" : {
+					"proto" : "dhcp"
+				},
+				"vlan": 200,
 				"mode" : "wan"
 			},
 			{
@@ -126,6 +133,13 @@ set network.wan.proto='dhcp'
 set network.wan.metric='1'
 set network.wan.type='bridge'
 set network.wan.ifname='wan'
+set network.wan200='interface'
+set network.wan200.proto='dhcp'
+set network.wan200.metric='1'
+set network.wan200.ifname='@wan.200'
+set network.wan200.ip4table='200'
+set network.wan200.ip6table='200'
+del network.wan200.type
 set network.gre='interface'
 set network.gre.proto='gretap'
 set network.gre.type='gre'
@@ -167,6 +181,9 @@ set network.vxlanpeer.netmask='255.255.255.0'
 set dhcp.wan='dhcp'
 set dhcp.wan.interface='wan'
 set dhcp.wan.ignore='1'
+set dhcp.wan200='dhcp'
+set dhcp.wan200.interface='wan200'
+set dhcp.wan200.ignore='1'
 set dhcp.nat200='dhcp'
 set dhcp.nat200.interface='nat200'
 set dhcp.nat200.start='10'
@@ -185,6 +202,14 @@ set dhcp.guest.interface='guest'
 set dhcp.guest.start='10'
 set dhcp.guest.limit='100'
 set dhcp.guest.leasetime='6h'
+set firewall.wan200='zone'
+set firewall.wan200.name='wan200'
+set firewall.wan200.network='wan200'
+set firewall.wan200.input='REJECT'
+set firewall.wan200.output='ACCEPT'
+set firewall.wan200.forward='REJECT'
+set firewall.wan200.masq='1'
+set firewall.wan200.mtu_fix='1'
 set firewall.nat200='zone'
 set firewall.nat200.name='nat200'
 set firewall.nat200.network='nat200'
@@ -199,15 +224,14 @@ set firewall.guest.name='guest'
 set firewall.guest.network='guest'
 set firewall.guest.input='REJECT'
 set firewall.guest.output='ACCEPT'
-set firewall.guest.forward='ACCEPT'
+set firewall.guest.forward='REJECT'
 set firewall.guest_wan='forwarding'
 set firewall.guest_wan.src='guest'
 set firewall.guest_wan.dest='wan'
 set firewall.guest_allow_dns='rule'
 set firewall.guest_allow_dns.name='Allow-DNS-Guest'
 set firewall.guest_allow_dns.src='guest'
-set firewall.guest_allow_dns.dest='*'
-set firewall.guest_allow_dns.port='53'
+set firewall.guest_allow_dns.dest_port='53'
 del firewall.guest_allow_dns.proto
 add_list firewall.guest_allow_dns.proto='tcp'
 add_list firewall.guest_allow_dns.proto='udp'
@@ -215,15 +239,13 @@ set firewall.guest_allow_dns.target='ACCEPT'
 set firewall.guest_allow_dhcp='rule'
 set firewall.guest_allow_dhcp.name='Allow-DHCP-Guest'
 set firewall.guest_allow_dhcp.src='guest'
-set firewall.guest_allow_dhcp.dest='*'
-set firewall.guest_allow_dhcp.port='67'
+set firewall.guest_allow_dhcp.dest_port='67'
 set firewall.guest_allow_dhcp.family='ipv4'
 set firewall.guest_allow_dhcp.proto='udp'
 set firewall.guest_allow_dhcp.target='ACCEPT'
 set firewall.guest_allowdhcpv6='rule'
 set firewall.guest_allowdhcpv6.name='Allow-DHCPv6-Guest'
 set firewall.guest_allowdhcpv6.src='guest'
-set firewall.guest_allowdhcpv6.dest='*'
 set firewall.guest_allowdhcpv6.dest_port='547'
 set firewall.guest_allowdhcpv6.family='ipv6'
 set firewall.guest_allowdhcpv6.proto='udp'
