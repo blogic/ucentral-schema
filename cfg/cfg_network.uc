@@ -1,4 +1,27 @@
 {%
+	function have_dhcpv6_relay_interfaces() {
+		for (let net in cfg.network)
+			if (net.cfg && net.cfg.ipv6_dhcpmode == "relay")
+				return true;
+
+		return false;
+	}
+
+	function ipv6_default_mode_for_role(role) {
+		switch (role) {
+		case 'wan':
+			return 'upstream';
+
+		case 'lan':
+		case 'nat':
+		case 'guest':
+			return 'downstream';
+
+		default:
+			return 'none';
+		}
+	}
+
 	function fw_generate_zone(x, n, mode) {
 		let u = uci_new_section(x, n, "zone", { name: n, network: n });
 
@@ -44,14 +67,6 @@
 			proto: "udp",
 			target: "ACCEPT"
 		});
-		uci_new_section(x, allow + "dhcpv6", "rule", {
-			name: "Allow-DHCPv6-Guest",
-			src,
-			dest_port: 547,
-			family: "ipv6",
-			proto: "udp",
-			target: "ACCEPT"
-		});
 		uci_new_section(x, block + "_local", "rule", {
 			name: "Block-local-Guest",
 			src,
@@ -61,6 +76,80 @@
 			dest_ip: [ "192.168.0.0/16", "172.16.0.0/24", "10.0.0.0/24" ],
 			target: "REJECT"
 		});
+	}
+
+	function fw_generate_ipv6(uci, src_zone, ipv6_role) {
+		let prefix = sprintf('%s_allow_', src_zone);
+
+		/* essential IPv6 firewalling in either direction */
+		if (ipv6_role != 'none') {
+			uci_new_section(uci, prefix + 'mld', 'rule', {
+				name: 'Allow MLD requests on ' + src_zone,
+				src: src_zone,
+				proto: 'icmp',
+				src_ip: 'fe80::/10',
+				icmp_type: [ '130/0', '131/0', '132/0', '143/0' ],
+				family: 'ipv6',
+				target: 'ACCEPT'
+			});
+
+			uci_new_section(uci, prefix + 'icmpv6_ingress', 'rule', {
+				name: 'Allow essential inbound IPv6 ICMP on ' + src_zone,
+				src: src_zone,
+				proto: 'icmp',
+				icmp_type: [
+					'echo-request', 'echo-reply', 'destination-unreachable', 'packet-too-big',
+					'time-exceeded', 'bad-header', 'unknown-header-type', 'router-solicitation',
+					'neighbour-solicitation', 'router-advertisement', 'neighbour-advertisement' ],
+				limit: '1000/sec',
+				family: 'ipv6',
+				target: 'ACCEPT'
+			});
+
+			uci_new_section(uci, prefix + 'icmpv6_forward', 'rule', {
+				name: 'Allow essential IPv6 ICMP forwarding from ' + src_zone,
+				src: src_zone,
+				dest: '*',
+				proto: 'icmp',
+				icmp_type: [
+					'echo-request', 'echo-reply', 'destination-unreachable', 'packet-too-big',
+					'time-exceeded', 'bad-header', 'unknown-header-type' ],
+				limit: '1000/sec',
+				family: 'ipv6',
+				target: 'ACCEPT'
+			});
+		}
+
+		/* role specific rules */
+		switch (ipv6_role) {
+		case 'upstream':
+			uci_new_section(uci, prefix + 'dhcpv6', 'rule', {
+				name: 'Allow inbound DHCPv6 replies on ' + src_zone,
+				src: src_zone,
+				proto: 'udp',
+				src_ip: 'fc00::/6',
+				dest_ip: 'fc00::/6',
+				dest_port: '546',
+				family: 'ipv6',
+				target: 'ACCEPT'
+			});
+
+			break;
+
+		case 'downstream':
+			uci_new_section(uci, prefix + 'dhcpv6', 'rule', {
+				name: 'Allow inbound DHCPv6 requests on ' + src_zone,
+				src: src_zone,
+				proto: 'udp',
+				src_ip: 'fc00::/6',
+				dest_ip: 'fc00::/6',
+				dest_port: '547',
+				family: 'ipv6',
+				target: 'ACCEPT'
+			});
+
+			break;
+		}
 	}
 
 	function bridge_generate_vlan(x, n, vid) {
@@ -78,11 +167,13 @@
 
 		if (!v) {
 			u.ignore = 1;
-			return;
+			return u;
 		}
 
 		uci_defaults(v, { start: 100, limit: 100, leasetime: "12h" });
 		uci_set_options(u, v, [ "start", "limit", "leasetime" ]);
+
+		return u;
 	}
 
 	function lease_generate(x, v) {
@@ -144,9 +235,79 @@
 		}
 
 		u.metric = 10;
-		uci_set_options(u, v, ["mtu", "ip6assign", "disabled", "metric"]);
+		uci_set_options(u, v, ["mtu", "disabled", "metric"]);
 
 		return u;
+	}
+
+	function network_generate_ipv6(uci, base_network, iface_config, iface_section, dhcp_section) {
+		let ipv6 = iface_config.cfg.ipv6 || ipv6_default_mode_for_role(iface_config.mode);
+
+		switch (ipv6) {
+		case 'upstream':
+			let name = network_generate_name(iface_config.mode + '6', iface_config);
+
+			uci_new_section(uci, name, 'interface', {
+				ifname: '@' + base_network,
+				proto: 'dhcpv6',
+				reqprefix: iface_config.cfg.ipv6_reqprefixlen || 'auto'
+			});
+
+			if (have_dhcpv6_relay_interfaces()) {
+				dhcp_section.ra = 'relay';
+				dhcp_section.ndp = 'relay';
+				dhcp_section.dhcpv6 = 'relay';
+				dhcp_section.master = 1;
+			}
+			else {
+				dhcp_section.ra = 'disabled';
+				dhcp_section.ndp = 'disabled';
+				dhcp_section.dhcpv6 = 'disabled';
+			}
+
+			break;
+
+		case 'downstream':
+			iface_section.ip6assign = iface_config.cfg.ipv6_setprefixlen || 60;
+
+			let dhcpv6_mode = iface_config.cfg.ipv6_dhcpmode || 'hybrid';
+			let ra_modes = [ 'stateless', 'hybrid', 'stateful' ];
+
+			switch (dhcpv6_mode) {
+			case 'stateless':
+			case 'hybrid':
+			case 'stateful':
+				dhcp_section.ra = 'server';
+				dhcp_section.ndp = 'disabled';
+				dhcp_section.dhcpv6 = 'server';
+
+				/* map mode name to 0/1/2 respectively */
+				dhcp_section.ra_management = index(ra_modes, dhcpv6_mode);
+
+				break;
+
+			case 'relay':
+				dhcp_section.ra = 'relay';
+				dhcp_section.ndp = 'relay';
+				dhcp_section.dhcpv6 = 'relay';
+
+				break;
+			}
+
+			break;
+
+		case 'none':
+			dhcp_section.ra = 'disabled';
+			dhcp_section.ndp = 'disabled';
+			dhcp_section.dhcpv6 = 'disabled';
+
+			/* ToDo: consider creating a config device section with
+			 * `option ipv6 0` to also disable IPv6-LL */
+
+			break;
+		}
+
+		fw_generate_ipv6(uci.firewall, base_network, ipv6);
 	}
 
 	function network_generate_wan(x, v) {
@@ -178,20 +339,25 @@
 			u.ifname = capab.network.wan.ifname;
 		}
 
-		dhcp_generate(x.dhcp, false, name);
+		let dhcp = dhcp_generate(x.dhcp, false, name);
+
+		network_generate_ipv6(x, name, v, u, dhcp);
 	}
 
 	function network_generate_lan(x, c, n) {
 		let name = network_generate_name(n, c);
-		let u;
+		let ipv6 = ipv6_default_mode_for_role(n);
+		let u, dhcp;
 
 		u = network_generate_base(x, c.cfg, name);
-		dhcp_generate(x.dhcp, c.cfg.dhcp, name);
+		dhcp = dhcp_generate(x.dhcp, c.cfg.dhcp, name);
 
 		for (let k, v in c.cfg.leases)
 			lease_generate(x.dhcp, v);
 
 		network_generate_vlan_rule(x.network, c, name);
+
+		network_generate_ipv6(x, name, c, u, dhcp);
 
 		return u;
 	}
@@ -317,7 +483,7 @@
 			firewall: {}
 		};
 
-	        for (let k, v in cfg.network) {
+		for (let k, v in cfg.network) {
 			switch (v.mode) {
 			case "wan":
 				network_generate_wan(uci, v);

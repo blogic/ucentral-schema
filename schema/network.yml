@@ -73,12 +73,6 @@ properties:
               type: number
               maximum: 1
               minimum: 0
-            ip6assign:
-              description:
-                The prefix delegation mask that the interface shall use.
-              type: number
-              maximum: 96
-              minimum: 0
             peeraddr:
               description:
                 The remote tunnel endpoint that we want to connect to.
@@ -143,3 +137,50 @@ properties:
               type: number
               maximum: 1
               minimum: 0
+            ipv6:
+              description:
+                The IPv6 operation mode of this interface. When set to "upstream", the system will
+                attempt to acquire an IPv6 address and prefix through DHCPv6-PD and SLAAC. When set
+                to "downstream", DHCPv6 and router advertisements will be offered. Setting "none"
+                will inhibit any IPv6 configuration.
+              type: string
+              enum:
+              - "none"
+              - "upstream"
+              - "downstream"
+            ipv6_reqprefixlen:
+              description:
+                Specifies the IPv6 prefix size that should be requested on upstream interfaces.
+              anyOf:
+              - type: string
+                enum:
+                - "auto"
+                - "none"
+              - type: number
+                minimum: 0
+                maximum: 64
+            ipv6_dhcpmode:
+              description:
+                Specifies the DHCPv6 operation mode on downstream interfaces. When set to "stateless",
+                the system will announce router advertisements only, without offering stateful DHCPv6
+                service. When set to "stateful", emitted router advertisements will instruct clients
+                to obtain a DHCPv6 lease. When set to "hybrid", clients can freely chose whether to self-
+                assign a random address through SLAAC, whether to request an address via DHCPv6, or both.
+                For maximum compatibility with different clients, it is recommended to use the hybrid mode.
+                The special mode "relay" will instruct the unit to act as DHCPv6 relay between this interface
+                and any of the IPv6 interfaces in "upstream" mode.
+              type: string
+              enum:
+              - "hybrid"
+              - "stateless"
+              - "stateful"
+              - "relay"
+            ipv6_setprefixlen:
+              description:
+                Specifies the IPv6 prefix size that should be assigned to this downstream interface.
+                A suitable prefix is taken from any of the received upstream prefixes and configured
+                on this interface for redistribution via DHCPv6. Setting this value to 64 disables
+                DHCPv6-PD since there will be no prefixes to redistribute.
+              type: number
+              minimum: 48
+              maximum: 64

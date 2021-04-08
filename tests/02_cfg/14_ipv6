@@ -1,0 +1,537 @@
+-- File fs/stat~_usr_share_ucentral_cfg_network_uc.json --
+{ "type": "file" }
+-- End --
+
+
+Testing automatic IPv6 configuration.
+
+-- Testcase --
+{%
+	let real_include = include;
+
+	include("./cfg/ucentral.uc", {
+		TRACE_CALLS: "none",
+
+		/* wrap include() to fixup the include paths */
+		include: function(path, scope) {
+			path = replace(path, "/usr/share/ucentral/", "../cfg/");
+
+			/* make path absolute */
+			if (index(path, "/") != 0) {
+				try {
+					die();
+				} catch(e) {
+					path = replace(e.stacktrace[1].filename, /\/[^\/]+$/, '') + '/' + path;
+				};
+			}
+
+			return real_include(path, scope);
+		}
+	})
+%}
+-- End --
+
+-- Environment --
+{
+	"capab": {
+		"network": {
+			"lan": {
+				"ifname": "lan1 lan2 lan3 lan4",
+				"macaddr": "00:11:22:f5:37:d3",
+				"protocol": "static"
+			},
+			"wan": {
+				"ifname": "wan",
+				"macaddr": "00:11:22:f5:37:d2",
+				"protocol": "dhcp"
+			}
+		}
+	},
+	"cfg": {
+		"network": [
+			{
+				"mode": "wan",
+				"cfg": {
+					"proto": "dhcp"
+				}
+			},
+			{
+				"mode": "nat",
+				"cfg": {
+					"proto": "static",
+					"ipaddr": "192.168.20.1",
+					"netmask": "255.255.255.0"
+				},
+			}
+		]
+	}
+}
+-- End --
+
+-- Expect stdout --
+set network.wan='interface'
+set network.wan.proto='dhcp'
+set network.wan.metric='1'
+set network.wan.type='bridge'
+set network.wan.ifname='wan'
+set network.nat='interface'
+set network.nat.proto='static'
+set network.nat.ipaddr='192.168.20.1'
+set network.nat.netmask='255.255.255.0'
+set network.nat.metric='10'
+set network.nat.ip6assign='60'
+set network.nat.type='bridge'
+set dhcp.wan='dhcp'
+set dhcp.wan.interface='wan'
+set dhcp.wan.ignore='1'
+set dhcp.wan.ra='disabled'
+set dhcp.wan.ndp='disabled'
+set dhcp.wan.dhcpv6='disabled'
+set dhcp.nat='dhcp'
+set dhcp.nat.interface='nat'
+set dhcp.nat.ignore='1'
+set dhcp.nat.ra='server'
+set dhcp.nat.ndp='disabled'
+set dhcp.nat.dhcpv6='server'
+set dhcp.nat.ra_management='1'
+set firewall.wan_allow_mld='rule'
+set firewall.wan_allow_mld.name='Allow MLD requests on wan'
+set firewall.wan_allow_mld.src='wan'
+set firewall.wan_allow_mld.proto='icmp'
+set firewall.wan_allow_mld.src_ip='fe80::/10'
+del firewall.wan_allow_mld.icmp_type
+add_list firewall.wan_allow_mld.icmp_type='130/0'
+add_list firewall.wan_allow_mld.icmp_type='131/0'
+add_list firewall.wan_allow_mld.icmp_type='132/0'
+add_list firewall.wan_allow_mld.icmp_type='143/0'
+set firewall.wan_allow_mld.family='ipv6'
+set firewall.wan_allow_mld.target='ACCEPT'
+set firewall.wan_allow_icmpv6_ingress='rule'
+set firewall.wan_allow_icmpv6_ingress.name='Allow essential inbound IPv6 ICMP on wan'
+set firewall.wan_allow_icmpv6_ingress.src='wan'
+set firewall.wan_allow_icmpv6_ingress.proto='icmp'
+del firewall.wan_allow_icmpv6_ingress.icmp_type
+add_list firewall.wan_allow_icmpv6_ingress.icmp_type='echo-request'
+add_list firewall.wan_allow_icmpv6_ingress.icmp_type='echo-reply'
+add_list firewall.wan_allow_icmpv6_ingress.icmp_type='destination-unreachable'
+add_list firewall.wan_allow_icmpv6_ingress.icmp_type='packet-too-big'
+add_list firewall.wan_allow_icmpv6_ingress.icmp_type='time-exceeded'
+add_list firewall.wan_allow_icmpv6_ingress.icmp_type='bad-header'
+add_list firewall.wan_allow_icmpv6_ingress.icmp_type='unknown-header-type'
+add_list firewall.wan_allow_icmpv6_ingress.icmp_type='router-solicitation'
+add_list firewall.wan_allow_icmpv6_ingress.icmp_type='neighbour-solicitation'
+add_list firewall.wan_allow_icmpv6_ingress.icmp_type='router-advertisement'
+add_list firewall.wan_allow_icmpv6_ingress.icmp_type='neighbour-advertisement'
+set firewall.wan_allow_icmpv6_ingress.limit='1000/sec'
+set firewall.wan_allow_icmpv6_ingress.family='ipv6'
+set firewall.wan_allow_icmpv6_ingress.target='ACCEPT'
+set firewall.wan_allow_icmpv6_forward='rule'
+set firewall.wan_allow_icmpv6_forward.name='Allow essential IPv6 ICMP forwarding from wan'
+set firewall.wan_allow_icmpv6_forward.src='wan'
+set firewall.wan_allow_icmpv6_forward.dest='*'
+set firewall.wan_allow_icmpv6_forward.proto='icmp'
+del firewall.wan_allow_icmpv6_forward.icmp_type
+add_list firewall.wan_allow_icmpv6_forward.icmp_type='echo-request'
+add_list firewall.wan_allow_icmpv6_forward.icmp_type='echo-reply'
+add_list firewall.wan_allow_icmpv6_forward.icmp_type='destination-unreachable'
+add_list firewall.wan_allow_icmpv6_forward.icmp_type='packet-too-big'
+add_list firewall.wan_allow_icmpv6_forward.icmp_type='time-exceeded'
+add_list firewall.wan_allow_icmpv6_forward.icmp_type='bad-header'
+add_list firewall.wan_allow_icmpv6_forward.icmp_type='unknown-header-type'
+set firewall.wan_allow_icmpv6_forward.limit='1000/sec'
+set firewall.wan_allow_icmpv6_forward.family='ipv6'
+set firewall.wan_allow_icmpv6_forward.target='ACCEPT'
+set firewall.wan_allow_dhcpv6='rule'
+set firewall.wan_allow_dhcpv6.name='Allow inbound DHCPv6 replies on wan'
+set firewall.wan_allow_dhcpv6.src='wan'
+set firewall.wan_allow_dhcpv6.proto='udp'
+set firewall.wan_allow_dhcpv6.src_ip='fc00::/6'
+set firewall.wan_allow_dhcpv6.dest_ip='fc00::/6'
+set firewall.wan_allow_dhcpv6.dest_port='546'
+set firewall.wan_allow_dhcpv6.family='ipv6'
+set firewall.wan_allow_dhcpv6.target='ACCEPT'
+set firewall.nat_allow_mld='rule'
+set firewall.nat_allow_mld.name='Allow MLD requests on nat'
+set firewall.nat_allow_mld.src='nat'
+set firewall.nat_allow_mld.proto='icmp'
+set firewall.nat_allow_mld.src_ip='fe80::/10'
+del firewall.nat_allow_mld.icmp_type
+add_list firewall.nat_allow_mld.icmp_type='130/0'
+add_list firewall.nat_allow_mld.icmp_type='131/0'
+add_list firewall.nat_allow_mld.icmp_type='132/0'
+add_list firewall.nat_allow_mld.icmp_type='143/0'
+set firewall.nat_allow_mld.family='ipv6'
+set firewall.nat_allow_mld.target='ACCEPT'
+set firewall.nat_allow_icmpv6_ingress='rule'
+set firewall.nat_allow_icmpv6_ingress.name='Allow essential inbound IPv6 ICMP on nat'
+set firewall.nat_allow_icmpv6_ingress.src='nat'
+set firewall.nat_allow_icmpv6_ingress.proto='icmp'
+del firewall.nat_allow_icmpv6_ingress.icmp_type
+add_list firewall.nat_allow_icmpv6_ingress.icmp_type='echo-request'
+add_list firewall.nat_allow_icmpv6_ingress.icmp_type='echo-reply'
+add_list firewall.nat_allow_icmpv6_ingress.icmp_type='destination-unreachable'
+add_list firewall.nat_allow_icmpv6_ingress.icmp_type='packet-too-big'
+add_list firewall.nat_allow_icmpv6_ingress.icmp_type='time-exceeded'
+add_list firewall.nat_allow_icmpv6_ingress.icmp_type='bad-header'
+add_list firewall.nat_allow_icmpv6_ingress.icmp_type='unknown-header-type'
+add_list firewall.nat_allow_icmpv6_ingress.icmp_type='router-solicitation'
+add_list firewall.nat_allow_icmpv6_ingress.icmp_type='neighbour-solicitation'
+add_list firewall.nat_allow_icmpv6_ingress.icmp_type='router-advertisement'
+add_list firewall.nat_allow_icmpv6_ingress.icmp_type='neighbour-advertisement'
+set firewall.nat_allow_icmpv6_ingress.limit='1000/sec'
+set firewall.nat_allow_icmpv6_ingress.family='ipv6'
+set firewall.nat_allow_icmpv6_ingress.target='ACCEPT'
+set firewall.nat_allow_icmpv6_forward='rule'
+set firewall.nat_allow_icmpv6_forward.name='Allow essential IPv6 ICMP forwarding from nat'
+set firewall.nat_allow_icmpv6_forward.src='nat'
+set firewall.nat_allow_icmpv6_forward.dest='*'
+set firewall.nat_allow_icmpv6_forward.proto='icmp'
+del firewall.nat_allow_icmpv6_forward.icmp_type
+add_list firewall.nat_allow_icmpv6_forward.icmp_type='echo-request'
+add_list firewall.nat_allow_icmpv6_forward.icmp_type='echo-reply'
+add_list firewall.nat_allow_icmpv6_forward.icmp_type='destination-unreachable'
+add_list firewall.nat_allow_icmpv6_forward.icmp_type='packet-too-big'
+add_list firewall.nat_allow_icmpv6_forward.icmp_type='time-exceeded'
+add_list firewall.nat_allow_icmpv6_forward.icmp_type='bad-header'
+add_list firewall.nat_allow_icmpv6_forward.icmp_type='unknown-header-type'
+set firewall.nat_allow_icmpv6_forward.limit='1000/sec'
+set firewall.nat_allow_icmpv6_forward.family='ipv6'
+set firewall.nat_allow_icmpv6_forward.target='ACCEPT'
+set firewall.nat_allow_dhcpv6='rule'
+set firewall.nat_allow_dhcpv6.name='Allow inbound DHCPv6 requests on nat'
+set firewall.nat_allow_dhcpv6.src='nat'
+set firewall.nat_allow_dhcpv6.proto='udp'
+set firewall.nat_allow_dhcpv6.src_ip='fc00::/6'
+set firewall.nat_allow_dhcpv6.dest_ip='fc00::/6'
+set firewall.nat_allow_dhcpv6.dest_port='547'
+set firewall.nat_allow_dhcpv6.family='ipv6'
+set firewall.nat_allow_dhcpv6.target='ACCEPT'
+set firewall.nat='zone'
+set firewall.nat.name='nat'
+set firewall.nat.network='nat'
+set firewall.nat.input='ACCEPT'
+set firewall.nat.output='ACCEPT'
+set firewall.nat.forward='ACCEPT'
+set firewall.nat_wan='forwarding'
+set firewall.nat_wan.src='nat'
+set firewall.nat_wan.dest='wan'
+-- End --
+
+
+Testing DHCPv6 relay mode.
+
+-- Testcase --
+{%
+	let real_include = include;
+
+	include("./cfg/ucentral.uc", {
+		TRACE_CALLS: "none",
+
+		/* wrap include() to fixup the include paths */
+		include: function(path, scope) {
+			path = replace(path, "/usr/share/ucentral/", "../cfg/");
+
+			/* make path absolute */
+			if (index(path, "/") != 0) {
+				try {
+					die();
+				} catch(e) {
+					path = replace(e.stacktrace[1].filename, /\/[^\/]+$/, '') + '/' + path;
+				};
+			}
+
+			return real_include(path, scope);
+		}
+	})
+%}
+-- End --
+
+-- Environment --
+{
+	"capab": {
+		"network": {
+			"lan": {
+				"ifname": "lan1 lan2 lan3 lan4",
+				"macaddr": "00:11:22:f5:37:d3",
+				"protocol": "static"
+			},
+			"wan": {
+				"ifname": "wan",
+				"macaddr": "00:11:22:f5:37:d2",
+				"protocol": "dhcp"
+			}
+		}
+	},
+	"cfg": {
+		"network": [
+			{
+				"mode": "wan",
+				"cfg": {
+					"proto": "dhcp"
+				}
+			},
+			{
+				"mode": "nat",
+				"cfg": {
+					"proto": "static",
+					"ipaddr": "192.168.20.1",
+					"netmask": "255.255.255.0",
+					"ipv6_dhcpmode": "relay"
+				},
+			}
+		]
+	}
+}
+-- End --
+
+-- Expect stdout --
+set network.wan='interface'
+set network.wan.proto='dhcp'
+set network.wan.metric='1'
+set network.wan.type='bridge'
+set network.wan.ifname='wan'
+set network.nat='interface'
+set network.nat.proto='static'
+set network.nat.ipaddr='192.168.20.1'
+set network.nat.netmask='255.255.255.0'
+set network.nat.metric='10'
+set network.nat.ip6assign='60'
+set network.nat.type='bridge'
+set dhcp.wan='dhcp'
+set dhcp.wan.interface='wan'
+set dhcp.wan.ignore='1'
+set dhcp.wan.ra='relay'
+set dhcp.wan.ndp='relay'
+set dhcp.wan.dhcpv6='relay'
+set dhcp.wan.master='1'
+set dhcp.nat='dhcp'
+set dhcp.nat.interface='nat'
+set dhcp.nat.ignore='1'
+set dhcp.nat.ra='relay'
+set dhcp.nat.ndp='relay'
+set dhcp.nat.dhcpv6='relay'
+set firewall.wan_allow_mld='rule'
+set firewall.wan_allow_mld.name='Allow MLD requests on wan'
+set firewall.wan_allow_mld.src='wan'
+set firewall.wan_allow_mld.proto='icmp'
+set firewall.wan_allow_mld.src_ip='fe80::/10'
+del firewall.wan_allow_mld.icmp_type
+add_list firewall.wan_allow_mld.icmp_type='130/0'
+add_list firewall.wan_allow_mld.icmp_type='131/0'
+add_list firewall.wan_allow_mld.icmp_type='132/0'
+add_list firewall.wan_allow_mld.icmp_type='143/0'
+set firewall.wan_allow_mld.family='ipv6'
+set firewall.wan_allow_mld.target='ACCEPT'
+set firewall.wan_allow_icmpv6_ingress='rule'
+set firewall.wan_allow_icmpv6_ingress.name='Allow essential inbound IPv6 ICMP on wan'
+set firewall.wan_allow_icmpv6_ingress.src='wan'
+set firewall.wan_allow_icmpv6_ingress.proto='icmp'
+del firewall.wan_allow_icmpv6_ingress.icmp_type
+add_list firewall.wan_allow_icmpv6_ingress.icmp_type='echo-request'
+add_list firewall.wan_allow_icmpv6_ingress.icmp_type='echo-reply'
+add_list firewall.wan_allow_icmpv6_ingress.icmp_type='destination-unreachable'
+add_list firewall.wan_allow_icmpv6_ingress.icmp_type='packet-too-big'
+add_list firewall.wan_allow_icmpv6_ingress.icmp_type='time-exceeded'
+add_list firewall.wan_allow_icmpv6_ingress.icmp_type='bad-header'
+add_list firewall.wan_allow_icmpv6_ingress.icmp_type='unknown-header-type'
+add_list firewall.wan_allow_icmpv6_ingress.icmp_type='router-solicitation'
+add_list firewall.wan_allow_icmpv6_ingress.icmp_type='neighbour-solicitation'
+add_list firewall.wan_allow_icmpv6_ingress.icmp_type='router-advertisement'
+add_list firewall.wan_allow_icmpv6_ingress.icmp_type='neighbour-advertisement'
+set firewall.wan_allow_icmpv6_ingress.limit='1000/sec'
+set firewall.wan_allow_icmpv6_ingress.family='ipv6'
+set firewall.wan_allow_icmpv6_ingress.target='ACCEPT'
+set firewall.wan_allow_icmpv6_forward='rule'
+set firewall.wan_allow_icmpv6_forward.name='Allow essential IPv6 ICMP forwarding from wan'
+set firewall.wan_allow_icmpv6_forward.src='wan'
+set firewall.wan_allow_icmpv6_forward.dest='*'
+set firewall.wan_allow_icmpv6_forward.proto='icmp'
+del firewall.wan_allow_icmpv6_forward.icmp_type
+add_list firewall.wan_allow_icmpv6_forward.icmp_type='echo-request'
+add_list firewall.wan_allow_icmpv6_forward.icmp_type='echo-reply'
+add_list firewall.wan_allow_icmpv6_forward.icmp_type='destination-unreachable'
+add_list firewall.wan_allow_icmpv6_forward.icmp_type='packet-too-big'
+add_list firewall.wan_allow_icmpv6_forward.icmp_type='time-exceeded'
+add_list firewall.wan_allow_icmpv6_forward.icmp_type='bad-header'
+add_list firewall.wan_allow_icmpv6_forward.icmp_type='unknown-header-type'
+set firewall.wan_allow_icmpv6_forward.limit='1000/sec'
+set firewall.wan_allow_icmpv6_forward.family='ipv6'
+set firewall.wan_allow_icmpv6_forward.target='ACCEPT'
+set firewall.wan_allow_dhcpv6='rule'
+set firewall.wan_allow_dhcpv6.name='Allow inbound DHCPv6 replies on wan'
+set firewall.wan_allow_dhcpv6.src='wan'
+set firewall.wan_allow_dhcpv6.proto='udp'
+set firewall.wan_allow_dhcpv6.src_ip='fc00::/6'
+set firewall.wan_allow_dhcpv6.dest_ip='fc00::/6'
+set firewall.wan_allow_dhcpv6.dest_port='546'
+set firewall.wan_allow_dhcpv6.family='ipv6'
+set firewall.wan_allow_dhcpv6.target='ACCEPT'
+set firewall.nat_allow_mld='rule'
+set firewall.nat_allow_mld.name='Allow MLD requests on nat'
+set firewall.nat_allow_mld.src='nat'
+set firewall.nat_allow_mld.proto='icmp'
+set firewall.nat_allow_mld.src_ip='fe80::/10'
+del firewall.nat_allow_mld.icmp_type
+add_list firewall.nat_allow_mld.icmp_type='130/0'
+add_list firewall.nat_allow_mld.icmp_type='131/0'
+add_list firewall.nat_allow_mld.icmp_type='132/0'
+add_list firewall.nat_allow_mld.icmp_type='143/0'
+set firewall.nat_allow_mld.family='ipv6'
+set firewall.nat_allow_mld.target='ACCEPT'
+set firewall.nat_allow_icmpv6_ingress='rule'
+set firewall.nat_allow_icmpv6_ingress.name='Allow essential inbound IPv6 ICMP on nat'
+set firewall.nat_allow_icmpv6_ingress.src='nat'
+set firewall.nat_allow_icmpv6_ingress.proto='icmp'
+del firewall.nat_allow_icmpv6_ingress.icmp_type
+add_list firewall.nat_allow_icmpv6_ingress.icmp_type='echo-request'
+add_list firewall.nat_allow_icmpv6_ingress.icmp_type='echo-reply'
+add_list firewall.nat_allow_icmpv6_ingress.icmp_type='destination-unreachable'
+add_list firewall.nat_allow_icmpv6_ingress.icmp_type='packet-too-big'
+add_list firewall.nat_allow_icmpv6_ingress.icmp_type='time-exceeded'
+add_list firewall.nat_allow_icmpv6_ingress.icmp_type='bad-header'
+add_list firewall.nat_allow_icmpv6_ingress.icmp_type='unknown-header-type'
+add_list firewall.nat_allow_icmpv6_ingress.icmp_type='router-solicitation'
+add_list firewall.nat_allow_icmpv6_ingress.icmp_type='neighbour-solicitation'
+add_list firewall.nat_allow_icmpv6_ingress.icmp_type='router-advertisement'
+add_list firewall.nat_allow_icmpv6_ingress.icmp_type='neighbour-advertisement'
+set firewall.nat_allow_icmpv6_ingress.limit='1000/sec'
+set firewall.nat_allow_icmpv6_ingress.family='ipv6'
+set firewall.nat_allow_icmpv6_ingress.target='ACCEPT'
+set firewall.nat_allow_icmpv6_forward='rule'
+set firewall.nat_allow_icmpv6_forward.name='Allow essential IPv6 ICMP forwarding from nat'
+set firewall.nat_allow_icmpv6_forward.src='nat'
+set firewall.nat_allow_icmpv6_forward.dest='*'
+set firewall.nat_allow_icmpv6_forward.proto='icmp'
+del firewall.nat_allow_icmpv6_forward.icmp_type
+add_list firewall.nat_allow_icmpv6_forward.icmp_type='echo-request'
+add_list firewall.nat_allow_icmpv6_forward.icmp_type='echo-reply'
+add_list firewall.nat_allow_icmpv6_forward.icmp_type='destination-unreachable'
+add_list firewall.nat_allow_icmpv6_forward.icmp_type='packet-too-big'
+add_list firewall.nat_allow_icmpv6_forward.icmp_type='time-exceeded'
+add_list firewall.nat_allow_icmpv6_forward.icmp_type='bad-header'
+add_list firewall.nat_allow_icmpv6_forward.icmp_type='unknown-header-type'
+set firewall.nat_allow_icmpv6_forward.limit='1000/sec'
+set firewall.nat_allow_icmpv6_forward.family='ipv6'
+set firewall.nat_allow_icmpv6_forward.target='ACCEPT'
+set firewall.nat_allow_dhcpv6='rule'
+set firewall.nat_allow_dhcpv6.name='Allow inbound DHCPv6 requests on nat'
+set firewall.nat_allow_dhcpv6.src='nat'
+set firewall.nat_allow_dhcpv6.proto='udp'
+set firewall.nat_allow_dhcpv6.src_ip='fc00::/6'
+set firewall.nat_allow_dhcpv6.dest_ip='fc00::/6'
+set firewall.nat_allow_dhcpv6.dest_port='547'
+set firewall.nat_allow_dhcpv6.family='ipv6'
+set firewall.nat_allow_dhcpv6.target='ACCEPT'
+set firewall.nat='zone'
+set firewall.nat.name='nat'
+set firewall.nat.network='nat'
+set firewall.nat.input='ACCEPT'
+set firewall.nat.output='ACCEPT'
+set firewall.nat.forward='ACCEPT'
+set firewall.nat_wan='forwarding'
+set firewall.nat_wan.src='nat'
+set firewall.nat_wan.dest='wan'
+-- End --
+
+
+Testing disabling IPv6.
+
+-- Testcase --
+{%
+	let real_include = include;
+
+	include("./cfg/ucentral.uc", {
+		TRACE_CALLS: "none",
+
+		/* wrap include() to fixup the include paths */
+		include: function(path, scope) {
+			path = replace(path, "/usr/share/ucentral/", "../cfg/");
+
+			/* make path absolute */
+			if (index(path, "/") != 0) {
+				try {
+					die();
+				} catch(e) {
+					path = replace(e.stacktrace[1].filename, /\/[^\/]+$/, '') + '/' + path;
+				};
+			}
+
+			return real_include(path, scope);
+		}
+	})
+%}
+-- End --
+
+-- Environment --
+{
+	"capab": {
+		"network": {
+			"lan": {
+				"ifname": "lan1 lan2 lan3 lan4",
+				"macaddr": "00:11:22:f5:37:d3",
+				"protocol": "static"
+			},
+			"wan": {
+				"ifname": "wan",
+				"macaddr": "00:11:22:f5:37:d2",
+				"protocol": "dhcp"
+			}
+		}
+	},
+	"cfg": {
+		"network": [
+			{
+				"mode": "wan",
+				"cfg": {
+					"proto": "dhcp",
+					"ipv6": "none"
+				}
+			},
+			{
+				"mode": "nat",
+				"cfg": {
+					"proto": "static",
+					"ipaddr": "192.168.20.1",
+					"netmask": "255.255.255.0",
+					"ipv6": "none"
+				},
+			}
+		]
+	}
+}
+-- End --
+
+-- Expect stdout --
+set network.wan='interface'
+set network.wan.proto='dhcp'
+set network.wan.metric='1'
+set network.wan.type='bridge'
+set network.wan.ifname='wan'
+set network.nat='interface'
+set network.nat.proto='static'
+set network.nat.ipaddr='192.168.20.1'
+set network.nat.netmask='255.255.255.0'
+set network.nat.metric='10'
+set network.nat.type='bridge'
+set dhcp.wan='dhcp'
+set dhcp.wan.interface='wan'
+set dhcp.wan.ignore='1'
+set dhcp.wan.ra='disabled'
+set dhcp.wan.ndp='disabled'
+set dhcp.wan.dhcpv6='disabled'
+set dhcp.nat='dhcp'
+set dhcp.nat.interface='nat'
+set dhcp.nat.ignore='1'
+set dhcp.nat.ra='disabled'
+set dhcp.nat.ndp='disabled'
+set dhcp.nat.dhcpv6='disabled'
+set firewall.nat='zone'
+set firewall.nat.name='nat'
+set firewall.nat.network='nat'
+set firewall.nat.input='ACCEPT'
+set firewall.nat.output='ACCEPT'
+set firewall.nat.forward='ACCEPT'
+set firewall.nat_wan='forwarding'
+set firewall.nat_wan.src='nat'
+set firewall.nat_wan.dest='wan'
+-- End --
