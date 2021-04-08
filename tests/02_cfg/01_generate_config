@@ -140,11 +140,11 @@ Testing the factory module with backup retention.
 	},
 	"cfg": {
 		"log" : {
-			"_log_hostname" : "foo",
-			"_log_ip" : "192.168.11.23",
-			"_log_port" : 12345,
-			"_log_proto" : "udp",
-			"_log_size" : 128
+			"log_hostname" : "foo",
+			"log_ip" : "192.168.11.23",
+			"log_port" : 12345,
+			"log_proto" : "udp",
+			"log_size" : 128
 		},
 		"network" : [
 			{
@@ -500,6 +500,12 @@ Testing the factory module with backup retention.
 -- End --
 
 -- Expect stdout --
+set system.@system[-1].log_size='128'
+set system.@system[-1].log_proto='udp'
+set system.@system[-1].log_ip='192.168.11.23'
+set system.@system[-1].log_port='12345'
+set system.@system[-1].log_hostname='foo'
+set system.@system[-1].log_remote='1'
 set network.wan='interface'
 set network.wan.proto='dhcp'
 set network.wan.metric='1'
