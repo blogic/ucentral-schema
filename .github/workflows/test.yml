@@ -39,5 +39,37 @@ jobs:
           make -j$(($(nproc)+1)) -C $(pwd)/build all
           sudo make -C $(pwd)/build install
 
+      - name: Install Python dependencies for YAML schemas
+        run: |
+          sudo apt-get install python3-setuptools
+          python3 -m pip install -U pip
+          python3 -m pip install -r requirements.txt
+
+      - name: Generate JSON schemas and documentation
+        run: ./generate.sh
+
       - name: Run ucode based tests
         run: ./run_tests.sh
+
+      - name: Generate abbreviated commit hash
+        run: echo "abbrev_commit=$(echo ${{ github.sha }} | cut -b1-8)" >> $GITHUB_ENV
+
+      - name: Upload documentation artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          if-no-files-found: error
+          name: ucentral-schema-docs-${{ env.abbrev_commit }}
+          path: docs
+
+      - name: Create index.html for GitHub pages
+        run: |
+          cp docs/ucentral-schema.html docs/index.html
+          sed -i "s/Schema Docs/OpenWrt uCentral Schema Docs (${{ env.abbrev_commit }})/" docs/index.html
+          sed -i "s;Generated using;Generated from <a href=\"https://github.com/${{ github.repository }}/commit/${{ env.abbrev_commit}}\">${{ github.repository }}@${{ env.abbrev_commit }}</a> using;" docs/index.html
+
+      - name: Publish documentation
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.ref == 'refs/heads/main' }}
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
