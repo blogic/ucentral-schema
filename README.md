@@ -6,7 +6,6 @@ the datamodel and rendering incoming cfg json into uci batch sequences.
 In order to run the test cases you will need the following tools
 * [ucode](https://github.com/jow-/ucode)
 * [ucentral-jsonschema](https://github.com/blogic/ucentral-jsonschema)
-* jsonlint-php
 * pip3 install -r requirements.txt
 
 ### Unit testing
