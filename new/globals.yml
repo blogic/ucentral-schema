@@ -1,0 +1,17 @@
+description:
+  A device has certain global properties that are used to derive parts of
+  the final configuration that gets applied.
+type: object
+properties:
+  ipv4-network:
+    description:
+      Define the IPv4 range that is delegatable to the downstream interfaces
+      This is described as a CIDR block. (192.168.0.0/16, 172.16.128/17)
+    type: string
+    uc-example: 192.168.0.0/16
+  ipv6-network:
+    description:
+      Define the IPv6 range that is delegatable to the downstream interfaces
+      This is described as a CIDR block. (fdca:1234:4567::/48)
+    type: string
+    uc-example: fdca:1234:4567::/48

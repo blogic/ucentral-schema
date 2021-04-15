@@ -1,0 +1,14 @@
+description:
+  The rate configuration of this BSS.
+type: object
+properties:
+  beacon:
+    description:
+      The beacon rate that shall be used by the BSS. Values are in Mbps.
+    type: number
+    default: 0
+  multicast:
+    description:
+      The multicast rate that shall be used by the BSS. Values are in Mbps.
+    type: number
+  default: 0

@@ -1,0 +1,21 @@
+description:
+  This section can be used to setup a SSH server on the AP.
+type: object
+properties:
+  enable:
+    description:
+      Shall the service be enabled.
+    type: boolean
+  host:
+    description:
+      The server that the AP shal to connect to.
+    type: string
+  port:
+    description:
+      This option defines the port that we connect to.
+    type: number
+    maximum: 65535
+  token:
+    description:
+      The security token that we use to authenticate with the server.
+    type: string

@@ -1,0 +1,28 @@
+description:
+  This section can be used to configure remote syslog support.
+type: object
+properties:
+  host:
+    description:
+      IP address of a syslog server to which the log messages should be
+      sent in addition to the local destination.
+    type: string
+  port:
+    description:
+      Port number of the remote syslog server specified with log_ip.
+    type: number
+    maximum: 65535
+    minimum: 100
+  proto:
+    description:
+      Sets the protocol to use for the connection, either tcp or udp.
+    type: string
+    enum:
+      - tcp
+      - udp
+  size:
+    description:
+      Size of the file based log buffer in KiB. This value is used as the fallback
+      value for log_buffer_size if the latter is not specified.
+    type: number
+    minimum: 32

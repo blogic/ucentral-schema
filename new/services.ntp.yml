@@ -1,0 +1,11 @@
+type: object
+description:
+  This section can be used to setup the upstream NTP servers.
+properties:
+  servers:
+    description:
+      This is an array of URL/IP of the upstream NTP servers that the unit shall use to
+      acquire its current time.
+    type: array
+    items:
+      type: string

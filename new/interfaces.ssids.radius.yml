@@ -1,0 +1,19 @@
+description:
+  When using EAP encryption we need to provide the required information
+  allowing us to connect to the AAA servers.
+type: object
+properties:
+  local-users:
+    $ref: "https://ucentral.io/schema/v1/interfaces/ssids/radius/local-users/"
+  authentication:
+    $ref: "https://ucentral.io/schema/v1/interfaces/ssids/radius/server/"
+  accounting:
+    $ref: "https://ucentral.io/schema/v1/interfaces/ssids/radius/server/"
+    properties:
+      interval:
+        description:
+          The interim accounting update interval. This value is defined in seconds.
+        type: number
+        maximum: 600
+        minimum: 60
+        default: 60

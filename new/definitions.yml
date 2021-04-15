@@ -1,0 +1,11 @@
+description:
+  This section is used to define templates that can be reference by a
+  configuration. This avoids duplication of data. A RADIUS server can be
+  defined here for example and then referenced by several SSIDs.
+type: object
+properties:
+  wireless-encryption:
+    description:
+      A wireless encryption template.
+    type: object
+    $ref: "#/interfaces/ssids/encryption"

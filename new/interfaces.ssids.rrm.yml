@@ -1,0 +1,24 @@
+description:
+  Enable 802.11k Radio Resource Management (RRM) for this BSS.
+type: object
+properties:
+  neighbor-reporting:
+    description:
+      Enable neighbor report via radio measurements (802.11k).
+    type: boolean
+  lci:
+    description:
+      The content of a LCI measurement subelement
+    type: string
+  civic-location:
+    description:
+      The content of a location civic measurement subelement
+    type: string
+  ftm-responder:
+    description:
+      Publish fine timing measurement (FTM) responder functionality on this BSS.
+    type: boolean
+  stationary-ap:
+    description:
+      Stationary AP config indicates that the AP doesn't move.
+    type: number

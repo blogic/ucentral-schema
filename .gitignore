@@ -1,2 +1,7 @@
 *.schema
 docs/
+new/ucentral.schema.json
+new/ucentral.schema.pretty.json
+new/docs/
+new/central.schema.json
+new/ucentral.schema.pretty.json

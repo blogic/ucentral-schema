@@ -1,0 +1,6 @@
+description:
+  This object allows passing raw uci commands, that get applied after all the
+  other configuration was ben generated.
+type: array
+items:
+  type: string

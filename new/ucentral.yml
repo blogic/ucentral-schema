@@ -1,0 +1,21 @@
+$id: https://openwrt.org/ucentral.schema.json
+$schema: http://json-schema.org/draft-07/schema#
+description: OpenWrt uCentral schema
+type: object
+properties:
+  unit:
+    $ref: "https://ucentral.io/schema/v1/unit/"
+  globals:
+    $ref: "https://ucentral.io/schema/v1/globals/"
+  definitions:
+    $ref: "https://ucentral.io/schema/v1/definitions/"
+  radios:
+    $ref: "https://ucentral.io/schema/v1/radios/"
+  interfaces:
+    $ref: "https://ucentral.io/schema/v1/interfaces/"
+  services:
+    $ref: "https://ucentral.io/schema/v1/services/"
+  metrics:
+    $ref: "https://ucentral.io/schema/v1/metrics/"
+  config-raw:
+    $ref: "https://ucentral.io/schema/v1/config-raw/"

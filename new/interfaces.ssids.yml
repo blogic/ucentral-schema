@@ -1,0 +1,98 @@
+description:
+  A device has certain properties that describe its identity and location.
+  These properties are described inside this object.
+type: object
+properties:
+  name:
+    description:
+      The broadcasted SSID of the wireless network and for for managed mode
+      the SSID of the network you’re connecting to
+    type: string
+    maxLength: 32
+    minLength: 1
+  wifi-bands:
+    description:
+      The band that the SSID should be broadcasted on. The configuration layer
+      will use the first matching band.
+    type: array
+    items:
+      type: string
+      enum:
+        - 2
+        - 5
+        - 5l
+        - 5u
+        - 6
+  bss-mode:
+    description:
+      Selects the operation mode of the wireless network interface controller.
+    type: string
+    enum:
+    - ap
+    - sta
+    - mesh
+  bssid:
+    description:
+      Override the BSSID of the network, only applicable in adhoc or sta mode.
+    type: string
+    maxLength: 17
+    minLength: 17
+  beacon-interval:
+    description:
+      Beacon interval in kus (1.024 ms).
+    type: number
+    maximum: 1000
+    minimum: 15
+  dtim-period:
+    description:
+      Set the DTIM (delivery traffic information message) period. There will
+      be one DTIM per this many beacon frames. This may be set between 1 and
+      255. This option only has an effect on ap wifi-ifaces.
+    type: number
+    maximum: 255
+    minimum: 1
+  hidden-ssid:
+    description:
+      Disables the broadcasting of beacon frames if set to 1 and,in doing so,
+      hides the ESSID.
+    type: boolean
+  isolate-clients:
+    description:
+      Isolates wireless clients from each other on this BSS.
+    type: boolean
+  power-save:
+    description:
+      Unscheduled Automatic Power Save Delivery.
+    type: boolean
+  rts-threshold:
+    description:
+      Set the RTS/CTS threshold of the BSS.
+    type: number
+    maximum: 65535
+    minimum: 1
+  broadcast-time:
+    description:
+      This option will make the unit braodcast the time inside its beacons.
+    type: boolean
+  unicast-conversion:
+    description:
+      Convert multicast traffic to unicast on this BSS.
+    type: boolean
+  encryption:
+    $ref: "https://ucentral.io/schema/v1/interfaces/ssids/encryption/"
+  captive:
+    $ref: "https://ucentral.io/schema/v1/interfaces/ssids/captive/"
+  rrm:
+    $ref: "https://ucentral.io/schema/v1/interfaces/ssids/rrm/"
+  rates:
+    $ref: "https://ucentral.io/schema/v1/interfaces/ssids/rates/"
+  roaming:
+    $ref: "https://ucentral.io/schema/v1/interfaces/ssids/roaming/"
+  radius:
+    $ref: "https://ucentral.io/schema/v1/interfaces/ssids/radius/"
+  hostapd-bss-raw:
+    description:
+      This array allows passing raw hostapd.conf lines.
+    type: array
+    items:
+      type: string

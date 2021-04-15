@@ -1,0 +1,18 @@
+description:
+  This section describes the vlan behaviour of a logical network interface.
+type: object
+properties:
+  id:
+    description:
+      This is the pvid of the vlan that shall be assigned to the interface.
+      The individual physical network devices contained within the interface
+      need to be told explicitly if egress traffic shall be tagged.
+    type: number
+    maximum: 4096
+  proto:
+    decription:
+      The L2 vlan tag that shall be added (1q,1ad)
+    type: string
+    enum:
+      - 802.1ad
+      - 802.1q

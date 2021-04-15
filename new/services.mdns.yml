@@ -1,0 +1,9 @@
+description:
+  This section can be used to configure the MDNS server.
+type: object
+properties:
+  enable:
+    description:
+      Enable this option if you would like to enable the MDNS server on the unit.
+    type: boolean
+    default: false

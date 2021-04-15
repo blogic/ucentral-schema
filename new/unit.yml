@@ -1,0 +1,19 @@
+description:
+  A device has certain properties that describe its identity and location.
+  These properties are described inside this object.
+type: object
+properties:
+  name:
+    description:
+      This is a free text field, stating the administrative name of the
+      device. It may contain spaces and special characters.
+    type: string
+  location:
+    description:
+      This is a free text field, stating the location of the  device. It
+      may contain spaces and special characters.
+    type: string
+  timezone:
+    description:
+      This allows you to change the TZ of the device.
+    type: string

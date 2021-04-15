@@ -1,0 +1,10 @@
+type: object
+properties:
+  describe:
+    description:
+      The LLDP description field. If set to "auto" it will be derived from unit.name.
+    type: string
+  location:
+    description:
+      The LLDP location field. If set to "auto" it will be derived from unit.location.
+    type: string

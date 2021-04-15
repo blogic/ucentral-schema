@@ -1,0 +1,23 @@
+description:
+  This section describes the bridge behaviour of a logical network interface.
+type: object
+properties:
+  mtu:
+    description:
+      The MTU that shall be used by the network interface.
+    type: number
+    maximum: 65535
+    minimum: 256
+    uc-example: 1500
+  tx-queue-len:
+    description:
+      The Transmit Queue Length is a TCP/IP stack network interface value that
+      sets the number of packets allowed per kernel transmit queue of a network
+      interface device.
+    type: number
+    uc-example: 5000
+  isolate-ports:
+    description:
+      Isolates the bridge ports from each other.
+    type: boolean
+    default: false

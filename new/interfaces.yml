@@ -1,0 +1,56 @@
+description:
+  This section describes the logical network interfaces of the device.
+  Interfaces as their primary have a role that is upstream, downstream,
+  guest, ....
+type: object
+properties:
+  name:
+    description:
+      This is a free text field, stating the administrative name of the
+      interface. It may contain spaces and special characters.
+    type: string
+    uc-example: LAN
+  role:
+    description:
+      The role defines if the interface is upstream or downstream facing.
+    type: string
+    enum:
+      - upstream
+      - downstream
+    uc-example: downstream
+  isolate-hosts:
+    description:
+      This option makes sure that any traffic leaving this interface is isolated
+      and all local IP ranges are blocked. It essentially enforces "guest network"
+      firewall settings.
+    type: boolean
+    uc-example: false
+  metric:
+    description:
+      The routing metric of this logical interface. Lower values have higher
+      priority.
+    type: boolean
+    default: 10
+    uc-example: 10
+  services:
+    description:
+      The services that shall be offered on this logical interface. These are
+      just strings such as "ssh", "lldp", "mdns"
+    type: array
+    items:
+      type: string
+    uc-example:
+      - ssh
+      - lldp
+  vlan:
+    $ref: "https://ucentral.io/schema/v1/interfaces/vlan/"
+  bridge:
+    $ref: "https://ucentral.io/schema/v1/interfaces/bridge/"
+  erthernet:
+    $ref: "https://ucentral.io/schema/v1/interfaces/ethernet/"
+  ipv4:
+    $ref: "https://ucentral.io/schema/v1/interfaces/ipv4/"
+  ipv6:
+    ref: "https://ucentral.io/schema/v1/interfaces/ipv6/"
+  ssids:
+    $ref: "https://ucentral.io/schema/v1/interfaces/ssids/"
