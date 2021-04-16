@@ -10,11 +10,17 @@ properties:
   definitions:
     $ref: "https://ucentral.io/schema/v1/definitions/"
   radios:
-    $ref: "https://ucentral.io/schema/v1/radios/"
+    type: array
+    items:
+      $ref: "https://ucentral.io/schema/v1/radio/"
   interfaces:
-    $ref: "https://ucentral.io/schema/v1/interfaces/"
+    type: array
+    items:
+      $ref: "https://ucentral.io/schema/v1/interface/"
   services:
-    $ref: "https://ucentral.io/schema/v1/services/"
+    type: array
+    items:
+      $ref: "https://ucentral.io/schema/v1/service/"
   metrics:
     $ref: "https://ucentral.io/schema/v1/metrics/"
   config-raw:

@@ -93,7 +93,7 @@ items:
       type: boolean
       default: false
     he-settings:
-      $ref: "https://ucentral.io/schema/v1/radios/he/"
+      $ref: "https://ucentral.io/schema/v1/radio/he/"
     hostapd-iface-raw:
       description:
         This array allows passing raw hostapd.conf lines.

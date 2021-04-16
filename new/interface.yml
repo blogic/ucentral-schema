@@ -43,14 +43,14 @@ properties:
       - ssh
       - lldp
   vlan:
-    $ref: "https://ucentral.io/schema/v1/interfaces/vlan/"
+    $ref: "https://ucentral.io/schema/v1/interface/vlan/"
   bridge:
-    $ref: "https://ucentral.io/schema/v1/interfaces/bridge/"
-  erthernet:
-    $ref: "https://ucentral.io/schema/v1/interfaces/ethernet/"
+    $ref: "https://ucentral.io/schema/v1/interface/bridge/"
+  ethernet:
+    $ref: "https://ucentral.io/schema/v1/interface/ethernet/"
   ipv4:
-    $ref: "https://ucentral.io/schema/v1/interfaces/ipv4/"
+    $ref: "https://ucentral.io/schema/v1/interface/ipv4/"
   ipv6:
-    ref: "https://ucentral.io/schema/v1/interfaces/ipv6/"
+    ref: "https://ucentral.io/schema/v1/interface/ipv6/"
   ssids:
-    $ref: "https://ucentral.io/schema/v1/interfaces/ssids/"
+    $ref: "https://ucentral.io/schema/v1/interface/ssid/"
