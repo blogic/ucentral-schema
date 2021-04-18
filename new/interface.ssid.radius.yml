@@ -4,11 +4,15 @@ description:
 type: object
 properties:
   local-users:
-    $ref: "https://ucentral.io/schema/v1/interfaces/ssids/radius/local-users/"
+    description:
+      Specifies a collection of local EAP user/psk/vid triplets.
+    type: array
+    items:
+      $ref: "https://ucentral.io/schema/v1/interface/ssid/radius/local-user/"
   authentication:
-    $ref: "https://ucentral.io/schema/v1/interfaces/ssids/radius/server/"
+    $ref: "https://ucentral.io/schema/v1/interface/ssid/radius/server/"
   accounting:
-    $ref: "https://ucentral.io/schema/v1/interfaces/ssids/radius/server/"
+    $ref: "https://ucentral.io/schema/v1/interface/ssid/radius/server/"
     properties:
       interval:
         description:

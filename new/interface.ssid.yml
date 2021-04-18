@@ -79,17 +79,17 @@ properties:
       Convert multicast traffic to unicast on this BSS.
     type: boolean
   encryption:
-    $ref: "https://ucentral.io/schema/v1/interfaces/ssids/encryption/"
+    $ref: "https://ucentral.io/schema/v1/interface/ssid/encryption/"
   captive:
-    $ref: "https://ucentral.io/schema/v1/interfaces/ssids/captive/"
+    $ref: "https://ucentral.io/schema/v1/interface/ssid/captive/"
   rrm:
-    $ref: "https://ucentral.io/schema/v1/interfaces/ssids/rrm/"
+    $ref: "https://ucentral.io/schema/v1/interface/ssid/rrm/"
   rates:
-    $ref: "https://ucentral.io/schema/v1/interfaces/ssids/rates/"
+    $ref: "https://ucentral.io/schema/v1/interface/ssid/rates/"
   roaming:
-    $ref: "https://ucentral.io/schema/v1/interfaces/ssids/roaming/"
+    $ref: "https://ucentral.io/schema/v1/interface/ssid/roaming/"
   radius:
-    $ref: "https://ucentral.io/schema/v1/interfaces/ssids/radius/"
+    $ref: "https://ucentral.io/schema/v1/interface/ssid/radius/"
   hostapd-bss-raw:
     description:
       This array allows passing raw hostapd.conf lines.
