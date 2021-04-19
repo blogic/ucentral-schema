@@ -20,7 +20,7 @@
 		if (active_config)
 			push(archive_cmdline, '/etc/ucentral/ucentral.active', active_config);
 		else
-			result({
+			result_json({
 				"error": 2,
 				"text": sprintf("Unable to determine active configuration: %s", fs.error())
 			});
@@ -28,7 +28,7 @@
 		let rc = system(archive_cmdline);
 
 		if (rc != 0) {
-			result({
+			result_json({
 				"error": 2,
 				"text": sprintf("Archive command %s exited with non-zero code %d", archive_cmdline, rc)
 			});
@@ -42,7 +42,7 @@
 	let rc = system(reset_cmdline);
 
 	if (rc != 0)
-		result({
+		result_json({
 			"error": 2,
 			"text": sprintf("Reset command %s exited with non-zero code %d", reset_cmdline, rc)
 		});
