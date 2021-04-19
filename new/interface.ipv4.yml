@@ -39,3 +39,5 @@ properties:
     uc-example:
       - 8.8.8.8
       - 4.4.4.4
+  dhcp-leases:
+    $ref: "https://ucentral.io/schema/v1/interface/ipv4/dhcp-lease/"

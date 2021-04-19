@@ -1,0 +1,14 @@
+description:
+  The UE rate-limiting configuration of this BSS.
+type: object
+properties:
+  ingress-rate:
+    description:
+      The ingress rate to which hosts will be shaped. Values are in Mbps
+    type: number
+    default: 0
+  egress-rate:
+    description:
+      The egress rate to which hosts will be shaped. Values are in Mbps
+    type: number
+    default: 0

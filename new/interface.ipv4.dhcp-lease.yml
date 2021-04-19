@@ -1,0 +1,29 @@
+description:
+  This section describes the static DHCP leases of this logical interface.
+type: array
+items:
+  type: object
+  properties:
+    macaddr:
+      description:
+        The MAC address of the host that this lease shall be used for.
+      type: string
+      maxLength: 17
+      minLength: 17
+      uc-example: 00:11:22:33:44:55
+    static-lease-offset:
+      description:
+        The offset of the IP that shall be used in relation to the first IP
+        in the available range.
+      type: number
+      uc-example: 10
+    lease-time:
+      description:
+        How long the lease is valid before a RENEW muss ne issued.
+      type: string
+      default: 6h
+    publish-hostname:
+      description:
+        Shall the hosts hostname be made available locally via DNS.
+      type: boolean
+      default: yes

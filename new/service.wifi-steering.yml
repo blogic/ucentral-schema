@@ -2,7 +2,22 @@ description:
   This section describes the band steering behaviour of the unit.
 type: object
 properties:
-  network:
+mode:
+    description:
+      Wifi sterring can happen either locally or via the backend gateway.
+    type: string
+    enum:
+      - local
+      - cloud
+    uc-example: local
+network:
     description:
       The network that shall be used to communicate with the other peers.
     type: string
+    uc-example: upstream
+key:
+    description:
+      The pre-shared crypto key that units in the cluster use to secure the
+      communication
+    type: string
+    uc-example: secret

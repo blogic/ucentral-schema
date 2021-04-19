@@ -86,10 +86,14 @@ properties:
     $ref: "https://ucentral.io/schema/v1/interface/ssid/rrm/"
   rates:
     $ref: "https://ucentral.io/schema/v1/interface/ssid/rates/"
+  rate-limit:
+    $ref: "https://ucentral.io/schema/v1/interface/ssid/rate-limit/"
   roaming:
     $ref: "https://ucentral.io/schema/v1/interface/ssid/roaming/"
   radius:
     $ref: "https://ucentral.io/schema/v1/interface/ssid/radius/"
+  pass-point:
+    $ref: "https://ucentral.io/schema/v1/interface/ssid/pass-point/"
   hostapd-bss-raw:
     description:
       This array allows passing raw hostapd.conf lines.

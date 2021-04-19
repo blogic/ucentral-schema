@@ -1,21 +1,22 @@
 description:
-  This section can be used to setup a SSH server on the AP.
+  This section can be used to setup a persistent connection to a rTTY server.
 type: object
 properties:
-  enable:
-    description:
-      Shall the service be enabled.
-    type: boolean
   host:
     description:
       The server that the AP shal to connect to.
     type: string
+    uc-example: 192.168.1.10
   port:
     description:
       This option defines the port that we connect to.
     type: number
     maximum: 65535
+    default: 5912
   token:
     description:
       The security token that we use to authenticate with the server.
     type: string
+    maxLength: 17
+    minLength: 17
+    uc-example: 01234567890123456789012345678901

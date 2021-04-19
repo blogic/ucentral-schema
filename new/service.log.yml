@@ -7,12 +7,14 @@ properties:
       IP address of a syslog server to which the log messages should be
       sent in addition to the local destination.
     type: string
+    uc-example: 192.168.1.10
   port:
     description:
       Port number of the remote syslog server specified with log_ip.
     type: number
     maximum: 65535
     minimum: 100
+    uc-example: 2000
   proto:
     description:
       Sets the protocol to use for the connection, either tcp or udp.
@@ -20,9 +22,11 @@ properties:
     enum:
       - tcp
       - udp
+    default: udp
   size:
     description:
       Size of the file based log buffer in KiB. This value is used as the fallback
       value for log_buffer_size if the latter is not specified.
     type: number
     minimum: 32
+    default: 1000

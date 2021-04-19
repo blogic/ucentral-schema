@@ -22,7 +22,7 @@ def schema_load(filename):
 
 def schema_compile(input, output, definitions, tiny):
     for k in input:
-        if tiny and k == "description":
+        if tiny and (k == "description" or k == "uc-example"):
             continue
         if isinstance(input[k], dict):
             if k not in output:

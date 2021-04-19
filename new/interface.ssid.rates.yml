@@ -11,4 +11,4 @@ properties:
     description:
       The multicast rate that shall be used by the BSS. Values are in Mbps.
     type: number
-  default: 0
+    default: 0
