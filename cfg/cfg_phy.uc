@@ -210,7 +210,8 @@
 		uci_set_options(u, v, [
 			"disabled", "country", "beacon_int", "txpower",
 			"chanbw", "require_mode", "legacy_rates",
-			"he_bss_color", "multiple_bssid", "ema"
+			"he_bss_color", "multiple_bssid", "ema",
+			"channel"
 		]);
 	}
 
