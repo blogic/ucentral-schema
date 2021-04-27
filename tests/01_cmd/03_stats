@@ -45,10 +45,12 @@ Testing the stats module.
               "type": "mac",
               "value": "00:11:22:33:44:55"
             },
-            "capability": {
-              "type": "Bridge",
-              "enabled": true
-            }
+            "capability": [
+	        {
+                  "type": "Bridge",
+                  "enabled": true
+                }
+	     ]
           }
         },
         "via": "LLDP",
@@ -68,24 +70,15 @@ Testing the stats module.
 -- End --
 
 -- Expect stdout --
-[call] ubusconn.call object <system> method <info> args <null>
+[call] ubusconn.call object <dhcp> method <ipv6leases> args <null>
+[call] ubusconn.call object <topology> method <mac> args <null>
+[call] ubusconn.call object <network.wireless> method <status> args <null>
 [call] ubusconn.call object <wifi> method <iface> args <null>
 [call] ubusconn.call object <wifi> method <station> args <null>
-[call] ubusconn.call object <poe> method <info> args <null>
-[call] ubusconn.call object <topology> method <mac> args <null>
 [call] ubusconn.call object <topology> method <port> args <null>
+[call] fs.open path </tmp/dhcp.leases> mode <null>
 [call] fs.popen cmdline <lldpcli -f json show neighbors> mode <null>
-[call] ubusconn.call object <network.interface.wan> method <status> args <null>
-[call] ubusconn.call object <network.interface> method <status> args <{ "interface": "lan" }>
-[call] ubusconn.call object <network.interface> method <status> args <{ "interface": "nat200" }>
-[call] system command <[ "/usr/sbin/dnsprobe", "-s", "127.0.0.1" ]> timeout <null>
-[call] system command <[ "/usr/sbin/dnsprobe", "-s", "192.168.26.1" ]> timeout <null>
-[call] system command <[ "/usr/sbin/dnsprobe", "-s", "192.168.1.1" ]> timeout <null>
-[call] system command <[ "/usr/sbin/dnsprobe", "-s", "192.168.16.1" ]> timeout <null>
-[call] system command <[ "/usr/sbin/dhcpdiscover", "-i", "br-wan", "-t", "5" ]> timeout <null>
-[call] system command <[ "/usr/sbin/dhcpdiscover", "-i", "br-lan", "-t", "5" ]> timeout <null>
-[call] system command <[ "/usr/sbin/dhcpdiscover", "-i", "br-nat200", "-t", "5" ]> timeout <null>
-[call] ubusconn.call object <ucentral> method <stats> args <{ "serial": "001122334455", "state": { /* 6 keys */ }, "uuid": null }>
-{ "lldp": { /* 1 keys */ }, "neighbours": { /* 10 keys */ }, "system": { /* 5 keys */ }, "traffic": { /* 16 keys */ }, "wifi-iface": { /* 4 keys */ }, "wifi-station": { /* 1 keys */ } }
-[call] fs.open path </tmp/ucentral.state> mode <w>
+[call] ubusconn.call object <system> method <info> args <null>
+{ "unit": { "memory": { "total": 490708992, "free": 406589440 }, "localtime": 1615390607, "uptime": 608424, "load": [ 71776, 77152, 71264 ] }, "radios": [ { "frequencies": [ 2437, 2437 ], "channel_width": "20", "tx_power": 20 } ], "interfaces": [ { "name": "lan", "uptime": 9053, "ipv4_addresses": [ "192.168.1.1\/24" ], "ipv6_leases": [ { "hostname": "example", "addresses": [ ":::::", ":::::" ] } ], "counters": { "rx_packets": 22500, "tx_packets": 22160, "rx_bytes": 2256063, "tx_bytes": 14257687, "multicast": 98 } }, { "name": "wan", "uptime": 608045, "ipv4_addresses": [ "192.168.26.221\/24" ], "dns_servers": [ "192.168.26.1" ], "ipv4_leasetime": 43200, "counters": { "rx_packets": 273405, "tx_packets": 1985648, "rx_bytes": 66586189, "tx_bytes": 1788666756 } } ] }
+[call] ubusconn.call object <ucentral> method <stats> args <{ "serial": "001122334455", "state": { /* 3 keys */ }, "uuid": null }>
 -- End --
