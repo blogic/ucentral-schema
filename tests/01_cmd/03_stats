@@ -36,35 +36,48 @@ Testing the stats module.
 -- File fs/popen~lldpcli_-f_json_show_neighbors.txt --
 {
   "lldp": {
-    "interface": {
-      "eno1": {
-        "chassis": {
-          "office1-switch23": {
-            "descr": "ProCurve J9280A Switch 2510G-48, revision Y.11.12, ROM N.10.02 (/sw/code/build/cod(cod11))",
+    "interface": [
+      {
+        "wan": {
+          "via": "LLDP",
+          "rid": "2",
+          "age": "0 day, 00:27:23",
+          "chassis": {
+            "fritz.box": {
+              "id": {
+                "type": "mac",
+                "value": "00:11:22:33:44:55"
+              },
+              "descr": "AVM FRITZ!Box 7490 113.07.21",
+              "mgmt-ip": "192.168.178.1",
+              "mgmt-iface": "9",
+              "capability": [
+                {
+                  "type": "Bridge",
+                  "enabled": true
+                },
+                {
+                  "type": "Router",
+                  "enabled": true
+                },
+                {
+                  "type": "Wlan",
+                  "enabled": true
+                }
+              ]
+            }
+          },
+          "port": {
             "id": {
               "type": "mac",
               "value": "00:11:22:33:44:55"
             },
-            "capability": [
-	        {
-                  "type": "Bridge",
-                  "enabled": true
-                }
-	     ]
-          }
-        },
-        "via": "LLDP",
-        "rid": "1",
-        "age": "0 day, 00:53:23",
-        "port": {
-          "descr": "42",
-          "id": {
-            "type": "local",
-            "value": "42"
+            "descr": "LAN:4",
+            "ttl": "60"
           }
         }
       }
-    }
+    ]
   }
 }
 -- End --

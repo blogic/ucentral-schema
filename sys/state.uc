@@ -58,7 +58,7 @@
 		let stdout = fs.popen("lldpcli -f json show neighbors");
 		let tmp;
 		if (stdout) {
-			tmp = json(stdout.read("all")).lldp;
+			tmp = json(stdout.read("all")).lldp.interface;
 			stdout.close();
 		} else {
 			log("LLDP cli command failed: %s", fs.error());
@@ -234,15 +234,6 @@
 
 			if (length(clients))
 				iface.clients = clients;
-		}
-
-		if (stats.clients && stats.lldp) {
-			try {
-				for (let netdev, l in lldp.interface) {
-				}
-			} catch(e) {
-				print(e);
-			};
 		}
 
 		if (stats.ssids && length(wifistatus)) {
