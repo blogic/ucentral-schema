@@ -1,5 +1,6 @@
 description:
   This section describes the HE specific configuration options of the BSS.
+type: object
 properties:
   multiple-bssid:
     description:
