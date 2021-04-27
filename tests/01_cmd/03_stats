@@ -79,6 +79,9 @@ Testing the stats module.
 [call] fs.open path </tmp/dhcp.leases> mode <null>
 [call] fs.popen cmdline <lldpcli -f json show neighbors> mode <null>
 [call] ubusconn.call object <system> method <info> args <null>
+[call] ubusconn.call object <network.interface.lan> method <status> args <null>
+[call] ubusconn.call object <network.interface.wan> method <status> args <null>
 { "unit": { "memory": { "total": 490708992, "free": 406589440 }, "localtime": 1615390607, "uptime": 608424, "load": [ 71776, 77152, 71264 ] }, "radios": [ { "frequencies": [ 2437, 2437 ], "channel_width": "20", "tx_power": 20 } ], "interfaces": [ { "name": "lan", "uptime": 9053, "ipv4_addresses": [ "192.168.1.1\/24" ], "ipv6_leases": [ { "hostname": "example", "addresses": [ ":::::", ":::::" ] } ], "counters": { "rx_packets": 22500, "tx_packets": 22160, "rx_bytes": 2256063, "tx_bytes": 14257687, "multicast": 98 } }, { "name": "wan", "uptime": 608045, "ipv4_addresses": [ "192.168.26.221\/24" ], "dns_servers": [ "192.168.26.1" ], "ipv4_leasetime": 43200, "counters": { "rx_packets": 273405, "tx_packets": 1985648, "rx_bytes": 66586189, "tx_bytes": 1788666756 } } ] }
 [call] ubusconn.call object <ucentral> method <stats> args <{ "serial": "001122334455", "state": { /* 3 keys */ }, "uuid": null }>
+[call] fs.open path </tmp/ucentral.state> mode <w>
 -- End --

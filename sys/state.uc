@@ -292,4 +292,13 @@
 		state
 	};
 	ctx.call("ucentral", "stats", msg);
+
+	let f = fs.open("/tmp/ucentral.state", "w");
+	if (f) {
+		f.write(msg);
+		f.close();
+	}
+	else {
+		log("Unable to open %s for writing: %s", statefile_path, fs.error());
+	}
 %}
