@@ -222,3 +222,4 @@
 			global.print(...args);
 	};
 
+	return global.mocklib;
