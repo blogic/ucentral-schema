@@ -47,7 +47,9 @@ properties:
   bridge:
     $ref: "https://ucentral.io/schema/v1/interface/bridge/"
   ethernet:
-    $ref: "https://ucentral.io/schema/v1/interface/ethernet/"
+    type: array
+    items:
+      $ref: "https://ucentral.io/schema/v1/interface/ethernet/"
   ipv4:
     $ref: "https://ucentral.io/schema/v1/interface/ipv4/"
   ipv6:

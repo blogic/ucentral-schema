@@ -40,4 +40,6 @@ properties:
       - 8.8.8.8
       - 4.4.4.4
   dhcp-leases:
-    $ref: "https://ucentral.io/schema/v1/interface/ipv4/dhcp-lease/"
+    type: array
+    items:
+      $ref: "https://ucentral.io/schema/v1/interface/ipv4/dhcp-lease/"

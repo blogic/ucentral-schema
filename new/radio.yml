@@ -1,102 +1,100 @@
 description:
   Describe a physical radio on the AP. A radio s be parent to several VAPs.
   They all share the same physical properties.
-type: array
-items:
-  type: object
-  properties:
-    band:
-      type: string
-      enum:
-      - 2
-      - 5
-      - 5u
-      - 5l
-      - 6
-    bandwidth:
-      description:
-        Specifies a narrow channel width in MHz, possible values are: 5, 10, 20.
-      type: number
-      enum:
-      - 5
-      - 10
-      - 20
-    channel:
-      description:
-        Specifies the wireless channel to use. A value of 0 starts the ACS
-        algorithm.
-      type: number
-      maximum: 171
-      minimum: 0
-    country:
-      description:
-        Specifies the country code, affects the available channels and
-        transmission powers.
-      type: string
-      maxLength: 2
-      minLength: 2
-    channel-mode:
-      description:
-        Define the ideal channel mode that the radio shall use. This can be 802.11n, 802.11ac
-        or 802.11ax. This is just a hint for the AP. If the requested value is not supported
-        then the AP will use the highest common denominator.
+type: object
+properties:
+  band:
+    type: string
+    enum:
+    - 2
+    - 5
+    - 5u
+    - 5l
+    - 6
+  bandwidth:
+    description:
+      Specifies a narrow channel width in MHz, possible values are: 5, 10, 20.
+    type: number
+    enum:
+    - 5
+    - 10
+    - 20
+  channel:
+    description:
+      Specifies the wireless channel to use. A value of 0 starts the ACS
+      algorithm.
+    type: number
+    maximum: 171
+    minimum: 0
+  country:
+    description:
+      Specifies the country code, affects the available channels and
+      transmission powers.
+    type: string
+    maxLength: 2
+    minLength: 2
+  channel-mode:
+    description:
+      Define the ideal channel mode that the radio shall use. This can be 802.11n, 802.11ac
+      or 802.11ax. This is just a hint for the AP. If the requested value is not supported
+      then the AP will use the highest common denominator.
+    type: string
+    enum:
+    - HT
+    - VHT
+    - HE
+  channel-width:
+    description:
+      The channel width that the radio shall use. This is just a hint for the AP. If the
+      requested value is not supported then the AP will use the highest common denominator.
+    type: string
+    enum:
+    - 20
+    - 40
+    - 80
+    - 160
+    - 8080
+  require-mode:
+    description:
+      Sations that do no fulfill these HT modes will be rejected.
+    type: array
+    items:
       type: string
       enum:
       - HT
       - VHT
       - HE
-    channel-width:
-      description:
-        The channel width that the radio shall use. This is just a hint for the AP. If the
-        requested value is not supported then the AP will use the highest common denominator.
+  mimo:
+    description:
+      This option allows configuring the antenna pairs that shall be used.
+      This is just a hint for the AP. If the requested value is not supported
+      then the AP will use the highest common denominator.
+    type: string
+    enum:
+    - 1x1
+    - 2x2
+    - 3x3
+    - 4x4
+    - 5x5
+    - 6x6
+    - 7x7
+    - 8x8
+  tx-power:
+    description:
+      This option specifies the transmission power in dBm
+    type: number
+    maximum: 30
+    minimum: 0
+  legacy-rates:
+    description:
+      Allow legacy 802.11b data rates.
+    type: boolean
+    default: false
+  he-settings:
+    $ref: "https://ucentral.io/schema/v1/radio/he/"
+  hostapd-iface-raw:
+    description:
+      This array allows passing raw hostapd.conf lines.
+    type: array
+    items:
       type: string
-      enum:
-      - 20
-      - 40
-      - 80
-      - 160
-      - 8080
-    require-mode:
-      description:
-        Sations that do no fulfill these HT modes will be rejected.
-      type: array
-      items:
-        type: string
-        enum:
-        - HT
-        - VHT
-        - HE
-    mimo:
-      description:
-        This option allows configuring the antenna pairs that shall be used.
-        This is just a hint for the AP. If the requested value is not supported
-        then the AP will use the highest common denominator.
-      type: string
-      enum:
-      - 1x1
-      - 2x2
-      - 3x3
-      - 4x4
-      - 5x5
-      - 6x6
-      - 7x7
-      - 8x8
-    tx-power:
-      description:
-        This option specifies the transmission power in dBm
-      type: number
-      maximum: 30
-      minimum: 0
-    legacy-rates:
-      description:
-        Allow legacy 802.11b data rates.
-      type: boolean
-      default: false
-    he-settings:
-      $ref: "https://ucentral.io/schema/v1/radio/he/"
-    hostapd-iface-raw:
-      description:
-        This array allows passing raw hostapd.conf lines.
-      type: array
-      items:
-        type: string
