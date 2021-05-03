@@ -8,14 +8,16 @@ properties:
     type: number
     maximum: 65535
     minimum: 256
-    uc-example: 1500
+    example:
+    - 1500
   tx-queue-len:
     description:
       The Transmit Queue Length is a TCP/IP stack network interface value that
       sets the number of packets allowed per kernel transmit queue of a network
       interface device.
     type: number
-    uc-example: 5000
+    example:
+    - 5000
   isolate-ports:
     description:
       Isolates the bridge ports from each other.

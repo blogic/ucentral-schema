@@ -16,24 +16,29 @@ properties:
     description:
       The maximum number of clients that shall be accept.
     type: number
-    uc-example: 32
+    example:
+    - 32
   upload-rate:
     description:
       The maximum upload rate for a specific client.
     type: number
-    uc-example: 10000
+    example:
+    - 10000
   download-rate:
     description:
       The maximum download rate for a specific client.
     type: number
-    uc-example: 10000
+    example:
+    - 10000
   upload-quota:
     description:
       The maximum upload quota for a specific client.
     type: number
-    uc-example: 10000
+    example:
+    - 10000
   download-quota:
     description:
       The maximum download quota for a specific client.
     type: number
-    uc-example: 10000
+    example:
+    - 10000

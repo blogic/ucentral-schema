@@ -6,27 +6,30 @@ properties:
     description:
        The URI of our Radius server.
     type: string
-    uc-example: 192.168.1.10
+    example:
+    - 192.168.1.10
   port:
     description:
        The network of our Radius server.
     type: number
     maximum: 65535
     minimum: 1024
-    uc-example: 1812
+    example:
+    - 1812
   secret:
     description:
       The shared Radius authentication secret.
     type: string
-    uc-example: secret
+    example:
+    - secret
   request-attribute:
     description:
       The additional Access-Request attributes that gets sent to the server.
     type: array
     items:
       type: string
-    uc-example:
-      - 126:s:Operator
+    example:
+    - 126:s:Operator
   request-cui:
     description:
       This will enable support for Chargeable-User-Identity (RFC 4372).

@@ -8,13 +8,15 @@ properties:
     type: string
     maxLength: 17
     minLength: 17
-    uc-example: 00:11:22:33:44:55
+    example:
+    - 00:11:22:33:44:55
   static-lease-offset:
     description:
       The offset of the IP that shall be used in relation to the first IP
       in the available range.
     type: number
-    uc-example: 10
+    example:
+    - 10
   lease-time:
     description:
       How long the lease is valid before a RENEW muss ne issued.

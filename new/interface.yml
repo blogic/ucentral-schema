@@ -9,7 +9,8 @@ properties:
       This is a free text field, stating the administrative name of the
       interface. It may contain spaces and special characters.
     type: string
-    uc-example: LAN
+    example:
+    - LAN
   role:
     description:
       The role defines if the interface is upstream or downstream facing.
@@ -17,21 +18,24 @@ properties:
     enum:
       - upstream
       - downstream
-    uc-example: downstream
+    example:
+    - downstream
   isolate-hosts:
     description:
       This option makes sure that any traffic leaving this interface is isolated
       and all local IP ranges are blocked. It essentially enforces "guest network"
       firewall settings.
     type: boolean
-    uc-example: false
+    example:
+    - false
   metric:
     description:
       The routing metric of this logical interface. Lower values have higher
       priority.
     type: boolean
     default: 10
-    uc-example: 10
+    example:
+    - 10
   services:
     description:
       The services that shall be offered on this logical interface. These are
@@ -39,9 +43,9 @@ properties:
     type: array
     items:
       type: string
-    uc-example:
-      - ssh
-      - lldp
+    example:
+    - ssh
+    - lldp
   vlan:
     $ref: "https://ucentral.io/schema/v1/interface/vlan/"
   bridge:

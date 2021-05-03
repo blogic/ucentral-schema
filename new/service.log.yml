@@ -7,14 +7,16 @@ properties:
       IP address of a syslog server to which the log messages should be
       sent in addition to the local destination.
     type: string
-    uc-example: 192.168.1.10
+    example:
+    - 192.168.1.10
   port:
     description:
       Port number of the remote syslog server specified with log_ip.
     type: number
     maximum: 65535
     minimum: 100
-    uc-example: 2000
+    example:
+    - 2000
   proto:
     description:
       Sets the protocol to use for the connection, either tcp or udp.

@@ -10,25 +10,29 @@ properties:
     enum:
       - dynamic
       - static
-    uc-example: static
+    example:
+    - static
   subnet:
     description:
       This option defines the static IPv4 of the logical interface in CIDR notation.
       auto/24 can be used, causing the configuration layer to automatically use
       and address range from globals.ipv4-network.
     type: string
-    uc-example: auto/24
+    example:
+    - auto/24
   gateway:
     description:
       This option defines the static IPv4 gateway of the logical interface.
     type: string
-    uc-example: 192.168.1.1
+    example:
+    - 192.168.1.1
   send-hostname:
     description:
       include the devices hostname inside DHCP requests
     type: boolean
     default: true
-    uc-example: true
+    example:
+    - true
   use-dns:
     description:
       Define which DNS servers shall be used. This can either be a list of
@@ -36,9 +40,9 @@ properties:
     type: array
     items:
       type: string
-    uc-example:
-      - 8.8.8.8
-      - 4.4.4.4
+    example:
+    - 8.8.8.8
+    - 4.4.4.4
   dhcp-leases:
     type: array
     items:

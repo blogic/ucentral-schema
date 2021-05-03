@@ -9,5 +9,5 @@ properties:
     type: array
     items:
       type: string
-    uc-example:
-      - 0.openwrt.pool.ntp.org
+    example:
+    - 0.openwrt.pool.ntp.org
