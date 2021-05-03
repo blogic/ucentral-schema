@@ -33,7 +33,7 @@ def schema_compile(input, output, definitions, tiny):
         elif k == "$ref" and input[k].startswith("https://"):
             name = entity_name(input[k])
             definitions[name] = schema_compile(schema_load(schema_filename(input[k])), {}, definitions, tiny)
-            output["$ref"] = "#/definitions/{}".format(name)
+            output["$ref"] = "#/$defs/{}".format(name)
         elif k == "$ref" and not tiny:
             output["properties"] = {"reference": {"type": "string"}}
         else:
@@ -45,7 +45,7 @@ def schema_generate():
         tiny = int(sys.argv[5])
         defs = {}
         schema = schema_compile(schema_load(sys.argv[3]), {}, defs, tiny)
-        schema["definitions"] = defs
+        schema["$defs"] = defs
         json.dump(schema, outfile, ensure_ascii = tiny and False or True, indent = tiny and 0 or 4)
 
 if len(sys.argv) != 6:

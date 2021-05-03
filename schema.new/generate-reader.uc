@@ -310,7 +310,7 @@ let GeneratorProto = {
 			if (type(itemSpec) == "object") {
 				if (isRef) {
 					this.print(path, '	return map(value, %s);',
-						to_method_name('instantiate', replace(isRef, '#/definitions/', '')));
+						to_method_name('instantiate', replace(isRef, '#/$defs/', '')));
 				}
 				else if (isSimple) {
 					this.print(path, '	return map(value, (item) => {');
@@ -357,7 +357,7 @@ let GeneratorProto = {
 					if (isRef) {
 						this.print(path, '		obj.%s = %s(%s);',
 							to_property_name(objectPropertyName),
-							to_method_name('instantiate', replace(isRef, '#/definitions/', '')),
+							to_method_name('instantiate', replace(isRef, '#/$defs/', '')),
 							valueExpr);
 					}
 					else if (isSimple) {
@@ -410,34 +410,14 @@ let GeneratorProto = {
 
 	generate: function()
 	{
+		let path = [];
+
 		this.schema = this.read_schema(this.path);
 
-		for (let definitionId, definitionSpec in this.schema.definitions)
-			this.emit_spec_validation_function([], 'instantiate', definitionId, definitionSpec);
+		for (let definitionId, definitionSpec in this.schema['$defs'])
+			this.emit_spec_validation_function(path, 'instantiate', definitionId, definitionSpec);
 
-		this.emit_spec_validation_function([], 'new', "UCentralState", this.schema);
-
-		return;
-
-		let defs = this.schema.definitions,
-		    seen = {};
-
-		this.entities = map(keys(defs), id => ({ "$id": id, ...(defs[id]) }));
-
-		while (length(this.entities)) {
-			let entity = pop(this.entities);
-
-			if (seen[entity["$id"]])
-				continue;
-
-			try {
-				this.emit_entity(entity["$id"], entity);
-			} catch(e) {
-				warn("ENTITY FAIL: " + e + "\n" + e.stacktrace[0].context + "\n");
-			}
-
-			seen[entity["$id"]] = true;
-		}
+		this.emit_spec_validation_function(path, 'new', "UCentralState", this.schema);
 	}
 };
 
