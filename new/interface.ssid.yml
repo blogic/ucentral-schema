@@ -18,11 +18,11 @@ properties:
     items:
       type: string
       enum:
-        - 2
-        - 5
-        - 5l
-        - 5u
-        - 6
+      - 2G
+      - 5G
+      - 5Gl
+      - 5Gu
+      - 6G
   bss-mode:
     description:
       Selects the operation mode of the wireless network interface controller.
@@ -35,12 +35,11 @@ properties:
     description:
       Override the BSSID of the network, only applicable in adhoc or sta mode.
     type: string
-    maxLength: 17
-    minLength: 17
+    format: uc-mac
   beacon-interval:
     description:
       Beacon interval in kus (1.024 ms).
-    type: number
+    type: integer
     maximum: 1000
     minimum: 15
   dtim-period:
@@ -48,7 +47,7 @@ properties:
       Set the DTIM (delivery traffic information message) period. There will
       be one DTIM per this many beacon frames. This may be set between 1 and
       255. This option only has an effect on ap wifi-ifaces.
-    type: number
+    type: integer
     maximum: 255
     minimum: 1
   hidden-ssid:
@@ -67,7 +66,7 @@ properties:
   rts-threshold:
     description:
       Set the RTS/CTS threshold of the BSS.
-    type: number
+    type: integer
     maximum: 65535
     minimum: 1
   broadcast-time:

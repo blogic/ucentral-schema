@@ -145,7 +145,7 @@ let GeneratorProto = {
 
 	emit_number: function(numberSpec)
 	{
-		assert(numberSpec.type == "number", "Expecting number type");
+		assert(numberSpec.type == "integer", "Expecting number type");
 
 		let rv = this.emit_generic(numberSpec);
 
@@ -223,7 +223,7 @@ let GeneratorProto = {
 		case "string":
 			return this.emit_string(valueSpec);
 
-		case "number":
+		case "integer":
 			return this.emit_number(valueSpec);
 
 		case "boolean":

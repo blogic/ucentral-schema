@@ -36,8 +36,7 @@ properties:
     description:
       Enforce a specific MAC to these ports.
     type: string
-    maxLength: 17
-    minLength: 17
+    format: uc-mac
     example:
     - true
   reverse-path-filter:

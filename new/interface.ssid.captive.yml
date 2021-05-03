@@ -11,34 +11,30 @@ properties:
     description:
       The fqdn used for the captive portal IP.
     type: string
+    format: fqdn
     default: ucentral.splash
   maxclients:
     description:
       The maximum number of clients that shall be accept.
-    type: number
-    example:
-    - 32
+    type: integer
+    default: 32
   upload-rate:
     description:
       The maximum upload rate for a specific client.
-    type: number
-    example:
-    - 10000
+    type: integer
+    default: 10000
   download-rate:
     description:
       The maximum download rate for a specific client.
-    type: number
-    example:
-    - 10000
+    type: integer
+    default: 10000
   upload-quota:
     description:
       The maximum upload quota for a specific client.
-    type: number
-    example:
-    - 10000
+    type: integer
+    default : 10000
   download-quota:
     description:
       The maximum download quota for a specific client.
-    type: number
-    example:
-    - 10000
+    type: integer
+    default: 10000

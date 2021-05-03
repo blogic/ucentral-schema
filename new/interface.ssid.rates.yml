@@ -5,10 +5,10 @@ properties:
   beacon:
     description:
       The beacon rate that shall be used by the BSS. Values are in Mbps.
-    type: number
+    type: integer
     default: 0
   multicast:
     description:
       The multicast rate that shall be used by the BSS. Values are in Mbps.
-    type: number
+    type: integer
     default: 0

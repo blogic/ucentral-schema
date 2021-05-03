@@ -18,12 +18,14 @@ properties:
       auto/24 can be used, causing the configuration layer to automatically use
       and address range from globals.ipv4-network.
     type: string
+    format: uc-cidr4
     example:
     - auto/24
   gateway:
     description:
       This option defines the static IPv4 gateway of the logical interface.
     type: string
+    format: uc-cidr4
     example:
     - 192.168.1.1
   send-hostname:
@@ -40,6 +42,7 @@ properties:
     type: array
     items:
       type: string
+      format: uc-cidr4
     example:
     - 8.8.8.8
     - 4.4.4.4

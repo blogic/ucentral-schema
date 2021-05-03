@@ -33,7 +33,7 @@ properties:
   ieee80211w:
     description:
       Enable 802.11w Management Frame Protection (MFP) for this BSS.
-    type: number
+    type: integer
     maximum: 2
     minimum: 0
     example:

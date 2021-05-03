@@ -7,7 +7,7 @@ properties:
       This is the pvid of the vlan that shall be assigned to the interface.
       The individual physical network devices contained within the interface
       need to be told explicitly if egress traffic shall be tagged.
-    type: number
+    type: integer
     maximum: 4096
   proto:
     decription:

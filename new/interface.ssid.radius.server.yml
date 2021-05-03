@@ -6,12 +6,13 @@ properties:
     description:
        The URI of our Radius server.
     type: string
+    format: uc-host
     example:
     - 192.168.1.10
   port:
     description:
        The network of our Radius server.
-    type: number
+    type: integer
     maximum: 65535
     minimum: 1024
     example:

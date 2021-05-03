@@ -17,7 +17,7 @@ properties:
       interval:
         description:
           The interim accounting update interval. This value is defined in seconds.
-        type: number
+        type: integer
         maximum: 600
         minimum: 60
         default: 60

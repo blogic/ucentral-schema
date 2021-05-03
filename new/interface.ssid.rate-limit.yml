@@ -5,10 +5,10 @@ properties:
   ingress-rate:
     description:
       The ingress rate to which hosts will be shaped. Values are in Mbps
-    type: number
+    type: integer
     default: 0
   egress-rate:
     description:
       The egress rate to which hosts will be shaped. Values are in Mbps
-    type: number
+    type: integer
     default: 0

@@ -6,15 +6,15 @@ properties:
   band:
     type: string
     enum:
-    - 2
-    - 5
-    - 5u
-    - 5l
-    - 6
+    - 2G
+    - 5G
+    - 5Gu
+    - 5Gl
+    - 6G
   bandwidth:
     description:
       Specifies a narrow channel width in MHz, possible values are: 5, 10, 20.
-    type: number
+    type: integer
     enum:
     - 5
     - 10
@@ -23,7 +23,7 @@ properties:
     description:
       Specifies the wireless channel to use. A value of 0 starts the ACS
       algorithm.
-    type: number
+    type: integer
     maximum: 171
     minimum: 0
   country:
@@ -33,6 +33,8 @@ properties:
     type: string
     maxLength: 2
     minLength: 2
+    example:
+    - US
   channel-mode:
     description:
       Define the ideal channel mode that the radio shall use. This can be 802.11n, 802.11ac
@@ -82,7 +84,7 @@ properties:
   tx-power:
     description:
       This option specifies the transmission power in dBm
-    type: number
+    type: integer
     maximum: 30
     minimum: 0
   legacy-rates:

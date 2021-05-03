@@ -9,5 +9,6 @@ properties:
     type: array
     items:
       type: string
+      format: uc-host
     example:
     - 0.openwrt.pool.ntp.org

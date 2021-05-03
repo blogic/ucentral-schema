@@ -5,7 +5,7 @@ properties:
   port:
     description:
       This option defines which port the SSH server shall be available on.
-    type: number
+    type: integer
     maximum: 65535
     default: 22
   authorized-keys:

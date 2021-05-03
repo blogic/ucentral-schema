@@ -4,8 +4,7 @@ description:
 properties:
   mac:
     type: string
-    maxLength: 17
-    minLength: 17
+    format: uc-mac
     example:
     - 00:11:22:33:44:55
   key:
@@ -15,7 +14,7 @@ properties:
     example:
     - aaaaaaaa
   vid:
-    type: number
+    type: integer
     maximum: 4096
     example:
     - 100

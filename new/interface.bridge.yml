@@ -5,7 +5,7 @@ properties:
   mtu:
     description:
       The MTU that shall be used by the network interface.
-    type: number
+    type: integer
     maximum: 65535
     minimum: 256
     example:
@@ -15,7 +15,7 @@ properties:
       The Transmit Queue Length is a TCP/IP stack network interface value that
       sets the number of packets allowed per kernel transmit queue of a network
       interface device.
-    type: number
+    type: integer
     example:
     - 5000
   isolate-ports:

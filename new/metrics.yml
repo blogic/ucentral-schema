@@ -11,7 +11,7 @@ properties:
       interval:
         description:
           The reporting interval defined in seconds.
-        type: number
+        type: integer
       types:
         description:
           A list of names of subsystems that shall be reported periodically.
@@ -27,7 +27,7 @@ properties:
       interval:
         description:
           The reporting interval defined in seconds.
-        type: number
+        type: integer
       types:
         description:
           A list of names of subsystems that shall be reported periodically.
@@ -43,7 +43,7 @@ properties:
       interval:
         description:
           The reporting interval defined in seconds.
-        type: number
+        type: integer
       types:
         description:
           A list of the message types that shall be sent to the backend.

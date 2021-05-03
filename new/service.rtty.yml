@@ -6,19 +6,20 @@ properties:
     description:
       The server that the AP shal to connect to.
     type: string
+    format: uc-host
     example:
     - 192.168.1.10
   port:
     description:
       This option defines the port that we connect to.
-    type: number
+    type: integer
     maximum: 65535
     default: 5912
   token:
     description:
       The security token that we use to authenticate with the server.
     type: string
-    maxLength: 17
-    minLength: 17
+    maxLength: 32
+    minLength: 32
     example:
     - 01234567890123456789012345678901

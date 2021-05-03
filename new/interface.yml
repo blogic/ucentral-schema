@@ -16,8 +16,8 @@ properties:
       The role defines if the interface is upstream or downstream facing.
     type: string
     enum:
-      - upstream
-      - downstream
+    - upstream
+    - downstream
     example:
     - downstream
   isolate-hosts:
