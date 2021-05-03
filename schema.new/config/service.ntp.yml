@@ -10,5 +10,5 @@ properties:
     items:
       type: string
       format: uc-host
-    example:
+    examples:
     - 0.openwrt.pool.ntp.org

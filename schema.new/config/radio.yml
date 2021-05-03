@@ -33,7 +33,7 @@ properties:
     type: string
     maxLength: 2
     minLength: 2
-    example:
+    examples:
     - US
   channel-mode:
     description:

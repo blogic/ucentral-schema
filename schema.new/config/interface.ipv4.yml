@@ -10,7 +10,7 @@ properties:
     enum:
       - dynamic
       - static
-    example:
+    examples:
     - static
   subnet:
     description:
@@ -19,21 +19,21 @@ properties:
       and address range from globals.ipv4-network.
     type: string
     format: uc-cidr4
-    example:
+    examples:
     - auto/24
   gateway:
     description:
       This option defines the static IPv4 gateway of the logical interface.
     type: string
     format: uc-cidr4
-    example:
+    examples:
     - 192.168.1.1
   send-hostname:
     description:
       include the devices hostname inside DHCP requests
     type: boolean
     default: true
-    example:
+    examples:
     - true
   use-dns:
     description:
@@ -43,7 +43,7 @@ properties:
     items:
       type: string
       format: uc-cidr4
-    example:
+    examples:
     - 8.8.8.8
     - 4.4.4.4
   dhcp-leases:

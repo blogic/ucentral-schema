@@ -7,14 +7,14 @@ properties:
       The MAC address of the host that this lease shall be used for.
     type: string
     format: uc-mac
-    example:
+    examples:
     - 00:11:22:33:44:55
   static-lease-offset:
     description:
       The offset of the IP that shall be used in relation to the first IP
       in the available range.
     type: integer
-    example:
+    examples:
     - 10
   lease-time:
     description:

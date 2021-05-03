@@ -7,7 +7,7 @@ properties:
        The URI of our Radius server.
     type: string
     format: uc-host
-    example:
+    examples:
     - 192.168.1.10
   port:
     description:
@@ -15,13 +15,13 @@ properties:
     type: integer
     maximum: 65535
     minimum: 1024
-    example:
+    examples:
     - 1812
   secret:
     description:
       The shared Radius authentication secret.
     type: string
-    example:
+    examples:
     - secret
   request-attribute:
     description:
@@ -29,7 +29,7 @@ properties:
     type: array
     items:
       type: string
-    example:
+    examples:
     - 126:s:Operator
   request-cui:
     description:

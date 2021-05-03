@@ -8,7 +8,7 @@ properties:
     type: integer
     maximum: 65535
     minimum: 256
-    example:
+    examples:
     - 1500
   tx-queue-len:
     description:
@@ -16,7 +16,7 @@ properties:
       sets the number of packets allowed per kernel transmit queue of a network
       interface device.
     type: integer
-    example:
+    examples:
     - 5000
   isolate-ports:
     description:

@@ -12,7 +12,7 @@ properties:
     type: array
     items:
       type: string
-    example:
+    examples:
     - LAN1
     - LAN2*
   multicast:
@@ -37,7 +37,7 @@ properties:
       Enforce a specific MAC to these ports.
     type: string
     format: uc-mac
-    example:
+    examples:
     - true
   reverse-path-filter:
     description:

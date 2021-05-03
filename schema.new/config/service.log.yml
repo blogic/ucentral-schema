@@ -8,7 +8,7 @@ properties:
       sent in addition to the local destination.
     type: string
     format: uc-host
-    example:
+    examples:
     - 192.168.1.10
   port:
     description:
@@ -16,7 +16,7 @@ properties:
     type: integer
     maximum: 65535
     minimum: 100
-    example:
+    examples:
     - 2000
   proto:
     description:

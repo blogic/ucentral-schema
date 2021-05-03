@@ -9,7 +9,7 @@ properties:
       This is described as a CIDR block. (192.168.0.0/16, 172.16.128/17)
     type: string
     format: uc-cidr4
-    example:
+    examples:
     - 192.168.0.0/16
   ipv6-network:
     description:
@@ -17,5 +17,5 @@ properties:
       This is described as a CIDR block. (fdca:1234:4567::/48)
     type: string
     format: uc-cidr6
-    example:
+    examples:
     - fdca:1234:4567::/48

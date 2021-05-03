@@ -9,7 +9,7 @@ properties:
       This is a free text field, stating the administrative name of the
       interface. It may contain spaces and special characters.
     type: string
-    example:
+    examples:
     - LAN
   role:
     description:
@@ -18,7 +18,7 @@ properties:
     enum:
     - upstream
     - downstream
-    example:
+    examples:
     - downstream
   isolate-hosts:
     description:
@@ -26,7 +26,7 @@ properties:
       and all local IP ranges are blocked. It essentially enforces "guest network"
       firewall settings.
     type: boolean
-    example:
+    examples:
     - false
   metric:
     description:
@@ -34,7 +34,7 @@ properties:
       priority.
     type: boolean
     default: 10
-    example:
+    examples:
     - 10
   services:
     description:
@@ -43,7 +43,7 @@ properties:
     type: array
     items:
       type: string
-    example:
+    examples:
     - ssh
     - lldp
   vlan:

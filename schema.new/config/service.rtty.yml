@@ -7,7 +7,7 @@ properties:
       The server that the AP shal to connect to.
     type: string
     format: uc-host
-    example:
+    examples:
     - 192.168.1.10
   port:
     description:
@@ -21,5 +21,5 @@ properties:
     type: string
     maxLength: 32
     minLength: 32
-    example:
+    examples:
     - 01234567890123456789012345678901
