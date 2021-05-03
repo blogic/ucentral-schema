@@ -1,0 +1,11 @@
+$id: https://openwrt.org/ucentral.state.json
+$schema: http://json-schema.org/draft-07/schema#
+description: OpenWrt uCentral state schema
+type: object
+properties:
+  unit:
+    $ref: "https://ucentral.io/state/v1/unit/"
+  radios:
+    $ref: "https://ucentral.io/state/v1/radio/"
+  interfaces:
+    $ref: "https://ucentral.io/state/v1/interface/"

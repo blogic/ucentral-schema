@@ -1,0 +1,34 @@
+type: array
+items:
+  type: object
+  description:
+    This section contains the current state of a SSID being brodcasted or
+    connected to by this device.
+  properties:
+    bssid:
+      type: string
+      description:
+        The BSSID used by this BSS instance.
+    ssid:
+      type: string
+      description:
+        The SSID that we are broadcasting or connecting to.
+    mode:
+      type: string
+      description:
+        The operational mode of the BSS.
+      enum:
+      - ap
+      - sta
+      - mesh
+      - wds
+    radio:
+      type: object
+      description:
+        A reference to the section describing the physical radio within this
+        document. (#/radios/X)
+      properties:
+        ref:
+          type: string
+    associations:
+      $ref: "https://ucentral.io/state/v1/interface/ssid/association/"

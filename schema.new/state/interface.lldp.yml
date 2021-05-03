@@ -1,0 +1,30 @@
+type: array
+items:
+  type: object
+  description:
+    A list of all LLDP peers that this logical interface is connected to.
+  properties:
+    capability:
+      type: array
+      description:
+        The device capabilities that our neighbour is announcing.
+      items:
+        type: string
+    description:
+      type: string
+      description:
+        The chassis description that our neighbour is announcing.
+    id:
+      type: string
+      description:
+        The chassis ID/MAC that our neighbour is announcing.
+    management_ips:
+      type: array
+      description:
+        The management IPs that our neighbour is announcing.
+      items:
+        type: string
+    port:
+      type: string
+      description:
+        The physical network port that we see this neighbour on.

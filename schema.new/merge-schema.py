@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import sys
 import yaml
 import json
 
@@ -9,11 +10,12 @@ def schema_filename(list):
     return file[0].replace("/", ".") + "yml"
 
 def entity_name(uri):
-    name = uri.replace("https://ucentral.io/schema/v1/", "").rstrip("/")
+    name = uri.replace("https://ucentral.io/" + sys.argv[1] + "/v1/", "").rstrip("/")
     return name.replace("/", ".")
 
 def schema_load(filename):
-    with open(filename) as stream:
+    print(sys.argv[2] + "/" + filename)
+    with open(sys.argv[2] + "/" + filename) as stream:
         try:
             schema = yaml.safe_load(stream)
             return schema
@@ -38,12 +40,15 @@ def schema_compile(input, output, definitions, tiny):
             output[k] = input[k]
     return output
 
-def schema_generate(filename, tiny):
-    with open(filename, 'w') as outfile:
+def schema_generate():
+    with open(sys.argv[4], 'w') as outfile:
+        tiny = int(sys.argv[5])
         defs = {}
-        schema = schema_compile(schema_load("ucentral.yml"), {}, defs, tiny)
+        schema = schema_compile(schema_load(sys.argv[3]), {}, defs, tiny)
         schema["definitions"] = defs
         json.dump(schema, outfile, ensure_ascii = tiny and False or True, indent = tiny and 0 or 4)
 
-schema_generate('ucentral.schema.json', 1)
-schema_generate('ucentral.schema.pretty.json', 0)
+if len(sys.argv) != 6:
+    raise Exception("Invalid parameters");
+
+schema_generate()

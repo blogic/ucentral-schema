@@ -1,0 +1,36 @@
+type: array
+description:
+  A list all OBSS that this BSS is connected to. The contained entries
+  depend opertational mode.
+  * AP - all associated stationd
+  * STA - the remote AP
+  * mesh - all mesh peers that we can see
+  * wds - the remote wds peer
+items:
+  description: An explanation about the purpose
+    of this instance.
+  properties:
+    bssid:
+      type: string
+      description:
+        The BSSID of the remote BSS.
+    rssi:
+      type: number
+      description:
+        The RX signal strength of the remore BSS. (dBm)
+    rx_bytes:
+      type: number
+      description:
+        The number of bytes received.
+    rx_packets:
+      type: number
+      description:
+        The number of packets received.
+    tx_bytes:
+      type: number
+      description:
+        The number of bytes transmitted.
+    tx_failed:
+      type: number
+      description:
+        The number of packets transmitted.

@@ -1,0 +1,30 @@
+type: array
+items:
+  type: object
+  description:
+    An explanation about the purpose of this instance.
+  properties:
+    ipv4_addresses:
+      type: array
+      description:
+        An explanation about the purpose of this
+      items:
+        type: string
+    ipv6_addresses:
+      type: array
+      description:
+        An explanation about the purpose of this
+      items:
+        type: string
+    mac:
+      type: string
+      description:
+        An explanation about the purpose of this
+    ports:
+      type: array
+      description:
+        An explanation about the purpose of this
+      items:
+        description:
+          An explanation about the purpose
+        type: string

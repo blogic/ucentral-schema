@@ -1,0 +1,41 @@
+type: object
+description:
+  This section contains the traffic counters of the logical interface. Entries
+  that have a value of 0 will not be included.
+properties:
+  collisions:
+    type: number
+  multicast:
+    type: number
+  rx_bytes:
+    type: number
+    description:
+      The number of bytes received.
+  rx_packets:
+    type: number
+    description:
+      The number of packets received.
+  rx_error:
+    type: number
+    description:
+      The number of receive errors.
+  rx_dropped:
+    type: number
+    description:
+      The number of received packets that were dropped.
+  tx_bytes:
+    type: number
+    description:
+      The number of bytes transmitted.
+  tx_packets:
+    type: number
+    description:
+      The number of packets transmitted.
+  tx_error:
+    type: number
+    description:
+      The number of transmit errors.
+  tx_dropped:
+    type: number
+    description:
+      The number of transmitted packets that were dropped.

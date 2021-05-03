@@ -1,0 +1,22 @@
+type: array
+items:
+  type: object
+  description:
+    This section describes an IPv4 lease that we have served
+  properties:
+    address:
+      type: string
+      description:
+        The IPv4 that has been assigned to the networking client.
+    assigned:
+      type: string
+      description:
+        The unix time stamp when this lease was assigned.
+    hostname:
+      type: string
+      description:
+        The hostname that the client included in his request.
+    mac:
+      type: string
+      description:
+        The MAC address of the client that this lease was assigned to.

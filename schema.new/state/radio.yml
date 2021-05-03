@@ -1,0 +1,28 @@
+type: array
+description:
+  An array containing the current operational state of all wifi radios that the
+  unit has.
+items:
+  type: object
+  properties:
+    channel_width:
+      type: number
+      description:
+        The channel width currently being used.
+      enum:
+      - 20
+      - 40
+      - 80
+      - 160
+      - 320
+    frequencies:
+      type: array
+      description:
+        The list of channels frquencies, that the unit is currently operating
+        on. Anything other than 20MHz will list several frequencies here.
+      items:
+        type: number
+    tx_power:
+      type: number
+      description:
+        The currently configure TX power of the radio in dBm.

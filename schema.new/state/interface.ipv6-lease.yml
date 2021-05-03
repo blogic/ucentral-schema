@@ -1,0 +1,17 @@
+type: array
+description:
+items:
+  type: object
+  description:
+    This section describes an IPv6 lease that we have served.
+  properties:
+    addresses:
+      type: array
+      description:
+        A list of all IPv6 addresses that were assigned to this host.
+      items:
+        type: string
+    hostname:
+      type: string
+      description:
+        The hostname that the client sent in its solicit message.

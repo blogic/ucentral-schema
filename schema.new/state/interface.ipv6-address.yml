@@ -1,0 +1,12 @@
+type: array
+items:
+  type: object
+  description:
+    An IPv6 address assigned to this logical interface.
+  properties:
+    address:
+      type: string
+      description: The actual IPv6 address/mask
+    valid:
+      type: number
+      description: How much longer this delegation is valid for.

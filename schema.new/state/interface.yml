@@ -1,0 +1,45 @@
+type: array
+description:
+  An array containing the runtime state of all logical interfaces.items:
+items:
+  type: object
+  properties:
+    uptime:
+      type: number
+      description:
+        The number of seconds since the interface was brought up.
+    name:
+      type: string
+      description:
+        The administrative name of this logical interface. This field is
+        freetext
+    ntp_server:
+      type: string
+      description:
+        The upstream NTP server being used by this interface.
+    ipv4_leasetime:
+      type: number
+      description:
+        This is the leasetime if the IPv4 address of this logical interface was
+        acquired via DHCPv4.
+    dns_servers:
+      type: array
+      description:
+        The list of remote DNS servers that this logical interface uses for
+        domain name resolution.
+      items:
+        type: string
+    ipv4_addresses:
+      $ref: "https://ucentral.io/state/v1/interface/ipv4-address/"
+    ipv4_leases:
+      $ref: "https://ucentral.io/state/v1/interface/ipv4-lease/"
+    ipv6_addresses:
+      $ref: "https://ucentral.io/state/v1/interface/ipv6-address/"
+    ipv6_leases:
+      $ref: "https://ucentral.io/state/v1/interface/ipv6-lease/"
+    counters:
+      $ref: "https://ucentral.io/state/v1/interface/counter/"
+    ssids:
+      $ref: "https://ucentral.io/state/v1/interface/ssid/"
+    lldp_neighbours:
+      $ref: "https://ucentral.io/state/v1/interface/lldp/"
