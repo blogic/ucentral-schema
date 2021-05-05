@@ -42,10 +42,10 @@ properties:
     type: array
     items:
       type: string
-      format: uc-cidr4
-    examples:
-    - 8.8.8.8
-    - 4.4.4.4
+      format: ipv4
+      examples:
+      - 8.8.8.8
+      - 4.4.4.4
   dhcp-leases:
     type: array
     items:

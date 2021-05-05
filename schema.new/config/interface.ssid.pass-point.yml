@@ -22,6 +22,7 @@ properties:
       This parameter can be used to configure one or more Venue URL Duples to
       provide additional information corresponding to Venue Name information.
     type: string
+    format: uri
   auth-type:
     description:
       This parameter indicates what type of network authentication is used in
@@ -33,6 +34,7 @@ properties:
     description:
       The IEEE 802.11u Domain Name.
     type: string
+    format: hostname
   nai-realm:
     description:
       NAI Realm information

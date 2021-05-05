@@ -12,9 +12,14 @@ properties:
     type: array
     items:
       type: string
-    examples:
-    - LAN1
-    - LAN2*
+      examples:
+      - LAN1
+      - LAN2
+      - LAN3
+      - LAN4
+      - LAN*
+      - WAN*
+      - "*"
   multicast:
     description:
       Enable multicast support.
