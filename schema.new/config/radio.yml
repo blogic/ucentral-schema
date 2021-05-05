@@ -49,7 +49,7 @@ properties:
     description:
       The channel width that the radio shall use. This is just a hint for the AP. If the
       requested value is not supported then the AP will use the highest common denominator.
-    type: string
+    type: integer
     enum:
     - 20
     - 40
@@ -58,7 +58,7 @@ properties:
     - 8080
   require-mode:
     description:
-      Sations that do no fulfill these HT modes will be rejected.
+      Stations that do no fulfill these HT modes will be rejected.
     type: array
     items:
       type: string

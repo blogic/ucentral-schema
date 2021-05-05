@@ -42,8 +42,6 @@ properties:
       Enforce a specific MAC to these ports.
     type: string
     format: uc-mac
-    examples:
-    - true
   reverse-path-filter:
     description:
       Reverse Path filtering is a method used by the Linux Kernel to help

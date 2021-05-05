@@ -21,4 +21,4 @@ properties:
   stationary-ap:
     description:
       Stationary AP config indicates that the AP doesn't move.
-    type: integer
+    type: boolean

@@ -18,24 +18,20 @@ properties:
     enum:
     - upstream
     - downstream
-    examples:
-    - downstream
   isolate-hosts:
     description:
       This option makes sure that any traffic leaving this interface is isolated
       and all local IP ranges are blocked. It essentially enforces "guest network"
       firewall settings.
     type: boolean
-    examples:
-    - false
   metric:
     description:
       The routing metric of this logical interface. Lower values have higher
       priority.
-    type: boolean
+    type: integer
     default: 10
-    examples:
-    - 10
+    maximum: 4294967295
+    minimum: 0
   services:
     description:
       The services that shall be offered on this logical interface. These are
