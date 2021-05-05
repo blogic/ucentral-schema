@@ -70,25 +70,35 @@ function random_item(array)
 	return array[math.rand() % length(array)];
 }
 
-function random_phrase() {
-	let verb = random_item(verbs),
-	    adjective, noun;
+function random_phrase(min, max) {
+	let str, len;
 
 	while (true) {
-		adjective = random_item(adjectives);
+		let verb = random_item(verbs),
+		    adjective, noun;
 
-		if (adjective != verb)
+		while (true) {
+			adjective = random_item(adjectives);
+
+			if (adjective != verb)
+				break;
+		}
+
+		while (true) {
+			noun = random_item(nouns);
+
+			if (noun != verb && noun != adjective)
+				break;
+		}
+
+		str = verb + '-' + adjective + '-' + noun;
+		len = length(str);
+
+		if (len >= min && len <= max)
 			break;
 	}
 
-	while (true) {
-		noun = random_item(nouns);
-
-		if (noun != verb && noun != adjective)
-			break;
-	}
-
-	return verb + '-' + adjective + '-' + noun;
+	return str;
 }
 
 function random_ip4addr() {
@@ -121,18 +131,18 @@ function random_ip6addr() {
 }
 
 function random_hostname() {
-	return random_phrase() + '.example.org';
+	return random_phrase(0, Infinity) + '.example.org';
 }
 
 function random_email() {
-	return random_phrase() + '@example.org';
+	return random_phrase(0, Infinity) + '@example.org';
 }
 
 function random_uri() {
-	return 'https://example.org/' + random_phrase();
+	return 'https://example.org/' + random_phrase(0, Infinity);
 }
 
-function random_value(kind, length) {
+function random_value(kind, minLength, maxLength) {
 	switch (kind) {
 	case 'ipv4':
 		return random_ip4addr();
@@ -194,10 +204,10 @@ function random_value(kind, length) {
 		break;
 
 	default:
-		if (length)
-			return random_string(length);
+		if (minLength <= 15 && maxLength >= 20)
+			return random_phrase(minLength, maxLength);
 		else
-			return random_phrase();
+			return random_string(minLength + (math.rand() % ((maxLength - minLength) + 1)));
 	}
 }
 
@@ -329,16 +339,16 @@ let GeneratorProto = {
 		else if (exists(stringSpec, "default"))
 			return stringSpec.default;
 
-		let len = 10;
+		let minLength = 0;
+		let maxLength = 256;
 
-		if (type(stringSpec.minLength) == "int" && stringSpec.minLength > len)
-			len = stringSpec.minLength;
+		if (type(stringSpec.minLength) == "int")
+			minLength = stringSpec.minLength;
 
-		if (type(stringSpec.maxLength) == "int" && stringSpec.maxLength < len)
-			len = stringSpec.maxLength;
+		if (type(stringSpec.maxLength) == "int")
+			maxLength = stringSpec.maxLength;
 
-		//return random_string(len);
-		return random_value(stringSpec.format);
+		return random_value(stringSpec.format, minLength, maxLength);
 	},
 
 	emit_number: function(numberSpec)

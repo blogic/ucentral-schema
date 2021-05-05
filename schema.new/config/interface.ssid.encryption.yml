@@ -28,13 +28,12 @@ properties:
     type: string
     maxLength: 63
     minLength: 8
-    examples:
-    - aaaaaaaa
   ieee80211w:
     description:
       Enable 802.11w Management Frame Protection (MFP) for this BSS.
-    type: integer
-    maximum: 2
-    minimum: 0
-    examples:
-    - 2
+    type: string
+    enum:
+    - disabled
+    - optional
+    - required
+    default: disabled

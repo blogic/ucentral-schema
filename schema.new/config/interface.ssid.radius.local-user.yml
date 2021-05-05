@@ -5,16 +5,15 @@ properties:
   mac:
     type: string
     format: uc-mac
-    examples:
-    - 00:11:22:33:44:55
   key:
     type: string
     maxLength: 63
     minLength: 8
-    examples:
-    - aaaaaaaa
   vid:
     type: integer
     maximum: 4096
     examples:
+    - 3
     - 100
+    - 200
+    - 4094

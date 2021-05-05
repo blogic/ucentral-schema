@@ -27,7 +27,25 @@ properties:
     description:
       This parameter indicates what type of network authentication is used in
       the network.
-    type: string
+    type: object
+    properties:
+      type:
+        description:
+          Specifies the specific network authentication type in use.
+        type: string
+        enum:
+        - "terms-and-conditions"
+        - "online-enrollment"
+        - "http-redirection"
+        - "dns-redirection"
+      uri:
+        description:
+          Specifies the redirect URL applicable to the indicated authentication type.
+        type: string
+        format: uri
+        examples:
+        - https://operator.example.org/wireless-access/terms-and-conditions.html
+        - http://www.example.com/redirect/me/here/
     minLength: 2
     maxLength: 2
   domain-name:
@@ -49,6 +67,7 @@ properties:
       same common ANQP information.
     type: integer
     maximum: 65535
+    minimum: 0
   friendly-name:
     description:
       This parameter can be used to configure one or more Operator Friendly
@@ -59,4 +78,42 @@ properties:
       The operator icons.
     type: array
     items:
-      type: string
+      type: object
+      properties:
+        width:
+          type: integer
+          description: The width of the operator icon in pixel
+          examples:
+          - 64
+        height:
+          type: integer
+          description: The height of the operator icon in pixel
+          examples:
+          - 64
+        type:
+          type: string
+          description: The mimetype of the operator icon
+          examples:
+          - image/png
+        uri:
+          type: string
+          format: uri
+          description: The URL the operator icon is available at
+          examples:
+          - http://example.org/operator-64x64.png
+      examples:
+      - width: 32
+        height: 32
+        type: image/png
+        url: http://example.org/operator-32x32.png
+      - width: 64
+        height: 64
+        type: image/png
+        uri: http://example.org/operator-64x64.png
+      - width: 16
+        height: 16
+        type: image/gif
+        uri: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7
+
+
+

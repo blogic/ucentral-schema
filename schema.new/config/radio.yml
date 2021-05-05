@@ -100,3 +100,12 @@ properties:
     type: array
     items:
       type: string
+      examples:
+      - 'ap_table_expiration_time=3600'
+      - 'device_type=6-0050F204-1'
+      - 'ieee80211h=1'
+      - 'rssi_ignore_probe_request=-75'
+      - 'time_zone=EST5'
+      - 'uuid=12345678-9abc-def0-1234-56789abcdef0'
+      - 'venue_url=1:http://www.example.com/info-eng'
+      - 'wpa_deny_ptk0_rekey=0'

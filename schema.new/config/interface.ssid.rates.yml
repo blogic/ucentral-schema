@@ -7,8 +7,36 @@ properties:
       The beacon rate that shall be used by the BSS. Values are in Mbps.
     type: integer
     default: 0
+    enum:
+    - 0
+    - 1000
+    - 2000
+    - 5500
+    - 6000
+    - 9000
+    - 11000
+    - 12000
+    - 18000
+    - 24000
+    - 36000
+    - 48000
+    - 54000
   multicast:
     description:
       The multicast rate that shall be used by the BSS. Values are in Mbps.
     type: integer
     default: 0
+    enum:
+    - 0
+    - 1000
+    - 2000
+    - 5500
+    - 6000
+    - 9000
+    - 11000
+    - 12000
+    - 18000
+    - 24000
+    - 36000
+    - 48000
+    - 54000

@@ -18,9 +18,7 @@ properties:
     items:
       $ref: "https://ucentral.io/schema/v1/interface/"
   services:
-    type: array
-    items:
-      $ref: "https://ucentral.io/schema/v1/service/"
+    $ref: "https://ucentral.io/schema/v1/service/"
   metrics:
     $ref: "https://ucentral.io/schema/v1/metrics/"
   config-raw:

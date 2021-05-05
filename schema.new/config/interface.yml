@@ -43,9 +43,9 @@ properties:
     type: array
     items:
       type: string
-    examples:
-    - ssh
-    - lldp
+      examples:
+      - ssh
+      - lldp
   vlan:
     $ref: "https://ucentral.io/schema/v1/interface/vlan/"
   bridge:
@@ -59,4 +59,6 @@ properties:
   ipv6:
     ref: "https://ucentral.io/schema/v1/interface/ipv6/"
   ssids:
-    $ref: "https://ucentral.io/schema/v1/interface/ssid/"
+    type: array
+    items:
+      $ref: "https://ucentral.io/schema/v1/interface/ssid/"

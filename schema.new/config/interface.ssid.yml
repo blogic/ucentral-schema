@@ -40,7 +40,8 @@ properties:
     description:
       Beacon interval in kus (1.024 ms).
     type: integer
-    maximum: 1000
+    default: 100
+    maximum: 65535
     minimum: 15
   dtim-period:
     description:
@@ -48,6 +49,7 @@ properties:
       be one DTIM per this many beacon frames. This may be set between 1 and
       255. This option only has an effect on ap wifi-ifaces.
     type: integer
+    default: 2
     maximum: 255
     minimum: 1
   hidden-ssid:
@@ -99,3 +101,12 @@ properties:
     type: array
     items:
       type: string
+      examples:
+      - 'ap_table_expiration_time=3600'
+      - 'device_type=6-0050F204-1'
+      - 'ieee80211h=1'
+      - 'rssi_ignore_probe_request=-75'
+      - 'time_zone=EST5'
+      - 'uuid=12345678-9abc-def0-1234-56789abcdef0'
+      - 'venue_url=1:http://www.example.com/info-eng'
+      - 'wpa_deny_ptk0_rekey=0'
