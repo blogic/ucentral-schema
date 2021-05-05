@@ -101,19 +101,28 @@ properties:
           description: The URL the operator icon is available at
           examples:
           - http://example.org/operator-64x64.png
+        language:
+          type: string
+          description: ISO 639-2 language code of the icon
+          pattern: "^[a-z][a-z][a-z]$"
+          examples:
+          - eng
+          - fre
+          - ger
+          - ita
       examples:
       - width: 32
         height: 32
         type: image/png
-        url: http://example.org/operator-32x32.png
+        uri: http://example.org/operator-32x32.png
+        language: eng
       - width: 64
         height: 64
         type: image/png
         uri: http://example.org/operator-64x64.png
+        language: eng
       - width: 16
         height: 16
         type: image/gif
         uri: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7
-
-
-
+        language: eng
