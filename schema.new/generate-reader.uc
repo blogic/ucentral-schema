@@ -7,12 +7,6 @@ push(REQUIRE_SEARCH_PATH,
 let fs = require("fs");
 let math = require("math");
 
-function assert(condition, message)
-{
-	if (!condition)
-		die(message);
-}
-
 function to_property_name(name)
 {
 	return replace(replace(
@@ -33,9 +27,19 @@ function to_method_name(verb, name)
 
 function to_value_descr(path)
 {
-	if (path[length(path) - 1] == '#') {
+	let last = path[length(path) - 1];
+
+	if (last == '#') {
 		let p = [...path]; pop(p);
 		return sprintf('Items of %s', join('.', p));
+	}
+	else if (last == '$') {
+		let p = [...path]; pop(p);
+		return sprintf('Keys of %s', join('.', p));
+	}
+	else if (type(last) == "int") {
+		let p = [...path]; pop(p);
+		return sprintf('Property %s', join('.', p));
 	}
 	else {
 		return sprintf('Property %s', join('.', path));
@@ -114,7 +118,7 @@ let GeneratorProto = {
 
 		let constraints = {
 			'maximum': '<=',
-			'minimum': '=>',
+			'minimum': '>=',
 			'exclusiveMaximum': '<',
 			'exclusiveMinimum': '>'
 		};
@@ -138,13 +142,13 @@ let GeneratorProto = {
 
 		if (exists(valueSpec, 'maxLength')) {
 			this.print(path, 'assert(length(%s) <= %J, %J);\n',
-				value_expr, valueSpec.maxLength,
+				valueExpr, valueSpec.maxLength,
 				sprintf('%s must be <= %J characters long', to_value_descr(path), valueSpec.maxLength));
 		}
 
 		if (exists(valueSpec, 'minLength')) {
 			this.print(path, 'assert(length(%s) >= %J, %J);\n',
-				value_expr, valueSpec.minLength,
+				valueExpr, valueSpec.minLength,
 				sprintf('%s must be >= %J characters long', to_value_descr(path), valueSpec.minLength));
 		}
 	},
@@ -153,13 +157,13 @@ let GeneratorProto = {
 	{
 		if (exists(valueSpec, 'maxItems')) {
 			this.print(path, 'assert(length(%s) <= %J, %J);\n',
-				value_expr, valueSpec.maxItems,
+				valueExpr, valueSpec.maxItems,
 				sprintf('%s array length must be <= %J items', to_value_descr(path), valueSpec.maxItems));
 		}
 
 		if (exists(valueSpec, 'minItems')) {
 			this.print(path, 'assert(length(%s) >= %J, %J);\n',
-				value_expr, valueSpec.minItems,
+				valueExpr, valueSpec.minItems,
 				sprintf('%s array length must be >= %J items', to_value_descr(path), valueSpec.minItems));
 		}
 
@@ -170,13 +174,13 @@ let GeneratorProto = {
 	{
 		if (exists(valueSpec, 'maxProperties')) {
 			this.print(path, 'assert(length(%s) <= %J, %J);\n',
-				value_expr, valueSpec.maxProperties,
+				valueExpr, valueSpec.maxProperties,
 				sprintf('%s object must have <= %J properties', to_value_descr(path), valueSpec.maxProperties));
 		}
 
 		if (exists(valueSpec, 'minProperties')) {
 			this.print(path, 'assert(length(%s) >= %J, %J);\n',
-				value_expr, valueSpec.minProperties,
+				valueExpr, valueSpec.minProperties,
 				sprintf('%s object must have >= %J properties', to_value_descr(path), valueSpec.minProperties));
 		}
 	},
@@ -245,11 +249,8 @@ let GeneratorProto = {
 		}
 	},
 
-	emit_spec_validation_asserts: function(path, valueExpr, propertyName, valueSpec)
+	emit_spec_validation_asserts: function(path, valueExpr, valueSpec)
 	{
-		//this.print(path, '// Asserts for %s / %J / %J',
-		//	valueExpr, propertyName, valueSpec);
-
 		let typeMap = {
 			string: '== "string"',
 			number: 'in [ "int", "double" ]',
@@ -259,12 +260,45 @@ let GeneratorProto = {
 			object: '== "object"'
 		};
 
-		this.print(path, 'assert(type(%s) %s, %J);',
-			valueExpr, typeMap[valueSpec.type],
-			sprintf('%s must be of type %s',
-				to_value_descr(path), valueSpec.type));
+		if (exists(typeMap, valueSpec.type)) {
+			this.print(path, 'assert(type(%s) %s, %J);',
+				valueExpr, typeMap[valueSpec.type],
+				sprintf('%s must be of type %s',
+					to_value_descr(path), valueSpec.type));
+		}
 
 		this.emit_generic_asserts(path, valueExpr, valueSpec);
+
+		let variantSpecs, variantSuccessCond;
+
+		if (type(valueSpec.anyOf) == "array" && length(valueSpec.anyOf) > 0) {
+			variantSpecs = valueSpec.anyOf;
+			variantSuccessCond = '> 0';
+		}
+		else if (type(valueSpec.oneOf) == "array" && length(valueSpec.oneOf) > 0) {
+			variantSpecs = valueSpec.oneOf;
+			variantSuccessCond = '== 1';
+		}
+		else if (type(valueSpec.allOf) == "array" && length(valueSpec.allOf) > 0) {
+			variantSpecs = valueSpec.allOf;
+			variantSuccessCond = sprintf('== %d', length(variantSpecs));
+		}
+
+		if (variantSpecs) {
+			let functionNames = [];
+
+			for (let i, subSpec in variantSpecs)
+				push(functionNames, this.emit_spec_validation_function(path, 'parseVariant', i, subSpec));
+
+			this.print(path, 'let success = 0, errors = [];\n');
+
+			for (let functionName in functionNames) {
+				this.print(path, 'try { %s(value); success++; }', functionName);
+				this.print(path, 'catch (e) { push(errors, e); }\n');
+			}
+
+			this.print(path, 'assert(success %s, join("\\n- or -\\n", errors));', variantSuccessCond);
+		}
 
 		switch (valueSpec.type) {
 		case 'number':
@@ -288,20 +322,15 @@ let GeneratorProto = {
 
 	emit_spec_validation_function: function(path, verb, propertyName, valueSpec)
 	{
-		this.print(path, 'function %s(value) {', to_method_name(verb, propertyName));
+		let functionName = to_method_name(verb, propertyName);
 
-		this.emit_spec_validation_asserts([...path, propertyName], 'value', propertyName, valueSpec);
+		this.print(path, 'function %s(value) {', functionName);
+
+		this.emit_spec_validation_asserts([...path, propertyName], 'value', valueSpec);
 
 		this.print(path, '');
 
 		switch (valueSpec.type) {
-		case 'string':
-		case 'number':
-		case 'integer':
-		case 'boolean':
-			this.print(path, '	return value;');
-			break;
-
 		case 'array':
 			let itemSpec = valueSpec.items,
 			    isSimple = this.is_simple_spec(itemSpec),
@@ -315,12 +344,12 @@ let GeneratorProto = {
 				else if (isSimple) {
 					this.print(path, '	return map(value, (item) => {');
 					//this.print(path, '		// Array %J item asserts...\n', propertyName);
-					this.emit_spec_validation_asserts([...path, propertyName, '#'], 'item', propertyName, valueSpec);
+					this.emit_spec_validation_asserts([...path, propertyName, '#'], 'item', itemSpec);
 					this.print(path, '		return item;');
 					this.print(path, '	});');
 				}
 				else {
-					this.emit_spec_validation_function([...path, propertyName], 'parse', 'item', valueSpec.items);
+					this.emit_spec_validation_function([...path, propertyName], 'parse', 'item', itemSpec);
 					this.print(path, '	return map(value, parseItem);');
 				}
 			}
@@ -335,7 +364,19 @@ let GeneratorProto = {
 			if (exists(valueSpec, "$ref"))
 				return;
 
-			this.print(path,	'	let obj = {};\n');
+			if (type(valueSpec.propertyNames) == "object") {
+				let keySpec = { type: 'string', ...(valueSpec.propertyNames) };
+
+				this.print(path, '	for (let propertyName in value) {');
+				this.emit_spec_validation_asserts([...path, propertyName, '$'], 'propertyName', keySpec);
+				this.print(path, '	}');
+				this.print(path, '');
+			}
+
+			if (valueSpec.additionalProperties === true)
+				this.print(path, '	let obj = { ...value };\n');
+			else
+				this.print(path, '	let obj = {};\n');
 
 			if (type(valueSpec.properties) == "object") {
 				for (let objectPropertyName, propertySpec in valueSpec.properties) {
@@ -364,7 +405,6 @@ let GeneratorProto = {
 						this.emit_spec_validation_asserts(
 							[...path, propertyName, objectPropertyName],
 							valueExpr,
-							objectPropertyName,
 							propertySpec);
 
 						this.print(path, '		obj.%s = %s;',
@@ -403,9 +443,16 @@ let GeneratorProto = {
 			}
 
 			this.print(path, '	return obj;');
+			break;
+
+		default:
+			this.print(path, '	return value;');
+			break;
 		}
 
 		this.print(path, '}\n');
+
+		return functionName;
 	},
 
 	generate: function()
@@ -414,10 +461,18 @@ let GeneratorProto = {
 
 		this.schema = this.read_schema(this.path);
 
+		this.print(path, '{%');
+		this.print(path, '// Automatically generated from %s - do not edit!', this.path);
+		this.print(path, '"use strict";\n');
+
 		for (let definitionId, definitionSpec in this.schema['$defs'])
 			this.emit_spec_validation_function(path, 'instantiate', definitionId, definitionSpec);
 
 		this.emit_spec_validation_function(path, 'new', "UCentralState", this.schema);
+
+		this.print(path, 'return {');
+		this.print(path, '	validate: (value) => newUCentralState(value)');
+		this.print(path, '};');
 	}
 };
 
@@ -426,6 +481,5 @@ function instantiateGenerator(path) {
 }
 
 let generator = instantiateGenerator("./ucentral.schema.pretty.json");
-let document = generator.generate();
 
-//print(document, "\n");
+generator.generate();
