@@ -7,10 +7,47 @@ push(REQUIRE_SEARCH_PATH,
 let fs = require("fs");
 let math = require("math");
 
-function assert(condition, message)
+// words sourced from https://github.com/imsky/wordlists/
+let verbs = [
+	'access', 'address', 'bookmark', 'browse', 'build', 'chat', 'click', 'close', 'code', 'compile', 'connect',
+	'debug', 'deploy', 'develop', 'download', 'downsize', 'drag', 'evangelize', 'execute', 'flub', 'generate',
+	'insource', 'install', 'link', 'load', 'log', 'make', 'marinate', 'message', 'noodle', 'onboard', 'open',
+	'paper', 'patch', 'ping', 'populate', 'post', 'productize', 'receive', 'release', 'resonate', 'run', 'scroll',
+	'search', 'send', 'share', 'step', 'sunset', 'surface', 'task', 'transition', 'triangulate', 'type', 'unpack',
+	'upload', 'vector', 'view', 'visit'
+];
+
+let nouns = [
+	'admin', 'agreeance', 'alignment', 'application', 'architecture', 'argument', 'availability', 'backburner',
+	'bandwidth', 'baseline', 'benefit', 'block', 'boondoggle', 'brass', 'buy-in', 'capital', 'chain', 'channel',
+	'code', 'comment', 'community', 'content', 'convergence', 'coopetition', 'cowboy', 'creative', 'data', 'deck',
+	'deliverable', 'delta', 'dialogue', 'disconnect', 'dog', 'empowerment', 'experience', 'expertise', 'float',
+	'flunky', 'function', 'functionality', 'gatekeeper', 'gofer', 'goldbricker', 'hardball', 'idea', 'ideation',
+	'imperative', 'improvement', 'infomediary', 'information', 'infrastructure', 'initiative', 'innovation',
+	'integer', 'interface', 'issue', 'item', 'keyword', 'kicker', 'kudos', 'language', 'leadership', 'learning',
+	'line', 'linkage', 'literal', 'market', 'material', 'method', 'methodology', 'metrics', 'mindshare', 'model',
+	'name', 'network', 'niche', 'number', 'object', 'opportunity', 'ownership', 'paradigm', 'parameter',
+	'partnership', 'pivot', 'platform', 'portal', 'potentiality', 'practice', 'procedure', 'process', 'product',
+	'pushback', 'relationship', 'report', 'resource', 'result', 'runway', 'scenario', 'schema', 'scope', 'scrub',
+	'service', 'shrink', 'sidebar', 'silo', 'skill', 'skillset', 'snippet', 'solution', 'source', 'space',
+	'strategy', 'string', 'synergy', 'syntax', 'system', 'talent', 'technology', 'type', 'upside', 'value',
+	'vector', 'verbiage', 'vision'
+];
+
+let adjectives = [
+	'absolute', 'achromatic', 'acoustic', 'adiabatic', 'alternating', 'atomic', 'binding', 'brownian', 'buoyant',
+	'central', 'chief', 'chromatic', 'closed', 'coherent', 'corporate', 'critical', 'customer', 'dense', 'direct',
+	'direct', 'district', 'dynamic', 'electric', 'electrical', 'endothermic', 'exothermic', 'forward', 'free',
+	'fundamental', 'future', 'global', 'gravitational', 'human', 'internal', 'internal', 'international',
+	'isobaric', 'isochoric', 'isothermal', 'kinetic', 'latent', 'lead', 'legacy', 'magnetic',  'mechanical',
+	'national', 'natural', 'nuclear', 'open', 'optical', 'potential', 'primary', 'principal', 'progressive',
+	'quantum', 'radiant', 'radioactive', 'rectilinear', 'regional', 'relative', 'resolving', 'resonnt',
+	'resultant', 'rigid', 'senior', 'volumetric'
+];
+
+function is_array(val)
 {
-	if (!condition)
-		die(message);
+	return (type(val) == "array" && length(val) > 0);
 }
 
 function random_string(len)
@@ -23,6 +60,145 @@ function random_string(len)
 	}
 
 	return chr(...chars);
+}
+
+function random_item(array)
+{
+	if (type(array) != "array")
+		return null;
+
+	return array[math.rand() % length(array)];
+}
+
+function random_phrase() {
+	let verb = random_item(verbs),
+	    adjective, noun;
+
+	while (true) {
+		adjective = random_item(adjectives);
+
+		if (adjective != verb)
+			break;
+	}
+
+	while (true) {
+		noun = random_item(nouns);
+
+		if (noun != verb && noun != adjective)
+			break;
+	}
+
+	return verb + '-' + adjective + '-' + noun;
+}
+
+function random_ip4addr() {
+	return sprintf(random_item([
+		'10.%d.%d.%d',
+		'172.16.%d.%d',
+		'172.17.%d.%d',
+		'172.18.%d.%d',
+		'172.19.%d.%d',
+		'172.20.%d.%d',
+		'172.21.%d.%d',
+		'172.22.%d.%d',
+		'172.23.%d.%d',
+		'172.24.%d.%d',
+		'172.25.%d.%d',
+		'172.26.%d.%d',
+		'172.27.%d.%d',
+		'172.28.%d.%d',
+		'172.29.%d.%d',
+		'172.30.%d.%d',
+		'172.31.%d.%d',
+		'192.168.%d.%d'
+	]), math.rand() % 256, math.rand() % 256, math.rand() % 256);
+}
+
+function random_ip6addr() {
+	return sprintf('2001:db8:%x:%x:%x:%x:%x:%x',
+		math.rand() % 0x10000, math.rand() % 0x10000, math.rand() % 0x10000,
+		math.rand() % 0x10000, math.rand() % 0x10000, math.rand() % 0x10000);
+}
+
+function random_hostname() {
+	return random_phrase() + '.example.org';
+}
+
+function random_email() {
+	return random_phrase() + '@example.org';
+}
+
+function random_uri() {
+	return 'https://example.org/' + random_phrase();
+}
+
+function random_value(kind, length) {
+	switch (kind) {
+	case 'ipv4':
+		return random_ip4addr();
+
+	case 'ipv6':
+		return random_ip6addr();
+
+	case 'email':
+	case 'idn-email':
+		return random_email();
+
+	case 'hostname':
+	case 'idn-hostname':
+		return random_hostname();
+
+	case 'uri':
+	case 'uri-reference':
+	case 'iri':
+	case 'iri-reference':
+		return random_uri();
+
+	case 'uc-ip':
+		switch (math.rand() % 2) {
+		case 0: return random_ip4addr();
+		case 1: return random_ip6addr();
+		}
+
+		break;
+
+	case 'uc-host':
+		switch (math.rand() % 3) {
+		case 0: return random_hostname();
+		case 1: return random_ip4addr();
+		case 2: return random_ip6addr();
+		}
+
+		break;
+
+	case 'uc-mac':
+		return sprintf('02:%02x:%02x:%02x:%02x:%02x',
+			math.rand() % 256, math.rand() % 256,
+			math.rand() % 256, math.rand() % 256,
+			math.rand() % 256);
+
+	case 'uc-cidr4':
+		return sprintf('%s/%d',
+			random_ip4addr(), math.rand() % 33);
+
+	case 'uc-cidr6':
+		return sprintf('%s/%d',
+			random_ip6addr(), math.rand() % 129);
+
+	case 'uc-cidr':
+		switch (math.rand() % 2) {
+		case 0: return sprintf('%s/%d', random_ip4addr(), math.rand() % 33);
+		case 1: return sprintf('%s/%d', random_ip6addr(), math.rand() % 129);
+		}
+
+		break;
+
+	default:
+		if (length)
+			return random_string(length);
+		else
+			return random_phrase();
+	}
 }
 
 let GeneratorProto = {
@@ -73,8 +249,8 @@ let GeneratorProto = {
 
 	emit_generic: function(objectSpec)
 	{
-		if (type(objectSpec.enum) == "array" && length(objectSpec.enum) > 0)
-			return objectSpec.enum[math.rand() % length(objectSpec.enum)];
+		if (is_array(objectSpec.enum))
+			return random_item(objectSpec.enum);
 
 		if (exists(objectSpec, "const"))
 			return objectSpec.const;
@@ -111,14 +287,35 @@ let GeneratorProto = {
 			if (type(arraySpec.minItems) == "int" && arraySpec.minItems > len)
 				len = arraySpec.minItems;
 
-			for (let i = 0; i < len; i++)
-				push(array, this.emit_spec(arraySpec.items));
+			if (is_array(arraySpec.items.enum) && length(arraySpec.items.enum) < len)
+				len = length(arraySpec.items.enum);
+
+			let examples = [ ...(is_array(arraySpec.items.examples) ? arraySpec.items.examples : []) ];
+
+			for (let i = 0; i < len; i++) {
+				while (true) {
+					let item;
+
+					if (length(examples)) {
+						item = random_item(examples);
+						examples = filter(examples, (i) => i != item);
+					}
+					else {
+						item = this.emit_spec(arraySpec.items, true);
+					}
+
+					if (arraySpec.items.type != "string" || index(array, item) == -1) {
+						push(array, item);
+						break;
+					}
+				}
+			}
 		}
 
 		return array;
 	},
 
-	emit_string: function(stringSpec)
+	emit_string: function(stringSpec, noExample)
 	{
 		assert(stringSpec.type == "string", "Expecting string type");
 
@@ -127,10 +324,10 @@ let GeneratorProto = {
 		if (rv == rv)
 			return rv;
 
-		if (exists(stringSpec, "uc-example"))
-			return stringSpec["uc-example"];
+		if (!noExample && is_array(stringSpec.examples))
+			return random_item(stringSpec.examples);
 		else if (exists(stringSpec, "default"))
-			return stringSpec["default"];
+			return stringSpec.default;
 
 		let len = 10;
 
@@ -140,7 +337,8 @@ let GeneratorProto = {
 		if (type(stringSpec.maxLength) == "int" && stringSpec.maxLength < len)
 			len = stringSpec.maxLength;
 
-		return random_string(len);
+		//return random_string(len);
+		return random_value(stringSpec.format);
 	},
 
 	emit_number: function(numberSpec)
@@ -154,7 +352,8 @@ let GeneratorProto = {
 
 		let multiplicator = 1;
 
-		if (type(numberSpec["default"]) == "double" || type(numberSpec["uc-example"]) == "double")
+		if (type(numberSpec.default) == "double" ||
+		    length(filter(numberSpec.examples, i => type(i) == "double")))
 			multiplicator = 0.1;
 
 		if (this.is_number(numberSpec.multipleOf) > 0)
@@ -164,6 +363,9 @@ let GeneratorProto = {
 		let max = this.is_number(numberSpec.maximum);
 		let exMin = this.is_number(numberSpec.exclusiveMinimum);
 		let exMax = this.is_number(numberSpec.exclusiveMaximum);
+
+		if (is_array(numberSpec.examples))
+			return random_item(numberSpec.examples);
 
 		while (true) {
 			let n = multiplicator * math.rand();
@@ -192,15 +394,15 @@ let GeneratorProto = {
 		if (rv == rv)
 			return rv;
 
-		if (exists(boolSpec, "uc-example"))
-			return (boolSpec["uc-example"] == true);
+		if (is_array(boolSpec.examples))
+			return random_item(boolSpec.examples);
 		else if (exists(boolSpec, "default"))
-			return (boolSpec["default"] == true);
+			return (boolSpec.default == true);
 
-		return false;
+		return ((math.rand() % 2) == 0);
 	},
 
-	emit_spec: function(valueSpec)
+	emit_spec: function(valueSpec, noExample)
 	{
 		let ref = this.is_ref(valueSpec);
 
@@ -221,7 +423,7 @@ let GeneratorProto = {
 			return this.emit_array(valueSpec);
 
 		case "string":
-			return this.emit_string(valueSpec);
+			return this.emit_string(valueSpec, noExample);
 
 		case "integer":
 			return this.emit_number(valueSpec);
@@ -263,4 +465,4 @@ function createGenerator(path) {
 let generator = createGenerator("./ucentral.schema.pretty.json");
 let document = generator.generate();
 
-print(document, "\n");
+printf("%.J\n", document);
