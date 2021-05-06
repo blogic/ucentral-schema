@@ -40,8 +40,9 @@
 	];
 
 	let files = [
-			"/etc/ucentral/cert.key", "/etc/ucentral/cert.pem",
-			"/etc/ucentral/redirector.json", "/etc/ucentral/dev-id"
+			"/etc/ucentral/cas.pem", "/etc/ucentral/cert.pem",
+			"/etc/ucentral/redirector.json", "/etc/ucentral/dev-id",
+			"/etc/ucentral/key.pem"
 	];
 	for (let f in files)
 		if (fs.stat(f))
