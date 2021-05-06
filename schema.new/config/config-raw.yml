@@ -3,4 +3,14 @@ description:
   other configuration was ben generated.
 type: array
 items:
-  type: string
+  type: array
+  minItems: 2
+  items:
+    type: string
+  examples:
+  - ['set', 'system.@system[0].timezone', 'GMT0']
+  - ['delete', 'firewall.@zone[0]']
+  - ['delete', 'dhcp.wan']
+  - ['add', 'dhcp', 'dhcp']
+  - ['add-list', 'system.ntp.server', '0.pool.example.org']
+  - ['del-list', 'system.ntp.server', '1.openwrt.pool.ntp.org']
