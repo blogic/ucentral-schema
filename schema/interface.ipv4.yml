@@ -46,6 +46,8 @@ properties:
       examples:
       - 8.8.8.8
       - 4.4.4.4
+  dhcp:
+    $ref: "https://ucentral.io/schema/v1/interface/ipv4/dhcp/"
   dhcp-leases:
     type: array
     items:

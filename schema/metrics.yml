@@ -18,6 +18,10 @@ properties:
         type: array
         items:
           type: string
+          enum:
+            - ssids
+            - lldp
+            - clients
   health:
     description:
       Health check gets executed periodically and will report a health value
@@ -28,23 +32,13 @@ properties:
         description:
           The reporting interval defined in seconds.
         type: integer
-      types:
-        description:
-          A list of names of subsystems that shall be reported periodically.
-        type: array
-        items:
-          type: string
   dhcp-snooping:
     description:
       DHCP snooping allows us to intercept DHCP packages on interface that are
       bridged, where DHCP is not offered as a service by the AP.
     type: object
     properties:
-      interval:
-        description:
-          The reporting interval defined in seconds.
-        type: integer
-      types:
+      filters:
         description:
           A list of the message types that shall be sent to the backend.
         type: array

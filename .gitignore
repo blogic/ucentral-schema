@@ -1,6 +1,4 @@
-*.schema
+/*.json
 docs/
-new/docs/
-schema.new/ucentral.schema.json
-schema.new/ucentral.schema.pretty.json
-schema.new/ucentral.state.pretty.json
+ucentral.schema.pretty.json
+ucentral.state.pretty.json

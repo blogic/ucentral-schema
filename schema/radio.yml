@@ -8,8 +8,6 @@ properties:
     enum:
     - 2G
     - 5G
-    - 5Gu
-    - 5Gl
     - 6G
   bandwidth:
     description:
@@ -59,13 +57,11 @@ properties:
   require-mode:
     description:
       Stations that do no fulfill these HT modes will be rejected.
-    type: array
-    items:
-      type: string
-      enum:
-      - HT
-      - VHT
-      - HE
+    type: string
+    enum:
+    - HT
+    - VHT
+    - HE
   mimo:
     description:
       This option allows configuring the antenna pairs that shall be used.
@@ -92,6 +88,22 @@ properties:
       Allow legacy 802.11b data rates.
     type: boolean
     default: false
+  beacon-interval:
+    description:
+      Beacon interval in kus (1.024 ms).
+    type: integer
+    default: 100
+    maximum: 65535
+    minimum: 15
+  dtim-period:
+    description:
+      Set the DTIM (delivery traffic information message) period. There will
+      be one DTIM per this many beacon frames. This may be set between 1 and
+      255. This option only has an effect on ap wifi-ifaces.
+    type: integer
+    default: 2
+    maximum: 255
+    minimum: 1
   he-settings:
     $ref: "https://ucentral.io/schema/v1/radio/he/"
   hostapd-iface-raw:

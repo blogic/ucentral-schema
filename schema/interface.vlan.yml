@@ -8,6 +8,7 @@ properties:
       The individual physical network devices contained within the interface
       need to be told explicitly if egress traffic shall be tagged.
     type: integer
+    minimum: 3
     maximum: 4096
   proto:
     decription:

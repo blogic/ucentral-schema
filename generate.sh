@@ -1,22 +1,10 @@
 #!/bin/sh
 
-sed -i "s/\t/        /g" -i schema/*.yml
-
-yaml2json schema/network.yml network.schema
-yaml2json schema/system.yml system.schema
-yaml2json schema/log.yml log.schema
-yaml2json schema/ntp.yml ntp.schema
-yaml2json schema/ssh.yml ssh.schema
-yaml2json schema/wifi-phy.yml wifi-phy.schema
-yaml2json schema/wifi-ssid.yml wifi-ssid.schema
-yaml2json schema/steer.yml steer.schema
-yaml2json schema/poe.yml poe.schema
-yaml2json schema/lldp.yml lldp.schema
-yaml2json schema/rtty.yml rtty.schema
-yaml2json schema/stats.yml stats.schema
-yaml2json schema/mqtt.yml mqtt.schema
-yaml2json schema/captive.yml captive.schema
-./merge-schema.py
+./merge-schema.py schema schema ucentral.yml ucentral.schema.json 1
+./merge-schema.py schema schema ucentral.yml ucentral.schema.pretty.json 0
+./merge-schema.py state state state.yml ucentral.state.pretty.json 0
 mkdir -p docs
-jsonschema2md ucentral.schema.json docs/ucentral-schema.md
-generate-schema-doc ucentral.schema.json docs/ucentral-schema.html
+generate-schema-doc --config expand_buttons=true ucentral.schema.pretty.json docs/ucentral-schema.html
+generate-schema-doc --config expand_buttons=true ucentral.state.pretty.json docs/ucentral-state.html
+./generate-reader.uc  > schemareader.uc
+./generate-example.uc > input.json

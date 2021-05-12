@@ -112,13 +112,6 @@ let wiphy = {
 
 	lookup_by_band: function(band) {
 		for (let path, phy in this.phys) {
-			if (phy.section)
-				continue;
-
-			// XXX: Remove this once the schema is updated
-			if (band in ["5Gl", "5Gu"])
-				band = "5G";
-
 			if (!(band in phy.band))
 				continue;
 
@@ -181,6 +174,14 @@ let ethernet = {
 		}
 
 		return sort(keys(matched));
+	},
+
+	calculate_names: function(interface) {
+		let vid = interface.vlan ? interface.vlan.id : '';
+		let name = interface.role + vid;
+			let ipv4_mode = interface.ipv4 ? interface.ipv4.addressing : 'none';
+		let ipv6_mode = interface.ipv6 ? interface.ipv6.addressing : 'none';
+		return name;
 	}
 };
 

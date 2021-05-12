@@ -20,8 +20,6 @@ properties:
       enum:
       - 2G
       - 5G
-      - 5Gl
-      - 5Gu
       - 6G
   bss-mode:
     description:
@@ -36,22 +34,6 @@ properties:
       Override the BSSID of the network, only applicable in adhoc or sta mode.
     type: string
     format: uc-mac
-  beacon-interval:
-    description:
-      Beacon interval in kus (1.024 ms).
-    type: integer
-    default: 100
-    maximum: 65535
-    minimum: 15
-  dtim-period:
-    description:
-      Set the DTIM (delivery traffic information message) period. There will
-      be one DTIM per this many beacon frames. This may be set between 1 and
-      255. This option only has an effect on ap wifi-ifaces.
-    type: integer
-    default: 2
-    maximum: 255
-    minimum: 1
   hidden-ssid:
     description:
       Disables the broadcasting of beacon frames if set to 1 and,in doing so,

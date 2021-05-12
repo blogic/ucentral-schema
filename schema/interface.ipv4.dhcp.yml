@@ -1,0 +1,22 @@
+description:
+  This section describes the DHCP server configuration
+type: object
+properties:
+  lease-first:
+    description:
+      The last octet of the first IPv4 address in this DHCP pool.
+    type: integer
+    examples:
+    - 10
+  lease-count:
+    description:
+      The number of IPv4 addresses inside the DHCP pool.
+    type: integer
+    examples:
+    - 100
+  lease-time:
+    description:
+      How long the lease is valid before a RENEW must be issued.
+    type: string
+    format: uc-timeout
+    default: 6h

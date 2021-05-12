@@ -6,12 +6,15 @@ properties:
     description:
       Enabling this option will make the PHY broadcast its BSSs using the multiple BSSID beacon IE.
     type: boolean
+    default: false
   ema:
     description:
       Enableing this option will make the PHY broadcast its multiple BSSID beacons using EMA.
     type: boolean
+    default: false
   bss-color:
     description:
       This enables BSS Coloring on the PHY. setting it to 0 disables the feature 1-63 sets the color
       and 64 will make hostapd pick a random color.
-    type: boolean
+    type: integer
+    default: 64

@@ -6,6 +6,7 @@ properties:
     description:
       Enable neighbor report via radio measurements (802.11k).
     type: boolean
+    default: false
   lci:
     description:
       The content of a LCI measurement subelement
@@ -18,7 +19,9 @@ properties:
     description:
       Publish fine timing measurement (FTM) responder functionality on this BSS.
     type: boolean
+    default: false
   stationary-ap:
     description:
       Stationary AP config indicates that the AP doesn't move.
     type: boolean
+    default: false

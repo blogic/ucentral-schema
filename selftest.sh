@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
 
 ./generate-reader.uc > schemareader.uc
-./generate-example.uc > input.json
-
+if [ -n "$1" ]; then
+	cp $1 input.json
+else
+	./generate-example.uc > input.json
+fi
 ucode -s '{%
 	push(REQUIRE_SEARCH_PATH,
 		"/usr/local/lib/ucode/*.so",
-		"../tests/lib/*.uc",
-		"./renderer/*.uc");
+		"tests/lib/*.uc",
+		"renderer/*.uc");
 
 	let mocklib = require("mocklib");
 	let fs = mocklib.require("fs");
