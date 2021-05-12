@@ -1,9 +1,9 @@
 {%
-	include('unit.uc', { unit: state.unit });
+	include('unit.uc', { location: '/unit', unit: state.unit });
 
-	for (let radio in state.radios)
-		include('radio.uc', { radio });
+	for (let i, radio in state.radios)
+		include('radio.uc', { location: '/radios/' + i, radio });
 
-	for (let interface in state.interfaces)
-		include('interface.uc', { interface });
+	for (let i, interface in state.interfaces)
+		include('interface.uc', { location: '/interfaces/' + i, interface });
 %}

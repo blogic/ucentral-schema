@@ -124,8 +124,9 @@ set network.{{ name }}_6.proto=dhcp
 {%  endif %}
 {% endif %}
 {%
-	for (let ssid in interface.ssids) {
+	for (let i, ssid in interface.ssids) {
 		include('ssid.uc', {
+			location: location + '/ssids/' + i,
 			ssid,
 			interface,
 			networks: use_dualstack ? [ name ] : [ name + '_4', name + '_6' ]
