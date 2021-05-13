@@ -1,7 +1,8 @@
 {%
 	capa = {};
 	ctx = ubus.connect();
-	capa.model = board.model;
+	capa.compatible = replace(board.model.id, ',', '_');
+	capa.model = board.model.name;
 	capa.network = board.network;
 	if (board["bridge"])
 		capa["bridge-vlan"] = true;
