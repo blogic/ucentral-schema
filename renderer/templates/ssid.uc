@@ -44,51 +44,54 @@
 {%  let id = wiphy.allocate_ssid_section_id(phy) %}
 {%  let crypto = validate_encryption(); %}
 {%  if (!crypto) continue; %}
-set wireless.{{ id }}=wifi-iface
-set wireless.{{ id }}.device={{ phy.section }}
-{%  for (let i, network in networks): %}
-{{ i ? 'add_list' : 'set' }} wireless.{{ id }}.network={{ network }}
+add wireless wifi-iface
+set wireless.@wifi-iface[-1].ucentral_path={{ s(location) }}
+set wireless.@wifi-iface[-1].device={{ phy.section }}
+{%  for (let i, name in ethernet.calculate_names(interface)): %}
+{{ i ? 'add_list' : 'set' }} wireless.@wifi-iface[-1].network={{ name }}
 {%  endfor %}
-set wireless.{{ id }}.ssid={{ s(ssid.name) }}
-set wireless.{{ id }}.mode={{ ssid.bss_mode }}
-set wireless.{{ id }}.bssid={{ ssid.bssid }}
-set wireless.{{ id }}.hidden={{ b(ssid.hidden_ssid) }}
-set wireless.{{ id }}.time_advertisement={{ ssid.broadcast_time }}
-set wireless.{{ id }}.isolate={{ b(ssid.isolate_clients) }}
-set wireless.{{ id }}.uapsd={{ b(ssid.power_save) }}
-set wireless.{{ id }}.rts_threshold={{ ssid.rts_threshold }}
-set wireless.{{ id }}.multicast_to_unicast={{ b(ssid.unicast_conversion) }}
-set wireless.{{ id }}.beacon_rate={{ ssid.rates.beacon }}
-set wireless.{{ id }}.mcast_rate={{ ssid.rates.multicast }}
+set wireless.@wifi-iface[-1].ssid={{ s(ssid.name) }}
+set wireless.@wifi-iface[-1].mode={{ ssid.bss_mode }}
+set wireless.@wifi-iface[-1].bssid={{ ssid.bssid }}
+set wireless.@wifi-iface[-1].hidden={{ b(ssid.hidden_ssid) }}
+set wireless.@wifi-iface[-1].time_advertisement={{ ssid.broadcast_time }}
+set wireless.@wifi-iface[-1].isolate={{ b(ssid.isolate_clients) }}
+set wireless.@wifi-iface[-1].uapsd={{ b(ssid.power_save) }}
+set wireless.@wifi-iface[-1].rts_threshold={{ ssid.rts_threshold }}
+set wireless.@wifi-iface[-1].multicast_to_unicast={{ b(ssid.unicast_conversion) }}
+{% if (ssid.rates): %}
+set wireless.@wifi-iface[-1].beacon_rate={{ ssid.rates.beacon }}
+set wireless.@wifi-iface[-1].mcast_rate={{ ssid.rates.multicast }}
+{% endif %}
 {% if (ssid.rrm): %}
-set wireless.{{ id }}.ieee80211k={{ b(ssid.rrm.neighbor_reporting) }}
-set wireless.{{ id }}.ftm_responder={{ b(ssid.rrm.ftm_responder) }}
-set wireless.{{ id }}.stationary_ap={{ b(ssid.rrm.stationary_ap) }}
-set wireless.{{ id }}.lci={{ b(ssid.rrm.lci) }}
-set wireless.{{ id }}.civic={{ ssid.rrm.civic }}
+set wireless.@wifi-iface[-1].ieee80211k={{ b(ssid.rrm.neighbor_reporting) }}
+set wireless.@wifi-iface[-1].ftm_responder={{ b(ssid.rrm.ftm_responder) }}
+set wireless.@wifi-iface[-1].stationary_ap={{ b(ssid.rrm.stationary_ap) }}
+set wireless.@wifi-iface[-1].lci={{ b(ssid.rrm.lci) }}
+set wireless.@wifi-iface[-1].civic={{ ssid.rrm.civic }}
 {% endif %}
 {% if (ssid.roaming): %}
-set wireless.{{ id }}.ieee80211r=1
-set wireless.{{ id }}.ft_over_ds={{ b(ssid.roaming.message_exchange == "ds") }}
-set wireless.{{ id }}.ft_psk_generate_local={{ b(ssid.roaming.generate_psk) }}
-set wireless.{{ id }}.mobility_domain={{ ssid.roaming.domain_identifier }}
+set wireless.@wifi-iface[-1].ieee80211r=1
+set wireless.@wifi-iface[-1].ft_over_ds={{ b(ssid.roaming.message_exchange == "ds") }}
+set wireless.@wifi-iface[-1].ft_psk_generate_local={{ b(ssid.roaming.generate_psk) }}
+set wireless.@wifi-iface[-1].mobility_domain={{ ssid.roaming.domain_identifier }}
 {% endif %}
-set wireless.{{ id }}.ieee80211w={{ match_ieee80211w() }}
-set wireless.{{ id }}.encryption={{ crypto.proto }}
-set wireless.{{ id }}.key={{ crypto.key }}
+set wireless.@wifi-iface[-1].ieee80211w={{ match_ieee80211w() }}
+set wireless.@wifi-iface[-1].encryption={{ crypto.proto }}
+set wireless.@wifi-iface[-1].key={{ crypto.key }}
 {% if (crypto.auth): %}
-set wireless.{{ id }}.auth_server={{ crypto.auth.host }}
-set wireless.{{ id }}.auth_port={{ crypto.auth.port }}
-set wireless.{{ id }}.auth_secret={{ crypto.auth.secret }}
+set wireless.@wifi-iface[-1].auth_server={{ crypto.auth.host }}
+set wireless.@wifi-iface[-1].auth_port={{ crypto.auth.port }}
+set wireless.@wifi-iface[-1].auth_secret={{ crypto.auth.secret }}
 {% endif %}
 {% if (crypto.acct): %}
-set wireless.{{ id }}.acct_server={{ crypto.acct.host }}
-set wireless.{{ id }}.acct_port={{ crypto.acct.port }}
-set wireless.{{ id }}.acct_secret={{ crypto.acct.secret }}
-set wireless.{{ id }}.acct_interval={{ crypto.acct.interval }}
+set wireless.@wifi-iface[-1].acct_server={{ crypto.acct.host }}
+set wireless.@wifi-iface[-1].acct_port={{ crypto.acct.port }}
+set wireless.@wifi-iface[-1].acct_secret={{ crypto.acct.secret }}
+set wireless.@wifi-iface[-1].acct_interval={{ crypto.acct.interval }}
 {% endif %}
 
-{% if (ssid.rate_limit.ingress_rate || ssid.rate_limit.egress_rate): %}
+{% if (ssid.rate_limit && (ssid.rate_limit.ingress_rate || ssid.rate_limit.egress_rate)): %}
 add ratelimit rate
 set ratelimit.@rate[-1].ssid={{ s(ssid.name) }}
 set ratelimit.@rate[-1].ingress={{ ssid.rate_limit.ingress_rate }}

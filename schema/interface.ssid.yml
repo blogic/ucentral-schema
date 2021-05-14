@@ -29,6 +29,8 @@ properties:
     - ap
     - sta
     - mesh
+    - wds
+    default: ap
   bssid:
     description:
       Override the BSSID of the network, only applicable in adhoc or sta mode.

@@ -1,5 +1,22 @@
 {%
-	include('unit.uc', { location: '/unit', unit: state.unit });
+	// reject the config if there is no valid upstream configuration
+	let upstream;
+	for (let i, interface in state.interfaces) {
+		if (interface.role != 'upstream')
+			continue;
+		upstream = interface;
+	}
+
+	if (!upstream) {
+		location = '/';
+		warn('Configuration must contain at least one valid upstream interface. Rejecting whole file');
+		die('Configuration must contain at least one valid upstream interface. Rejecting whole file');
+	}
+
+	include('base.uc');
+
+	if (state.unit)
+		include('unit.uc', { location: '/unit', unit: state.unit });
 
 	for (let service in state.services)
 		include('services/' + service + '.uc', {
@@ -16,8 +33,17 @@
 	for (let i, radio in state.radios)
 		include('radio.uc', { location: '/radios/' + i, radio });
 
-	for (let i, interface in state.interfaces)
-		include('interface.uc', { location: '/interfaces/' + i, interface });
+	let vlans = [];
+	function iterate_interfaces(role) {
+		for (let i, interface in state.interfaces) {
+			if (interface.role != role)
+				continue;
+			include('interface.uc', { location: '/interfaces/' + i, interface, vlans });
+		}
+	}
+
+	iterate_interfaces("upstream");
+	iterate_interfaces("downstream");
 
 	if (state.config_raw)
 		include("config_raw.uc", { location: '/config_raw', config_raw: state.config_raw });

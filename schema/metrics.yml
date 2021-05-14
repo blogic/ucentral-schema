@@ -12,6 +12,7 @@ properties:
         description:
           The reporting interval defined in seconds.
         type: integer
+        minimum: 60
       types:
         description:
           A list of names of subsystems that shall be reported periodically.
@@ -32,6 +33,7 @@ properties:
         description:
           The reporting interval defined in seconds.
         type: integer
+        minimum: 60
   dhcp-snooping:
     description:
       DHCP snooping allows us to intercept DHCP packages on interface that are

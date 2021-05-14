@@ -1,4 +1,9 @@
+#!/usr/bin/ucode
 {%
+let fs = require("fs");
+let uci = require("uci");
+let ubus = require("ubus");
+
 state = {
 	unit: {},
 	interfaces: {}
@@ -103,7 +108,7 @@ catch(e) {
 
 let errors = length(state.interfaces);
 if (!errors)
-	delete(state.interfaces);
+	delete(state, "interfaces");
 
 let sanity = 100 - (errors * 100 / count);
 

@@ -8,13 +8,15 @@ let schemareader = require("schemareader");
 let renderer = require("renderer");
 let fs = require("fs");
 
-let inputfile = fs.open("/tmp/test.json", "r");
+let inputfile = fs.open(ARGV[2], "r");
 let inputjson = json(inputfile.read("all"));
 
+let error = 0;
+
 inputfile.close();
+let logs = [];
 
 try {
-	let logs = [];
 	let batch = renderer.render(schemareader.validate(inputjson), logs);
 
 	fs.stdout.write("Log messages:\n" + join("\n", logs) + "\n\n");
@@ -35,10 +37,28 @@ try {
 
 	for (let cmd in [ 'uci -c /tmp/config-shadow commit',
 			  'cp /tmp/config-shadow/* /etc/config/',
-			  'reload_config', 'rm -rf /tmp/config-shadow' ])
+			  'rm -rf /tmp/config-shadow',
+			  'reload_config'])
 		system(cmd);
+
+	fs.unlink('/etc/ucentral/ucentral.active');
+	fs.symlink(ARGV[2], '/etc/ucentral/ucentral.active');
+
 }
 catch (e) {
+	error = 1;
 	warn("Fatal error while generating UCI: ", e, "\n", e.stacktrace[0].context, "\n");
 }
+
+let ubus = require("ubus").connect();
+
+ubus.call("ucentral", "result", {
+	uuid: inputjson.uuid || 0,
+	id: +ARGV[3] || 0,
+	status: {
+		error,
+		text: error ? "Failed" : "Success",
+		rejected: logs || []
+	}
+});
 %}

@@ -1,4 +1,4 @@
-
+{% let name = ethernet.calculate_name(interface) %}
 {% let dhcp = interface.ipv4.dhcp || { ignore: 1 } %}
 add dhcp dhcp
 set dhcp.@dhcp[-1].interface={{ s(name) }}
