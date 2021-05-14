@@ -115,7 +115,7 @@ set network.{{ name }}.ip6addr={{ ipcalc.generate_prefix(state, interface.ipv6.s
 {%  elif (ipv4_mode == 'dynamic'): %}
 set network.{{ name }}.proto=dhcp
 {%   for (let dns in interface.ipv4.use_dns): %}
-list_add network.{{ name }}.dns={{ dns }}
+add_list network.{{ name }}.dns={{ dns }}
 {%   endfor %}
 set network.{{ name }}.peerdns={{ b(!length(interface.ipv4.use_dns)) }}
 {%  else %}
