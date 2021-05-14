@@ -8,7 +8,7 @@ let schemareader = require("schemareader");
 let renderer = require("renderer");
 let fs = require("fs");
 
-let inputfile = fs.open("/tmp/test.json", "r");
+let inputfile = fs.open(ARGV[2], "r");
 let inputjson = json(inputfile.read("all"));
 
 inputfile.close();
@@ -35,8 +35,12 @@ try {
 
 	for (let cmd in [ 'uci -c /tmp/config-shadow commit',
 			  'cp /tmp/config-shadow/* /etc/config/',
-			  'reload_config', 'rm -rf /tmp/config-shadow' ])
+			  'rm -rf /tmp/config-shadow',
+			  'reload_config'])
 		system(cmd);
+
+	fs.unlink('/etc/ucentral/ucentral.active');
+	fs.symlink(ARGV[2], '/etc/ucentral/ucentral.active');
 }
 catch (e) {
 	warn("Fatal error while generating UCI: ", e, "\n", e.stacktrace[0].context, "\n");

@@ -17,3 +17,4 @@ properties:
     enum:
       - 802.1ad
       - 802.1q
+    default: 802.1q

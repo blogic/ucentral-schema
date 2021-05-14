@@ -1,4 +1,6 @@
 {%
+	let math = require("math");
+
 	// Skip interfaces previously marked as conflicting.
 	if (interface.conflicting) {
 		warn("Skipping conflicting interface declaration");
@@ -7,14 +9,7 @@
 	}
 
 	// Check this interface for role/vlan uniqueness...
-	let this_vid = interface.vlan ? interface.vlan.id : '';
-
-	if (!this_vid) {
-		if (interface.role == 'upstream')
-			this_vid = 2;
-		else
-			this_vid = 1;
-	}
+	let this_vid = interface.vlan ? interface.vlan.id : 1;
 
 	for (let other_interface in state.interfaces) {
 		if (other_interface == interface)
@@ -26,6 +21,12 @@
 			warn("Multiple interfaces with same role and VLAN ID defined, ignoring conflicting interface");
 			other_interface.conflicting = true;
 		}
+	}
+
+	// check if a downstream interface with a vlan has a matching upstream interface
+	if (interface.vlan && interface.role == "downstream" && index(vlans, this_vid) < 0) {
+		warn("Trying to create a downstream interface with a VLAN ID, without matching upstream interface.");
+		return;
 	}
 
 	// Gather related BSS modes and ethernet ports.
@@ -41,27 +42,15 @@
 		return;
 	}
 
-	// Compute unique logical name and netdev name to use
-	let name = ethernet.calculate_names(interface);
-	let bridgedev = 'bridge';
-	let netdev = '';
+	// store the VLAN id assigned to this interface
+	push(vlans, this_vid);
 
-	// If this interface enables host isolation, we need to turn it into a
-	// dedicated isolated netdev...
-	if (interface.isolate_hosts) {
-		// If there are any ethernet ports or multiple SSIDs participating,
-		// we need to spawn a new bridge interface.
-		if (length(eth_ports) > 0 || length(bss_modes) > 1)
-			netdev = 'br-' + name;
-	}
-	// ... upstream interfaces with a vlan require the @upstream syntax
-	else if (interface.role == 'upstream' && interface.vlan) {
-		netdev = "@upstream." + this_vid;
-	}
-	// ... otherwise we program a VLAN on top of the global bridge.
-	else {
-		netdev = bridgedev + '.' + this_vid;
-	}
+	// Compute unique logical name and netdev name to use
+	let name = ethernet.calculate_name(interface);
+	let bridgedev = 'up';
+	if (interface.role == "downstream")
+		bridgedev = 'down';
+	let netdev = bridgedev + '.' + this_vid;
 
 	// Determine the IPv4 and IPv6 configuration modes and figure out if we
 	// can set them both in a single interface (dualstack) or whether we need
@@ -72,38 +61,23 @@
 		(ipv4_mode == 'none') || (ipv6_mode == 'none') ||
 		(ipv4_mode == 'static' && ipv6_mode == 'static')
 	);
+
+	// upstream interfaces always have a routing metric of 0
+	if (interface.role == "upstream")
+		interface.metric = 0;
 %}
 
-# Network configuration
-add network interface
-set networ.@interface[-1].ifname='lo'
-set networ.@interface[-1].proto='static'
-set networ.@interface[-1].ipaddr='127.0.0.1'
-set networ.@interface[-1].netmask='255.0.0.0'
-
-add network device
-set network.@device[-1].name=bridge
-set network.@device[-1].type=bridge
-
-{% if (interface.isolate_hosts && netdev): %}
-set network.{{ name }}_dev=device
-set network.{{ name }}_dev.type=bridge
-set network.{{ name }}_dev.name={{ netdev }}
+add network bridge-vlan
+set network.@bridge-vlan[-1].device={{ bridgedev }}
+set network.@bridge-vlan[-1].vlan={{ this_vid }}
 {%  for (let i, port in eth_ports): %}
-{{ i ? 'add_list' : 'set' }} network.{{ name }}_dev.ifname={{ port }}
+{{ i ? 'add_list' : 'set' }} network.@bridge-vlan[-1].ports={{ port }}{{ ((interface.role == 'upstream') && interface.vlan) ? ':t' : '' }}
 {%  endfor %}
-{% elif (!interface.isolate_hosts): %}
-set network.{{ name }}_vlan=bridge-vlan
-set network.{{ name }}_vlan.device={{ bridgedev }}
-set network.{{ name }}_vlan.vlan={{ this_vid }}
-{%  for (let i, port in eth_ports): %}
-{{ i ? 'add_list' : 'set' }} network.{{ name }}_vlan.ports={{ port }}{{ ((interface.role == 'upstream') && interface.vlan) ? ':t' : '' }}
-{%  endfor %}
-{% endif %}
 
 {% if (use_dualstack): %}
-set network.{{ name }}=interface
+set network.{{name}}=interface
 set network.{{ name }}.ucentral_name={{ s(interface.name) }}
+set network.{{ name }}.ucentral_path={{ s(location) }}
 set network.{{ name }}.ifname={{ netdev }}
 set network.{{ name }}.metric={{ interface.metric }}
 {%  if (ipv4_mode == 'static'): %}
@@ -121,17 +95,17 @@ set network.{{ name }}.peerdns={{ b(!length(interface.ipv4.use_dns)) }}
 {%  else %}
 set network.{{ name }}.proto=dhcpv6
 {%  endif %}
-{% if (interface.role == 'upstream'): %}
+{% if (interface.role == 'upstream' && interface.vlan): %}
 set network.{{ name }}.ip4table={{ this_vid }}
 set network.{{ name }}.ip6table={{ this_vid }}
 {%  endif %}
 {% else %}
 {%  if (ipv4_mode != 'none'): %}
-set network.{{ name }}_4=interface
+set network.{{name}}=interface_4
 set network.{{ name }}_4.ucentral_name={{ s(interface.name) }}
 set network.{{ name }}_4.ifname={{ netdev }}
 set network.{{ name }}_4.metric={{ interface.metric }}
-{%   if (interface.role == 'upstream'): %}
+{%   if (interface.role == 'upstream' && interface.vlan): %}
 set network.{{ name }}_4.ip4table={{ this_vid }}
 {%   endif %}
 {%   if (ipv4_mode == 'static'): %}
@@ -142,11 +116,11 @@ set network.{{ name }}_4.proto=dhcp
 {%   endif %}
 {%  endif %}
 {%  if (ipv6_mode != 'none'): %}
-set network.{{ name }}_6=interface
+set network.{{name}}=interface_6
 set network.{{ name }}_6.ucentral_name={{ s(interface.name) }}
 set network.{{ name }}_6.ifname={{ netdev }}
 set network.{{ name }}_6.metric={{ interface.metric }}
-{%   if (interface.role == 'upstream'): %}
+{%   if (interface.role == 'upstream' && interface.vlan): %}
 set network.{{ name }}_6.ip6table={{ this_vid }}
 {%   endif %}
 {%   if (ipv6_mode == 'static'): %}
@@ -161,27 +135,19 @@ set network.{{ name }}_6.proto=dhcp
 {% if (use_dualstack && interface.role == "downstream" && interface.vlan): %}
 add network rule
 set network.@rule[-1].in={{ name }}
-set network.@rule[-1].lookup={{ this_vid }}
+set network.@rule[-1].lookup={{ interface.vlan.id }}
 {% endif %}
 
 {%
-	include('interface/firewall.uc', {
-		interface,
-		networks: use_dualstack ? [ name ] : [ name + '_4', name + '_6' ]
-	});
+	include('interface/firewall.uc');
 
 	if (interface.ipv4)
-		include('interface/dhcp.uc', {
-			interface,
-			name: use_dualstack ?  name : name + '_4'
-		});
+		include('interface/dhcp.uc');
 
 	for (let i, ssid in interface.ssids) {
 		include('ssid.uc', {
 			location: location + '/ssids/' + i,
-			ssid,
-			interface,
-			networks: use_dualstack ? [ name ] : [ name + '_4', name + '_6' ]
+			ssid
 		});
 	}
 %}

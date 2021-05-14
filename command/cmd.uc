@@ -1,5 +1,13 @@
+#!/usr/bin/ucode
 {%
-
+let fs = require("fs");
+let uci = require("uci");
+let ubus = require("ubus");
+let capabfile = fs.open("/etc/ucentral/capabilities.json", "r");
+let capab = json(capabfile.read("all"));
+let cmdfile = fs.open(ARGV[2], "r");
+let cmd = json(cmdfile.read("all"));
+let id = ARGV[3];
 let ctx = ubus.connect();
 
 if (!ctx) {

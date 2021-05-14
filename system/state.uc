@@ -1,4 +1,11 @@
+#!/usr/bin/ucode
 {%
+	let fs = require("fs");
+	let uci = require("uci");
+	let ubus = require("ubus");
+	let cfgfile = fs.open("/etc/ucentral/ucentral.active", "r");
+	let cfg = json(cfgfile.read("all"));
+
 	/* set up basic functionality */
 	if (!cursor)
 		cursor = uci.cursor();

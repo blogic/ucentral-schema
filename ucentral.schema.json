@@ -3,6 +3,9 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "properties": {
+        "uuid": {
+            "type": "integer"
+        },
         "unit": {
             "$ref": "#/$defs/unit"
         },
@@ -231,7 +234,8 @@
                     "enum": [
                         "802.1ad",
                         "802.1q"
-                    ]
+                    ],
+                    "default": "802.1q"
                 }
             }
         },
@@ -858,8 +862,10 @@
                     "enum": [
                         "ap",
                         "sta",
-                        "mesh"
-                    ]
+                        "mesh",
+                        "wds"
+                    ],
+                    "default": "ap"
                 },
                 "bssid": {
                     "type": "string",
@@ -1174,7 +1180,8 @@
                     "type": "object",
                     "properties": {
                         "interval": {
-                            "type": "integer"
+                            "type": "integer",
+                            "minimum": 60
                         },
                         "types": {
                             "type": "array",
@@ -1193,7 +1200,8 @@
                     "type": "object",
                     "properties": {
                         "interval": {
-                            "type": "integer"
+                            "type": "integer",
+                            "minimum": 60
                         }
                     }
                 },

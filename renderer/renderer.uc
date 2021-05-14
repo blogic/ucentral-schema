@@ -5,6 +5,7 @@
 
 let uci = require("uci");
 let ubus = require("ubus");
+let math = require("math");
 
 let cursor = uci ? uci.cursor() : null;
 let conn = ubus ? ubus.connect() : null;
@@ -176,12 +177,22 @@ let ethernet = {
 		return sort(keys(matched));
 	},
 
-	calculate_names: function(interface) {
+	calculate_name: function(interface) {
 		let vid = interface.vlan ? interface.vlan.id : '';
-		let name = interface.role + vid;
-			let ipv4_mode = interface.ipv4 ? interface.ipv4.addressing : 'none';
+
+		return (interface.role == 'upstream' ? 'wan' : 'lan') + vid;
+	},
+
+	calculate_names: function(interface) {
+		let name = this.calculate_name(interface);
+
+		let ipv4_mode = interface.ipv4 ? interface.ipv4.addressing : 'none';
 		let ipv6_mode = interface.ipv6 ? interface.ipv6.addressing : 'none';
-		return name;
+
+		return (
+			(ipv4_mode == 'none') || (ipv6_mode == 'none') ||
+			(ipv4_mode == 'static' && ipv6_mode == 'static')
+		) ? [ name ] : [ name + '_4', name + '_6' ];
 	}
 };
 

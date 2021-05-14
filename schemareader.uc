@@ -224,6 +224,9 @@ function instantiateInterfaceVlan(value) {
 		assert(value["proto"] in [ "802.1ad", "802.1q" ], "Property interface.vlan.proto must be one of [ \"802.1ad\", \"802.1q\" ]");
 		obj.proto = value["proto"];
 	}
+	else {
+		obj.proto = "802.1q";
+	}
 
 	return obj;
 }
@@ -954,8 +957,11 @@ function instantiateInterfaceSsid(value) {
 
 	if (exists(value, "bss-mode")) {
 		assert(type(value["bss-mode"]) == "string", "Property interface.ssid.bss-mode must be of type string");
-		assert(value["bss-mode"] in [ "ap", "sta", "mesh" ], "Property interface.ssid.bss-mode must be one of [ \"ap\", \"sta\", \"mesh\" ]");
+		assert(value["bss-mode"] in [ "ap", "sta", "mesh", "wds" ], "Property interface.ssid.bss-mode must be one of [ \"ap\", \"sta\", \"mesh\", \"wds\" ]");
 		obj.bss_mode = value["bss-mode"];
+	}
+	else {
+		obj.bss_mode = "ap";
 	}
 
 	if (exists(value, "bssid")) {
@@ -1376,6 +1382,7 @@ function instantiateMetrics(value) {
 
 		if (exists(value, "interval")) {
 			assert(type(value["interval"]) == "int", "Property metrics.statistics.interval must be of type integer");
+			assert(value["interval"] >= 60, "Property metrics.statistics.interval must be >= 60");
 			obj.interval = value["interval"];
 		}
 	
@@ -1407,6 +1414,7 @@ function instantiateMetrics(value) {
 
 		if (exists(value, "interval")) {
 			assert(type(value["interval"]) == "int", "Property metrics.health.interval must be of type integer");
+			assert(value["interval"] >= 60, "Property metrics.health.interval must be >= 60");
 			obj.interval = value["interval"];
 		}
 	
@@ -1467,6 +1475,11 @@ function newUCentralState(value) {
 	assert(type(value) == "object", "Property UCentralState must be of type object");
 
 	let obj = {};
+
+	if (exists(value, "uuid")) {
+		assert(type(value["uuid"]) == "int", "Property UCentralState.uuid must be of type integer");
+		obj.uuid = value["uuid"];
+	}
 
 	if (exists(value, "unit")) {
 		obj.unit = instantiateUnit(value["unit"]);
