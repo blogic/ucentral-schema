@@ -1,0 +1,10 @@
+description:
+  This Object defines the properties of a mesh interface overlay.
+type: object
+properties:
+  proto:
+    description:
+      This field must be set to mesh.
+    type: string
+    enum:
+      - mesh
