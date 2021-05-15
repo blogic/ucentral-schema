@@ -36,6 +36,13 @@ def schema_compile(input, output, definitions, tiny):
             output["$ref"] = "#/$defs/{}".format(name)
         elif k == "$ref" and not tiny:
             output["properties"] = {"reference": {"type": "string"}}
+        elif k == "anyOf" or k == "oneOf" or k == "allOf":
+            r = []
+            for v in input[k]:
+                o = {}
+                schema_compile(v, o, definitions, tiny)
+                r.append(o)
+            output[k] = r
         else:
             output[k] = input[k]
     return output
