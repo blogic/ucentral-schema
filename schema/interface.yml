@@ -58,3 +58,5 @@ properties:
     type: array
     items:
       $ref: "https://ucentral.io/schema/v1/interface/ssid/"
+  stacked:
+    $ref: "https://ucentral.io/schema/v1/interface/stacked/"
