@@ -425,6 +425,11 @@ let GeneratorProto = {
 			valueSpec = { ...refValueSpec, ...valueSpec };
 		}
 
+		let alternatives = valueSpec.anyOf || valueSpec.allOf || valueSpec.oneOf;
+
+		if (type(alternatives) == 'array' && length(alternatives) > 0)
+			return this.emit_spec(alternatives[math.rand() % length(alternatives)], noExample);
+
 		switch (valueSpec.type) {
 		case "object":
 			return this.emit_object(valueSpec);
