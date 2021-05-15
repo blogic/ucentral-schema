@@ -50,7 +50,7 @@ function instantiateDefinitions(value) {
 
 	function parseWirelessEncryption(value) {
 		assert(type(value) == "object", "Property definitions.wireless-encryption must be of type object");
-	
+
 		let obj = {};
 
 		return obj;
@@ -193,7 +193,7 @@ function instantiateRadio(value) {
 
 	function parseHostapdIfaceRaw(value) {
 		assert(type(value) == "array", "Property radio.hostapd-iface-raw must be of type array");
-	
+
 		return map(value, (item) => {
 			assert(type(item) == "string", "Items of radio.hostapd-iface-raw must be of type string");
 			return item;
@@ -266,7 +266,7 @@ function instantiateInterfaceEthernet(value) {
 
 	function parseSelectPorts(value) {
 		assert(type(value) == "array", "Property interface.ethernet.select-ports must be of type array");
-	
+
 		return map(value, (item) => {
 			assert(type(item) == "string", "Items of interface.ethernet.select-ports must be of type string");
 			return item;
@@ -408,7 +408,7 @@ function instantiateInterfaceIpv4(value) {
 
 	function parseUseDns(value) {
 		assert(type(value) == "array", "Property interface.ipv4.use-dns must be of type array");
-	
+
 		return map(value, (item) => {
 			assert(type(item) == "string", "Items of interface.ipv4.use-dns must be of type string");
 			return item;
@@ -425,7 +425,7 @@ function instantiateInterfaceIpv4(value) {
 
 	function parseDhcpLeases(value) {
 		assert(type(value) == "array", "Property interface.ipv4.dhcp-leases must be of type array");
-	
+
 		return map(value, instantiateInterfaceIpv4DhcpLease);
 	}
 
@@ -710,10 +710,10 @@ function instantiateInterfaceSsidRadiusServer(value) {
 
 	function parseRequestAttribute(value) {
 		assert(type(value) == "array", "Property interface.ssid.radius.server.request-attribute must be of type array");
-	
+
 		function parseItem(value) {
 			assert(type(value) == "object", "Property interface.ssid.radius.server.request-attribute.item must be of type object");
-		
+
 			let obj = {};
 
 			if (exists(value, "id")) {
@@ -722,19 +722,19 @@ function instantiateInterfaceSsidRadiusServer(value) {
 				assert(value["id"] >= 1, "Property interface.ssid.radius.server.request-attribute.item.id must be >= 1");
 				obj.id = value["id"];
 			}
-		
+
 			function parseValue(value) {
 				function parseVariant0(value) {
 					assert(type(value) == "int", "Property interface.ssid.radius.server.request-attribute.item.value must be of type integer");
 					assert(value <= 4294967295, "Property interface.ssid.radius.server.request-attribute.item.value must be <= 4294967295");
 					assert(value >= 0, "Property interface.ssid.radius.server.request-attribute.item.value must be >= 0");
-				
+
 					return value;
 				}
 
 				function parseVariant1(value) {
 					assert(type(value) == "string", "Property interface.ssid.radius.server.request-attribute.item.value must be of type string");
-				
+
 					return value;
 				}
 
@@ -747,14 +747,14 @@ function instantiateInterfaceSsidRadiusServer(value) {
 				catch (e) { push(errors, e); }
 
 				assert(success > 0, join("\n- or -\n", errors));
-			
+
 				return value;
 			}
 
 			if (exists(value, "value")) {
 				obj.value = parseValue(value["value"]);
 			}
-		
+
 			return obj;
 		}
 
@@ -783,7 +783,7 @@ function instantiateInterfaceSsidRadius(value) {
 
 	function parseLocalUsers(value) {
 		assert(type(value) == "array", "Property interface.ssid.radius.local-users must be of type array");
-	
+
 		return map(value, instantiateInterfaceSsidRadiusLocalUser);
 	}
 
@@ -831,7 +831,7 @@ function instantiateInterfaceSsidPassPoint(value) {
 
 	function parseAuthType(value) {
 		assert(type(value) == "object", "Property interface.ssid.pass-point.auth-type must be of type object");
-	
+
 		let obj = {};
 
 		if (exists(value, "type")) {
@@ -839,12 +839,12 @@ function instantiateInterfaceSsidPassPoint(value) {
 			assert(value["type"] in [ "terms-and-conditions", "online-enrollment", "http-redirection", "dns-redirection" ], "Property interface.ssid.pass-point.auth-type.type must be one of [ \"terms-and-conditions\", \"online-enrollment\", \"http-redirection\", \"dns-redirection\" ]");
 			obj.type = value["type"];
 		}
-	
+
 		if (exists(value, "uri")) {
 			assert(type(value["uri"]) == "string", "Property interface.ssid.pass-point.auth-type.uri must be of type string");
 			obj.uri = value["uri"];
 		}
-	
+
 		return obj;
 	}
 
@@ -881,39 +881,39 @@ function instantiateInterfaceSsidPassPoint(value) {
 
 	function parseIcon(value) {
 		assert(type(value) == "array", "Property interface.ssid.pass-point.icon must be of type array");
-	
+
 		function parseItem(value) {
 			assert(type(value) == "object", "Property interface.ssid.pass-point.icon.item must be of type object");
-		
+
 			let obj = {};
 
 			if (exists(value, "width")) {
 				assert(type(value["width"]) == "int", "Property interface.ssid.pass-point.icon.item.width must be of type integer");
 				obj.width = value["width"];
 			}
-		
+
 			if (exists(value, "height")) {
 				assert(type(value["height"]) == "int", "Property interface.ssid.pass-point.icon.item.height must be of type integer");
 				obj.height = value["height"];
 			}
-		
+
 			if (exists(value, "type")) {
 				assert(type(value["type"]) == "string", "Property interface.ssid.pass-point.icon.item.type must be of type string");
 				obj.type = value["type"];
 			}
-		
+
 			if (exists(value, "uri")) {
 				assert(type(value["uri"]) == "string", "Property interface.ssid.pass-point.icon.item.uri must be of type string");
 				obj.uri = value["uri"];
 			}
-		
+
 			if (exists(value, "language")) {
 				assert(type(value["language"]) == "string", "Property interface.ssid.pass-point.icon.item.language must be of type string");
 				assert(match(value["language"], /^[a-z][a-z][a-z]$/), "Property interface.ssid.pass-point.icon.item.language must match regular expression /^[a-z][a-z][a-z]$/");
 
 				obj.language = value["language"];
 			}
-		
+
 			return obj;
 		}
 
@@ -943,7 +943,7 @@ function instantiateInterfaceSsid(value) {
 
 	function parseWifiBands(value) {
 		assert(type(value) == "array", "Property interface.ssid.wifi-bands must be of type array");
-	
+
 		return map(value, (item) => {
 			assert(type(item) == "string", "Items of interface.ssid.wifi-bands must be of type string");
 			assert(item in [ "2G", "5G", "6G" ], "Items of interface.ssid.wifi-bands must be one of [ \"2G\", \"5G\", \"6G\" ]");
@@ -1035,7 +1035,7 @@ function instantiateInterfaceSsid(value) {
 
 	function parseHostapdBssRaw(value) {
 		assert(type(value) == "array", "Property interface.ssid.hostapd-bss-raw must be of type array");
-	
+
 		return map(value, (item) => {
 			assert(type(item) == "string", "Items of interface.ssid.hostapd-bss-raw must be of type string");
 			return item;
@@ -1047,6 +1047,44 @@ function instantiateInterfaceSsid(value) {
 	}
 
 	return obj;
+}
+
+function instantiateInterfaceStackedMesh(value) {
+	assert(type(value) == "object", "Property interface.stacked.mesh must be of type object");
+
+	let obj = {};
+
+	if (exists(value, "proto")) {
+		assert(type(value["proto"]) == "string", "Property interface.stacked.mesh.proto must be of type string");
+		assert(value["proto"] in [ "mesh" ], "Property interface.stacked.mesh.proto must be one of [ \"mesh\" ]");
+		obj.proto = value["proto"];
+	}
+
+	return obj;
+}
+
+function instantiateInterfaceStacked(value) {
+	assert(type(value) == "array", "Property interface.stacked must be of type array");
+
+	function parseItem(value) {
+		function parseVariant0(value) {
+
+			let obj = instantiateInterfaceStackedMesh(value);
+
+			return obj;
+		}
+
+		let success = 0, errors = [];
+
+		try { parseVariant0(value); success++; }
+		catch (e) { push(errors, e); }
+
+		assert(success > 0, join("\n- or -\n", errors));
+
+		return value;
+	}
+
+	return map(value, parseItem);
 }
 
 function instantiateInterface(value) {
@@ -1082,7 +1120,7 @@ function instantiateInterface(value) {
 
 	function parseServices(value) {
 		assert(type(value) == "array", "Property interface.services must be of type array");
-	
+
 		return map(value, (item) => {
 			assert(type(item) == "string", "Items of interface.services must be of type string");
 			return item;
@@ -1103,7 +1141,7 @@ function instantiateInterface(value) {
 
 	function parseEthernet(value) {
 		assert(type(value) == "array", "Property interface.ethernet must be of type array");
-	
+
 		return map(value, instantiateInterfaceEthernet);
 	}
 
@@ -1116,7 +1154,7 @@ function instantiateInterface(value) {
 	}
 
 	function parseIpv6(value) {
-	
+
 		return value;
 	}
 
@@ -1126,12 +1164,16 @@ function instantiateInterface(value) {
 
 	function parseSsids(value) {
 		assert(type(value) == "array", "Property interface.ssids must be of type array");
-	
+
 		return map(value, instantiateInterfaceSsid);
 	}
 
 	if (exists(value, "ssids")) {
 		obj.ssids = parseSsids(value["ssids"]);
+	}
+
+	if (exists(value, "stacked")) {
+		obj.stacked = instantiateInterfaceStacked(value["stacked"]);
 	}
 
 	return obj;
@@ -1177,7 +1219,7 @@ function instantiateServiceSsh(value) {
 
 	function parseAuthorizedKeys(value) {
 		assert(type(value) == "array", "Property service.ssh.authorized-keys must be of type array");
-	
+
 		return map(value, (item) => {
 			assert(type(item) == "string", "Items of service.ssh.authorized-keys must be of type string");
 			return item;
@@ -1206,7 +1248,7 @@ function instantiateServiceNtp(value) {
 
 	function parseServers(value) {
 		assert(type(value) == "array", "Property service.ntp.servers must be of type array");
-	
+
 		return map(value, (item) => {
 			assert(type(item) == "string", "Items of service.ntp.servers must be of type string");
 			return item;
@@ -1377,7 +1419,7 @@ function instantiateMetrics(value) {
 
 	function parseStatistics(value) {
 		assert(type(value) == "object", "Property metrics.statistics must be of type object");
-	
+
 		let obj = {};
 
 		if (exists(value, "interval")) {
@@ -1385,10 +1427,10 @@ function instantiateMetrics(value) {
 			assert(value["interval"] >= 60, "Property metrics.statistics.interval must be >= 60");
 			obj.interval = value["interval"];
 		}
-	
+
 		function parseTypes(value) {
 			assert(type(value) == "array", "Property metrics.statistics.types must be of type array");
-		
+
 			return map(value, (item) => {
 				assert(type(item) == "string", "Items of metrics.statistics.types must be of type string");
 				assert(item in [ "ssids", "lldp", "clients" ], "Items of metrics.statistics.types must be one of [ \"ssids\", \"lldp\", \"clients\" ]");
@@ -1399,7 +1441,7 @@ function instantiateMetrics(value) {
 		if (exists(value, "types")) {
 			obj.types = parseTypes(value["types"]);
 		}
-	
+
 		return obj;
 	}
 
@@ -1409,7 +1451,7 @@ function instantiateMetrics(value) {
 
 	function parseHealth(value) {
 		assert(type(value) == "object", "Property metrics.health must be of type object");
-	
+
 		let obj = {};
 
 		if (exists(value, "interval")) {
@@ -1417,7 +1459,7 @@ function instantiateMetrics(value) {
 			assert(value["interval"] >= 60, "Property metrics.health.interval must be >= 60");
 			obj.interval = value["interval"];
 		}
-	
+
 		return obj;
 	}
 
@@ -1427,12 +1469,12 @@ function instantiateMetrics(value) {
 
 	function parseDhcpSnooping(value) {
 		assert(type(value) == "object", "Property metrics.dhcp-snooping must be of type object");
-	
+
 		let obj = {};
 
 		function parseFilters(value) {
 			assert(type(value) == "array", "Property metrics.dhcp-snooping.filters must be of type array");
-		
+
 			return map(value, (item) => {
 				assert(type(item) == "string", "Items of metrics.dhcp-snooping.filters must be of type string");
 				assert(item in [ "ack", "discover", "offer", "request", "solicit", "reply", "renew" ], "Items of metrics.dhcp-snooping.filters must be one of [ \"ack\", \"discover\", \"offer\", \"request\", \"solicit\", \"reply\", \"renew\" ]");
@@ -1443,7 +1485,7 @@ function instantiateMetrics(value) {
 		if (exists(value, "filters")) {
 			obj.filters = parseFilters(value["filters"]);
 		}
-	
+
 		return obj;
 	}
 
@@ -1461,7 +1503,7 @@ function instantiateConfigRaw(value) {
 		assert(type(value) == "array", "Property config-raw.item must be of type array");
 		assert(length(value) >= 2, "Property config-raw.item array length must be >= 2 items");
 
-	
+
 		return map(value, (item) => {
 			assert(type(item) == "string", "Items of config-raw.item must be of type string");
 			return item;
@@ -1495,7 +1537,7 @@ function newUCentralState(value) {
 
 	function parseRadios(value) {
 		assert(type(value) == "array", "Property UCentralState.radios must be of type array");
-	
+
 		return map(value, instantiateRadio);
 	}
 
@@ -1505,7 +1547,7 @@ function newUCentralState(value) {
 
 	function parseInterfaces(value) {
 		assert(type(value) == "array", "Property UCentralState.interfaces must be of type array");
-	
+
 		return map(value, instantiateInterface);
 	}
 
