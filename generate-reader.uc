@@ -228,10 +228,13 @@ let GeneratorProto = {
 
 	print: function(path, fmt, ...args)
 	{
-		for (let _ in path)
-			print("\t");
+		if (length(fmt)) {
+			for (let _ in path)
+				print("\t");
 
-		printf(fmt, ...args);
+			printf(fmt, ...args);
+		}
+
 		print("\n");
 	},
 
@@ -322,13 +325,20 @@ let GeneratorProto = {
 
 	emit_spec_validation_function: function(path, verb, propertyName, valueSpec)
 	{
-		let functionName = to_method_name(verb, propertyName);
+		let functionName = to_method_name(verb, propertyName),
+		    isRef = this.is_ref(valueSpec);
 
 		this.print(path, 'function %s(value) {', functionName);
 
 		this.emit_spec_validation_asserts([...path, propertyName], 'value', valueSpec);
 
 		this.print(path, '');
+
+		/* Derive type from referenced subschema if possible */
+		if (!exists(valueSpec, 'type') && isRef) {
+			let def = this.schema['$defs'][replace(isRef, '#/$defs/', '')];
+			valueSpec.type = def ? def.type : null;
+		}
 
 		switch (valueSpec.type) {
 		case 'array':
@@ -360,10 +370,6 @@ let GeneratorProto = {
 			break;
 
 		case 'object':
-			/* XXX: not yet */
-			if (exists(valueSpec, "$ref"))
-				return;
-
 			if (type(valueSpec.propertyNames) == "object") {
 				let keySpec = { type: 'string', ...(valueSpec.propertyNames) };
 
@@ -373,10 +379,20 @@ let GeneratorProto = {
 				this.print(path, '');
 			}
 
-			if (valueSpec.additionalProperties === true)
-				this.print(path, '	let obj = { ...value };\n');
-			else
-				this.print(path, '	let obj = {};\n');
+			if (exists(valueSpec, "$ref")) {
+				let fn = to_method_name('instantiate', replace(valueSpec['$ref'], '#/$defs/', ''));
+
+				if (valueSpec.additionalProperties === true)
+					this.print(path, '	let obj = { ...value, ...(%s(value)) };\n', fn);
+				else
+					this.print(path, '	let obj = %s(value);\n', fn);
+			}
+			else {
+				if (valueSpec.additionalProperties === true)
+					this.print(path, '	let obj = { ...value };\n');
+				else
+					this.print(path, '	let obj = {};\n');
+			}
 
 			if (type(valueSpec.properties) == "object") {
 				for (let objectPropertyName, propertySpec in valueSpec.properties) {
