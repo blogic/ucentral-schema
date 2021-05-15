@@ -645,13 +645,11 @@
                                 "anyOf": [
                                     {
                                         "type": "integer",
-                                        "description": "The numeric RADIUS attribute value",
                                         "maximum": 4294967295,
                                         "minimum": 0
                                     },
                                     {
-                                        "type": "string",
-                                        "description": "The RADIUS attribute value string"
+                                        "type": "string"
                                     }
                                 ]
                             }
@@ -933,6 +931,27 @@
                 }
             }
         },
+        "interface.stacked.mesh": {
+            "type": "object",
+            "properties": {
+                "proto": {
+                    "type": "string",
+                    "enum": [
+                        "mesh"
+                    ]
+                }
+            }
+        },
+        "interface.stacked": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {
+                        "$ref": "#/$defs/interface.stacked.mesh"
+                    }
+                ]
+            }
+        },
         "interface": {
             "type": "object",
             "properties": {
@@ -991,6 +1010,9 @@
                     "items": {
                         "$ref": "#/$defs/interface.ssid"
                     }
+                },
+                "stacked": {
+                    "$ref": "#/$defs/interface.stacked"
                 }
             }
         },
