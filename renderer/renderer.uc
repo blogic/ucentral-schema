@@ -295,6 +295,20 @@ let ipcalc = {
 	}
 };
 
+let services = {
+	lookup_interfaces: function(service) {
+		let interfaces = [];
+
+		for (let interface in state.interfaces) {
+			if (!interface.services || index(interface.services, service) < 0)
+				continue;
+			push(interfaces, interface);
+		}
+
+		return interfaces;
+	}
+};
+
 return {
 	render: function(state, logs) {
 		logs = logs || [];
@@ -306,6 +320,7 @@ return {
 			wiphy,
 			ethernet,
 			ipcalc,
+			services,
 
 			warn: (fmt, ...args) => push(logs, sprintf("[W] (In %s) ", location || '/') + sprintf(fmt, ...args)),
 			info: (fmt, ...args) => push(logs, sprintf("[!] (In %s) ", location || '/') + sprintf(fmt, ...args))

@@ -1165,6 +1165,17 @@
                 }
             }
         },
+        "service.http": {
+            "type": "object",
+            "properties": {
+                "http-port": {
+                    "type": "integer",
+                    "maximum": 65535,
+                    "minimum": 1,
+                    "default": 80
+                }
+            }
+        },
         "service.wifi-steering": {
             "type": "object",
             "properties": {
@@ -1212,6 +1223,9 @@
                 },
                 "log": {
                     "$ref": "#/$defs/service.log"
+                },
+                "http": {
+                    "$ref": "#/$defs/service.http"
                 },
                 "wifi-steering": {
                     "$ref": "#/$defs/service.wifi-steering"

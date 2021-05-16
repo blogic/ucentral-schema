@@ -1379,6 +1379,24 @@ function instantiateServiceLog(value) {
 	return obj;
 }
 
+function instantiateServiceHttp(value) {
+	assert(type(value) == "object", "Property service.http must be of type object");
+
+	let obj = {};
+
+	if (exists(value, "http-port")) {
+		assert(type(value["http-port"]) == "int", "Property service.http.http-port must be of type integer");
+		assert(value["http-port"] <= 65535, "Property service.http.http-port must be <= 65535");
+		assert(value["http-port"] >= 1, "Property service.http.http-port must be >= 1");
+		obj.http_port = value["http-port"];
+	}
+	else {
+		obj.http_port = 80;
+	}
+
+	return obj;
+}
+
 function instantiateServiceWifiSteering(value) {
 	assert(type(value) == "object", "Property service.wifi-steering must be of type object");
 
@@ -1430,6 +1448,10 @@ function instantiateService(value) {
 
 	if (exists(value, "log")) {
 		obj.log = instantiateServiceLog(value["log"]);
+	}
+
+	if (exists(value, "http")) {
+		obj.http = instantiateServiceHttp(value["http"]);
 	}
 
 	if (exists(value, "wifi-steering")) {
