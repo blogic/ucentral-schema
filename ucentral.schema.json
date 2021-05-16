@@ -931,7 +931,7 @@
                 }
             }
         },
-        "interface.stacked.mesh": {
+        "interface.tunnel.mesh": {
             "type": "object",
             "properties": {
                 "proto": {
@@ -942,15 +942,12 @@
                 }
             }
         },
-        "interface.stacked": {
-            "type": "array",
-            "items": {
-                "anyOf": [
-                    {
-                        "$ref": "#/$defs/interface.stacked.mesh"
-                    }
-                ]
-            }
+        "interface.tunnel": {
+            "oneOf": [
+                {
+                    "$ref": "#/$defs/interface.tunnel.mesh"
+                }
+            ]
         },
         "interface": {
             "type": "object",
@@ -1011,8 +1008,8 @@
                         "$ref": "#/$defs/interface.ssid"
                     }
                 },
-                "stacked": {
-                    "$ref": "#/$defs/interface.stacked"
+                "tunnel": {
+                    "$ref": "#/$defs/interface.tunnel"
                 }
             }
         },

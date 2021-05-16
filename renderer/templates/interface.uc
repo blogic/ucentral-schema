@@ -65,14 +65,22 @@
 	// upstream interfaces always have a routing metric of 0
 	if (interface.role == "upstream")
 		interface.metric = 0;
-%}
 
-add network bridge-vlan
-set network.@bridge-vlan[-1].device={{ bridgedev }}
-set network.@bridge-vlan[-1].vlan={{ this_vid }}
-{%  for (let i, port in eth_ports): %}
-{{ i ? 'add_list' : 'set' }} network.@bridge-vlan[-1].ports={{ port }}{{ ((interface.role == 'upstream') && interface.vlan) ? ':t' : '' }}
-{%  endfor %}
+	// If this interface is a tunnel, we need to create the interface
+	// in a different way
+	let tunnel_proto = interface.tunnel ? interface.tunnel.proto : '';
+
+	//
+	// Create the actual UCI sections
+	//
+
+	// All none L2/3 tunnel require a vlan inside their bridge
+	include("interface/bridge-vlan.uc", { eth_ports, this_vid, bridgedev });
+
+	// Mesh requires the 2 additional interface sections
+	if (tunnel_proto == "mesh")
+		include("interface/mesh.uc", { name });
+%}
 
 {% if (use_dualstack): %}
 set network.{{name}}=interface
@@ -145,9 +153,10 @@ set network.@rule[-1].lookup={{ interface.vlan.id }}
 		include('interface/dhcp.uc');
 
 	for (let i, ssid in interface.ssids) {
-		include('ssid.uc', {
+		include('interface/ssid.uc', {
 			location: location + '/ssids/' + i,
-			ssid
+			ssid,
+			name
 		});
 	}
 %}

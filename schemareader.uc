@@ -1049,42 +1049,36 @@ function instantiateInterfaceSsid(value) {
 	return obj;
 }
 
-function instantiateInterfaceStackedMesh(value) {
-	assert(type(value) == "object", "Property interface.stacked.mesh must be of type object");
+function instantiateInterfaceTunnelMesh(value) {
+	assert(type(value) == "object", "Property interface.tunnel.mesh must be of type object");
 
 	let obj = {};
 
 	if (exists(value, "proto")) {
-		assert(type(value["proto"]) == "string", "Property interface.stacked.mesh.proto must be of type string");
-		assert(value["proto"] in [ "mesh" ], "Property interface.stacked.mesh.proto must be one of [ \"mesh\" ]");
+		assert(type(value["proto"]) == "string", "Property interface.tunnel.mesh.proto must be of type string");
+		assert(value["proto"] in [ "mesh" ], "Property interface.tunnel.mesh.proto must be one of [ \"mesh\" ]");
 		obj.proto = value["proto"];
 	}
 
 	return obj;
 }
 
-function instantiateInterfaceStacked(value) {
-	assert(type(value) == "array", "Property interface.stacked must be of type array");
+function instantiateInterfaceTunnel(value) {
+	function parseVariant0(value) {
 
-	function parseItem(value) {
-		function parseVariant0(value) {
+		let obj = instantiateInterfaceTunnelMesh(value);
 
-			let obj = instantiateInterfaceStackedMesh(value);
-
-			return obj;
-		}
-
-		let success = 0, errors = [];
-
-		try { parseVariant0(value); success++; }
-		catch (e) { push(errors, e); }
-
-		assert(success > 0, join("\n- or -\n", errors));
-
-		return value;
+		return obj;
 	}
 
-	return map(value, parseItem);
+	let success = 0, errors = [];
+
+	try { parseVariant0(value); success++; }
+	catch (e) { push(errors, e); }
+
+	assert(success == 1, join("\n- or -\n", errors));
+
+	return value;
 }
 
 function instantiateInterface(value) {
@@ -1172,8 +1166,8 @@ function instantiateInterface(value) {
 		obj.ssids = parseSsids(value["ssids"]);
 	}
 
-	if (exists(value, "stacked")) {
-		obj.stacked = instantiateInterfaceStacked(value["stacked"]);
+	if (exists(value, "tunnel")) {
+		obj.tunnel = instantiateInterfaceTunnel(value["tunnel"]);
 	}
 
 	return obj;

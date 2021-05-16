@@ -1,0 +1,2 @@
+oneOf:
+ - $ref: 'https://ucentral.io/schema/v1/interface/tunnel/mesh/'

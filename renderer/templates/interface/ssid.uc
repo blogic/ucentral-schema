@@ -47,6 +47,13 @@
 add wireless wifi-iface
 set wireless.@wifi-iface[-1].ucentral_path={{ s(location) }}
 set wireless.@wifi-iface[-1].device={{ phy.section }}
+{% if (ssid.bss_mode == 'mesh'): %}
+set wireless.@wifi-iface[-1].mode={{ ssid.bss_mode }}
+set wireless.@wifi-iface[-1].mesh_id={{ s(ssid.name) }}
+set wireless.@wifi-iface[-1].mesh_fwding=0
+set wireless.@wifi-iface[-1].network={{ name }}_mesh
+{% endif %}
+{% if (ssid.bss_mode == 'ap'): %}
 {%  for (let i, name in ethernet.calculate_names(interface)): %}
 {{ i ? 'add_list' : 'set' }} wireless.@wifi-iface[-1].network={{ name }}
 {%  endfor %}
@@ -59,22 +66,23 @@ set wireless.@wifi-iface[-1].isolate={{ b(ssid.isolate_clients) }}
 set wireless.@wifi-iface[-1].uapsd={{ b(ssid.power_save) }}
 set wireless.@wifi-iface[-1].rts_threshold={{ ssid.rts_threshold }}
 set wireless.@wifi-iface[-1].multicast_to_unicast={{ b(ssid.unicast_conversion) }}
-{% if (ssid.rates): %}
-set wireless.@wifi-iface[-1].beacon_rate={{ ssid.rates.beacon }}
-set wireless.@wifi-iface[-1].mcast_rate={{ ssid.rates.multicast }}
-{% endif %}
-{% if (ssid.rrm): %}
+{%  if (ssid.rrm): %}
 set wireless.@wifi-iface[-1].ieee80211k={{ b(ssid.rrm.neighbor_reporting) }}
 set wireless.@wifi-iface[-1].ftm_responder={{ b(ssid.rrm.ftm_responder) }}
 set wireless.@wifi-iface[-1].stationary_ap={{ b(ssid.rrm.stationary_ap) }}
 set wireless.@wifi-iface[-1].lci={{ b(ssid.rrm.lci) }}
 set wireless.@wifi-iface[-1].civic={{ ssid.rrm.civic }}
-{% endif %}
-{% if (ssid.roaming): %}
+{%  endif %}
+{%  if (ssid.roaming): %}
 set wireless.@wifi-iface[-1].ieee80211r=1
 set wireless.@wifi-iface[-1].ft_over_ds={{ b(ssid.roaming.message_exchange == "ds") }}
 set wireless.@wifi-iface[-1].ft_psk_generate_local={{ b(ssid.roaming.generate_psk) }}
 set wireless.@wifi-iface[-1].mobility_domain={{ ssid.roaming.domain_identifier }}
+{%  endif %}
+{% endif %}
+{% if (ssid.rates): %}
+set wireless.@wifi-iface[-1].beacon_rate={{ ssid.rates.beacon }}
+set wireless.@wifi-iface[-1].mcast_rate={{ ssid.rates.multicast }}
 {% endif %}
 set wireless.@wifi-iface[-1].ieee80211w={{ match_ieee80211w() }}
 set wireless.@wifi-iface[-1].encryption={{ crypto.proto }}

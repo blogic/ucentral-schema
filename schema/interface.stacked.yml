@@ -1,7 +1,0 @@
-description:
-  A logical interface can have several stacked protocols. These can be defined
-  inside this array.
-type: array
-items:
- anyOf:
-  - $ref: 'https://ucentral.io/schema/v1/interface/stacked/mesh/'
