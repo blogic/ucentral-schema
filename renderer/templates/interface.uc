@@ -88,7 +88,7 @@
 		include("interface/mesh.uc", { name });
 
 	// All none L2/3 tunnel require a vlan inside their bridge
-	include("interface/bridge-vlan.uc", { eth_ports, this_vid, bridgedev });
+	include("interface/bridge-vlan.uc", { interface, name, eth_ports, this_vid, bridgedev });
 
 	if (use_dualstack) {
 		include("interface/dualstack.uc", { interface, name, this_vid, location, netdev, ipv4_mode, ipv6_mode });

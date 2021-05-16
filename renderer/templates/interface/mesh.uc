@@ -1,4 +1,3 @@
-add_list network.@bridge-vlan[-1].ports={{ name }}_bat
 
 set network.{{ name }}_bat=interface
 set network.{{ name }}_bat.proto=batadv
