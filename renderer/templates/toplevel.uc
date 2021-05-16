@@ -14,7 +14,6 @@
 	}
 
 	if (!upstream) {
-		location = '/';
 		warn('Configuration must contain at least one valid upstream interface. Rejecting whole file');
 		die('Configuration must contain at least one valid upstream interface. Rejecting whole file');
 	}

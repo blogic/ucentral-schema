@@ -321,6 +321,7 @@ return {
 			ethernet,
 			ipcalc,
 			services,
+			location: '/',
 
 			warn: (fmt, ...args) => push(logs, sprintf("[W] (In %s) ", location || '/') + sprintf(fmt, ...args)),
 			info: (fmt, ...args) => push(logs, sprintf("[!] (In %s) ", location || '/') + sprintf(fmt, ...args))
