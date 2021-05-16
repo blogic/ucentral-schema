@@ -1,2 +1,3 @@
 oneOf:
  - $ref: 'https://ucentral.io/schema/v1/interface/tunnel/mesh/'
+ - $ref: 'https://ucentral.io/schema/v1/interface/tunnel/vxlan/'

@@ -62,9 +62,12 @@
 		(ipv4_mode == 'static' && ipv6_mode == 'static')
 	);
 
-	// upstream interfaces always have a routing metric of 0
-	if (interface.role == "upstream")
-		interface.metric = 0;
+	// If no metric is defined explicitly, any upstream interfaces will default
+	// to 5 and downstream interfaces will default to 10
+	if (!interface.metric && interface.role == "upstream")
+		interface.metric = 5;
+	if (!interface.metric && interface.role == "downstream")
+		interface.metric = 10;
 
 	// If this interface is a tunnel, we need to create the interface
 	// in a different way
@@ -74,12 +77,18 @@
 	// Create the actual UCI sections
 	//
 
-	// All none L2/3 tunnel require a vlan inside their bridge
-	include("interface/bridge-vlan.uc", { eth_ports, this_vid, bridgedev });
+	// Some tunnels do not need the normal bridge-vlan setup
+	if (tunnel_proto in [ "vxlan" ]) {
+		include("interface/" + tunnel_proto + ".uc", { name });
+		return;
+	}
 
 	// Mesh requires the 2 additional interface sections
 	if (tunnel_proto == "mesh")
 		include("interface/mesh.uc", { name });
+
+	// All none L2/3 tunnel require a vlan inside their bridge
+	include("interface/bridge-vlan.uc", { eth_ports, this_vid, bridgedev });
 %}
 
 {% if (use_dualstack): %}

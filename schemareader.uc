@@ -215,7 +215,7 @@ function instantiateInterfaceVlan(value) {
 	if (exists(value, "id")) {
 		assert(type(value["id"]) == "int", "Property interface.vlan.id must be of type integer");
 		assert(value["id"] <= 4096, "Property interface.vlan.id must be <= 4096");
-		assert(value["id"] >= 3, "Property interface.vlan.id must be >= 3");
+		assert(value["id"] >= 2, "Property interface.vlan.id must be >= 2");
 		obj.id = value["id"];
 	}
 
@@ -1063,6 +1063,32 @@ function instantiateInterfaceTunnelMesh(value) {
 	return obj;
 }
 
+function instantiateInterfaceTunnelVxlan(value) {
+	assert(type(value) == "object", "Property interface.tunnel.vxlan must be of type object");
+
+	let obj = {};
+
+	if (exists(value, "proto")) {
+		assert(type(value["proto"]) == "string", "Property interface.tunnel.vxlan.proto must be of type string");
+		assert(value["proto"] in [ "vxlan" ], "Property interface.tunnel.vxlan.proto must be one of [ \"vxlan\" ]");
+		obj.proto = value["proto"];
+	}
+
+	if (exists(value, "peer-address")) {
+		assert(type(value["peer-address"]) == "string", "Property interface.tunnel.vxlan.peer-address must be of type string");
+		obj.peer_address = value["peer-address"];
+	}
+
+	if (exists(value, "peer-port")) {
+		assert(type(value["peer-port"]) == "int", "Property interface.tunnel.vxlan.peer-port must be of type integer");
+		assert(value["peer-port"] <= 65535, "Property interface.tunnel.vxlan.peer-port must be <= 65535");
+		assert(value["peer-port"] >= 1, "Property interface.tunnel.vxlan.peer-port must be >= 1");
+		obj.peer_port = value["peer-port"];
+	}
+
+	return obj;
+}
+
 function instantiateInterfaceTunnel(value) {
 	function parseVariant0(value) {
 
@@ -1071,9 +1097,19 @@ function instantiateInterfaceTunnel(value) {
 		return obj;
 	}
 
+	function parseVariant1(value) {
+
+		let obj = instantiateInterfaceTunnelVxlan(value);
+
+		return obj;
+	}
+
 	let success = 0, errors = [];
 
 	try { parseVariant0(value); success++; }
+	catch (e) { push(errors, e); }
+
+	try { parseVariant1(value); success++; }
 	catch (e) { push(errors, e); }
 
 	assert(success == 1, join("\n- or -\n", errors));
@@ -1107,9 +1143,6 @@ function instantiateInterface(value) {
 		assert(value["metric"] <= 4294967295, "Property interface.metric must be <= 4294967295");
 		assert(value["metric"] >= 0, "Property interface.metric must be >= 0");
 		obj.metric = value["metric"];
-	}
-	else {
-		obj.metric = 10;
 	}
 
 	function parseServices(value) {

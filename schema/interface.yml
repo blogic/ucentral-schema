@@ -29,7 +29,6 @@ properties:
       The routing metric of this logical interface. Lower values have higher
       priority.
     type: integer
-    default: 10
     maximum: 4294967295
     minimum: 0
   services:
