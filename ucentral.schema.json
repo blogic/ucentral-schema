@@ -1176,6 +1176,15 @@
                 }
             }
         },
+        "service.igmp": {
+            "type": "object",
+            "properties": {
+                "enable": {
+                    "type": "boolean",
+                    "default": false
+                }
+            }
+        },
         "service.wifi-steering": {
             "type": "object",
             "properties": {
@@ -1226,6 +1235,9 @@
                 },
                 "http": {
                     "$ref": "#/$defs/service.http"
+                },
+                "igmp": {
+                    "$ref": "#/$defs/service.igmp"
                 },
                 "wifi-steering": {
                     "$ref": "#/$defs/service.wifi-steering"

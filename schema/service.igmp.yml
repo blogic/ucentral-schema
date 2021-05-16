@@ -1,0 +1,9 @@
+description:
+  This section allows enabling the IGMP/Multicast proxy
+type: object
+properties:
+  enable:
+    description:
+      This option defines if the IGMP/Multicast proxy shall be enabled on the device.
+    type: boolean
+    default: false

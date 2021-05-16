@@ -1397,6 +1397,22 @@ function instantiateServiceHttp(value) {
 	return obj;
 }
 
+function instantiateServiceIgmp(value) {
+	assert(type(value) == "object", "Property service.igmp must be of type object");
+
+	let obj = {};
+
+	if (exists(value, "enable")) {
+		assert(type(value["enable"]) == "bool", "Property service.igmp.enable must be of type boolean");
+		obj.enable = value["enable"];
+	}
+	else {
+		obj.enable = false;
+	}
+
+	return obj;
+}
+
 function instantiateServiceWifiSteering(value) {
 	assert(type(value) == "object", "Property service.wifi-steering must be of type object");
 
@@ -1452,6 +1468,10 @@ function instantiateService(value) {
 
 	if (exists(value, "http")) {
 		obj.http = instantiateServiceHttp(value["http"]);
+	}
+
+	if (exists(value, "igmp")) {
+		obj.igmp = instantiateServiceIgmp(value["igmp"]);
 	}
 
 	if (exists(value, "wifi-steering")) {

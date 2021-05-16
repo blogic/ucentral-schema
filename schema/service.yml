@@ -17,5 +17,7 @@ properties:
     $ref: "https://ucentral.io/schema/v1/service/log/"
   http:
     $ref: "https://ucentral.io/schema/v1/service/http/"
+  igmp:
+    $ref: "https://ucentral.io/schema/v1/service/igmp/"
   wifi-steering:
     $ref: "https://ucentral.io/schema/v1/service/wifi-steering/"
