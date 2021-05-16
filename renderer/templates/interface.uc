@@ -89,73 +89,16 @@
 
 	// All none L2/3 tunnel require a vlan inside their bridge
 	include("interface/bridge-vlan.uc", { eth_ports, this_vid, bridgedev });
-%}
 
-{% if (use_dualstack): %}
-set network.{{name}}=interface
-set network.{{ name }}.ucentral_name={{ s(interface.name) }}
-set network.{{ name }}.ucentral_path={{ s(location) }}
-set network.{{ name }}.ifname={{ netdev }}
-set network.{{ name }}.metric={{ interface.metric }}
-{%  if (ipv4_mode == 'static'): %}
-set network.{{ name }}.proto=static
-set network.{{ name }}.ipaddr={{ ipcalc.generate_prefix(state, interface.ipv4.subnet) }}
-{%  elif (ipv6_mode == 'static'): %}
-set network.{{ name }}.proto=static
-set network.{{ name }}.ip6addr={{ ipcalc.generate_prefix(state, interface.ipv6.subnet) }}
-{%  elif (ipv4_mode == 'dynamic'): %}
-set network.{{ name }}.proto=dhcp
-{%   for (let dns in interface.ipv4.use_dns): %}
-add_list network.{{ name }}.dns={{ dns }}
-{%   endfor %}
-set network.{{ name }}.peerdns={{ b(!length(interface.ipv4.use_dns)) }}
-{%  else %}
-set network.{{ name }}.proto=dhcpv6
-{%  endif %}
-{% if (interface.role == 'upstream' && interface.vlan): %}
-set network.{{ name }}.ip4table={{ this_vid }}
-set network.{{ name }}.ip6table={{ this_vid }}
-{%  endif %}
-{% else %}
-{%  if (ipv4_mode != 'none'): %}
-set network.{{name}}=interface_4
-set network.{{ name }}_4.ucentral_name={{ s(interface.name) }}
-set network.{{ name }}_4.ifname={{ netdev }}
-set network.{{ name }}_4.metric={{ interface.metric }}
-{%   if (interface.role == 'upstream' && interface.vlan): %}
-set network.{{ name }}_4.ip4table={{ this_vid }}
-{%   endif %}
-{%   if (ipv4_mode == 'static'): %}
-set network.{{ name }}_4.proto=static
-set network.{{ name }}_4.ipaddr={{ ipcalc.generate_prefix(state, interface.ipv4.subnet) }}
-{%   else %}
-set network.{{ name }}_4.proto=dhcp
-{%   endif %}
-{%  endif %}
-{%  if (ipv6_mode != 'none'): %}
-set network.{{name}}=interface_6
-set network.{{ name }}_6.ucentral_name={{ s(interface.name) }}
-set network.{{ name }}_6.ifname={{ netdev }}
-set network.{{ name }}_6.metric={{ interface.metric }}
-{%   if (interface.role == 'upstream' && interface.vlan): %}
-set network.{{ name }}_6.ip6table={{ this_vid }}
-{%   endif %}
-{%   if (ipv6_mode == 'static'): %}
-set network.{{ name }}_6.proto=static
-set network.{{ name }}_6.ipaddr={{ ipcalc.generate_prefix(state, interface.ipv6.subnet) }}
-{%   else %}
-set network.{{ name }}_6.proto=dhcp
-{%   endif %}
-{%  endif %}
-{% endif %}
+	if (use_dualstack) {
+		include("interface/dualstack.uc", { interface, name, this_vid, location, netdev, ipv4_mode, ipv6_mode });
+	} else {
+		if (ipv4_mode != 'none')
+			include("interface/ipv4.uc", { interface, name, this_vid, location, netdev });
+		if (ipv6_mode != 'none')
+			include("interface/ipv6.uc", { interface, name, this_vid, location, netdev });
+	}
 
-{% if (use_dualstack && interface.role == "downstream" && interface.vlan): %}
-add network rule
-set network.@rule[-1].in={{ name }}
-set network.@rule[-1].lookup={{ interface.vlan.id }}
-{% endif %}
-
-{%
 	include('interface/firewall.uc');
 
 	if (interface.ipv4)
