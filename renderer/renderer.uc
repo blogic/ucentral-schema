@@ -5,7 +5,7 @@
 
 let uci = require("uci");
 let ubus = require("ubus");
-let math = require("math");
+let fs = require("fs");
 
 let cursor = uci ? uci.cursor() : null;
 let conn = ubus ? ubus.connect() : null;
@@ -30,21 +30,8 @@ function s(str) {
 function discover_ports() {
 	let roles = {};
 
-	/* XXX: remove me */
-	let capab = {
-		network: {
-			"lan" : {
-				"ifname" : "lan1 lan2 lan3 lan4",
-				"macaddr" : "00:11:22:f5:37:d3",
-				"protocol" : "static"
-			},
-			"wan" : {
-				"ifname" : "wan",
-				"macaddr" : "00:11:22:f5:37:d2",
-				"protocol" : "dhcp"
-			}
-		}
-	};
+	let capabfile = fs.open("/etc/ucentral/capabilities.json", "r");
+	let capab = json(capabfile.read("all"));
 
 	/* Derive ethernet port names and roles from swconfig switch */
 	if (type(capab.switch) == "object") {
