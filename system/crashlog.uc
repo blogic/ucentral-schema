@@ -6,6 +6,7 @@ let line, lines = [];
 while (line = fd.read("line"))
 	push(lines, trim(line));
 fd.close();
+fs.unlink("/sys/fs/pstore/dmesg-ramoops-0");
 let fd = fs.open("/tmp/crashlog", "w");
 fd.write({crashlog: lines});
 fd.close();
