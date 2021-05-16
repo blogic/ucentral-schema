@@ -143,7 +143,7 @@
 		if (name == "loopback")
 			return;
 
-		let iface = {name};
+		let iface = { name, location: d.ucentral_path };
 		let ipv4leases = [];
 		let lldp_neigh = [];
 
