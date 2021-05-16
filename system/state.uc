@@ -135,6 +135,8 @@
 		radio.tx_power = vap.tx_power;
 		push(state.radios, radio);
 	}
+	if (!length(state.radios))
+		delete(state, "radios");
 
 	/* interfaces */
 	cursor.load("network");
