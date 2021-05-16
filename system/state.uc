@@ -285,7 +285,7 @@
 	printf("%s\n", state);
 
 	let msg = {
-		uuid: cfg.uuid,
+		uuid: cfg.uuid || 1,
 		serial: cursor.get("ucentral", "config", "serial"),
 		state
 	};

@@ -1,5 +1,11 @@
 {%
 	// reject the config if there is no valid upstream configuration
+	if (!state.uuid) {
+		warn('Configuration must contain a valid UUID. Rejecting whole file');
+		die('Configuration must contain a valid UUID. Rejecting whole file');
+	}
+
+	// reject the config if there is no valid upstream configuration
 	let upstream;
 	for (let i, interface in state.interfaces) {
 		if (interface.role != 'upstream')
