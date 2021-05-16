@@ -13,6 +13,7 @@ let ctx = ubus.connect();
 let interfaces = ctx.call("network.interface", "dump").interface;
 let cursor = uci.cursor();
 cursor.load("dhcp");
+cursor.load("network");
 cursor.load("wireless");
 let dhcp = cursor.get_all("dhcp");
 let wifi_config = cursor.get_all("wireless");
@@ -93,8 +94,10 @@ for (let iface in interfaces) {
 	if (length(radius))
 		health.radius = radius;
 
-	if (length(health))
+	if (length(health)) {
+		health.location= cursor.get("network", name, "ucentral_path");
 		state.interfaces[name] = health;
+	}
 }
 
 try {
