@@ -1,6 +1,4 @@
 {%
-	let math = require("math");
-
 	// Skip interfaces previously marked as conflicting.
 	if (interface.conflicting) {
 		warn("Skipping conflicting interface declaration");
