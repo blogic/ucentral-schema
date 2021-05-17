@@ -1,0 +1,23 @@
+description:
+  This Object defines the properties of a GRE tunnel.
+type: object
+properties:
+  proto:
+    description:
+      This field must be set to gre.
+    type: string
+    enum:
+      - gre
+  peer-address:
+    description:
+      This is the IP address of the remote host, that the GRE tunnel shall be
+      established with.
+    type: string
+    format: uc-cidr4
+    example: '192.168.100.1'
+  vlan-id:
+    description:
+      This is the id of the vlan that shall be assigned to the interface.
+    type: integer
+    maximum: 4096
+

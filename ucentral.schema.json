@@ -1011,6 +1011,26 @@
                 }
             }
         },
+        "interface.tunnel.gre": {
+            "type": "object",
+            "properties": {
+                "proto": {
+                    "type": "string",
+                    "enum": [
+                        "gre"
+                    ]
+                },
+                "peer-address": {
+                    "type": "string",
+                    "format": "uc-cidr4",
+                    "example": "192.168.100.1"
+                },
+                "vlan-id": {
+                    "type": "integer",
+                    "maximum": 4096
+                }
+            }
+        },
         "interface.tunnel": {
             "oneOf": [
                 {
@@ -1018,6 +1038,9 @@
                 },
                 {
                     "$ref": "#/$defs/interface.tunnel.vxlan"
+                },
+                {
+                    "$ref": "#/$defs/interface.tunnel.gre"
                 }
             ]
         },

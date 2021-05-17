@@ -79,8 +79,8 @@
 	//
 
 	// Some tunnels do not need the normal bridge-vlan setup
-	if (tunnel_proto in [ "vxlan" ]) {
-		include("interface/" + tunnel_proto + ".uc", { name });
+	if (tunnel_proto in [ "vxlan", 'gre' ]) {
+		include("interface/" + tunnel_proto + ".uc", { interface, name, location, netdev, ipv4_mode, ipv6_mode });
 		return;
 	}
 

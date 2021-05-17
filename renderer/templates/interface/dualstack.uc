@@ -3,7 +3,9 @@ set network.{{ name }}.ucentral_name={{ s(interface.name) }}
 set network.{{ name }}.ucentral_path={{ s(location) }}
 set network.{{ name }}.ifname={{ netdev }}
 set network.{{ name }}.metric={{ interface.metric }}
-{%  if (ipv4_mode == 'static'): %}
+{%  if (ipv4_mode == 'none' && ipv6_mode == 'none'): %}
+set network.{{ name }}.proto=none
+{%  elif (ipv4_mode == 'static'): %}
 set network.{{ name }}.proto=static
 set network.{{ name }}.ipaddr={{ ipcalc.generate_prefix(state, interface.ipv4.subnet) }}
 {%  elif (ipv6_mode == 'static'): %}

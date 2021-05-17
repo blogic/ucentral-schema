@@ -1162,6 +1162,31 @@ function instantiateInterfaceTunnelVxlan(value) {
 	return obj;
 }
 
+function instantiateInterfaceTunnelGre(value) {
+	assert(type(value) == "object", "Property interface.tunnel.gre must be of type object");
+
+	let obj = {};
+
+	if (exists(value, "proto")) {
+		assert(type(value["proto"]) == "string", "Property interface.tunnel.gre.proto must be of type string");
+		assert(value["proto"] in [ "gre" ], "Property interface.tunnel.gre.proto must be one of [ \"gre\" ]");
+		obj.proto = value["proto"];
+	}
+
+	if (exists(value, "peer-address")) {
+		assert(type(value["peer-address"]) == "string", "Property interface.tunnel.gre.peer-address must be of type string");
+		obj.peer_address = value["peer-address"];
+	}
+
+	if (exists(value, "vlan-id")) {
+		assert(type(value["vlan-id"]) == "int", "Property interface.tunnel.gre.vlan-id must be of type integer");
+		assert(value["vlan-id"] <= 4096, "Property interface.tunnel.gre.vlan-id must be <= 4096");
+		obj.vlan_id = value["vlan-id"];
+	}
+
+	return obj;
+}
+
 function instantiateInterfaceTunnel(value) {
 	function parseVariant0(value) {
 
@@ -1177,12 +1202,22 @@ function instantiateInterfaceTunnel(value) {
 		return obj;
 	}
 
+	function parseVariant2(value) {
+
+		let obj = instantiateInterfaceTunnelGre(value);
+
+		return obj;
+	}
+
 	let success = 0, errors = [];
 
 	try { value = parseVariant0(value); success++; }
 	catch (e) { push(errors, e); }
 
 	try { value = parseVariant1(value); success++; }
+	catch (e) { push(errors, e); }
+
+	try { value = parseVariant2(value); success++; }
 	catch (e) { push(errors, e); }
 
 	assert(success == 1, join("\n- or -\n", errors));
