@@ -504,19 +504,19 @@ function instantiateInterfaceSsidMultiPsk(value) {
 		obj.mac = value["mac"];
 	}
 
-	if (exists(value, "psk")) {
-		assert(type(value["psk"]) == "string", "Property interface.ssid.multi-psk.psk must be of type string");
-		assert(length(value["psk"]) <= 63, "Property interface.ssid.multi-psk.psk must be <= 63 characters long");
+	if (exists(value, "key")) {
+		assert(type(value["key"]) == "string", "Property interface.ssid.multi-psk.key must be of type string");
+		assert(length(value["key"]) <= 63, "Property interface.ssid.multi-psk.key must be <= 63 characters long");
 
-		assert(length(value["psk"]) >= 8, "Property interface.ssid.multi-psk.psk must be >= 8 characters long");
+		assert(length(value["key"]) >= 8, "Property interface.ssid.multi-psk.key must be >= 8 characters long");
 
-		obj.psk = value["psk"];
+		obj.key = value["key"];
 	}
 
-	if (exists(value, "vid")) {
-		assert(type(value["vid"]) == "int", "Property interface.ssid.multi-psk.vid must be of type integer");
-		assert(value["vid"] <= 4096, "Property interface.ssid.multi-psk.vid must be <= 4096");
-		obj.vid = value["vid"];
+	if (exists(value, "vlan-id")) {
+		assert(type(value["vlan-id"]) == "int", "Property interface.ssid.multi-psk.vlan-id must be of type integer");
+		assert(value["vlan-id"] <= 4096, "Property interface.ssid.multi-psk.vlan-id must be <= 4096");
+		obj.vlan_id = value["vlan-id"];
 	}
 
 	return obj;

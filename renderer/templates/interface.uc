@@ -109,7 +109,8 @@
 		include('interface/ssid.uc', {
 			location: location + '/ssids/' + i,
 			ssid,
-			name
+			name,
+			count: i
 		});
 	}
 %}
