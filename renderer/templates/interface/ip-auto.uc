@@ -3,6 +3,7 @@ set network.{{ name }}.ucentral_name={{ s(interface.name) }}
 set network.{{ name }}.ucentral_path={{ s(location) }}
 set network.{{ name }}.ifname={{ netdev }}
 set network.{{ name }}.metric={{ interface.metric }}
+set network.{{ name }}.type={{ interface.type }}
 {%  if (ipv4_mode == 'none' && ipv6_mode == 'none'): %}
 set network.{{ name }}.proto=none
 {%  elif (ipv4_mode == 'static'): %}

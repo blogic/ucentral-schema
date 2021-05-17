@@ -54,11 +54,11 @@
 	let netdev = bridgedev + '.' + this_vid;
 
 	// Determine the IPv4 and IPv6 configuration modes and figure out if we
-	// can set them both in a single interface (dualstack) or whether we need
+	// can set them both in a single interface (automatic) or whether we need
 	// two logical interfaces due to different protocols.
 	let ipv4_mode = interface.ipv4 ? interface.ipv4.addressing : 'none';
 	let ipv6_mode = interface.ipv6 ? interface.ipv6.addressing : 'none';
-	let use_dualstack = (
+	let use_automatic = (
 		(ipv4_mode == 'none') || (ipv6_mode == 'none') ||
 		(ipv4_mode == 'static' && ipv6_mode == 'static')
 	);
@@ -91,8 +91,8 @@
 	// All none L2/3 tunnel require a vlan inside their bridge
 	include("interface/bridge-vlan.uc", { interface, name, eth_ports, this_vid, bridgedev });
 
-	if (use_dualstack) {
-		include("interface/dualstack.uc", { interface, name, this_vid, location, netdev, ipv4_mode, ipv6_mode });
+	if (use_automatic) {
+		include("interface/ip-auto.uc", { interface, name, this_vid, location, netdev, ipv4_mode, ipv6_mode });
 	} else {
 		if (ipv4_mode != 'none')
 			include("interface/ipv4.uc", { interface, name, this_vid, location, netdev, ipv4_mode });
