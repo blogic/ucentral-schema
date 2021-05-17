@@ -1,0 +1,22 @@
+description:
+  Define which types of ieee802.11 management frames shall be sent up to the
+  controller.
+type: object
+properties:
+  filters:
+    description:
+      A list of the management frames types that shall be sent to the backend.
+    type: array
+    items:
+      type: string
+      enum:
+        - probe
+        - auth
+        - assoc
+        - disassoc
+        - deauth
+        - local-deauth
+        - inactive-deauth
+        - key-mismatch
+        - beacon-report
+        - radar-detected

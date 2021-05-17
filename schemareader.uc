@@ -116,7 +116,7 @@ function instantiateRadio(value) {
 		function parseVariant0(value) {
 			assert(type(value) == "int", "Property radio.channel must be of type integer");
 			assert(value <= 171, "Property radio.channel must be <= 171");
-			assert(value >= 0, "Property radio.channel must be >= 0");
+			assert(value >= 1, "Property radio.channel must be >= 1");
 
 			return value;
 		}
@@ -1507,85 +1507,111 @@ function instantiateService(value) {
 	return obj;
 }
 
+function instantiateMetricsStatistics(value) {
+	assert(type(value) == "object", "Property metrics.statistics must be of type object");
+
+	let obj = {};
+
+	if (exists(value, "interval")) {
+		assert(type(value["interval"]) == "int", "Property metrics.statistics.interval must be of type integer");
+		assert(value["interval"] >= 60, "Property metrics.statistics.interval must be >= 60");
+		obj.interval = value["interval"];
+	}
+
+	function parseTypes(value) {
+		assert(type(value) == "array", "Property metrics.statistics.types must be of type array");
+
+		return map(value, (item) => {
+			assert(type(item) == "string", "Items of metrics.statistics.types must be of type string");
+			assert(item in [ "ssids", "lldp", "clients" ], "Items of metrics.statistics.types must be one of [ \"ssids\", \"lldp\", \"clients\" ]");
+			return item;
+		});
+	}
+
+	if (exists(value, "types")) {
+		obj.types = parseTypes(value["types"]);
+	}
+
+	return obj;
+}
+
+function instantiateMetricsHealth(value) {
+	assert(type(value) == "object", "Property metrics.health must be of type object");
+
+	let obj = {};
+
+	if (exists(value, "interval")) {
+		assert(type(value["interval"]) == "int", "Property metrics.health.interval must be of type integer");
+		assert(value["interval"] >= 60, "Property metrics.health.interval must be >= 60");
+		obj.interval = value["interval"];
+	}
+
+	return obj;
+}
+
+function instantiateMetricsWifiFrames(value) {
+	assert(type(value) == "object", "Property metrics.wifi-frames must be of type object");
+
+	let obj = {};
+
+	function parseFilters(value) {
+		assert(type(value) == "array", "Property metrics.wifi-frames.filters must be of type array");
+
+		return map(value, (item) => {
+			assert(type(item) == "string", "Items of metrics.wifi-frames.filters must be of type string");
+			assert(item in [ "probe", "auth", "assoc", "disassoc", "deauth", "local-deauth", "inactive-deauth", "key-mismatch", "beacon-report", "radar-detected" ], "Items of metrics.wifi-frames.filters must be one of [ \"probe\", \"auth\", \"assoc\", \"disassoc\", \"deauth\", \"local-deauth\", \"inactive-deauth\", \"key-mismatch\", \"beacon-report\", \"radar-detected\" ]");
+			return item;
+		});
+	}
+
+	if (exists(value, "filters")) {
+		obj.filters = parseFilters(value["filters"]);
+	}
+
+	return obj;
+}
+
+function instantiateMetricsDhcpSnooping(value) {
+	assert(type(value) == "object", "Property metrics.dhcp-snooping must be of type object");
+
+	let obj = {};
+
+	function parseFilters(value) {
+		assert(type(value) == "array", "Property metrics.dhcp-snooping.filters must be of type array");
+
+		return map(value, (item) => {
+			assert(type(item) == "string", "Items of metrics.dhcp-snooping.filters must be of type string");
+			assert(item in [ "ack", "discover", "offer", "request", "solicit", "reply", "renew" ], "Items of metrics.dhcp-snooping.filters must be one of [ \"ack\", \"discover\", \"offer\", \"request\", \"solicit\", \"reply\", \"renew\" ]");
+			return item;
+		});
+	}
+
+	if (exists(value, "filters")) {
+		obj.filters = parseFilters(value["filters"]);
+	}
+
+	return obj;
+}
+
 function instantiateMetrics(value) {
 	assert(type(value) == "object", "Property metrics must be of type object");
 
 	let obj = {};
 
-	function parseStatistics(value) {
-		assert(type(value) == "object", "Property metrics.statistics must be of type object");
-
-		let obj = {};
-
-		if (exists(value, "interval")) {
-			assert(type(value["interval"]) == "int", "Property metrics.statistics.interval must be of type integer");
-			assert(value["interval"] >= 60, "Property metrics.statistics.interval must be >= 60");
-			obj.interval = value["interval"];
-		}
-
-		function parseTypes(value) {
-			assert(type(value) == "array", "Property metrics.statistics.types must be of type array");
-
-			return map(value, (item) => {
-				assert(type(item) == "string", "Items of metrics.statistics.types must be of type string");
-				assert(item in [ "ssids", "lldp", "clients" ], "Items of metrics.statistics.types must be one of [ \"ssids\", \"lldp\", \"clients\" ]");
-				return item;
-			});
-		}
-
-		if (exists(value, "types")) {
-			obj.types = parseTypes(value["types"]);
-		}
-
-		return obj;
-	}
-
 	if (exists(value, "statistics")) {
-		obj.statistics = parseStatistics(value["statistics"]);
-	}
-
-	function parseHealth(value) {
-		assert(type(value) == "object", "Property metrics.health must be of type object");
-
-		let obj = {};
-
-		if (exists(value, "interval")) {
-			assert(type(value["interval"]) == "int", "Property metrics.health.interval must be of type integer");
-			assert(value["interval"] >= 60, "Property metrics.health.interval must be >= 60");
-			obj.interval = value["interval"];
-		}
-
-		return obj;
+		obj.statistics = instantiateMetricsStatistics(value["statistics"]);
 	}
 
 	if (exists(value, "health")) {
-		obj.health = parseHealth(value["health"]);
+		obj.health = instantiateMetricsHealth(value["health"]);
 	}
 
-	function parseDhcpSnooping(value) {
-		assert(type(value) == "object", "Property metrics.dhcp-snooping must be of type object");
-
-		let obj = {};
-
-		function parseFilters(value) {
-			assert(type(value) == "array", "Property metrics.dhcp-snooping.filters must be of type array");
-
-			return map(value, (item) => {
-				assert(type(item) == "string", "Items of metrics.dhcp-snooping.filters must be of type string");
-				assert(item in [ "ack", "discover", "offer", "request", "solicit", "reply", "renew" ], "Items of metrics.dhcp-snooping.filters must be one of [ \"ack\", \"discover\", \"offer\", \"request\", \"solicit\", \"reply\", \"renew\" ]");
-				return item;
-			});
-		}
-
-		if (exists(value, "filters")) {
-			obj.filters = parseFilters(value["filters"]);
-		}
-
-		return obj;
+	if (exists(value, "wifi-frames")) {
+		obj.wifi_frames = instantiateMetricsWifiFrames(value["wifi-frames"]);
 	}
 
 	if (exists(value, "dhcp-snooping")) {
-		obj.dhcp_snooping = parseDhcpSnooping(value["dhcp-snooping"]);
+		obj.dhcp_snooping = instantiateMetricsDhcpSnooping(value["dhcp-snooping"]);
 	}
 
 	return obj;

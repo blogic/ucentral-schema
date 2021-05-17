@@ -131,7 +131,7 @@
                         {
                             "type": "integer",
                             "maximum": 171,
-                            "minimum": 0
+                            "minimum": 1
                         },
                         {
                             "type": "string",
@@ -1254,57 +1254,92 @@
                 }
             }
         },
+        "metrics.statistics": {
+            "type": "object",
+            "properties": {
+                "interval": {
+                    "type": "integer",
+                    "minimum": 60
+                },
+                "types": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "ssids",
+                            "lldp",
+                            "clients"
+                        ]
+                    }
+                }
+            }
+        },
+        "metrics.health": {
+            "type": "object",
+            "properties": {
+                "interval": {
+                    "type": "integer",
+                    "minimum": 60
+                }
+            }
+        },
+        "metrics.wifi-frames": {
+            "type": "object",
+            "properties": {
+                "filters": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "probe",
+                            "auth",
+                            "assoc",
+                            "disassoc",
+                            "deauth",
+                            "local-deauth",
+                            "inactive-deauth",
+                            "key-mismatch",
+                            "beacon-report",
+                            "radar-detected"
+                        ]
+                    }
+                }
+            }
+        },
+        "metrics.dhcp-snooping": {
+            "type": "object",
+            "properties": {
+                "filters": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "ack",
+                            "discover",
+                            "offer",
+                            "request",
+                            "solicit",
+                            "reply",
+                            "renew"
+                        ]
+                    }
+                }
+            }
+        },
         "metrics": {
             "type": "object",
             "properties": {
                 "statistics": {
-                    "type": "object",
-                    "properties": {
-                        "interval": {
-                            "type": "integer",
-                            "minimum": 60
-                        },
-                        "types": {
-                            "type": "array",
-                            "items": {
-                                "type": "string",
-                                "enum": [
-                                    "ssids",
-                                    "lldp",
-                                    "clients"
-                                ]
-                            }
-                        }
-                    }
+                    "$ref": "#/$defs/metrics.statistics"
                 },
                 "health": {
-                    "type": "object",
-                    "properties": {
-                        "interval": {
-                            "type": "integer",
-                            "minimum": 60
-                        }
-                    }
+                    "$ref": "#/$defs/metrics.health"
+                },
+                "wifi-frames": {
+                    "$ref": "#/$defs/metrics.wifi-frames"
                 },
                 "dhcp-snooping": {
-                    "type": "object",
-                    "properties": {
-                        "filters": {
-                            "type": "array",
-                            "items": {
-                                "type": "string",
-                                "enum": [
-                                    "ack",
-                                    "discover",
-                                    "offer",
-                                    "request",
-                                    "solicit",
-                                    "reply",
-                                    "renew"
-                                ]
-                            }
-                        }
-                    }
+                    "$ref": "#/$defs/metrics.dhcp-snooping"
                 }
             }
         },

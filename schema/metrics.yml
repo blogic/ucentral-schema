@@ -4,53 +4,10 @@ description:
 type: object
 properties:
   statistics:
-    description:
-      Statistics are traffic counters, neighbor tables, ...
-    type: object
-    properties:
-      interval:
-        description:
-          The reporting interval defined in seconds.
-        type: integer
-        minimum: 60
-      types:
-        description:
-          A list of names of subsystems that shall be reported periodically.
-        type: array
-        items:
-          type: string
-          enum:
-            - ssids
-            - lldp
-            - clients
+    $ref: "https://ucentral.io/schema/v1/metrics/statistics/"
   health:
-    description:
-      Health check gets executed periodically and will report a health value
-      between 0-100 indicating how healthy the device thinks it is
-    type: object
-    properties:
-      interval:
-        description:
-          The reporting interval defined in seconds.
-        type: integer
-        minimum: 60
+    $ref: "https://ucentral.io/schema/v1/metrics/health/"
+  wifi-frames:
+    $ref: "https://ucentral.io/schema/v1/metrics/wifi-frames/"
   dhcp-snooping:
-    description:
-      DHCP snooping allows us to intercept DHCP packages on interface that are
-      bridged, where DHCP is not offered as a service by the AP.
-    type: object
-    properties:
-      filters:
-        description:
-          A list of the message types that shall be sent to the backend.
-        type: array
-        items:
-          type: string
-          enum:
-            - ack
-            - discover
-            - offer
-            - request
-            - solicit
-            - reply
-            - renew
+    $ref: "https://ucentral.io/schema/v1/metrics/dhcp-snooping/"

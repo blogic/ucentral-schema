@@ -1,0 +1,19 @@
+description:
+  DHCP snooping allows us to intercept DHCP packages on interface that are
+  bridged, where DHCP is not offered as a service by the AP.
+type: object
+properties:
+  filters:
+    description:
+      A list of the message types that shall be sent to the backend.
+    type: array
+    items:
+      type: string
+      enum:
+        - ack
+        - discover
+        - offer
+        - request
+        - solicit
+        - reply
+        - renew

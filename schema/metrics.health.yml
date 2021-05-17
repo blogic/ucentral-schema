@@ -1,0 +1,10 @@
+description:
+  Health check gets executed periodically and will report a health value
+  between 0-100 indicating how healthy the device thinks it is
+type: object
+properties:
+  interval:
+    description:
+      The reporting interval defined in seconds.
+    type: integer
+    minimum: 60
