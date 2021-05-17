@@ -34,7 +34,7 @@ function discover_ports() {
 	let capab = json(capabfile.read("all"));
 
 	/* Derive ethernet port names and roles from swconfig switch */
-	if (type(capab.switch) == "object") {
+	if (0 && type(capab.switch) == "object") {
 		for (let switchname, switchspec in capab.switch) {
 			if (type(switchspec) == "object" && type(switchspec.ports) == "array") {
 				for (let portspec in switchspec.ports) {
