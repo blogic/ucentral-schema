@@ -95,9 +95,9 @@
 		include("interface/dualstack.uc", { interface, name, this_vid, location, netdev, ipv4_mode, ipv6_mode });
 	} else {
 		if (ipv4_mode != 'none')
-			include("interface/ipv4.uc", { interface, name, this_vid, location, netdev });
+			include("interface/ipv4.uc", { interface, name, this_vid, location, netdev, ipv4_mode });
 		if (ipv6_mode != 'none')
-			include("interface/ipv6.uc", { interface, name, this_vid, location, netdev });
+			include("interface/ipv6.uc", { interface, name, this_vid, location, netdev, ipv6_mode });
 	}
 
 	include('interface/firewall.uc');
