@@ -19,11 +19,15 @@ properties:
     - 20
   channel:
     description:
-      Specifies the wireless channel to use. A value of 0 starts the ACS
+      Specifies the wireless channel to use. A value of 'auto' starts the ACS
       algorithm.
-    type: integer
-    maximum: 171
-    minimum: 0
+    oneOf:
+      - type: integer
+        maximum: 171
+        minimum: 1
+      - type: string
+        enum:
+          - auto
   country:
     description:
       Specifies the country code, affects the available channels and

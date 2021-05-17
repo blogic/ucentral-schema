@@ -112,11 +112,37 @@ function instantiateRadio(value) {
 		obj.bandwidth = value["bandwidth"];
 	}
 
+	function parseChannel(value) {
+		function parseVariant0(value) {
+			assert(type(value) == "int", "Property radio.channel must be of type integer");
+			assert(value <= 171, "Property radio.channel must be <= 171");
+			assert(value >= 0, "Property radio.channel must be >= 0");
+
+			return value;
+		}
+
+		function parseVariant1(value) {
+			assert(type(value) == "string", "Property radio.channel must be of type string");
+			assert(value in [ "auto" ], "Property radio.channel must be one of [ \"auto\" ]");
+
+			return value;
+		}
+
+		let success = 0, errors = [];
+
+		try { parseVariant0(value); success++; }
+		catch (e) { push(errors, e); }
+
+		try { parseVariant1(value); success++; }
+		catch (e) { push(errors, e); }
+
+		assert(success == 1, join("\n- or -\n", errors));
+
+		return value;
+	}
+
 	if (exists(value, "channel")) {
-		assert(type(value["channel"]) == "int", "Property radio.channel must be of type integer");
-		assert(value["channel"] <= 171, "Property radio.channel must be <= 171");
-		assert(value["channel"] >= 0, "Property radio.channel must be >= 0");
-		obj.channel = value["channel"];
+		obj.channel = parseChannel(value["channel"]);
 	}
 
 	if (exists(value, "country")) {

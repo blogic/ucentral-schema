@@ -127,9 +127,19 @@
                     ]
                 },
                 "channel": {
-                    "type": "integer",
-                    "maximum": 171,
-                    "minimum": 0
+                    "oneOf": [
+                        {
+                            "type": "integer",
+                            "maximum": 171,
+                            "minimum": 0
+                        },
+                        {
+                            "type": "string",
+                            "enum": [
+                                "auto"
+                            ]
+                        }
+                    ]
                 },
                 "country": {
                     "type": "string",

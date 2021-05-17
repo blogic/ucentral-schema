@@ -33,6 +33,9 @@
 	}
 
 	function match_channel(phy, wanted_channel) {
+		if (!wanted_channel || wanted_channel == "auto")
+			return 0;
+
 		if (wanted_channel in phy.channels)
 			return wanted_channel;
 
