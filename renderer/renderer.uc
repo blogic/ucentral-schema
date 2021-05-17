@@ -33,38 +33,16 @@ function discover_ports() {
 	let capabfile = fs.open("/etc/ucentral/capabilities.json", "r");
 	let capab = json(capabfile.read("all"));
 
-	/* Derive ethernet port names and roles from swconfig switch */
-	if (0 && type(capab.switch) == "object") {
-		for (let switchname, switchspec in capab.switch) {
-			if (type(switchspec) == "object" && type(switchspec.ports) == "array") {
-				for (let portspec in switchspec.ports) {
-					if (type(portspec) == "object" && exists(portspec, "num") && exists(portspec, "role")) {
-						// XXX: check if we need to remember more properties to (re)construct
-						// swconfig VLAN settings later...
-						let role = uc(portspec.role);
-						push(roles[role] = roles[role] || [], {
-							switch: switchname,
-							port: portspec.num,
-							index: (type(portspec.index) == "int") ? portspec.index : portspec.num
-						});
-					}
-				}
-			}
-		}
-	}
-
-	/* Derive ethernet port names and roles from DSA default config */
-	else {
-		for (let role, spec in capab.network) {
-			if (type(spec) == "object" && type(spec.ifname) == "string") {
-				for (let i, ifname in split(spec.ifname, /\s+/)) {
-					if (ifname != "") {
-						role = uc(role);
-						push(roles[role] = roles[role] || [], {
-							netdev: ifname,
-							index: i
-						});
-					}
+	/* Derive ethernet port names and roles from default config */
+	for (let role, spec in capab.network) {
+		if (type(spec) == "object" && type(spec.ifname) == "string") {
+			for (let i, ifname in split(spec.ifname, /\s+/)) {
+				if (ifname != "") {
+					role = uc(role);
+					push(roles[role] = roles[role] || [], {
+						netdev: ifname,
+						index: i
+					});
 				}
 			}
 		}
