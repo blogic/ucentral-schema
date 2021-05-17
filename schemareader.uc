@@ -494,6 +494,34 @@ function instantiateInterfaceSsidEncryption(value) {
 	return obj;
 }
 
+function instantiateInterfaceSsidMultiPsk(value) {
+	assert(type(value) == "object", "Property interface.ssid.multi-psk must be of type object");
+
+	let obj = {};
+
+	if (exists(value, "mac")) {
+		assert(type(value["mac"]) == "string", "Property interface.ssid.multi-psk.mac must be of type string");
+		obj.mac = value["mac"];
+	}
+
+	if (exists(value, "psk")) {
+		assert(type(value["psk"]) == "string", "Property interface.ssid.multi-psk.psk must be of type string");
+		assert(length(value["psk"]) <= 63, "Property interface.ssid.multi-psk.psk must be <= 63 characters long");
+
+		assert(length(value["psk"]) >= 8, "Property interface.ssid.multi-psk.psk must be >= 8 characters long");
+
+		obj.psk = value["psk"];
+	}
+
+	if (exists(value, "vid")) {
+		assert(type(value["vid"]) == "int", "Property interface.ssid.multi-psk.vid must be of type integer");
+		assert(value["vid"] <= 4096, "Property interface.ssid.multi-psk.vid must be <= 4096");
+		obj.vid = value["vid"];
+	}
+
+	return obj;
+}
+
 function instantiateInterfaceSsidCaptive(value) {
 	assert(type(value) == "object", "Property interface.ssid.captive must be of type object");
 
@@ -694,13 +722,22 @@ function instantiateInterfaceSsidRadiusLocalUser(value) {
 		obj.mac = value["mac"];
 	}
 
-	if (exists(value, "key")) {
-		assert(type(value["key"]) == "string", "Property interface.ssid.radius.local-user.key must be of type string");
-		assert(length(value["key"]) <= 63, "Property interface.ssid.radius.local-user.key must be <= 63 characters long");
+	if (exists(value, "user")) {
+		assert(type(value["user"]) == "string", "Property interface.ssid.radius.local-user.user must be of type string");
+		assert(length(value["user"]) <= 63, "Property interface.ssid.radius.local-user.user must be <= 63 characters long");
 
-		assert(length(value["key"]) >= 8, "Property interface.ssid.radius.local-user.key must be >= 8 characters long");
+		assert(length(value["user"]) >= 8, "Property interface.ssid.radius.local-user.user must be >= 8 characters long");
 
-		obj.key = value["key"];
+		obj.user = value["user"];
+	}
+
+	if (exists(value, "psk")) {
+		assert(type(value["psk"]) == "string", "Property interface.ssid.radius.local-user.psk must be of type string");
+		assert(length(value["psk"]) <= 63, "Property interface.ssid.radius.local-user.psk must be <= 63 characters long");
+
+		assert(length(value["psk"]) >= 8, "Property interface.ssid.radius.local-user.psk must be >= 8 characters long");
+
+		obj.psk = value["psk"];
 	}
 
 	if (exists(value, "vid")) {
@@ -1029,6 +1066,16 @@ function instantiateInterfaceSsid(value) {
 
 	if (exists(value, "encryption")) {
 		obj.encryption = instantiateInterfaceSsidEncryption(value["encryption"]);
+	}
+
+	function parseMultiPsk(value) {
+		assert(type(value) == "array", "Property interface.ssid.multi-psk must be of type array");
+
+		return map(value, instantiateInterfaceSsidMultiPsk);
+	}
+
+	if (exists(value, "multi-psk")) {
+		obj.multi_psk = parseMultiPsk(value["multi-psk"]);
 	}
 
 	if (exists(value, "captive")) {

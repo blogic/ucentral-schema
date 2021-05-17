@@ -65,6 +65,10 @@ properties:
     type: boolean
   encryption:
     $ref: "https://ucentral.io/schema/v1/interface/ssid/encryption/"
+  multi-psk:
+    type: array
+    items:
+      $ref: "https://ucentral.io/schema/v1/interface/ssid/multi-psk/"
   captive:
     $ref: "https://ucentral.io/schema/v1/interface/ssid/captive/"
   rrm:

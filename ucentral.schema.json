@@ -455,6 +455,30 @@
                 }
             }
         },
+        "interface.ssid.multi-psk": {
+            "type": "object",
+            "properties": {
+                "mac": {
+                    "type": "string",
+                    "format": "uc-mac"
+                },
+                "psk": {
+                    "type": "string",
+                    "maxLength": 63,
+                    "minLength": 8
+                },
+                "vid": {
+                    "type": "integer",
+                    "maximum": 4096,
+                    "examples": [
+                        3,
+                        100,
+                        200,
+                        4094
+                    ]
+                }
+            }
+        },
         "interface.ssid.captive": {
             "type": "object",
             "properties": {
@@ -600,7 +624,12 @@
                     "type": "string",
                     "format": "uc-mac"
                 },
-                "key": {
+                "user": {
+                    "type": "string",
+                    "maxLength": 63,
+                    "minLength": 8
+                },
+                "psk": {
                     "type": "string",
                     "maxLength": 63,
                     "minLength": 8
@@ -901,6 +930,12 @@
                 },
                 "encryption": {
                     "$ref": "#/$defs/interface.ssid.encryption"
+                },
+                "multi-psk": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/interface.ssid.multi-psk"
+                    }
                 },
                 "captive": {
                     "$ref": "#/$defs/interface.ssid.captive"
