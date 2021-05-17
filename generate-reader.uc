@@ -296,7 +296,7 @@ let GeneratorProto = {
 			this.print(path, 'let success = 0, errors = [];\n');
 
 			for (let functionName in functionNames) {
-				this.print(path, 'try { %s(value); success++; }', functionName);
+				this.print(path, 'try { value = %s(value); success++; }', functionName);
 				this.print(path, 'catch (e) { push(errors, e); }\n');
 			}
 

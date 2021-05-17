@@ -130,10 +130,10 @@ function instantiateRadio(value) {
 
 		let success = 0, errors = [];
 
-		try { parseVariant0(value); success++; }
+		try { value = parseVariant0(value); success++; }
 		catch (e) { push(errors, e); }
 
-		try { parseVariant1(value); success++; }
+		try { value = parseVariant1(value); success++; }
 		catch (e) { push(errors, e); }
 
 		assert(success == 1, join("\n- or -\n", errors));
@@ -766,10 +766,10 @@ function instantiateInterfaceSsidRadiusServer(value) {
 
 				let success = 0, errors = [];
 
-				try { parseVariant0(value); success++; }
+				try { value = parseVariant0(value); success++; }
 				catch (e) { push(errors, e); }
 
-				try { parseVariant1(value); success++; }
+				try { value = parseVariant1(value); success++; }
 				catch (e) { push(errors, e); }
 
 				assert(success > 0, join("\n- or -\n", errors));
@@ -1132,10 +1132,10 @@ function instantiateInterfaceTunnel(value) {
 
 	let success = 0, errors = [];
 
-	try { parseVariant0(value); success++; }
+	try { value = parseVariant0(value); success++; }
 	catch (e) { push(errors, e); }
 
-	try { parseVariant1(value); success++; }
+	try { value = parseVariant1(value); success++; }
 	catch (e) { push(errors, e); }
 
 	assert(success == 1, join("\n- or -\n", errors));
