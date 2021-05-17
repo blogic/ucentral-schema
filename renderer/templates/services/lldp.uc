@@ -1,6 +1,7 @@
 
 # LLDP service configuration
 
+set lldpd.config.enable=1
 set lldpd.config.description={{ s(lldp.describe) }}
 set lldpd.config.lldp_location={{ s(lldp.location) }}
 {% let interfaces = services.lookup_interfaces("lldp") %}
