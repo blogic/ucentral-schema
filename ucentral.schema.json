@@ -900,7 +900,9 @@
                         "ap",
                         "sta",
                         "mesh",
-                        "wds"
+                        "wds-ap",
+                        "wds-sta",
+                        "wds-repeater"
                     ],
                     "default": "ap"
                 },

@@ -37,6 +37,16 @@
 
 		return index([ "disabled", "optional", "required" ], ssid.encryption.ieee80211w);
 	}
+
+	function match_wds() {
+		return index([ "wds-ap", "wds-sta", "wds-repeater" ], ssid.bss_mode);
+	}
+
+	let bss_mode = ssid.bss_mode;
+	if (ssid.bss_mode == "wds-ap")
+		bss_mode =  "ap";
+	if (ssid.bss_mode == "wds-sta")
+		bss_mode =  "sta";
 %}
 
 # Wireless configuration
@@ -48,19 +58,21 @@
 set wireless.{{ section }}=wifi-iface
 set wireless.{{ section }}.ucentral_path={{ s(location) }}
 set wireless.{{ section }}.device={{ phy.section }}
-{%   if (ssid.bss_mode == 'mesh'): %}
-set wireless.{{ section }}.mode={{ ssid.bss_mode }}
+{%   if (bss_mode == 'mesh'): %}
+set wireless.{{ section }}.mode={{ bss_mode }}
 set wireless.{{ section }}.mesh_id={{ s(ssid.name) }}
 set wireless.{{ section }}.mesh_fwding=0
 set wireless.{{ section }}.network={{ name }}_mesh
 {%   endif %}
-{%   if (ssid.bss_mode == 'ap'): %}
+{%   if (index([ 'ap', 'sta' ], bss_mode) >= 0): %}
 {%     for (let i, name in ethernet.calculate_names(interface)): %}
 {{ i ? 'add_list' : 'set' }} wireless.{{ section }}.network={{ name }}
 {%     endfor %}
 set wireless.{{ section }}.ssid={{ s(ssid.name) }}
-set wireless.{{ section }}.mode={{ ssid.bss_mode }}
+set wireless.{{ section }}.mode={{ s(bss_mode) }}
 set wireless.{{ section }}.bssid={{ ssid.bssid }}
+{%   endif %}
+{%   if (bss_mode == 'ap'): %}
 set wireless.{{ section }}.hidden={{ b(ssid.hidden_ssid) }}
 set wireless.{{ section }}.time_advertisement={{ ssid.broadcast_time }}
 set wireless.{{ section }}.isolate={{ b(ssid.isolate_clients) }}
@@ -99,6 +111,7 @@ set wireless.{{ section }}.acct_port={{ crypto.acct.port }}
 set wireless.{{ section }}.acct_secret={{ crypto.acct.secret }}
 set wireless.{{ section }}.acct_interval={{ crypto.acct.interval }}
 {%   endif %}
+set wireless.{{ section }}.wds='{{ b(match_wds()) }}'
 {%   if (ssid.rate_limit && (ssid.rate_limit.ingress_rate || ssid.rate_limit.egress_rate)): %}
 
 add ratelimit rate

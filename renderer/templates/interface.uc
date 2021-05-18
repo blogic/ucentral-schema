@@ -105,12 +105,19 @@
 	if (interface.ipv4)
 		include('interface/dhcp.uc');
 
+	let count = 0;
 	for (let i, ssid in interface.ssids) {
-		include('interface/ssid.uc', {
-			location: location + '/ssids/' + i,
-			ssid,
-			name,
-			count: i
-		});
+		let modes = (ssid.bss_mode == "wds-repeater") ?
+			[ "wds-sta", "wds-ap" ] : [ ssid.bss_mode ];
+		for (let mode in modes) {
+			ssid.bss_mode = mode;
+			include('interface/ssid.uc', {
+				location: location + '/ssids/' + i,
+				ssid,
+				name,
+				count
+			});
+			count++;
+		}
 	}
 %}

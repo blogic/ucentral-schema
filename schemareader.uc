@@ -1020,7 +1020,7 @@ function instantiateInterfaceSsid(value) {
 
 	if (exists(value, "bss-mode")) {
 		assert(type(value["bss-mode"]) == "string", "Property interface.ssid.bss-mode must be of type string");
-		assert(value["bss-mode"] in [ "ap", "sta", "mesh", "wds" ], "Property interface.ssid.bss-mode must be one of [ \"ap\", \"sta\", \"mesh\", \"wds\" ]");
+		assert(value["bss-mode"] in [ "ap", "sta", "mesh", "wds-ap", "wds-sta", "wds-repeater" ], "Property interface.ssid.bss-mode must be one of [ \"ap\", \"sta\", \"mesh\", \"wds-ap\", \"wds-sta\", \"wds-repeater\" ]");
 		obj.bss_mode = value["bss-mode"];
 	}
 	else {
