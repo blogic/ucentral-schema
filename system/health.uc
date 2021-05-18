@@ -111,7 +111,7 @@ catch(e) {
 
 let errors = length(state.interfaces);
 if (!errors)
-	delete(state, "interfaces");
+	delete state.interfaces;
 
 let sanity = 100 - (errors * 100 / count);
 

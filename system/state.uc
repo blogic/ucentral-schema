@@ -136,7 +136,7 @@
 		push(state.radios, radio);
 	}
 	if (!length(state.radios))
-		delete(state, "radios");
+		delete state.radios;
 
 	/* interfaces */
 	cursor.load("network");
@@ -174,7 +174,7 @@
 				if (!addr.mask)
 					continue;
 				addr.address = sprintf("%s/%s", addr.address, addr.mask);
-				delete(addr, "mask");
+				delete addr.mask;
 			}
 		}
 
@@ -280,7 +280,7 @@
 			iface.counters = ports[name].stats;
 			for (let key in iface.counters)
 				if (!iface.counters[key])
-					delete(iface.counters, key);
+					delete iface.counters.key;
 		}
 	});
 
