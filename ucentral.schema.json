@@ -930,6 +930,15 @@
                 "unicast-conversion": {
                     "type": "boolean"
                 },
+                "services": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "examples": [
+                            "wifi-steering"
+                        ]
+                    }
+                },
                 "encryption": {
                     "$ref": "#/$defs/interface.ssid.encryption"
                 },
@@ -1279,15 +1288,27 @@
                 },
                 "network": {
                     "type": "string",
-                    "examples": [
-                        "upstream"
-                    ]
+                    "default": "upstream"
                 },
-                "key": {
-                    "type": "string",
-                    "examples": [
-                        "secret"
-                    ]
+                "assoc-steering": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "required-snr": {
+                    "type": "integer",
+                    "default": 0
+                },
+                "required-probe-snr": {
+                    "type": "integer",
+                    "default": 0
+                },
+                "required-roam-snr": {
+                    "type": "integer",
+                    "default": 0
+                },
+                "load-kick-threshold": {
+                    "type": "integer",
+                    "default": 0
                 }
             }
         },

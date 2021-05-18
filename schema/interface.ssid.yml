@@ -65,6 +65,15 @@ properties:
     description:
       Convert multicast traffic to unicast on this BSS.
     type: boolean
+  services:
+    description:
+      The services that shall be offered on this logical interface. These are
+      just strings such as "wifi-steering"
+    type: array
+    items:
+      type: string
+      examples:
+      - wifi-steering
   encryption:
     $ref: "https://ucentral.io/schema/v1/interface/ssid/encryption/"
   multi-psk:

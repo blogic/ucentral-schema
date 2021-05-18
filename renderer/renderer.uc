@@ -272,6 +272,22 @@ let services = {
 
 		return interfaces;
 	}
+
+	lookup_ssids: function(service) {
+		let ssids = [];
+
+		for (let interface in state.interfaces) {
+			if (!interface.ssids)
+				continue;
+			for (let ssid in interface.ssids) {
+				if (!ssid.services || index(ssid.services, service) < 0)
+					continue;
+				push(ssids, ssid);
+			}
+		}
+
+		return ssids;
+	}
 };
 
 return {

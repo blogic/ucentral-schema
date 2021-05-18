@@ -1064,6 +1064,19 @@ function instantiateInterfaceSsid(value) {
 		obj.unicast_conversion = value["unicast-conversion"];
 	}
 
+	function parseServices(value) {
+		assert(type(value) == "array", "Property interface.ssid.services must be of type array");
+
+		return map(value, (item) => {
+			assert(type(item) == "string", "Items of interface.ssid.services must be of type string");
+			return item;
+		});
+	}
+
+	if (exists(value, "services")) {
+		obj.services = parseServices(value["services"]);
+	}
+
 	if (exists(value, "encryption")) {
 		obj.encryption = instantiateInterfaceSsidEncryption(value["encryption"]);
 	}
@@ -1552,10 +1565,48 @@ function instantiateServiceWifiSteering(value) {
 		assert(type(value["network"]) == "string", "Property service.wifi-steering.network must be of type string");
 		obj.network = value["network"];
 	}
+	else {
+		obj.network = "upstream";
+	}
 
-	if (exists(value, "key")) {
-		assert(type(value["key"]) == "string", "Property service.wifi-steering.key must be of type string");
-		obj.key = value["key"];
+	if (exists(value, "assoc-steering")) {
+		assert(type(value["assoc-steering"]) == "bool", "Property service.wifi-steering.assoc-steering must be of type boolean");
+		obj.assoc_steering = value["assoc-steering"];
+	}
+	else {
+		obj.assoc_steering = false;
+	}
+
+	if (exists(value, "required-snr")) {
+		assert(type(value["required-snr"]) == "int", "Property service.wifi-steering.required-snr must be of type integer");
+		obj.required_snr = value["required-snr"];
+	}
+	else {
+		obj.required_snr = 0;
+	}
+
+	if (exists(value, "required-probe-snr")) {
+		assert(type(value["required-probe-snr"]) == "int", "Property service.wifi-steering.required-probe-snr must be of type integer");
+		obj.required_probe_snr = value["required-probe-snr"];
+	}
+	else {
+		obj.required_probe_snr = 0;
+	}
+
+	if (exists(value, "required-roam-snr")) {
+		assert(type(value["required-roam-snr"]) == "int", "Property service.wifi-steering.required-roam-snr must be of type integer");
+		obj.required_roam_snr = value["required-roam-snr"];
+	}
+	else {
+		obj.required_roam_snr = 0;
+	}
+
+	if (exists(value, "load-kick-threshold")) {
+		assert(type(value["load-kick-threshold"]) == "int", "Property service.wifi-steering.load-kick-threshold must be of type integer");
+		obj.load_kick_threshold = value["load-kick-threshold"];
+	}
+	else {
+		obj.load_kick_threshold = 0;
 	}
 
 	return obj;
