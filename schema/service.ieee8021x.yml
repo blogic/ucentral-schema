@@ -1,0 +1,9 @@
+description:
+  This section allows enabling wired ieee802.1X
+type: object
+properties:
+  enable:
+    description:
+      This option defines if ieee8021x shall be enabled on the device.
+    type: boolean
+    default: false

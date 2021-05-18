@@ -1253,6 +1253,15 @@
                 }
             }
         },
+        "service.ieee8021x": {
+            "type": "object",
+            "properties": {
+                "enable": {
+                    "type": "boolean",
+                    "default": false
+                }
+            }
+        },
         "service.wifi-steering": {
             "type": "object",
             "properties": {
@@ -1306,6 +1315,9 @@
                 },
                 "igmp": {
                     "$ref": "#/$defs/service.igmp"
+                },
+                "ieee8021x": {
+                    "$ref": "#/$defs/service.ieee8021x"
                 },
                 "wifi-steering": {
                     "$ref": "#/$defs/service.wifi-steering"

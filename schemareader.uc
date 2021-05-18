@@ -1521,6 +1521,22 @@ function instantiateServiceIgmp(value) {
 	return obj;
 }
 
+function instantiateServiceIeee8021x(value) {
+	assert(type(value) == "object", "Property service.ieee8021x must be of type object");
+
+	let obj = {};
+
+	if (exists(value, "enable")) {
+		assert(type(value["enable"]) == "bool", "Property service.ieee8021x.enable must be of type boolean");
+		obj.enable = value["enable"];
+	}
+	else {
+		obj.enable = false;
+	}
+
+	return obj;
+}
+
 function instantiateServiceWifiSteering(value) {
 	assert(type(value) == "object", "Property service.wifi-steering must be of type object");
 
@@ -1580,6 +1596,10 @@ function instantiateService(value) {
 
 	if (exists(value, "igmp")) {
 		obj.igmp = instantiateServiceIgmp(value["igmp"]);
+	}
+
+	if (exists(value, "ieee8021x")) {
+		obj.ieee8021x = instantiateServiceIeee8021x(value["ieee8021x"]);
 	}
 
 	if (exists(value, "wifi-steering")) {
