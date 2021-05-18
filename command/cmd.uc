@@ -31,13 +31,13 @@ function result(code, fmt, ...args) {
 		"status": {
 			"error": code,
 			"text": text
-		}
+		}, "id": +id
 	});
 	warn(text + "\n");
 }
 
 function result_json(status) {
-	ctx.call("ucentral", "result", {"id": id, "status": status});
+	ctx.call("ucentral", "result", {"id": +id, "status": status});
 	if (status.text)
 		warn(status.text + "\n");
 	if (status.resultText)
