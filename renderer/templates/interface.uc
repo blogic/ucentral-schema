@@ -1,4 +1,6 @@
 {%
+	let has_downstream_relays = false;
+
 	// Skip interfaces previously marked as conflicting.
 	if (interface.conflicting) {
 		warn("Skipping conflicting interface declaration");
@@ -22,6 +24,12 @@
 			warn("Multiple interfaces with same role and VLAN ID defined, ignoring conflicting interface");
 			other_interface.conflicting = true;
 		}
+
+		if (other_interface.role == 'downstream' &&
+		    other_interface.ipv6 &&
+		    other_interface.ipv6.dhcpv6 &&
+		    other_interface.ipv6.dhcpv6.mode == 'relay')
+		    has_downstream_relays = true;
 	}
 
 	// check if a downstream interface with a vlan has a matching upstream interface
@@ -58,10 +66,6 @@
 	// two logical interfaces due to different protocols.
 	let ipv4_mode = interface.ipv4 ? interface.ipv4.addressing : 'none';
 	let ipv6_mode = interface.ipv6 ? interface.ipv6.addressing : 'none';
-	let use_automatic = (
-		(ipv4_mode == 'none') || (ipv6_mode == 'none') ||
-		(ipv4_mode == 'static' && ipv6_mode == 'static')
-	);
 
 	// If no metric is defined explicitly, any upstream interfaces will default
 	// to 5 and downstream interfaces will default to 10
@@ -91,19 +95,21 @@
 	// All none L2/3 tunnel require a vlan inside their bridge
 	include("interface/bridge-vlan.uc", { interface, name, eth_ports, this_vid, bridgedev });
 
-	if (use_automatic) {
-		include("interface/ip-auto.uc", { interface, name, this_vid, location, netdev, ipv4_mode, ipv6_mode });
-	} else {
-		if (ipv4_mode != 'none')
-			include("interface/ipv4.uc", { interface, name, this_vid, location, netdev, ipv4_mode });
-		if (ipv6_mode != 'none')
-			include("interface/ipv6.uc", { interface, name, this_vid, location, netdev, ipv6_mode });
-	}
+	include("interface/common.uc", {
+		name, this_vid, netdev,
+		ipv4_mode, ipv4: interface.ipv4 || {},
+		ipv6_mode, ipv6: interface.ipv6 || {}
+	});
 
 	include('interface/firewall.uc');
 
-	if (interface.ipv4)
-		include('interface/dhcp.uc');
+	if (interface.ipv4 || interface.ipv6) {
+		include('interface/dhcp.uc', {
+			ipv4: interface.ipv4 || {},
+			ipv6: interface.ipv6 || {},
+			has_downstream_relays
+		});
+	}
 
 	let count = 0;
 	for (let i, ssid in interface.ssids) {

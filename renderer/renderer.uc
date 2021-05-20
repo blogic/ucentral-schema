@@ -168,6 +168,16 @@ let ethernet = {
 		return sort(keys(matched));
 	},
 
+	is_single_config: function(interface) {
+		let ipv4_mode = interface.ipv4 ? interface.ipv4.addressing : 'none';
+		let ipv6_mode = interface.ipv6 ? interface.ipv6.addressing : 'none';
+
+		return (
+			(ipv4_mode == 'none') || (ipv6_mode == 'none') ||
+			(ipv4_mode == 'static' && ipv6_mode == 'static')
+		);
+	},
+
 	calculate_name: function(interface) {
 		let vid = interface.vlan ? interface.vlan.id : '';
 
@@ -177,13 +187,19 @@ let ethernet = {
 	calculate_names: function(interface) {
 		let name = this.calculate_name(interface);
 
-		let ipv4_mode = interface.ipv4 ? interface.ipv4.addressing : 'none';
-		let ipv6_mode = interface.ipv6 ? interface.ipv6.addressing : 'none';
+		return this.is_single_config(interface) ? [ name ] : [ name + '_4', name + '_6' ];
+	},
 
-		return (
-			(ipv4_mode == 'none') || (ipv6_mode == 'none') ||
-			(ipv4_mode == 'static' && ipv6_mode == 'static')
-		) ? [ name ] : [ name + '_4', name + '_6' ];
+	calculate_ipv4_name: function(interface) {
+		let name = this.calculate_name(interface);
+
+		return this.is_single_config(interface) ? name : name + '_4';
+	},
+
+	calculate_ipv6_name: function(interface) {
+		let name = this.calculate_name(interface);
+
+		return this.is_single_config(interface) ? name : name + '_6';
 	}
 };
 
