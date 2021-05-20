@@ -417,6 +417,66 @@
                 }
             }
         },
+        "interface.ipv6.dhcpv6": {
+            "type": "object",
+            "properties": {
+                "mode": {
+                    "type": "string",
+                    "enum": [
+                        "hybrid",
+                        "stateless",
+                        "stateful",
+                        "relay"
+                    ]
+                },
+                "announce-dns": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "format": "ipv6"
+                    }
+                },
+                "filter-prefix": {
+                    "type": "string",
+                    "format": "uc-cidr6",
+                    "default": "::/0"
+                }
+            }
+        },
+        "interface.ipv6": {
+            "type": "object",
+            "properties": {
+                "addressing": {
+                    "type": "string",
+                    "enum": [
+                        "dynamic",
+                        "static"
+                    ]
+                },
+                "subnet": {
+                    "type": "string",
+                    "format": "uc-cidr6",
+                    "examples": [
+                        "auto/64"
+                    ]
+                },
+                "gateway": {
+                    "type": "string",
+                    "format": "ipv6",
+                    "examples": [
+                        "2001:db8:123:456::1"
+                    ]
+                },
+                "prefix-size": {
+                    "type": "integer",
+                    "maximum": 64,
+                    "minimum": 0
+                },
+                "dhcpv6": {
+                    "$ref": "#/$defs/interface.ipv6.dhcpv6"
+                }
+            }
+        },
         "interface.ssid.encryption": {
             "type": "object",
             "properties": {
@@ -1105,7 +1165,7 @@
                     "$ref": "#/$defs/interface.ipv4"
                 },
                 "ipv6": {
-                    "ref": "https://ucentral.io/schema/v1/interface/ipv6/"
+                    "$ref": "#/$defs/interface.ipv6"
                 },
                 "ssids": {
                     "type": "array",

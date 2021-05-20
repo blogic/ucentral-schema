@@ -1,0 +1,39 @@
+description:
+  This section describes the DHCPv6 server configuration
+type: object
+properties:
+  mode:
+    description:
+      Specifies the DHCPv6 server operation mode. When set to "stateless", the system will announce
+      router advertisements only, without offering stateful DHCPv6 service. When set to "stateful",
+      emitted router advertisements will instruct clients to obtain a DHCPv6 lease. When set to
+      "hybrid", clients can freely chose whether to self-assign a random address through SLAAC,
+      whether to request an address via DHCPv6, or both.
+      For maximum compatibility with different clients, it is recommended to use the hybrid mode.
+      The special mode "relay" will instruct the unit to act as DHCPv6 relay between this interface
+      and any of the IPv6 interfaces in "upstream" mode.
+    type: string
+    enum:
+    - "hybrid"
+    - "stateless"
+    - "stateful"
+    - "relay"
+  announce-dns:
+    description:
+      Overrides the DNS server to announce in DHCPv6 and RA messages. By default, the device will
+      announce its own local interface address as DNS server, essentially acting as proxy for
+      downstream clients. By specifying a non-empty list of IPv6 addresses here, this default
+      behaviour can be overridden.
+    type: array
+    items:
+      type: string
+      format: ipv6
+  filter-prefix:
+    description:
+      Selects a specific downstream prefix or a number of downstream prefix ranges to announce in
+      DHCPv6 and RA messages. By default, all prefixes configured on a given downstream interface
+      are advertised. By specifying an IPv6 prefix in CIDR notation here, only prefixes covered by
+      this CIDR are selected.
+    type: string
+    format: uc-cidr6
+    default: ::/0
