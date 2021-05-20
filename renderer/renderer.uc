@@ -271,7 +271,7 @@ let services = {
 		}
 
 		return interfaces;
-	}
+	},
 
 	lookup_ssids: function(service) {
 		let ssids = [];
