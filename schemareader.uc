@@ -462,6 +462,76 @@ function instantiateInterfaceIpv4(value) {
 	return obj;
 }
 
+function instantiateInterfaceIpv6Dhcpv6(value) {
+	assert(type(value) == "object", "Property interface.ipv6.dhcpv6 must be of type object");
+
+	let obj = {};
+
+	if (exists(value, "mode")) {
+		assert(type(value["mode"]) == "string", "Property interface.ipv6.dhcpv6.mode must be of type string");
+		assert(value["mode"] in [ "hybrid", "stateless", "stateful", "relay" ], "Property interface.ipv6.dhcpv6.mode must be one of [ \"hybrid\", \"stateless\", \"stateful\", \"relay\" ]");
+		obj.mode = value["mode"];
+	}
+
+	function parseAnnounceDns(value) {
+		assert(type(value) == "array", "Property interface.ipv6.dhcpv6.announce-dns must be of type array");
+
+		return map(value, (item) => {
+			assert(type(item) == "string", "Items of interface.ipv6.dhcpv6.announce-dns must be of type string");
+			return item;
+		});
+	}
+
+	if (exists(value, "announce-dns")) {
+		obj.announce_dns = parseAnnounceDns(value["announce-dns"]);
+	}
+
+	if (exists(value, "filter-prefix")) {
+		assert(type(value["filter-prefix"]) == "string", "Property interface.ipv6.dhcpv6.filter-prefix must be of type string");
+		obj.filter_prefix = value["filter-prefix"];
+	}
+	else {
+		obj.filter_prefix = "::/0";
+	}
+
+	return obj;
+}
+
+function instantiateInterfaceIpv6(value) {
+	assert(type(value) == "object", "Property interface.ipv6 must be of type object");
+
+	let obj = {};
+
+	if (exists(value, "addressing")) {
+		assert(type(value["addressing"]) == "string", "Property interface.ipv6.addressing must be of type string");
+		assert(value["addressing"] in [ "dynamic", "static" ], "Property interface.ipv6.addressing must be one of [ \"dynamic\", \"static\" ]");
+		obj.addressing = value["addressing"];
+	}
+
+	if (exists(value, "subnet")) {
+		assert(type(value["subnet"]) == "string", "Property interface.ipv6.subnet must be of type string");
+		obj.subnet = value["subnet"];
+	}
+
+	if (exists(value, "gateway")) {
+		assert(type(value["gateway"]) == "string", "Property interface.ipv6.gateway must be of type string");
+		obj.gateway = value["gateway"];
+	}
+
+	if (exists(value, "prefix-size")) {
+		assert(type(value["prefix-size"]) == "int", "Property interface.ipv6.prefix-size must be of type integer");
+		assert(value["prefix-size"] <= 64, "Property interface.ipv6.prefix-size must be <= 64");
+		assert(value["prefix-size"] >= 0, "Property interface.ipv6.prefix-size must be >= 0");
+		obj.prefix_size = value["prefix-size"];
+	}
+
+	if (exists(value, "dhcpv6")) {
+		obj.dhcpv6 = instantiateInterfaceIpv6Dhcpv6(value["dhcpv6"]);
+	}
+
+	return obj;
+}
+
 function instantiateInterfaceSsidEncryption(value) {
 	assert(type(value) == "object", "Property interface.ssid.encryption must be of type object");
 
@@ -1301,13 +1371,8 @@ function instantiateInterface(value) {
 		obj.ipv4 = instantiateInterfaceIpv4(value["ipv4"]);
 	}
 
-	function parseIpv6(value) {
-
-		return value;
-	}
-
 	if (exists(value, "ipv6")) {
-		obj.ipv6 = parseIpv6(value["ipv6"]);
+		obj.ipv6 = instantiateInterfaceIpv6(value["ipv6"]);
 	}
 
 	function parseSsids(value) {

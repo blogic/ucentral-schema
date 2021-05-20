@@ -52,7 +52,7 @@ properties:
   ipv4:
     $ref: "https://ucentral.io/schema/v1/interface/ipv4/"
   ipv6:
-    ref: "https://ucentral.io/schema/v1/interface/ipv6/"
+    $ref: "https://ucentral.io/schema/v1/interface/ipv6/"
   ssids:
     type: array
     items:

@@ -1,0 +1,52 @@
+description:
+  This section describes the IPv6 properties of a logical interface.
+type: object
+properties:
+  addressing:
+    description:
+      This option defines the method by which the IPv6 subnet of the interface
+      is acquired. In static addressing mode, the specified subnet and gateway,
+      if any, are configured on the interface in a fixed manner. Also - if a
+      prefix size hint is specified - a prefix of the given size is allocated
+      from each upstream received prefix delegation pool and assigned to the
+      interface. In dynamic addressing mode, a DHCPv6 client will be launched to
+      obtain IPv6 prefixes for the interface itself and for downstream
+      delegation. Note that dynamic addressing usually only ever makes sense on
+      upstream interfaces.
+    type: string
+    enum:
+      - dynamic
+      - static
+  subnet:
+    description:
+      This option defines a static IPv6 prefix in CIDR notation to set on the
+      logical interface. A special notation "auto/64" can be used, causing the
+      configuration agent to automatically allocate a suitable prefix from the
+      IPv6 address pool specified in globals.ipv6-network. This property only
+      applies to static addressing mode. Note that this is usually not needed
+      due to DHCPv6-PD assisted prefix assignment.
+    type: string
+    format: uc-cidr6
+    examples:
+    - auto/64
+  gateway:
+    description:
+      This option defines the static IPv6 gateway of the logical interface. It
+      only applies to static addressing mode. Note that this is usually not
+      needed due to DHCPv6-PD assisted prefix assignment.
+    type: string
+    format: ipv6
+    examples:
+    - 2001:db8:123:456::1
+  prefix-size:
+    description:
+      For dynamic addressing interfaces, this property specifies the prefix size
+      to request from an upstream DHCPv6 server through prefix delegation. For
+      static addressing interfaces, it specifies the size of the sub-prefix to
+      allocate from the upstream-received delegation prefixes for assignment to
+      the logical interface.
+    type: integer
+    maximum: 64
+    minimum: 0
+  dhcpv6:
+    $ref: "https://ucentral.io/schema/v1/interface/ipv6/dhcpv6/"
