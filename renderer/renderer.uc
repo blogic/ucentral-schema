@@ -27,6 +27,32 @@ function s(str) {
 	return sprintf("'%s'", replace(str, /'/g, "'\\''"));
 }
 
+// Attempts to include a file, catching potential exceptions
+function tryinclude(path, scope) {
+	if (!match(path, /^[A-Za-z0-9_\/-]+\.uc$/)) {
+		warn("Refusing to handle invalid include path '%s'", path);
+		return;
+	}
+
+	let parent_path = null;
+
+	// XXX: This is a somewhat convoluted way to obtain the filename of the
+	//      calling template we're including the file for. Might eventually
+	//      replace it with something cleaner.
+	try { die(); } catch(e) {
+		parent_path = replace(e.stacktrace[1].filename, /\/[^\/]+$/, '');
+	}
+
+	assert(parent_path, "Unable to determine calling template path");
+
+	try {
+		include(parent_path + "/" + path, scope);
+	}
+	catch (e) {
+		warn("Unable to include path '%s': %s\n%s", path, e, e.stacktrace[0].context);
+	}
+}
+
 function discover_ports() {
 	let roles = {};
 
@@ -297,6 +323,7 @@ return {
 		return render('templates/toplevel.uc', {
 			b,
 			s,
+			tryinclude,
 			state,
 			wiphy,
 			ethernet,
