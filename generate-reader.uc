@@ -50,50 +50,50 @@ function to_value_descr(path)
 let GeneratorProto = {
 	format_validators: {
 		"uc-cidr4": [
-			'let m = match(s, /^(auto|[0-9.]+)\\/([0-9]+)$/);',
+			'let m = match(value, /^(auto|[0-9.]+)\\/([0-9]+)$/);',
 			'return m ? ((m[1] == "auto" || length(iptoarr(m[1])) == 4) && +m[2] <= 32) : false;'
 		],
 		"uc-cidr6": [
-			'let m = match(s, /^(auto|[0-9a-fA-F:.]+)\\/([0-9]+)$/);',
+			'let m = match(value, /^(auto|[0-9a-fA-F:.]+)\\/([0-9]+)$/);',
 			'return m ? ((m[1] == "auto" || length(iptoarr(m[1])) == 16) && +m[2] <= 128) : false;'
 		],
 		"uc-cidr": [
-			'let m = match(s, /^(auto|[0-9a-fA-F:.]+)\\/([0-9]+)$/);',
+			'let m = match(value, /^(auto|[0-9a-fA-F:.]+)\\/([0-9]+)$/);',
 			'if (!m) return false;',
 			'let l = (m[1] == "auto") ? 16 : length(iptoarr(m[1]));',
 			'return (l > 0 && +m[2] <= (l * 8));'
 		],
 		"uc-mac": [
-			'return match(s, /^[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]$/i);'
+			'return match(value, /^[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]$/i);'
 		],
 		"uc-host": [
-			'if (length(iptoarr(s)) != 0) return true;',
-			'if (length(s) > 255) return false;',
-			'let labels = split(s, ".");',
+			'if (length(iptoarr(value)) != 0) return true;',
+			'if (length(value) > 255) return false;',
+			'let labels = split(value, ".");',
 			'return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);'
 		],
 		"uc-timeout": [
-			'return match(s, /^[0-9]+[smhdw]$/);'
+			'return match(value, /^[0-9]+[smhdw]$/);'
 		],
 		"hostname": [
-			'if (length(s) > 255) return false;',
-			'let labels = split(s, ".");',
+			'if (length(value) > 255) return false;',
+			'let labels = split(value, ".");',
 			'return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);'
 		],
 		"fqdn": [
-			'if (length(s) > 255) return false;',
-			'let labels = split(s, ".");',
+			'if (length(value) > 255) return false;',
+			'let labels = split(value, ".");',
 			'return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 1);'
 		],
 		"ipv4": [
-			'return (length(iptoarr(s)) == 4);'
+			'return (length(iptoarr(value)) == 4);'
 		],
 		"ipv6": [
-			'return (length(iptoarr(s)) == 16);'
+			'return (length(iptoarr(value)) == 16);'
 		],
 		"uri": [
-			'if (index(s, "data:") == 0) return true;',
-			'let m = match(s, /^[a-z+-]+:\\/\\/([^\\/]+).*$/);',
+			'if (index(value, "data:") == 0) return true;',
+			'let m = match(value, /^[a-z+-]+:\\/\\/([^\\/]+).*$/);',
 			'if (!m) return false;',
 			'if (length(iptoarr(m[1])) != 0) return true;',
 			'if (length(m[1]) > 255) return false;',
@@ -157,17 +157,11 @@ let GeneratorProto = {
 			return;
 		}
 
-		let code = this.format_validators[valueSpec.format];
-
-		this.print(path, 'assert((s => {');
-
-		for (let line in code)
-			this.print(path, '	' + line);
-
-		this.print(path, '})(%s), "%s has invalid format: " + %s);',
+		this.print(path, 'assert(%s(%s), "%s must match %s format");',
+			to_method_name('match', valueSpec.format),
 			valueExpr,
 			to_value_descr(path),
-			valueExpr);
+			valueSpec.format);
 	},
 
 	emit_generic_asserts: function(path, valueExpr, valueSpec)
@@ -374,6 +368,18 @@ let GeneratorProto = {
 		}
 	},
 
+	emit_format_validation_function: function(path, verb, formatName, formatCode)
+	{
+		let functionName = to_method_name(verb, formatName);
+
+		this.print(path, 'function %s(value) {', functionName);
+
+		for (let line in formatCode)
+			this.print(path, '	' + line);
+
+		this.print(path, '}\n');
+	},
+
 	emit_spec_validation_function: function(path, verb, propertyName, valueSpec)
 	{
 		let functionName = to_method_name(verb, propertyName),
@@ -531,6 +537,9 @@ let GeneratorProto = {
 		this.print(path, '{%');
 		this.print(path, '// Automatically generated from %s - do not edit!', this.path);
 		this.print(path, '"use strict";\n');
+
+		for (let formatName, formatCode in this.format_validators)
+			this.emit_format_validation_function(path, 'match', formatName, formatCode);
 
 		for (let definitionId, definitionSpec in this.schema['$defs'])
 			this.emit_spec_validation_function(path, 'instantiate', definitionId, definitionSpec);

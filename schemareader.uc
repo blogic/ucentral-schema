@@ -2,6 +2,68 @@
 // Automatically generated from ./ucentral.schema.pretty.json - do not edit!
 "use strict";
 
+function matchUcCidr4(value) {
+	let m = match(value, /^(auto|[0-9.]+)\/([0-9]+)$/);
+	return m ? ((m[1] == "auto" || length(iptoarr(m[1])) == 4) && +m[2] <= 32) : false;
+}
+
+function matchUcCidr6(value) {
+	let m = match(value, /^(auto|[0-9a-fA-F:.]+)\/([0-9]+)$/);
+	return m ? ((m[1] == "auto" || length(iptoarr(m[1])) == 16) && +m[2] <= 128) : false;
+}
+
+function matchUcCidr(value) {
+	let m = match(value, /^(auto|[0-9a-fA-F:.]+)\/([0-9]+)$/);
+	if (!m) return false;
+	let l = (m[1] == "auto") ? 16 : length(iptoarr(m[1]));
+	return (l > 0 && +m[2] <= (l * 8));
+}
+
+function matchUcMac(value) {
+	return match(value, /^[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]$/i);
+}
+
+function matchUcHost(value) {
+	if (length(iptoarr(value)) != 0) return true;
+	if (length(value) > 255) return false;
+	let labels = split(value, ".");
+	return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);
+}
+
+function matchUcTimeout(value) {
+	return match(value, /^[0-9]+[smhdw]$/);
+}
+
+function matchHostname(value) {
+	if (length(value) > 255) return false;
+	let labels = split(value, ".");
+	return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);
+}
+
+function matchFqdn(value) {
+	if (length(value) > 255) return false;
+	let labels = split(value, ".");
+	return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 1);
+}
+
+function matchIpv4(value) {
+	return (length(iptoarr(value)) == 4);
+}
+
+function matchIpv6(value) {
+	return (length(iptoarr(value)) == 16);
+}
+
+function matchUri(value) {
+	if (index(value, "data:") == 0) return true;
+	let m = match(value, /^[a-z+-]+:\/\/([^\/]+).*$/);
+	if (!m) return false;
+	if (length(iptoarr(m[1])) != 0) return true;
+	if (length(m[1]) > 255) return false;
+	let labels = split(m[1], ".");
+	return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);
+}
+
 function instantiateUnit(value) {
 	assert(type(value) == "object", "Property unit must be of type object");
 
@@ -32,19 +94,13 @@ function instantiateGlobals(value) {
 
 	if (exists(value, "ipv4-network")) {
 		assert(type(value["ipv4-network"]) == "string", "Property globals.ipv4-network must be of type string");
-		assert((s => {
-			let m = match(s, /^(auto|[0-9.]+)\/([0-9]+)$/);
-			return m ? ((m[1] == "auto" || length(iptoarr(m[1])) == 4) && +m[2] <= 32) : false;
-		})(value["ipv4-network"]), "Property globals.ipv4-network has invalid format: " + value["ipv4-network"]);
+		assert(matchUcCidr4(value["ipv4-network"]), "Property globals.ipv4-network must match uc-cidr4 format");
 		obj.ipv4_network = value["ipv4-network"];
 	}
 
 	if (exists(value, "ipv6-network")) {
 		assert(type(value["ipv6-network"]) == "string", "Property globals.ipv6-network must be of type string");
-		assert((s => {
-			let m = match(s, /^(auto|[0-9a-fA-F:.]+)\/([0-9]+)$/);
-			return m ? ((m[1] == "auto" || length(iptoarr(m[1])) == 16) && +m[2] <= 128) : false;
-		})(value["ipv6-network"]), "Property globals.ipv6-network has invalid format: " + value["ipv6-network"]);
+		assert(matchUcCidr6(value["ipv6-network"]), "Property globals.ipv6-network must match uc-cidr6 format");
 		obj.ipv6_network = value["ipv6-network"];
 	}
 
@@ -337,9 +393,7 @@ function instantiateInterfaceEthernet(value) {
 
 	if (exists(value, "macaddr")) {
 		assert(type(value["macaddr"]) == "string", "Property interface.ethernet.macaddr must be of type string");
-		assert((s => {
-			return match(s, /^[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]$/i);
-		})(value["macaddr"]), "Property interface.ethernet.macaddr has invalid format: " + value["macaddr"]);
+		assert(matchUcMac(value["macaddr"]), "Property interface.ethernet.macaddr must match uc-mac format");
 		obj.macaddr = value["macaddr"];
 	}
 
@@ -371,9 +425,7 @@ function instantiateInterfaceIpv4Dhcp(value) {
 
 	if (exists(value, "lease-time")) {
 		assert(type(value["lease-time"]) == "string", "Property interface.ipv4.dhcp.lease-time must be of type string");
-		assert((s => {
-			return match(s, /^[0-9]+[smhdw]$/);
-		})(value["lease-time"]), "Property interface.ipv4.dhcp.lease-time has invalid format: " + value["lease-time"]);
+		assert(matchUcTimeout(value["lease-time"]), "Property interface.ipv4.dhcp.lease-time must match uc-timeout format");
 		obj.lease_time = value["lease-time"];
 	}
 	else {
@@ -390,9 +442,7 @@ function instantiateInterfaceIpv4DhcpLease(value) {
 
 	if (exists(value, "macaddr")) {
 		assert(type(value["macaddr"]) == "string", "Property interface.ipv4.dhcp-lease.macaddr must be of type string");
-		assert((s => {
-			return match(s, /^[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]$/i);
-		})(value["macaddr"]), "Property interface.ipv4.dhcp-lease.macaddr has invalid format: " + value["macaddr"]);
+		assert(matchUcMac(value["macaddr"]), "Property interface.ipv4.dhcp-lease.macaddr must match uc-mac format");
 		obj.macaddr = value["macaddr"];
 	}
 
@@ -403,9 +453,7 @@ function instantiateInterfaceIpv4DhcpLease(value) {
 
 	if (exists(value, "lease-time")) {
 		assert(type(value["lease-time"]) == "string", "Property interface.ipv4.dhcp-lease.lease-time must be of type string");
-		assert((s => {
-			return match(s, /^[0-9]+[smhdw]$/);
-		})(value["lease-time"]), "Property interface.ipv4.dhcp-lease.lease-time has invalid format: " + value["lease-time"]);
+		assert(matchUcTimeout(value["lease-time"]), "Property interface.ipv4.dhcp-lease.lease-time must match uc-timeout format");
 		obj.lease_time = value["lease-time"];
 	}
 	else {
@@ -436,18 +484,13 @@ function instantiateInterfaceIpv4(value) {
 
 	if (exists(value, "subnet")) {
 		assert(type(value["subnet"]) == "string", "Property interface.ipv4.subnet must be of type string");
-		assert((s => {
-			let m = match(s, /^(auto|[0-9.]+)\/([0-9]+)$/);
-			return m ? ((m[1] == "auto" || length(iptoarr(m[1])) == 4) && +m[2] <= 32) : false;
-		})(value["subnet"]), "Property interface.ipv4.subnet has invalid format: " + value["subnet"]);
+		assert(matchUcCidr4(value["subnet"]), "Property interface.ipv4.subnet must match uc-cidr4 format");
 		obj.subnet = value["subnet"];
 	}
 
 	if (exists(value, "gateway")) {
 		assert(type(value["gateway"]) == "string", "Property interface.ipv4.gateway must be of type string");
-		assert((s => {
-			return (length(iptoarr(s)) == 4);
-		})(value["gateway"]), "Property interface.ipv4.gateway has invalid format: " + value["gateway"]);
+		assert(matchIpv4(value["gateway"]), "Property interface.ipv4.gateway must match ipv4 format");
 		obj.gateway = value["gateway"];
 	}
 
@@ -464,9 +507,7 @@ function instantiateInterfaceIpv4(value) {
 
 		return map(value, (item) => {
 			assert(type(item) == "string", "Items of interface.ipv4.use-dns must be of type string");
-			assert((s => {
-				return (length(iptoarr(s)) == 4);
-			})(item), "Items of interface.ipv4.use-dns has invalid format: " + item);
+			assert(matchIpv4(item), "Items of interface.ipv4.use-dns must match ipv4 format");
 			return item;
 		});
 	}
@@ -508,9 +549,7 @@ function instantiateInterfaceIpv6Dhcpv6(value) {
 
 		return map(value, (item) => {
 			assert(type(item) == "string", "Items of interface.ipv6.dhcpv6.announce-dns must be of type string");
-			assert((s => {
-				return (length(iptoarr(s)) == 16);
-			})(item), "Items of interface.ipv6.dhcpv6.announce-dns has invalid format: " + item);
+			assert(matchIpv6(item), "Items of interface.ipv6.dhcpv6.announce-dns must match ipv6 format");
 			return item;
 		});
 	}
@@ -521,10 +560,7 @@ function instantiateInterfaceIpv6Dhcpv6(value) {
 
 	if (exists(value, "filter-prefix")) {
 		assert(type(value["filter-prefix"]) == "string", "Property interface.ipv6.dhcpv6.filter-prefix must be of type string");
-		assert((s => {
-			let m = match(s, /^(auto|[0-9a-fA-F:.]+)\/([0-9]+)$/);
-			return m ? ((m[1] == "auto" || length(iptoarr(m[1])) == 16) && +m[2] <= 128) : false;
-		})(value["filter-prefix"]), "Property interface.ipv6.dhcpv6.filter-prefix has invalid format: " + value["filter-prefix"]);
+		assert(matchUcCidr6(value["filter-prefix"]), "Property interface.ipv6.dhcpv6.filter-prefix must match uc-cidr6 format");
 		obj.filter_prefix = value["filter-prefix"];
 	}
 	else {
@@ -547,18 +583,13 @@ function instantiateInterfaceIpv6(value) {
 
 	if (exists(value, "subnet")) {
 		assert(type(value["subnet"]) == "string", "Property interface.ipv6.subnet must be of type string");
-		assert((s => {
-			let m = match(s, /^(auto|[0-9a-fA-F:.]+)\/([0-9]+)$/);
-			return m ? ((m[1] == "auto" || length(iptoarr(m[1])) == 16) && +m[2] <= 128) : false;
-		})(value["subnet"]), "Property interface.ipv6.subnet has invalid format: " + value["subnet"]);
+		assert(matchUcCidr6(value["subnet"]), "Property interface.ipv6.subnet must match uc-cidr6 format");
 		obj.subnet = value["subnet"];
 	}
 
 	if (exists(value, "gateway")) {
 		assert(type(value["gateway"]) == "string", "Property interface.ipv6.gateway must be of type string");
-		assert((s => {
-			return (length(iptoarr(s)) == 16);
-		})(value["gateway"]), "Property interface.ipv6.gateway has invalid format: " + value["gateway"]);
+		assert(matchIpv6(value["gateway"]), "Property interface.ipv6.gateway must match ipv6 format");
 		obj.gateway = value["gateway"];
 	}
 
@@ -615,9 +646,7 @@ function instantiateInterfaceSsidMultiPsk(value) {
 
 	if (exists(value, "mac")) {
 		assert(type(value["mac"]) == "string", "Property interface.ssid.multi-psk.mac must be of type string");
-		assert((s => {
-			return match(s, /^[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]$/i);
-		})(value["mac"]), "Property interface.ssid.multi-psk.mac has invalid format: " + value["mac"]);
+		assert(matchUcMac(value["mac"]), "Property interface.ssid.multi-psk.mac must match uc-mac format");
 		obj.mac = value["mac"];
 	}
 
@@ -654,11 +683,7 @@ function instantiateInterfaceSsidCaptive(value) {
 
 	if (exists(value, "gateway-fqdn")) {
 		assert(type(value["gateway-fqdn"]) == "string", "Property interface.ssid.captive.gateway-fqdn must be of type string");
-		assert((s => {
-			if (length(s) > 255) return false;
-			let labels = split(s, ".");
-			return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 1);
-		})(value["gateway-fqdn"]), "Property interface.ssid.captive.gateway-fqdn has invalid format: " + value["gateway-fqdn"]);
+		assert(matchFqdn(value["gateway-fqdn"]), "Property interface.ssid.captive.gateway-fqdn must match fqdn format");
 		obj.gateway_fqdn = value["gateway-fqdn"];
 	}
 	else {
@@ -841,9 +866,7 @@ function instantiateInterfaceSsidRadiusLocalUser(value) {
 
 	if (exists(value, "mac")) {
 		assert(type(value["mac"]) == "string", "Property interface.ssid.radius.local-user.mac must be of type string");
-		assert((s => {
-			return match(s, /^[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]$/i);
-		})(value["mac"]), "Property interface.ssid.radius.local-user.mac has invalid format: " + value["mac"]);
+		assert(matchUcMac(value["mac"]), "Property interface.ssid.radius.local-user.mac must match uc-mac format");
 		obj.mac = value["mac"];
 	}
 
@@ -881,12 +904,7 @@ function instantiateInterfaceSsidRadiusServer(value) {
 
 	if (exists(value, "host")) {
 		assert(type(value["host"]) == "string", "Property interface.ssid.radius.server.host must be of type string");
-		assert((s => {
-			if (length(iptoarr(s)) != 0) return true;
-			if (length(s) > 255) return false;
-			let labels = split(s, ".");
-			return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);
-		})(value["host"]), "Property interface.ssid.radius.server.host has invalid format: " + value["host"]);
+		assert(matchUcHost(value["host"]), "Property interface.ssid.radius.server.host must match uc-host format");
 		obj.host = value["host"];
 	}
 
@@ -1020,15 +1038,7 @@ function instantiateInterfaceSsidPassPoint(value) {
 
 	if (exists(value, "venue-url")) {
 		assert(type(value["venue-url"]) == "string", "Property interface.ssid.pass-point.venue-url must be of type string");
-		assert((s => {
-			if (index(s, "data:") == 0) return true;
-			let m = match(s, /^[a-z+-]+:\/\/([^\/]+).*$/);
-			if (!m) return false;
-			if (length(iptoarr(m[1])) != 0) return true;
-			if (length(m[1]) > 255) return false;
-			let labels = split(m[1], ".");
-			return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);
-		})(value["venue-url"]), "Property interface.ssid.pass-point.venue-url has invalid format: " + value["venue-url"]);
+		assert(matchUri(value["venue-url"]), "Property interface.ssid.pass-point.venue-url must match uri format");
 		obj.venue_url = value["venue-url"];
 	}
 
@@ -1045,15 +1055,7 @@ function instantiateInterfaceSsidPassPoint(value) {
 
 		if (exists(value, "uri")) {
 			assert(type(value["uri"]) == "string", "Property interface.ssid.pass-point.auth-type.uri must be of type string");
-			assert((s => {
-				if (index(s, "data:") == 0) return true;
-				let m = match(s, /^[a-z+-]+:\/\/([^\/]+).*$/);
-				if (!m) return false;
-				if (length(iptoarr(m[1])) != 0) return true;
-				if (length(m[1]) > 255) return false;
-				let labels = split(m[1], ".");
-				return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);
-			})(value["uri"]), "Property interface.ssid.pass-point.auth-type.uri has invalid format: " + value["uri"]);
+			assert(matchUri(value["uri"]), "Property interface.ssid.pass-point.auth-type.uri must match uri format");
 			obj.uri = value["uri"];
 		}
 
@@ -1066,11 +1068,7 @@ function instantiateInterfaceSsidPassPoint(value) {
 
 	if (exists(value, "domain-name")) {
 		assert(type(value["domain-name"]) == "string", "Property interface.ssid.pass-point.domain-name must be of type string");
-		assert((s => {
-			if (length(s) > 255) return false;
-			let labels = split(s, ".");
-			return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);
-		})(value["domain-name"]), "Property interface.ssid.pass-point.domain-name has invalid format: " + value["domain-name"]);
+		assert(matchHostname(value["domain-name"]), "Property interface.ssid.pass-point.domain-name must match hostname format");
 		obj.domain_name = value["domain-name"];
 	}
 
@@ -1121,15 +1119,7 @@ function instantiateInterfaceSsidPassPoint(value) {
 
 			if (exists(value, "uri")) {
 				assert(type(value["uri"]) == "string", "Property interface.ssid.pass-point.icon.item.uri must be of type string");
-				assert((s => {
-					if (index(s, "data:") == 0) return true;
-					let m = match(s, /^[a-z+-]+:\/\/([^\/]+).*$/);
-					if (!m) return false;
-					if (length(iptoarr(m[1])) != 0) return true;
-					if (length(m[1]) > 255) return false;
-					let labels = split(m[1], ".");
-					return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);
-				})(value["uri"]), "Property interface.ssid.pass-point.icon.item.uri has invalid format: " + value["uri"]);
+				assert(matchUri(value["uri"]), "Property interface.ssid.pass-point.icon.item.uri must match uri format");
 				obj.uri = value["uri"];
 			}
 
@@ -1192,9 +1182,7 @@ function instantiateInterfaceSsid(value) {
 
 	if (exists(value, "bssid")) {
 		assert(type(value["bssid"]) == "string", "Property interface.ssid.bssid must be of type string");
-		assert((s => {
-			return match(s, /^[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]$/i);
-		})(value["bssid"]), "Property interface.ssid.bssid has invalid format: " + value["bssid"]);
+		assert(matchUcMac(value["bssid"]), "Property interface.ssid.bssid must match uc-mac format");
 		obj.bssid = value["bssid"];
 	}
 
@@ -1328,10 +1316,7 @@ function instantiateInterfaceTunnelVxlan(value) {
 
 	if (exists(value, "peer-address")) {
 		assert(type(value["peer-address"]) == "string", "Property interface.tunnel.vxlan.peer-address must be of type string");
-		assert((s => {
-			let m = match(s, /^(auto|[0-9.]+)\/([0-9]+)$/);
-			return m ? ((m[1] == "auto" || length(iptoarr(m[1])) == 4) && +m[2] <= 32) : false;
-		})(value["peer-address"]), "Property interface.tunnel.vxlan.peer-address has invalid format: " + value["peer-address"]);
+		assert(matchUcCidr4(value["peer-address"]), "Property interface.tunnel.vxlan.peer-address must match uc-cidr4 format");
 		obj.peer_address = value["peer-address"];
 	}
 
@@ -1358,10 +1343,7 @@ function instantiateInterfaceTunnelGre(value) {
 
 	if (exists(value, "peer-address")) {
 		assert(type(value["peer-address"]) == "string", "Property interface.tunnel.gre.peer-address must be of type string");
-		assert((s => {
-			let m = match(s, /^(auto|[0-9.]+)\/([0-9]+)$/);
-			return m ? ((m[1] == "auto" || length(iptoarr(m[1])) == 4) && +m[2] <= 32) : false;
-		})(value["peer-address"]), "Property interface.tunnel.gre.peer-address has invalid format: " + value["peer-address"]);
+		assert(matchUcCidr4(value["peer-address"]), "Property interface.tunnel.gre.peer-address must match uc-cidr4 format");
 		obj.peer_address = value["peer-address"];
 	}
 
@@ -1568,12 +1550,7 @@ function instantiateServiceNtp(value) {
 
 		return map(value, (item) => {
 			assert(type(item) == "string", "Items of service.ntp.servers must be of type string");
-			assert((s => {
-				if (length(iptoarr(s)) != 0) return true;
-				if (length(s) > 255) return false;
-				let labels = split(s, ".");
-				return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);
-			})(item), "Items of service.ntp.servers has invalid format: " + item);
+			assert(matchUcHost(item), "Items of service.ntp.servers must match uc-host format");
 			return item;
 		});
 	}
@@ -1613,12 +1590,7 @@ function instantiateServiceRtty(value) {
 
 	if (exists(value, "host")) {
 		assert(type(value["host"]) == "string", "Property service.rtty.host must be of type string");
-		assert((s => {
-			if (length(iptoarr(s)) != 0) return true;
-			if (length(s) > 255) return false;
-			let labels = split(s, ".");
-			return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);
-		})(value["host"]), "Property service.rtty.host has invalid format: " + value["host"]);
+		assert(matchUcHost(value["host"]), "Property service.rtty.host must match uc-host format");
 		obj.host = value["host"];
 	}
 
@@ -1650,12 +1622,7 @@ function instantiateServiceLog(value) {
 
 	if (exists(value, "host")) {
 		assert(type(value["host"]) == "string", "Property service.log.host must be of type string");
-		assert((s => {
-			if (length(iptoarr(s)) != 0) return true;
-			if (length(s) > 255) return false;
-			let labels = split(s, ".");
-			return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);
-		})(value["host"]), "Property service.log.host has invalid format: " + value["host"]);
+		assert(matchUcHost(value["host"]), "Property service.log.host must match uc-host format");
 		obj.host = value["host"];
 	}
 
