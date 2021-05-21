@@ -145,7 +145,7 @@
 		if (name == "loopback")
 			return;
 
-		let iface = { name, location: d.ucentral_path };
+		let iface = { name, location: d.ucentral_path, ipv4:{}, ipv6:{} };
 		let ipv4leases = [];
 		let lldp_neigh = [];
 
@@ -164,13 +164,12 @@
 			for (let a in status["ipv4-address"])
 				push(ipv4, sprintf("%s/%d", a.address, a.mask));
 
-			iface.ipv4_addresses = ipv4;
+			iface.ipv4.addresses = ipv4;
 		}
 
 		if (length(status["ipv6-address"])) {
-			iface.ipv6_addresses = status["ipv6-address"];
-			for (let key, addr in iface.ipv6_addresses) {
-				printf("%s %s\n", key, addr);
+			iface.ipv6.addresses = status["ipv6-address"];
+			for (let key, addr in iface.ipv6.addresses) {
 				if (!addr.mask)
 					continue;
 				addr.address = sprintf("%s/%s", addr.address, addr.mask);
@@ -185,7 +184,7 @@
 			iface.ntp_server = status.data.ntpserver;
 
 		if (length(status.data) && status.data.leasetime && status.proto == "dhcp")
-			iface.ipv4_leasetime = status.data.leasetime;
+			iface.ipv4.leasetime = status.data.leasetime;
 
 		if (length(ipv6leases) &&
 		    length(ipv6leases.device) &&
@@ -204,7 +203,7 @@
 			}
 
 			if (length(leases))
-				iface.ipv6_leases = leases
+				iface.ipv6.leases = leases
 		}
 
 		if (length(topology)) {
@@ -231,21 +230,21 @@
 					client.ipv6_addresses = topo["ipv6"];
 				client.ports = topo.fdb;
 				client.last_seen == topo.last_seen;
-				if (stats.clients)
+				if (index(stats.types, 'clients') >= 0)
 					push(clients, client);
 			}
 
 			if (length(ipv4leases))
-				iface.ipv4_leases = ipv4leases;
+				iface.ipv4.leases = ipv4leases;
 
-			if (stats.lldp && length(lldp_neigh))
-				iface.lldp_neighbours = lldp_neigh;
+			if (index(stats.types, 'clients') >= 0 && length(lldp_neigh))
+				iface.lldp = lldp_neigh;
 
 			if (length(clients))
 				iface.clients = clients;
 		}
 
-		if (stats.ssids && length(wifistatus)) {
+		if (index(stats.types, 'ssids') >= 0 && length(wifistatus)) {
 			let ssids = [];
 			let counter = 0;
 
@@ -263,7 +262,6 @@
 
 					ssid.ssid = iface.ssid;
 					ssid.mode = iface.mode;
-					ssid.bssid = iface.mac;
 
 					if (length(stations[vap.ifname]))
 						ssid.associations = stations[vap.ifname];
@@ -282,6 +280,10 @@
 				if (!iface.counters[key])
 					delete iface.counters.key;
 		}
+		if (!length(iface.ipv4))
+			delete iface.ipv4;
+		if (!length(iface.ipv6))
+			delete iface.ipv6;
 	});
 
 	printf("%s\n", state);
