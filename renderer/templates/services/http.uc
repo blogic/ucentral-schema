@@ -18,4 +18,15 @@ set uhttpd.@uhttpd[-1].http_keepalive='20'
 set uhttpd.@uhttpd[-1].tcp_keepalive='1'
 set uhttpd.@uhttpd[-1].ubus_prefix='/ubus'
 add_list uhttpd.@uhttpd[-1].listen_http='0.0.0.0:{{ http.http_port }}'
+{%   let interfaces = services.lookup_interfaces("http") %}
+{%   for (let interface in interfaces): %}
+{%      let name = ethernet.calculate_name(interface) %}
+
+add firewall rule
+set firewall.@rule[-1].name='Allow-http-{{ name }}'
+set firewall.@rule[-1].src='{{ name }}'
+set firewall.@rule[-1].port='{{ http.http_port }}'
+set firewall.@rule[-1].proto='tcp'
+set firewall.@rule[-1].target='ACCEPT'
+{%   endfor %}
 {% endif %}
