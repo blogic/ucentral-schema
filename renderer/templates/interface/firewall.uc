@@ -1,16 +1,144 @@
-{% for (let name in ethernet.calculate_names(interface)): %}
-{% if (interface.role == "upstream"): %}
-add_list firewall.wan.network={{ s(name) }}
-{% else %}
+
 add firewall zone
 set firewall.@zone[-1].name={{ s(name) }}
-set firewall.@zone[-1].network={{ s(name) }}
+{% if (interface.role == 'upstream'): %}
+set firewall.@zone[-1].input='REJECT'
+set firewall.@zone[-1].output='ACCEPT'
+set firewall.@zone[-1].forward='REJECT'
+set firewall.@zone[-1].masq=1
+set firewall.@zone[-1].mtu_fix=1
+{% else %}
+add firewall forwarding
+set firewall.@forwarding[-1].src={{ s(name) }}
+set firewall.@forwarding[-1].dest='up{{ interface.vlan ? interface.vlan.id : '' }}'
+
+add firewall zone
+set firewall.@zone[-1].name={{ s(name) }}
 set firewall.@zone[-1].input='ACCEPT'
 set firewall.@zone[-1].output='ACCEPT'
 set firewall.@zone[-1].forward='ACCEPT'
-
-add firewall forwarding
-set firewall.@forwarding[-1].src={{ name }}
-set firewall.@forwarding[-1].dest='wan{{ interface.vlan ? interface.vlan.id : '' }}'
 {% endif %}
+{% for (let network in ethernet.calculate_names(interface)): %}
+add_list firewall.@zone[-1].network={{ s(network) }}
 {% endfor %}
+
+add firewall rule
+set firewall.@rule[-1].name='Allow-Ping'
+set firewall.@rule[-1].src={{ s(name) }}
+set firewall.@rule[-1].proto='icmp'
+set firewall.@rule[-1].icmp_type='echo-request'
+set firewall.@rule[-1].family='ipv4'
+set firewall.@rule[-1].target='ACCEPT'
+
+add firewall rule
+set firewall.@rule[-1].name='Allow-IGMP'
+set firewall.@rule[-1].src={{ s(name) }}
+set firewall.@rule[-1].proto='igmp'
+set firewall.@rule[-1].family='ipv4'
+set firewall.@rule[-1].target='ACCEPT'
+
+
+{% if (ipv4_mode || !ipv6_mode): %}
+add firewall rule
+set firewall.@rule[-1].name='Support-UDP-Traceroute'
+set firewall.@rule[-1].src={{ s(name) }}
+set firewall.@rule[-1].dest_port='33434:33689'
+set firewall.@rule[-1].proto='udp'
+set firewall.@rule[-1].family='ipv4'
+set firewall.@rule[-1].target='REJECT'
+set firewall.@rule[-1].enabled='false'
+
+add firewall rule
+set firewall.@rule[-1].name='Allow-DHCP-Renew'
+set firewall.@rule[-1].src={{ s(name) }}
+set firewall.@rule[-1].proto='udp'
+set firewall.@rule[-1].dest_port='68'
+set firewall.@rule[-1].target='ACCEPT'
+set firewall.@rule[-1].family='ipv4'
+{% endif %}
+
+{%   if (ipv6_mode || !ipv4_mode): %}
+add firewall rule
+set firewall.@rule[-1].name='Allow-DHCPv6'
+set firewall.@rule[-1].src={{ s(name) }}
+set firewall.@rule[-1].proto='udp'
+set firewall.@rule[-1].src_ip='fc00::/6'
+set firewall.@rule[-1].dest_ip='fc00::/6'
+set firewall.@rule[-1].dest_port='546'
+set firewall.@rule[-1].family='ipv6'
+set firewall.@rule[-1].target='ACCEPT'
+
+add firewall rule
+set firewall.@rule[-1].name='Allow-MLD'
+set firewall.@rule[-1].src={{ s(name) }}
+set firewall.@rule[-1].proto='icmp'
+set firewall.@rule[-1].src_ip='fe80::/10'
+set firewall.@rule[-1].icmp_type='130/0'
+set firewall.@rule[-1].icmp_type='131/0'
+set firewall.@rule[-1].icmp_type='132/0'
+set firewall.@rule[-1].icmp_type='143/0'
+set firewall.@rule[-1].family='ipv6'
+set firewall.@rule[-1].target='ACCEPT'
+
+add firewall rule
+set firewall.@rule[-1].name='Allow-ICMPv6-Input'
+set firewall.@rule[-1].src={{ s(name) }}
+set firewall.@rule[-1].proto='icmp'
+add_list firewall.@rule[-1].icmp_type='echo-request'
+add_list firewall.@rule[-1].icmp_type='echo-reply'
+add_list firewall.@rule[-1].icmp_type='destination-unreachable'
+add_list firewall.@rule[-1].icmp_type='packet-too-big'
+add_list firewall.@rule[-1].icmp_type='time-exceeded'
+add_list firewall.@rule[-1].icmp_type='bad-header'
+add_list firewall.@rule[-1].icmp_type='unknown-header-type'
+add_list firewall.@rule[-1].icmp_type='router-solicitation'
+add_list firewall.@rule[-1].icmp_type='neighbour-solicitation'
+add_list firewall.@rule[-1].icmp_type='router-advertisement'
+add_list firewall.@rule[-1].icmp_type='neighbour-advertisement'
+set firewall.@rule[-1].limit='1000/sec'
+set firewall.@rule[-1].family='ipv6'
+set firewall.@rule[-1].target='ACCEPT'
+
+add firewall rule
+set firewall.@rule[-1].name='Allow-ICMPv6-Forward'
+set firewall.@rule[-1].src={{ s(name) }}
+set firewall.@rule[-1].dest='*'
+set firewall.@rule[-1].proto='icmp'
+add_list firewall.@rule[-1].icmp_type='echo-request'
+add_list firewall.@rule[-1].icmp_type='echo-reply'
+add_list firewall.@rule[-1].icmp_type='destination-unreachable'
+add_list firewall.@rule[-1].icmp_type='packet-too-big'
+add_list firewall.@rule[-1].icmp_type='time-exceeded'
+add_list firewall.@rule[-1].icmp_type='bad-header'
+add_list firewall.@rule[-1].icmp_type='unknown-header-type'
+set firewall.@rule[-1].limit='1000/sec'
+set firewall.@rule[-1].family='ipv6'
+set firewall.@rule[-1].target='ACCEPT'
+{% endif %}
+
+{% if (interface.role == "downstream"): %}
+add firewall rule
+set firewall.@rule[-1].name='Allow-DNS-Guest'
+set firewall.@rule[-1].src={{ s(name) }}
+set firewall.@rule[-1].dest_port='53'
+set firewall.@rule[-1].family='ipv4'
+add_list firewall.@rule[-1].proto='tcp'
+add_list firewall.@rule[-1].proto='udp'
+set firewall.@rule[-1].target='ACCEPT'
+
+add firewall rule
+set firewall.@rule[-1].name='Allow-DHCP-Guest'
+set firewall.@rule[-1].src={{ s(name) }}
+set firewall.@rule[-1].dest_port=67
+set firewall.@rule[-1].family='ipv4'
+set firewall.@rule[-1].proto='udp'
+set firewall.@rule[-1].target='ACCEPT'
+
+add firewall rule
+set firewall.@rule[-1].name='Allow-DHCPv6-Guest'
+set firewall.@rule[-1].src={{ s(name) }}
+set firewall.@rule[-1].dest_port=547
+set firewall.@rule[-1].family='ipv6'
+set firewall.@rule[-1].proto='udp'
+set firewall.@rule[-1].target='ACCEPT'
+{% endif %}

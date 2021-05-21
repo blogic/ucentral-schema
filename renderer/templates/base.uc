@@ -13,11 +13,3 @@ add network device
 set network.@device[-1].name=down
 set network.@device[-1].type=bridge
 
-set firewall.wan=zone
-set firewall.wan.name=wan
-add_list firewall.wan.network=wan
-set firewall.wan.input='REJECT'
-set firewall.wan.output='ACCEPT'
-set firewall.wan.forward='REJECT'
-set firewall.wan.masq=1
-set firewall.wan.mtu_fix=1

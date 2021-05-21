@@ -120,10 +120,12 @@
 		include("interface/mesh.uc", { name });
 
 	// All none L2/3 tunnel require a vlan inside their bridge (unless we run a captive portal)
-	if (interface.captive)
+	if (interface.captive) {
 		netdev = '';
-	else
+		interface.type = 'bridge';
+	} else {
 		include("interface/bridge-vlan.uc", { interface, name, eth_ports, this_vid, bridgedev });
+	}
 
 	include("interface/common.uc", {
 		name, this_vid, netdev,
@@ -131,7 +133,7 @@
 		ipv6_mode, ipv6: interface.ipv6 || {}
 	});
 
-	include('interface/firewall.uc');
+	include('interface/firewall.uc', { name, ipv4_mode, ipv6_mode });
 
 	if (interface.ipv4 || interface.ipv6) {
 		include('interface/dhcp.uc', {

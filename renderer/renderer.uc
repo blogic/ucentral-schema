@@ -184,7 +184,7 @@ let ethernet = {
 		if (interface.captive)
 			return 'captive';
 
-		return (interface.role == 'upstream' ? 'wan' : 'lan') + vid;
+		return (interface.role == 'upstream' ? 'up' : 'down') + vid;
 	},
 
 	calculate_names: function(interface) {
