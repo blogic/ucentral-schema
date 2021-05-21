@@ -38,6 +38,27 @@
 		return;
 	}
 
+	// resolve auto prefixes
+	if (interface.ipv4 && interface.ipv4.subnet) {
+		try {
+			interface.ipv4.subnet = ipcalc.generate_prefix(state, interface.ipv4.subnet, false);
+		}
+		catch (e) {
+			warn("Unable to allocate a suitable IPv4 prefix: %s, ignoring interface", e);
+			return;
+		}
+	}
+
+	if (interface.ipv6 && interface.ipv6.subnet) {
+		try {
+			interface.ipv6.subnet = ipcalc.generate_prefix(state, interface.ipv6.subnet, true);
+		}
+		catch (e) {
+			warn("Unable to allocate a suitable IPv6 prefix: %s, ignoring interface", e);
+			return;
+		}
+	}
+
 	// Gather related BSS modes and ethernet ports.
 	let bss_modes = map(interface.ssids, ssid => ssid.bss_mode);
 	let eth_ports = ethernet.lookup_by_interface_spec(interface);
