@@ -59,6 +59,12 @@
 		}
 	}
 
+	// Captive Portal is only supported on downstream interfaces
+	if (interface.captive && interface.role != 'downstream') {
+		warn("Trying to create a Cpative Portal on a none downstream interface.");
+		return;
+	}
+
 	// Gather related BSS modes and ethernet ports.
 	let bss_modes = map(interface.ssids, ssid => ssid.bss_mode);
 	let eth_ports = ethernet.lookup_by_interface_spec(interface);
@@ -113,8 +119,11 @@
 	if (tunnel_proto == "mesh")
 		include("interface/mesh.uc", { name });
 
-	// All none L2/3 tunnel require a vlan inside their bridge
-	include("interface/bridge-vlan.uc", { interface, name, eth_ports, this_vid, bridgedev });
+	// All none L2/3 tunnel require a vlan inside their bridge (unless we run a captive portal)
+	if (interface.captive)
+		netdev = '';
+	else
+		include("interface/bridge-vlan.uc", { interface, name, eth_ports, this_vid, bridgedev });
 
 	include("interface/common.uc", {
 		name, this_vid, netdev,
@@ -147,4 +156,7 @@
 			count++;
 		}
 	}
+
+	if (interface.captive)
+		include('interface/captive.uc', { netdev });
 %}

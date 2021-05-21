@@ -53,6 +53,8 @@ properties:
     $ref: "https://ucentral.io/schema/v1/interface/ipv4/"
   ipv6:
     $ref: "https://ucentral.io/schema/v1/interface/ipv6/"
+  captive:
+    $ref: "https://ucentral.io/schema/v1/interface/captive/"
   ssids:
     type: array
     items:

@@ -13,7 +13,7 @@ properties:
     type: string
     format: fqdn
     default: ucentral.splash
-  maxclients:
+  max-clients:
     description:
       The maximum number of clients that shall be accept.
     type: integer
@@ -22,19 +22,19 @@ properties:
     description:
       The maximum upload rate for a specific client.
     type: integer
-    default: 10000
+    default: 0
   download-rate:
     description:
       The maximum download rate for a specific client.
     type: integer
-    default: 10000
+    default: 0
   upload-quota:
     description:
       The maximum upload quota for a specific client.
     type: integer
-    default : 10000
+    default : 0
   download-quota:
     description:
       The maximum download quota for a specific client.
     type: integer
-    default: 10000
+    default: 0

@@ -607,6 +607,71 @@ function instantiateInterfaceIpv6(value) {
 	return obj;
 }
 
+function instantiateInterfaceCaptive(value) {
+	assert(type(value) == "object", "Property interface.captive must be of type object");
+
+	let obj = {};
+
+	if (exists(value, "gateway-name")) {
+		assert(type(value["gateway-name"]) == "string", "Property interface.captive.gateway-name must be of type string");
+		obj.gateway_name = value["gateway-name"];
+	}
+	else {
+		obj.gateway_name = "uCentral - Captive Portal";
+	}
+
+	if (exists(value, "gateway-fqdn")) {
+		assert(type(value["gateway-fqdn"]) == "string", "Property interface.captive.gateway-fqdn must be of type string");
+		assert(matchFqdn(value["gateway-fqdn"]), "Property interface.captive.gateway-fqdn must match fqdn format");
+		obj.gateway_fqdn = value["gateway-fqdn"];
+	}
+	else {
+		obj.gateway_fqdn = "ucentral.splash";
+	}
+
+	if (exists(value, "max-clients")) {
+		assert(type(value["max-clients"]) == "int", "Property interface.captive.max-clients must be of type integer");
+		obj.max_clients = value["max-clients"];
+	}
+	else {
+		obj.max_clients = 32;
+	}
+
+	if (exists(value, "upload-rate")) {
+		assert(type(value["upload-rate"]) == "int", "Property interface.captive.upload-rate must be of type integer");
+		obj.upload_rate = value["upload-rate"];
+	}
+	else {
+		obj.upload_rate = 0;
+	}
+
+	if (exists(value, "download-rate")) {
+		assert(type(value["download-rate"]) == "int", "Property interface.captive.download-rate must be of type integer");
+		obj.download_rate = value["download-rate"];
+	}
+	else {
+		obj.download_rate = 0;
+	}
+
+	if (exists(value, "upload-quota")) {
+		assert(type(value["upload-quota"]) == "int", "Property interface.captive.upload-quota must be of type integer");
+		obj.upload_quota = value["upload-quota"];
+	}
+	else {
+		obj.upload_quota = 0;
+	}
+
+	if (exists(value, "download-quota")) {
+		assert(type(value["download-quota"]) == "int", "Property interface.captive.download-quota must be of type integer");
+		obj.download_quota = value["download-quota"];
+	}
+	else {
+		obj.download_quota = 0;
+	}
+
+	return obj;
+}
+
 function instantiateInterfaceSsidEncryption(value) {
 	assert(type(value) == "object", "Property interface.ssid.encryption must be of type object");
 
@@ -663,71 +728,6 @@ function instantiateInterfaceSsidMultiPsk(value) {
 		assert(type(value["vlan-id"]) == "int", "Property interface.ssid.multi-psk.vlan-id must be of type integer");
 		assert(value["vlan-id"] <= 4096, "Property interface.ssid.multi-psk.vlan-id must be <= 4096");
 		obj.vlan_id = value["vlan-id"];
-	}
-
-	return obj;
-}
-
-function instantiateInterfaceSsidCaptive(value) {
-	assert(type(value) == "object", "Property interface.ssid.captive must be of type object");
-
-	let obj = {};
-
-	if (exists(value, "gateway-name")) {
-		assert(type(value["gateway-name"]) == "string", "Property interface.ssid.captive.gateway-name must be of type string");
-		obj.gateway_name = value["gateway-name"];
-	}
-	else {
-		obj.gateway_name = "uCentral - Captive Portal";
-	}
-
-	if (exists(value, "gateway-fqdn")) {
-		assert(type(value["gateway-fqdn"]) == "string", "Property interface.ssid.captive.gateway-fqdn must be of type string");
-		assert(matchFqdn(value["gateway-fqdn"]), "Property interface.ssid.captive.gateway-fqdn must match fqdn format");
-		obj.gateway_fqdn = value["gateway-fqdn"];
-	}
-	else {
-		obj.gateway_fqdn = "ucentral.splash";
-	}
-
-	if (exists(value, "maxclients")) {
-		assert(type(value["maxclients"]) == "int", "Property interface.ssid.captive.maxclients must be of type integer");
-		obj.maxclients = value["maxclients"];
-	}
-	else {
-		obj.maxclients = 32;
-	}
-
-	if (exists(value, "upload-rate")) {
-		assert(type(value["upload-rate"]) == "int", "Property interface.ssid.captive.upload-rate must be of type integer");
-		obj.upload_rate = value["upload-rate"];
-	}
-	else {
-		obj.upload_rate = 10000;
-	}
-
-	if (exists(value, "download-rate")) {
-		assert(type(value["download-rate"]) == "int", "Property interface.ssid.captive.download-rate must be of type integer");
-		obj.download_rate = value["download-rate"];
-	}
-	else {
-		obj.download_rate = 10000;
-	}
-
-	if (exists(value, "upload-quota")) {
-		assert(type(value["upload-quota"]) == "int", "Property interface.ssid.captive.upload-quota must be of type integer");
-		obj.upload_quota = value["upload-quota"];
-	}
-	else {
-		obj.upload_quota = 10000;
-	}
-
-	if (exists(value, "download-quota")) {
-		assert(type(value["download-quota"]) == "int", "Property interface.ssid.captive.download-quota must be of type integer");
-		obj.download_quota = value["download-quota"];
-	}
-	else {
-		obj.download_quota = 10000;
 	}
 
 	return obj;
@@ -1245,10 +1245,6 @@ function instantiateInterfaceSsid(value) {
 		obj.multi_psk = parseMultiPsk(value["multi-psk"]);
 	}
 
-	if (exists(value, "captive")) {
-		obj.captive = instantiateInterfaceSsidCaptive(value["captive"]);
-	}
-
 	if (exists(value, "rrm")) {
 		obj.rrm = instantiateInterfaceSsidRrm(value["rrm"]);
 	}
@@ -1459,6 +1455,10 @@ function instantiateInterface(value) {
 
 	if (exists(value, "ipv6")) {
 		obj.ipv6 = instantiateInterfaceIpv6(value["ipv6"]);
+	}
+
+	if (exists(value, "captive")) {
+		obj.captive = instantiateInterfaceCaptive(value["captive"]);
 	}
 
 	function parseSsids(value) {
@@ -1821,7 +1821,6 @@ function instantiateMetricsStatistics(value) {
 
 	if (exists(value, "interval")) {
 		assert(type(value["interval"]) == "int", "Property metrics.statistics.interval must be of type integer");
-		assert(value["interval"] >= 60, "Property metrics.statistics.interval must be >= 60");
 		obj.interval = value["interval"];
 	}
 

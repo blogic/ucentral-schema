@@ -181,6 +181,9 @@ let ethernet = {
 	calculate_name: function(interface) {
 		let vid = interface.vlan ? interface.vlan.id : '';
 
+		if (interface.captive)
+			return 'captive';
+
 		return (interface.role == 'upstream' ? 'wan' : 'lan') + vid;
 	},
 

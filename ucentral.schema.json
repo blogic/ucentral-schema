@@ -477,6 +477,40 @@
                 }
             }
         },
+        "interface.captive": {
+            "type": "object",
+            "properties": {
+                "gateway-name": {
+                    "type": "string",
+                    "default": "uCentral - Captive Portal"
+                },
+                "gateway-fqdn": {
+                    "type": "string",
+                    "format": "fqdn",
+                    "default": "ucentral.splash"
+                },
+                "max-clients": {
+                    "type": "integer",
+                    "default": 32
+                },
+                "upload-rate": {
+                    "type": "integer",
+                    "default": 0
+                },
+                "download-rate": {
+                    "type": "integer",
+                    "default": 0
+                },
+                "upload-quota": {
+                    "type": "integer",
+                    "default": 0
+                },
+                "download-quota": {
+                    "type": "integer",
+                    "default": 0
+                }
+            }
+        },
         "interface.ssid.encryption": {
             "type": "object",
             "properties": {
@@ -536,40 +570,6 @@
                         200,
                         4094
                     ]
-                }
-            }
-        },
-        "interface.ssid.captive": {
-            "type": "object",
-            "properties": {
-                "gateway-name": {
-                    "type": "string",
-                    "default": "uCentral - Captive Portal"
-                },
-                "gateway-fqdn": {
-                    "type": "string",
-                    "format": "fqdn",
-                    "default": "ucentral.splash"
-                },
-                "maxclients": {
-                    "type": "integer",
-                    "default": 32
-                },
-                "upload-rate": {
-                    "type": "integer",
-                    "default": 10000
-                },
-                "download-rate": {
-                    "type": "integer",
-                    "default": 10000
-                },
-                "upload-quota": {
-                    "type": "integer",
-                    "default": 10000
-                },
-                "download-quota": {
-                    "type": "integer",
-                    "default": 10000
                 }
             }
         },
@@ -1008,9 +1008,6 @@
                         "$ref": "#/$defs/interface.ssid.multi-psk"
                     }
                 },
-                "captive": {
-                    "$ref": "#/$defs/interface.ssid.captive"
-                },
                 "rrm": {
                     "$ref": "#/$defs/interface.ssid.rrm"
                 },
@@ -1166,6 +1163,9 @@
                 },
                 "ipv6": {
                     "$ref": "#/$defs/interface.ipv6"
+                },
+                "captive": {
+                    "$ref": "#/$defs/interface.captive"
                 },
                 "ssids": {
                     "type": "array",
@@ -1411,8 +1411,7 @@
             "type": "object",
             "properties": {
                 "interval": {
-                    "type": "integer",
-                    "minimum": 60
+                    "type": "integer"
                 },
                 "types": {
                     "type": "array",

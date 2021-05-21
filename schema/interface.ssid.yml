@@ -80,8 +80,6 @@ properties:
     type: array
     items:
       $ref: "https://ucentral.io/schema/v1/interface/ssid/multi-psk/"
-  captive:
-    $ref: "https://ucentral.io/schema/v1/interface/ssid/captive/"
   rrm:
     $ref: "https://ucentral.io/schema/v1/interface/ssid/rrm/"
   rates:
