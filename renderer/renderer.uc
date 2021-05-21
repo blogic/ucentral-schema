@@ -272,6 +272,9 @@ let ipcalc = {
 		let prefix = match(template, /^(auto|[0-9a-fA-F:.]+)\/([0-9]+)$/);
 
 		if (prefix && prefix[1] == 'auto') {
+			assert(state.globals && state.globals[ipv6 ? 'ipv6_network' : 'ipv4_network'],
+				"No global prefix pool configured");
+
 			let pool = match(state.globals[ipv6 ? 'ipv6_network' : 'ipv4_network'], /^([0-9a-fA-F:.]+)\/([0-9]+)$/);
 
 			assert(prefix[2] >= pool[2],
