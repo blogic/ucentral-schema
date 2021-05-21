@@ -89,7 +89,9 @@
 # Wireless Configuration
 set wireless.{{ phy.section }}.disabled=0
 set wireless.{{ phy.section }}.htmode={{ htmode }}
+{% if (radio.channel): %}
 set wireless.{{ phy.section }}.channel={{ match_channel(phy, radio.channel) }}
+{% endif %}
 set wireless.{{ phy.section }}.txantenna={{ match_mimo(phy.tx_ant, radio.mimo) }}
 set wireless.{{ phy.section }}.rxantenna={{ match_mimo(phy.rx_ant, radio.mimo) }}
 set wireless.{{ phy.section }}.beacon_int={{ radio.beacon_interval }}
