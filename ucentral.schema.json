@@ -383,7 +383,7 @@
                 },
                 "gateway": {
                     "type": "string",
-                    "format": "uc-cidr4",
+                    "format": "ipv4",
                     "examples": [
                         "192.168.1.1"
                     ]

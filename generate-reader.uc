@@ -48,6 +48,60 @@ function to_value_descr(path)
 
 
 let GeneratorProto = {
+	format_validators: {
+		"uc-cidr4": [
+			'let m = match(s, /^(auto|[0-9.]+)\\/([0-9]+)$/);',
+			'return m ? ((m[1] == "auto" || length(iptoarr(m[1])) == 4) && +m[2] <= 32) : false;'
+		],
+		"uc-cidr6": [
+			'let m = match(s, /^(auto|[0-9a-fA-F:.]+)\\/([0-9]+)$/);',
+			'return m ? ((m[1] == "auto" || length(iptoarr(m[1])) == 16) && +m[2] <= 128) : false;'
+		],
+		"uc-cidr": [
+			'let m = match(s, /^(auto|[0-9a-fA-F:.]+)\\/([0-9]+)$/);',
+			'if (!m) return false;',
+			'let l = (m[1] == "auto") ? 16 : length(iptoarr(m[1]));',
+			'return (l > 0 && +m[2] <= (l * 8));'
+		],
+		"uc-mac": [
+			'return match(s, /^[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]:[0-9a-f][0-9a-f]$/i);'
+		],
+		"uc-host": [
+			'if (length(iptoarr(s)) != 0) return true;',
+			'if (length(s) > 255) return false;',
+			'let labels = split(s, ".");',
+			'return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);'
+		],
+		"uc-timeout": [
+			'return match(s, /^[0-9]+[smhdw]$/);'
+		],
+		"hostname": [
+			'if (length(s) > 255) return false;',
+			'let labels = split(s, ".");',
+			'return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);'
+		],
+		"fqdn": [
+			'if (length(s) > 255) return false;',
+			'let labels = split(s, ".");',
+			'return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 1);'
+		],
+		"ipv4": [
+			'return (length(iptoarr(s)) == 4);'
+		],
+		"ipv6": [
+			'return (length(iptoarr(s)) == 16);'
+		],
+		"uri": [
+			'if (index(s, "data:") == 0) return true;',
+			'let m = match(s, /^[a-z+-]+:\\/\\/([^\\/]+).*$/);',
+			'if (!m) return false;',
+			'if (length(iptoarr(m[1])) != 0) return true;',
+			'if (length(m[1]) > 255) return false;',
+			'let labels = split(m[1], ".");',
+			'return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);'
+		]
+	},
+
 	is_ref: function(value)
 	{
 		return (
@@ -91,6 +145,29 @@ let GeneratorProto = {
 		}
 
 		return ref;
+	},
+
+	emit_format_asserts: function(path, valueExpr, valueSpec)
+	{
+		if (!valueSpec.format)
+			return;
+
+		if (!exists(this.format_validators, valueSpec.format)) {
+			warn("Unrecognized string format '" + valueSpec.format + '".\n');
+			return;
+		}
+
+		let code = this.format_validators[valueSpec.format];
+
+		this.print(path, 'assert((s => {');
+
+		for (let line in code)
+			this.print(path, '	' + line);
+
+		this.print(path, '})(%s), "%s has invalid format: " + %s);',
+			valueExpr,
+			to_value_descr(path),
+			valueExpr);
 	},
 
 	emit_generic_asserts: function(path, valueExpr, valueSpec)
@@ -185,33 +262,6 @@ let GeneratorProto = {
 		}
 	},
 
-	emit_constraints: function(propertyName, valueSpec)
-	{
-		this.emit_generic_asserts(propertyName, valueSpec);
-
-		switch (valueSpec.type) {
-		case 'integer':
-			this.emit_number_asserts(propertyName, valueSpec, true);
-			break;
-
-		case 'number':
-			this.emit_number_asserts(propertyName, valueSpec, false);
-			break;
-
-		case 'string':
-			this.emit_string_asserts(propertyName, valueSpec);
-			break;
-
-		case 'array':
-			this.emit_array_asserts(propertyName, valueSpec);
-			break;
-
-		case 'object':
-			this.emit_object_asserts(propertyName, valueSpec);
-			break;
-		}
-	},
-
 	read_schema: function(path)
 	{
 		let fd = fs.open(path, "r");
@@ -271,6 +321,7 @@ let GeneratorProto = {
 		}
 
 		this.emit_generic_asserts(path, valueExpr, valueSpec);
+		this.emit_format_asserts(path, valueExpr, valueSpec);
 
 		let variantSpecs, variantSuccessCond;
 

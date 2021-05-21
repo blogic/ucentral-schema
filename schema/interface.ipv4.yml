@@ -25,7 +25,7 @@ properties:
     description:
       This option defines the static IPv4 gateway of the logical interface.
     type: string
-    format: uc-cidr4
+    format: ipv4
     examples:
     - 192.168.1.1
   send-hostname:
