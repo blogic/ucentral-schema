@@ -64,56 +64,112 @@ function matchUri(value) {
 	return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);
 }
 
-function instantiateUnit(value) {
-	assert(type(value) == "object", "Property unit must be of type object");
+function instantiateUnit(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseName(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "name")) {
-		assert(type(value["name"]) == "string", "Property unit.name must be of type string");
-		obj.name = value["name"];
+		obj.name = parseName(location + "/name", value["name"], errors);
+	}
+
+	function parseLocation(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "location")) {
-		assert(type(value["location"]) == "string", "Property unit.location must be of type string");
-		obj.location = value["location"];
+		obj.location = parseLocation(location + "/location", value["location"], errors);
+	}
+
+	function parseTimezone(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "timezone")) {
-		assert(type(value["timezone"]) == "string", "Property unit.timezone must be of type string");
-		obj.timezone = value["timezone"];
+		obj.timezone = parseTimezone(location + "/timezone", value["timezone"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateGlobals(value) {
-	assert(type(value) == "object", "Property globals must be of type object");
+function instantiateGlobals(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseIpv4Network(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchUcCidr4(value))
+			push(errors, [ location, "must be a valid IPv4 CIDR" ]);
+
+		return value;
+	}
+
 	if (exists(value, "ipv4-network")) {
-		assert(type(value["ipv4-network"]) == "string", "Property globals.ipv4-network must be of type string");
-		assert(matchUcCidr4(value["ipv4-network"]), "Property globals.ipv4-network must match uc-cidr4 format");
-		obj.ipv4_network = value["ipv4-network"];
+		obj.ipv4_network = parseIpv4Network(location + "/ipv4-network", value["ipv4-network"], errors);
+	}
+
+	function parseIpv6Network(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchUcCidr6(value))
+			push(errors, [ location, "must be a valid IPv6 CIDR" ]);
+
+		return value;
 	}
 
 	if (exists(value, "ipv6-network")) {
-		assert(type(value["ipv6-network"]) == "string", "Property globals.ipv6-network must be of type string");
-		assert(matchUcCidr6(value["ipv6-network"]), "Property globals.ipv6-network must match uc-cidr6 format");
-		obj.ipv6_network = value["ipv6-network"];
+		obj.ipv6_network = parseIpv6Network(location + "/ipv6-network", value["ipv6-network"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateDefinitions(value) {
-	assert(type(value) == "object", "Property definitions must be of type object");
+function instantiateDefinitions(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
-	function parseWirelessEncryption(value) {
-		assert(type(value) == "object", "Property definitions.wireless-encryption must be of type object");
+	function parseWirelessEncryption(location, value, errors) {
+		if (type(value) != "object") {
+			push(errors, [ location, "must be of type object" ]);
+			return null;
+		}
 
 		let obj = {};
 
@@ -121,36 +177,63 @@ function instantiateDefinitions(value) {
 	}
 
 	if (exists(value, "wireless-encryption")) {
-		obj.wireless_encryption = parseWirelessEncryption(value["wireless-encryption"]);
+		obj.wireless_encryption = parseWirelessEncryption(location + "/wireless-encryption", value["wireless-encryption"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateRadioHe(value) {
-	assert(type(value) == "object", "Property radio.he must be of type object");
+function instantiateRadioHe(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseMultipleBssid(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "multiple-bssid")) {
-		assert(type(value["multiple-bssid"]) == "bool", "Property radio.he.multiple-bssid must be of type boolean");
-		obj.multiple_bssid = value["multiple-bssid"];
+		obj.multiple_bssid = parseMultipleBssid(location + "/multiple-bssid", value["multiple-bssid"], errors);
 	}
 	else {
 		obj.multiple_bssid = false;
 	}
 
+	function parseEma(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "ema")) {
-		assert(type(value["ema"]) == "bool", "Property radio.he.ema must be of type boolean");
-		obj.ema = value["ema"];
+		obj.ema = parseEma(location + "/ema", value["ema"], errors);
 	}
 	else {
 		obj.ema = false;
 	}
 
+	function parseBssColor(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "bss-color")) {
-		assert(type(value["bss-color"]) == "int", "Property radio.he.bss-color must be of type integer");
-		obj.bss_color = value["bss-color"];
+		obj.bss_color = parseBssColor(location + "/bss-color", value["bss-color"], errors);
 	}
 	else {
 		obj.bss_color = 64;
@@ -159,160 +242,340 @@ function instantiateRadioHe(value) {
 	return obj;
 }
 
-function instantiateRadio(value) {
-	assert(type(value) == "object", "Property radio must be of type object");
+function instantiateRadio(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseBand(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!(value in [ "2G", "5G", "6G" ]))
+			push(errors, [ location, "must be one of [ \"2G\", \"5G\", \"6G\" ]" ]);
+
+		return value;
+	}
+
 	if (exists(value, "band")) {
-		assert(type(value["band"]) == "string", "Property radio.band must be of type string");
-		assert(value["band"] in [ "2G", "5G", "6G" ], "Property radio.band must be one of [ \"2G\", \"5G\", \"6G\" ]");
-		obj.band = value["band"];
+		obj.band = parseBand(location + "/band", value["band"], errors);
+	}
+
+	function parseBandwidth(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (!(value in [ 5, 10, 20 ]))
+			push(errors, [ location, "must be one of [ 5, 10, 20 ]" ]);
+
+		return value;
 	}
 
 	if (exists(value, "bandwidth")) {
-		assert(type(value["bandwidth"]) == "int", "Property radio.bandwidth must be of type integer");
-		assert(value["bandwidth"] in [ 5, 10, 20 ], "Property radio.bandwidth must be one of [ 5, 10, 20 ]");
-		obj.bandwidth = value["bandwidth"];
+		obj.bandwidth = parseBandwidth(location + "/bandwidth", value["bandwidth"], errors);
 	}
 
-	function parseChannel(value) {
-		function parseVariant0(value) {
-			assert(type(value) == "int", "Property radio.channel must be of type integer");
-			assert(value <= 171, "Property radio.channel must be <= 171");
-			assert(value >= 1, "Property radio.channel must be >= 1");
+	function parseChannel(location, value, errors) {
+		function parseVariant0(location, value, errors) {
+			if (type(value) != "int") {
+				push(errors, [ location, "must be of type integer" ]);
+				return null;
+			}
+
+			if (value > 171)
+				push(errors, [ location, "must be lower than or equal to 171" ]);
+
+			if (value < 1)
+				push(errors, [ location, "must be bigger than or equal to 1" ]);
 
 			return value;
 		}
 
-		function parseVariant1(value) {
-			assert(type(value) == "string", "Property radio.channel must be of type string");
-			assert(value in [ "auto" ], "Property radio.channel must be one of [ \"auto\" ]");
+		function parseVariant1(location, value, errors) {
+			if (type(value) != "string") {
+				push(errors, [ location, "must be of type string" ]);
+				return null;
+			}
+
+			if (!(value in [ "auto" ]))
+				push(errors, [ location, "must be one of [ \"auto\" ]" ]);
 
 			return value;
 		}
 
-		let success = 0, errors = [];
+		let success = 0, tryval, tryerr, verrors = [];
 
-		try { value = parseVariant0(value); success++; }
-		catch (e) { push(errors, e); }
+		tryerr = [];
+		tryval = parseVariant0(location, value, tryerr);
+		if (!length(tryerr)) {
+			value = tryval;
+			success++;
+		}
+		else {
+			push(verrors, join(" and\n", map(tryerr, err => "\t - " + err[1])));
+		}
 
-		try { value = parseVariant1(value); success++; }
-		catch (e) { push(errors, e); }
+		tryerr = [];
+		tryval = parseVariant1(location, value, tryerr);
+		if (!length(tryerr)) {
+			value = tryval;
+			success++;
+		}
+		else {
+			push(verrors, join(" and\n", map(tryerr, err => "\t - " + err[1])));
+		}
 
-		assert(success == 1, join("\n- or -\n", errors));
+		if (success != 1) {
+			push(errors, [ location, "must match exactly one of the following constraints:\n" + join("\n- or -\n", verrors) ]);
+			return null;
+		}
 
 		return value;
 	}
 
 	if (exists(value, "channel")) {
-		obj.channel = parseChannel(value["channel"]);
+		obj.channel = parseChannel(location + "/channel", value["channel"], errors);
+	}
+
+	function parseCountry(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (length(value) > 2)
+			push(errors, [ location, "must be at most 2 characters long" ]);
+
+		if (length(value) < 2)
+			push(errors, [ location, "must be at least 2 characters long" ]);
+
+		return value;
 	}
 
 	if (exists(value, "country")) {
-		assert(type(value["country"]) == "string", "Property radio.country must be of type string");
-		assert(length(value["country"]) <= 2, "Property radio.country must be <= 2 characters long");
+		obj.country = parseCountry(location + "/country", value["country"], errors);
+	}
 
-		assert(length(value["country"]) >= 2, "Property radio.country must be >= 2 characters long");
+	function parseChannelMode(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
 
-		obj.country = value["country"];
+		if (!(value in [ "HT", "VHT", "HE" ]))
+			push(errors, [ location, "must be one of [ \"HT\", \"VHT\", \"HE\" ]" ]);
+
+		return value;
 	}
 
 	if (exists(value, "channel-mode")) {
-		assert(type(value["channel-mode"]) == "string", "Property radio.channel-mode must be of type string");
-		assert(value["channel-mode"] in [ "HT", "VHT", "HE" ], "Property radio.channel-mode must be one of [ \"HT\", \"VHT\", \"HE\" ]");
-		obj.channel_mode = value["channel-mode"];
+		obj.channel_mode = parseChannelMode(location + "/channel-mode", value["channel-mode"], errors);
+	}
+
+	function parseChannelWidth(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (!(value in [ 20, 40, 80, 160, 8080 ]))
+			push(errors, [ location, "must be one of [ 20, 40, 80, 160, 8080 ]" ]);
+
+		return value;
 	}
 
 	if (exists(value, "channel-width")) {
-		assert(type(value["channel-width"]) == "int", "Property radio.channel-width must be of type integer");
-		assert(value["channel-width"] in [ 20, 40, 80, 160, 8080 ], "Property radio.channel-width must be one of [ 20, 40, 80, 160, 8080 ]");
-		obj.channel_width = value["channel-width"];
+		obj.channel_width = parseChannelWidth(location + "/channel-width", value["channel-width"], errors);
+	}
+
+	function parseRequireMode(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!(value in [ "HT", "VHT", "HE" ]))
+			push(errors, [ location, "must be one of [ \"HT\", \"VHT\", \"HE\" ]" ]);
+
+		return value;
 	}
 
 	if (exists(value, "require-mode")) {
-		assert(type(value["require-mode"]) == "string", "Property radio.require-mode must be of type string");
-		assert(value["require-mode"] in [ "HT", "VHT", "HE" ], "Property radio.require-mode must be one of [ \"HT\", \"VHT\", \"HE\" ]");
-		obj.require_mode = value["require-mode"];
+		obj.require_mode = parseRequireMode(location + "/require-mode", value["require-mode"], errors);
+	}
+
+	function parseMimo(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!(value in [ "1x1", "2x2", "3x3", "4x4", "5x5", "6x6", "7x7", "8x8" ]))
+			push(errors, [ location, "must be one of [ \"1x1\", \"2x2\", \"3x3\", \"4x4\", \"5x5\", \"6x6\", \"7x7\", \"8x8\" ]" ]);
+
+		return value;
 	}
 
 	if (exists(value, "mimo")) {
-		assert(type(value["mimo"]) == "string", "Property radio.mimo must be of type string");
-		assert(value["mimo"] in [ "1x1", "2x2", "3x3", "4x4", "5x5", "6x6", "7x7", "8x8" ], "Property radio.mimo must be one of [ \"1x1\", \"2x2\", \"3x3\", \"4x4\", \"5x5\", \"6x6\", \"7x7\", \"8x8\" ]");
-		obj.mimo = value["mimo"];
+		obj.mimo = parseMimo(location + "/mimo", value["mimo"], errors);
+	}
+
+	function parseTxPower(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (value > 30)
+			push(errors, [ location, "must be lower than or equal to 30" ]);
+
+		if (value < 0)
+			push(errors, [ location, "must be bigger than or equal to 0" ]);
+
+		return value;
 	}
 
 	if (exists(value, "tx-power")) {
-		assert(type(value["tx-power"]) == "int", "Property radio.tx-power must be of type integer");
-		assert(value["tx-power"] <= 30, "Property radio.tx-power must be <= 30");
-		assert(value["tx-power"] >= 0, "Property radio.tx-power must be >= 0");
-		obj.tx_power = value["tx-power"];
+		obj.tx_power = parseTxPower(location + "/tx-power", value["tx-power"], errors);
+	}
+
+	function parseLegacyRates(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "legacy-rates")) {
-		assert(type(value["legacy-rates"]) == "bool", "Property radio.legacy-rates must be of type boolean");
-		obj.legacy_rates = value["legacy-rates"];
+		obj.legacy_rates = parseLegacyRates(location + "/legacy-rates", value["legacy-rates"], errors);
 	}
 	else {
 		obj.legacy_rates = false;
 	}
 
+	function parseBeaconInterval(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (value > 65535)
+			push(errors, [ location, "must be lower than or equal to 65535" ]);
+
+		if (value < 15)
+			push(errors, [ location, "must be bigger than or equal to 15" ]);
+
+		return value;
+	}
+
 	if (exists(value, "beacon-interval")) {
-		assert(type(value["beacon-interval"]) == "int", "Property radio.beacon-interval must be of type integer");
-		assert(value["beacon-interval"] <= 65535, "Property radio.beacon-interval must be <= 65535");
-		assert(value["beacon-interval"] >= 15, "Property radio.beacon-interval must be >= 15");
-		obj.beacon_interval = value["beacon-interval"];
+		obj.beacon_interval = parseBeaconInterval(location + "/beacon-interval", value["beacon-interval"], errors);
 	}
 	else {
 		obj.beacon_interval = 100;
 	}
 
+	function parseDtimPeriod(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (value > 255)
+			push(errors, [ location, "must be lower than or equal to 255" ]);
+
+		if (value < 1)
+			push(errors, [ location, "must be bigger than or equal to 1" ]);
+
+		return value;
+	}
+
 	if (exists(value, "dtim-period")) {
-		assert(type(value["dtim-period"]) == "int", "Property radio.dtim-period must be of type integer");
-		assert(value["dtim-period"] <= 255, "Property radio.dtim-period must be <= 255");
-		assert(value["dtim-period"] >= 1, "Property radio.dtim-period must be >= 1");
-		obj.dtim_period = value["dtim-period"];
+		obj.dtim_period = parseDtimPeriod(location + "/dtim-period", value["dtim-period"], errors);
 	}
 	else {
 		obj.dtim_period = 2;
 	}
 
 	if (exists(value, "he-settings")) {
-		obj.he_settings = instantiateRadioHe(value["he-settings"]);
+		obj.he_settings = instantiateRadioHe(location + "/he-settings", value["he-settings"], errors);
 	}
 
-	function parseHostapdIfaceRaw(value) {
-		assert(type(value) == "array", "Property radio.hostapd-iface-raw must be of type array");
+	function parseHostapdIfaceRaw(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
 
-		return map(value, (item) => {
-			assert(type(item) == "string", "Items of radio.hostapd-iface-raw must be of type string");
-			return item;
-		});
+		function parseItem(location, value, errors) {
+			if (type(value) != "string") {
+				push(errors, [ location, "must be of type string" ]);
+				return null;
+			}
+
+			return value;
+		}
+
+		return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "hostapd-iface-raw")) {
-		obj.hostapd_iface_raw = parseHostapdIfaceRaw(value["hostapd-iface-raw"]);
+		obj.hostapd_iface_raw = parseHostapdIfaceRaw(location + "/hostapd-iface-raw", value["hostapd-iface-raw"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateInterfaceVlan(value) {
-	assert(type(value) == "object", "Property interface.vlan must be of type object");
+function instantiateInterfaceVlan(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseId(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (value > 4096)
+			push(errors, [ location, "must be lower than or equal to 4096" ]);
+
+		if (value < 2)
+			push(errors, [ location, "must be bigger than or equal to 2" ]);
+
+		return value;
+	}
+
 	if (exists(value, "id")) {
-		assert(type(value["id"]) == "int", "Property interface.vlan.id must be of type integer");
-		assert(value["id"] <= 4096, "Property interface.vlan.id must be <= 4096");
-		assert(value["id"] >= 2, "Property interface.vlan.id must be >= 2");
-		obj.id = value["id"];
+		obj.id = parseId(location + "/id", value["id"], errors);
+	}
+
+	function parseProto(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!(value in [ "802.1ad", "802.1q" ]))
+			push(errors, [ location, "must be one of [ \"802.1ad\", \"802.1q\" ]" ]);
+
+		return value;
 	}
 
 	if (exists(value, "proto")) {
-		assert(type(value["proto"]) == "string", "Property interface.vlan.proto must be of type string");
-		assert(value["proto"] in [ "802.1ad", "802.1q" ], "Property interface.vlan.proto must be one of [ \"802.1ad\", \"802.1q\" ]");
-		obj.proto = value["proto"];
+		obj.proto = parseProto(location + "/proto", value["proto"], errors);
 	}
 	else {
 		obj.proto = "802.1q";
@@ -321,26 +584,57 @@ function instantiateInterfaceVlan(value) {
 	return obj;
 }
 
-function instantiateInterfaceBridge(value) {
-	assert(type(value) == "object", "Property interface.bridge must be of type object");
+function instantiateInterfaceBridge(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseMtu(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (value > 65535)
+			push(errors, [ location, "must be lower than or equal to 65535" ]);
+
+		if (value < 256)
+			push(errors, [ location, "must be bigger than or equal to 256" ]);
+
+		return value;
+	}
+
 	if (exists(value, "mtu")) {
-		assert(type(value["mtu"]) == "int", "Property interface.bridge.mtu must be of type integer");
-		assert(value["mtu"] <= 65535, "Property interface.bridge.mtu must be <= 65535");
-		assert(value["mtu"] >= 256, "Property interface.bridge.mtu must be >= 256");
-		obj.mtu = value["mtu"];
+		obj.mtu = parseMtu(location + "/mtu", value["mtu"], errors);
+	}
+
+	function parseTxQueueLen(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "tx-queue-len")) {
-		assert(type(value["tx-queue-len"]) == "int", "Property interface.bridge.tx-queue-len must be of type integer");
-		obj.tx_queue_len = value["tx-queue-len"];
+		obj.tx_queue_len = parseTxQueueLen(location + "/tx-queue-len", value["tx-queue-len"], errors);
+	}
+
+	function parseIsolatePorts(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "isolate-ports")) {
-		assert(type(value["isolate-ports"]) == "bool", "Property interface.bridge.isolate-ports must be of type boolean");
-		obj.isolate_ports = value["isolate-ports"];
+		obj.isolate_ports = parseIsolatePorts(location + "/isolate-ports", value["isolate-ports"], errors);
 	}
 	else {
 		obj.isolate_ports = false;
@@ -349,57 +643,111 @@ function instantiateInterfaceBridge(value) {
 	return obj;
 }
 
-function instantiateInterfaceEthernet(value) {
-	assert(type(value) == "object", "Property interface.ethernet must be of type object");
+function instantiateInterfaceEthernet(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
-	function parseSelectPorts(value) {
-		assert(type(value) == "array", "Property interface.ethernet.select-ports must be of type array");
+	function parseSelectPorts(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
 
-		return map(value, (item) => {
-			assert(type(item) == "string", "Items of interface.ethernet.select-ports must be of type string");
-			return item;
-		});
+		function parseItem(location, value, errors) {
+			if (type(value) != "string") {
+				push(errors, [ location, "must be of type string" ]);
+				return null;
+			}
+
+			return value;
+		}
+
+		return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "select-ports")) {
-		obj.select_ports = parseSelectPorts(value["select-ports"]);
+		obj.select_ports = parseSelectPorts(location + "/select-ports", value["select-ports"], errors);
+	}
+
+	function parseMulticast(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "multicast")) {
-		assert(type(value["multicast"]) == "bool", "Property interface.ethernet.multicast must be of type boolean");
-		obj.multicast = value["multicast"];
+		obj.multicast = parseMulticast(location + "/multicast", value["multicast"], errors);
 	}
 	else {
 		obj.multicast = true;
 	}
 
+	function parseLearning(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "learning")) {
-		assert(type(value["learning"]) == "bool", "Property interface.ethernet.learning must be of type boolean");
-		obj.learning = value["learning"];
+		obj.learning = parseLearning(location + "/learning", value["learning"], errors);
 	}
 	else {
 		obj.learning = true;
 	}
 
+	function parseIsolate(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "isolate")) {
-		assert(type(value["isolate"]) == "bool", "Property interface.ethernet.isolate must be of type boolean");
-		obj.isolate = value["isolate"];
+		obj.isolate = parseIsolate(location + "/isolate", value["isolate"], errors);
 	}
 	else {
 		obj.isolate = false;
 	}
 
+	function parseMacaddr(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchUcMac(value))
+			push(errors, [ location, "must be a valid MAC address" ]);
+
+		return value;
+	}
+
 	if (exists(value, "macaddr")) {
-		assert(type(value["macaddr"]) == "string", "Property interface.ethernet.macaddr must be of type string");
-		assert(matchUcMac(value["macaddr"]), "Property interface.ethernet.macaddr must match uc-mac format");
-		obj.macaddr = value["macaddr"];
+		obj.macaddr = parseMacaddr(location + "/macaddr", value["macaddr"], errors);
+	}
+
+	function parseReversePathFilter(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "reverse-path-filter")) {
-		assert(type(value["reverse-path-filter"]) == "bool", "Property interface.ethernet.reverse-path-filter must be of type boolean");
-		obj.reverse_path_filter = value["reverse-path-filter"];
+		obj.reverse_path_filter = parseReversePathFilter(location + "/reverse-path-filter", value["reverse-path-filter"], errors);
 	}
 	else {
 		obj.reverse_path_filter = false;
@@ -408,25 +756,54 @@ function instantiateInterfaceEthernet(value) {
 	return obj;
 }
 
-function instantiateInterfaceIpv4Dhcp(value) {
-	assert(type(value) == "object", "Property interface.ipv4.dhcp must be of type object");
+function instantiateInterfaceIpv4Dhcp(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseLeaseFirst(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "lease-first")) {
-		assert(type(value["lease-first"]) == "int", "Property interface.ipv4.dhcp.lease-first must be of type integer");
-		obj.lease_first = value["lease-first"];
+		obj.lease_first = parseLeaseFirst(location + "/lease-first", value["lease-first"], errors);
+	}
+
+	function parseLeaseCount(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "lease-count")) {
-		assert(type(value["lease-count"]) == "int", "Property interface.ipv4.dhcp.lease-count must be of type integer");
-		obj.lease_count = value["lease-count"];
+		obj.lease_count = parseLeaseCount(location + "/lease-count", value["lease-count"], errors);
+	}
+
+	function parseLeaseTime(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchUcTimeout(value))
+			push(errors, [ location, "must be a valid timeout value" ]);
+
+		return value;
 	}
 
 	if (exists(value, "lease-time")) {
-		assert(type(value["lease-time"]) == "string", "Property interface.ipv4.dhcp.lease-time must be of type string");
-		assert(matchUcTimeout(value["lease-time"]), "Property interface.ipv4.dhcp.lease-time must match uc-timeout format");
-		obj.lease_time = value["lease-time"];
+		obj.lease_time = parseLeaseTime(location + "/lease-time", value["lease-time"], errors);
 	}
 	else {
 		obj.lease_time = "6h";
@@ -435,34 +812,73 @@ function instantiateInterfaceIpv4Dhcp(value) {
 	return obj;
 }
 
-function instantiateInterfaceIpv4DhcpLease(value) {
-	assert(type(value) == "object", "Property interface.ipv4.dhcp-lease must be of type object");
+function instantiateInterfaceIpv4DhcpLease(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseMacaddr(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchUcMac(value))
+			push(errors, [ location, "must be a valid MAC address" ]);
+
+		return value;
+	}
+
 	if (exists(value, "macaddr")) {
-		assert(type(value["macaddr"]) == "string", "Property interface.ipv4.dhcp-lease.macaddr must be of type string");
-		assert(matchUcMac(value["macaddr"]), "Property interface.ipv4.dhcp-lease.macaddr must match uc-mac format");
-		obj.macaddr = value["macaddr"];
+		obj.macaddr = parseMacaddr(location + "/macaddr", value["macaddr"], errors);
+	}
+
+	function parseStaticLeaseOffset(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "static-lease-offset")) {
-		assert(type(value["static-lease-offset"]) == "int", "Property interface.ipv4.dhcp-lease.static-lease-offset must be of type integer");
-		obj.static_lease_offset = value["static-lease-offset"];
+		obj.static_lease_offset = parseStaticLeaseOffset(location + "/static-lease-offset", value["static-lease-offset"], errors);
+	}
+
+	function parseLeaseTime(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchUcTimeout(value))
+			push(errors, [ location, "must be a valid timeout value" ]);
+
+		return value;
 	}
 
 	if (exists(value, "lease-time")) {
-		assert(type(value["lease-time"]) == "string", "Property interface.ipv4.dhcp-lease.lease-time must be of type string");
-		assert(matchUcTimeout(value["lease-time"]), "Property interface.ipv4.dhcp-lease.lease-time must match uc-timeout format");
-		obj.lease_time = value["lease-time"];
+		obj.lease_time = parseLeaseTime(location + "/lease-time", value["lease-time"], errors);
 	}
 	else {
 		obj.lease_time = "6h";
 	}
 
+	function parsePublishHostname(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "publish-hostname")) {
-		assert(type(value["publish-hostname"]) == "bool", "Property interface.ipv4.dhcp-lease.publish-hostname must be of type boolean");
-		obj.publish_hostname = value["publish-hostname"];
+		obj.publish_hostname = parsePublishHostname(location + "/publish-hostname", value["publish-hostname"], errors);
 	}
 	else {
 		obj.publish_hostname = true;
@@ -471,97 +887,186 @@ function instantiateInterfaceIpv4DhcpLease(value) {
 	return obj;
 }
 
-function instantiateInterfaceIpv4(value) {
-	assert(type(value) == "object", "Property interface.ipv4 must be of type object");
+function instantiateInterfaceIpv4(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseAddressing(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!(value in [ "dynamic", "static" ]))
+			push(errors, [ location, "must be one of [ \"dynamic\", \"static\" ]" ]);
+
+		return value;
+	}
+
 	if (exists(value, "addressing")) {
-		assert(type(value["addressing"]) == "string", "Property interface.ipv4.addressing must be of type string");
-		assert(value["addressing"] in [ "dynamic", "static" ], "Property interface.ipv4.addressing must be one of [ \"dynamic\", \"static\" ]");
-		obj.addressing = value["addressing"];
+		obj.addressing = parseAddressing(location + "/addressing", value["addressing"], errors);
+	}
+
+	function parseSubnet(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchUcCidr4(value))
+			push(errors, [ location, "must be a valid IPv4 CIDR" ]);
+
+		return value;
 	}
 
 	if (exists(value, "subnet")) {
-		assert(type(value["subnet"]) == "string", "Property interface.ipv4.subnet must be of type string");
-		assert(matchUcCidr4(value["subnet"]), "Property interface.ipv4.subnet must match uc-cidr4 format");
-		obj.subnet = value["subnet"];
+		obj.subnet = parseSubnet(location + "/subnet", value["subnet"], errors);
+	}
+
+	function parseGateway(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchIpv4(value))
+			push(errors, [ location, "must be a valid IPv4 address" ]);
+
+		return value;
 	}
 
 	if (exists(value, "gateway")) {
-		assert(type(value["gateway"]) == "string", "Property interface.ipv4.gateway must be of type string");
-		assert(matchIpv4(value["gateway"]), "Property interface.ipv4.gateway must match ipv4 format");
-		obj.gateway = value["gateway"];
+		obj.gateway = parseGateway(location + "/gateway", value["gateway"], errors);
+	}
+
+	function parseSendHostname(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "send-hostname")) {
-		assert(type(value["send-hostname"]) == "bool", "Property interface.ipv4.send-hostname must be of type boolean");
-		obj.send_hostname = value["send-hostname"];
+		obj.send_hostname = parseSendHostname(location + "/send-hostname", value["send-hostname"], errors);
 	}
 	else {
 		obj.send_hostname = true;
 	}
 
-	function parseUseDns(value) {
-		assert(type(value) == "array", "Property interface.ipv4.use-dns must be of type array");
+	function parseUseDns(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
 
-		return map(value, (item) => {
-			assert(type(item) == "string", "Items of interface.ipv4.use-dns must be of type string");
-			assert(matchIpv4(item), "Items of interface.ipv4.use-dns must match ipv4 format");
-			return item;
-		});
+		function parseItem(location, value, errors) {
+			if (type(value) != "string") {
+				push(errors, [ location, "must be of type string" ]);
+				return null;
+			}
+
+			if (!matchIpv4(value))
+				push(errors, [ location, "must be a valid IPv4 address" ]);
+
+			return value;
+		}
+
+		return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "use-dns")) {
-		obj.use_dns = parseUseDns(value["use-dns"]);
+		obj.use_dns = parseUseDns(location + "/use-dns", value["use-dns"], errors);
 	}
 
 	if (exists(value, "dhcp")) {
-		obj.dhcp = instantiateInterfaceIpv4Dhcp(value["dhcp"]);
+		obj.dhcp = instantiateInterfaceIpv4Dhcp(location + "/dhcp", value["dhcp"], errors);
 	}
 
-	function parseDhcpLeases(value) {
-		assert(type(value) == "array", "Property interface.ipv4.dhcp-leases must be of type array");
+	function parseDhcpLeases(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
 
-		return map(value, instantiateInterfaceIpv4DhcpLease);
+		return map(value, (item, i) => instantiateInterfaceIpv4DhcpLease(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "dhcp-leases")) {
-		obj.dhcp_leases = parseDhcpLeases(value["dhcp-leases"]);
+		obj.dhcp_leases = parseDhcpLeases(location + "/dhcp-leases", value["dhcp-leases"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateInterfaceIpv6Dhcpv6(value) {
-	assert(type(value) == "object", "Property interface.ipv6.dhcpv6 must be of type object");
+function instantiateInterfaceIpv6Dhcpv6(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
-	if (exists(value, "mode")) {
-		assert(type(value["mode"]) == "string", "Property interface.ipv6.dhcpv6.mode must be of type string");
-		assert(value["mode"] in [ "hybrid", "stateless", "stateful", "relay" ], "Property interface.ipv6.dhcpv6.mode must be one of [ \"hybrid\", \"stateless\", \"stateful\", \"relay\" ]");
-		obj.mode = value["mode"];
+	function parseMode(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!(value in [ "hybrid", "stateless", "stateful", "relay" ]))
+			push(errors, [ location, "must be one of [ \"hybrid\", \"stateless\", \"stateful\", \"relay\" ]" ]);
+
+		return value;
 	}
 
-	function parseAnnounceDns(value) {
-		assert(type(value) == "array", "Property interface.ipv6.dhcpv6.announce-dns must be of type array");
+	if (exists(value, "mode")) {
+		obj.mode = parseMode(location + "/mode", value["mode"], errors);
+	}
 
-		return map(value, (item) => {
-			assert(type(item) == "string", "Items of interface.ipv6.dhcpv6.announce-dns must be of type string");
-			assert(matchIpv6(item), "Items of interface.ipv6.dhcpv6.announce-dns must match ipv6 format");
-			return item;
-		});
+	function parseAnnounceDns(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
+
+		function parseItem(location, value, errors) {
+			if (type(value) != "string") {
+				push(errors, [ location, "must be of type string" ]);
+				return null;
+			}
+
+			if (!matchIpv6(value))
+				push(errors, [ location, "must be a valid IPv6 address" ]);
+
+			return value;
+		}
+
+		return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "announce-dns")) {
-		obj.announce_dns = parseAnnounceDns(value["announce-dns"]);
+		obj.announce_dns = parseAnnounceDns(location + "/announce-dns", value["announce-dns"], errors);
+	}
+
+	function parseFilterPrefix(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchUcCidr6(value))
+			push(errors, [ location, "must be a valid IPv6 CIDR" ]);
+
+		return value;
 	}
 
 	if (exists(value, "filter-prefix")) {
-		assert(type(value["filter-prefix"]) == "string", "Property interface.ipv6.dhcpv6.filter-prefix must be of type string");
-		assert(matchUcCidr6(value["filter-prefix"]), "Property interface.ipv6.dhcpv6.filter-prefix must match uc-cidr6 format");
-		obj.filter_prefix = value["filter-prefix"];
+		obj.filter_prefix = parseFilterPrefix(location + "/filter-prefix", value["filter-prefix"], errors);
 	}
 	else {
 		obj.filter_prefix = "::/0";
@@ -570,132 +1075,145 @@ function instantiateInterfaceIpv6Dhcpv6(value) {
 	return obj;
 }
 
-function instantiateInterfaceIpv6(value) {
-	assert(type(value) == "object", "Property interface.ipv6 must be of type object");
+function instantiateInterfaceIpv6(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseAddressing(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!(value in [ "dynamic", "static" ]))
+			push(errors, [ location, "must be one of [ \"dynamic\", \"static\" ]" ]);
+
+		return value;
+	}
+
 	if (exists(value, "addressing")) {
-		assert(type(value["addressing"]) == "string", "Property interface.ipv6.addressing must be of type string");
-		assert(value["addressing"] in [ "dynamic", "static" ], "Property interface.ipv6.addressing must be one of [ \"dynamic\", \"static\" ]");
-		obj.addressing = value["addressing"];
+		obj.addressing = parseAddressing(location + "/addressing", value["addressing"], errors);
+	}
+
+	function parseSubnet(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchUcCidr6(value))
+			push(errors, [ location, "must be a valid IPv6 CIDR" ]);
+
+		return value;
 	}
 
 	if (exists(value, "subnet")) {
-		assert(type(value["subnet"]) == "string", "Property interface.ipv6.subnet must be of type string");
-		assert(matchUcCidr6(value["subnet"]), "Property interface.ipv6.subnet must match uc-cidr6 format");
-		obj.subnet = value["subnet"];
+		obj.subnet = parseSubnet(location + "/subnet", value["subnet"], errors);
+	}
+
+	function parseGateway(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchIpv6(value))
+			push(errors, [ location, "must be a valid IPv6 address" ]);
+
+		return value;
 	}
 
 	if (exists(value, "gateway")) {
-		assert(type(value["gateway"]) == "string", "Property interface.ipv6.gateway must be of type string");
-		assert(matchIpv6(value["gateway"]), "Property interface.ipv6.gateway must match ipv6 format");
-		obj.gateway = value["gateway"];
+		obj.gateway = parseGateway(location + "/gateway", value["gateway"], errors);
+	}
+
+	function parsePrefixSize(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (value > 64)
+			push(errors, [ location, "must be lower than or equal to 64" ]);
+
+		if (value < 0)
+			push(errors, [ location, "must be bigger than or equal to 0" ]);
+
+		return value;
 	}
 
 	if (exists(value, "prefix-size")) {
-		assert(type(value["prefix-size"]) == "int", "Property interface.ipv6.prefix-size must be of type integer");
-		assert(value["prefix-size"] <= 64, "Property interface.ipv6.prefix-size must be <= 64");
-		assert(value["prefix-size"] >= 0, "Property interface.ipv6.prefix-size must be >= 0");
-		obj.prefix_size = value["prefix-size"];
+		obj.prefix_size = parsePrefixSize(location + "/prefix-size", value["prefix-size"], errors);
 	}
 
 	if (exists(value, "dhcpv6")) {
-		obj.dhcpv6 = instantiateInterfaceIpv6Dhcpv6(value["dhcpv6"]);
+		obj.dhcpv6 = instantiateInterfaceIpv6Dhcpv6(location + "/dhcpv6", value["dhcpv6"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateInterfaceCaptive(value) {
-	assert(type(value) == "object", "Property interface.captive must be of type object");
+function instantiateInterfaceSsidEncryption(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
-	if (exists(value, "gateway-name")) {
-		assert(type(value["gateway-name"]) == "string", "Property interface.captive.gateway-name must be of type string");
-		obj.gateway_name = value["gateway-name"];
-	}
-	else {
-		obj.gateway_name = "uCentral - Captive Portal";
-	}
+	function parseProto(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
 
-	if (exists(value, "gateway-fqdn")) {
-		assert(type(value["gateway-fqdn"]) == "string", "Property interface.captive.gateway-fqdn must be of type string");
-		assert(matchFqdn(value["gateway-fqdn"]), "Property interface.captive.gateway-fqdn must match fqdn format");
-		obj.gateway_fqdn = value["gateway-fqdn"];
-	}
-	else {
-		obj.gateway_fqdn = "ucentral.splash";
-	}
+		if (!(value in [ "none", "psk", "psk2", "psk-mixed", "wpa", "wpa2", "wpa-mixed", "sae", "sae-mixed", "wpa3", "wpa3-mixed" ]))
+			push(errors, [ location, "must be one of [ \"none\", \"psk\", \"psk2\", \"psk-mixed\", \"wpa\", \"wpa2\", \"wpa-mixed\", \"sae\", \"sae-mixed\", \"wpa3\", \"wpa3-mixed\" ]" ]);
 
-	if (exists(value, "max-clients")) {
-		assert(type(value["max-clients"]) == "int", "Property interface.captive.max-clients must be of type integer");
-		obj.max_clients = value["max-clients"];
+		return value;
 	}
-	else {
-		obj.max_clients = 32;
-	}
-
-	if (exists(value, "upload-rate")) {
-		assert(type(value["upload-rate"]) == "int", "Property interface.captive.upload-rate must be of type integer");
-		obj.upload_rate = value["upload-rate"];
-	}
-	else {
-		obj.upload_rate = 0;
-	}
-
-	if (exists(value, "download-rate")) {
-		assert(type(value["download-rate"]) == "int", "Property interface.captive.download-rate must be of type integer");
-		obj.download_rate = value["download-rate"];
-	}
-	else {
-		obj.download_rate = 0;
-	}
-
-	if (exists(value, "upload-quota")) {
-		assert(type(value["upload-quota"]) == "int", "Property interface.captive.upload-quota must be of type integer");
-		obj.upload_quota = value["upload-quota"];
-	}
-	else {
-		obj.upload_quota = 0;
-	}
-
-	if (exists(value, "download-quota")) {
-		assert(type(value["download-quota"]) == "int", "Property interface.captive.download-quota must be of type integer");
-		obj.download_quota = value["download-quota"];
-	}
-	else {
-		obj.download_quota = 0;
-	}
-
-	return obj;
-}
-
-function instantiateInterfaceSsidEncryption(value) {
-	assert(type(value) == "object", "Property interface.ssid.encryption must be of type object");
-
-	let obj = {};
 
 	if (exists(value, "proto")) {
-		assert(type(value["proto"]) == "string", "Property interface.ssid.encryption.proto must be of type string");
-		assert(value["proto"] in [ "none", "psk", "psk2", "psk-mixed", "wpa", "wpa2", "wpa-mixed", "sae", "sae-mixed", "wpa3", "wpa3-mixed" ], "Property interface.ssid.encryption.proto must be one of [ \"none\", \"psk\", \"psk2\", \"psk-mixed\", \"wpa\", \"wpa2\", \"wpa-mixed\", \"sae\", \"sae-mixed\", \"wpa3\", \"wpa3-mixed\" ]");
-		obj.proto = value["proto"];
+		obj.proto = parseProto(location + "/proto", value["proto"], errors);
+	}
+
+	function parseKey(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (length(value) > 63)
+			push(errors, [ location, "must be at most 63 characters long" ]);
+
+		if (length(value) < 8)
+			push(errors, [ location, "must be at least 63 characters long" ]);
+
+		return value;
 	}
 
 	if (exists(value, "key")) {
-		assert(type(value["key"]) == "string", "Property interface.ssid.encryption.key must be of type string");
-		assert(length(value["key"]) <= 63, "Property interface.ssid.encryption.key must be <= 63 characters long");
+		obj.key = parseKey(location + "/key", value["key"], errors);
+	}
 
-		assert(length(value["key"]) >= 8, "Property interface.ssid.encryption.key must be >= 8 characters long");
+	function parseIeee80211w(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
 
-		obj.key = value["key"];
+		if (!(value in [ "disabled", "optional", "required" ]))
+			push(errors, [ location, "must be one of [ \"disabled\", \"optional\", \"required\" ]" ]);
+
+		return value;
 	}
 
 	if (exists(value, "ieee80211w")) {
-		assert(type(value["ieee80211w"]) == "string", "Property interface.ssid.encryption.ieee80211w must be of type string");
-		assert(value["ieee80211w"] in [ "disabled", "optional", "required" ], "Property interface.ssid.encryption.ieee80211w must be one of [ \"disabled\", \"optional\", \"required\" ]");
-		obj.ieee80211w = value["ieee80211w"];
+		obj.ieee80211w = parseIeee80211w(location + "/ieee80211w", value["ieee80211w"], errors);
 	}
 	else {
 		obj.ieee80211w = "disabled";
@@ -704,69 +1222,271 @@ function instantiateInterfaceSsidEncryption(value) {
 	return obj;
 }
 
-function instantiateInterfaceSsidMultiPsk(value) {
-	assert(type(value) == "object", "Property interface.ssid.multi-psk must be of type object");
+function instantiateInterfaceSsidMultiPsk(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseMac(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchUcMac(value))
+			push(errors, [ location, "must be a valid MAC address" ]);
+
+		return value;
+	}
+
 	if (exists(value, "mac")) {
-		assert(type(value["mac"]) == "string", "Property interface.ssid.multi-psk.mac must be of type string");
-		assert(matchUcMac(value["mac"]), "Property interface.ssid.multi-psk.mac must match uc-mac format");
-		obj.mac = value["mac"];
+		obj.mac = parseMac(location + "/mac", value["mac"], errors);
+	}
+
+	function parseKey(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (length(value) > 63)
+			push(errors, [ location, "must be at most 63 characters long" ]);
+
+		if (length(value) < 8)
+			push(errors, [ location, "must be at least 63 characters long" ]);
+
+		return value;
 	}
 
 	if (exists(value, "key")) {
-		assert(type(value["key"]) == "string", "Property interface.ssid.multi-psk.key must be of type string");
-		assert(length(value["key"]) <= 63, "Property interface.ssid.multi-psk.key must be <= 63 characters long");
+		obj.key = parseKey(location + "/key", value["key"], errors);
+	}
 
-		assert(length(value["key"]) >= 8, "Property interface.ssid.multi-psk.key must be >= 8 characters long");
+	function parseVlanId(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
 
-		obj.key = value["key"];
+		if (value > 4096)
+			push(errors, [ location, "must be lower than or equal to 4096" ]);
+
+		return value;
 	}
 
 	if (exists(value, "vlan-id")) {
-		assert(type(value["vlan-id"]) == "int", "Property interface.ssid.multi-psk.vlan-id must be of type integer");
-		assert(value["vlan-id"] <= 4096, "Property interface.ssid.multi-psk.vlan-id must be <= 4096");
-		obj.vlan_id = value["vlan-id"];
+		obj.vlan_id = parseVlanId(location + "/vlan-id", value["vlan-id"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateInterfaceSsidRrm(value) {
-	assert(type(value) == "object", "Property interface.ssid.rrm must be of type object");
+function instantiateInterfaceSsidCaptive(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseGatewayName(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		return value;
+	}
+
+	if (exists(value, "gateway-name")) {
+		obj.gateway_name = parseGatewayName(location + "/gateway-name", value["gateway-name"], errors);
+	}
+	else {
+		obj.gateway_name = "uCentral - Captive Portal";
+	}
+
+	function parseGatewayFqdn(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchFqdn(value))
+			push(errors, [ location, "must be a valid fully qualified domain name" ]);
+
+		return value;
+	}
+
+	if (exists(value, "gateway-fqdn")) {
+		obj.gateway_fqdn = parseGatewayFqdn(location + "/gateway-fqdn", value["gateway-fqdn"], errors);
+	}
+	else {
+		obj.gateway_fqdn = "ucentral.splash";
+	}
+
+	function parseMaxclients(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		return value;
+	}
+
+	if (exists(value, "maxclients")) {
+		obj.maxclients = parseMaxclients(location + "/maxclients", value["maxclients"], errors);
+	}
+	else {
+		obj.maxclients = 32;
+	}
+
+	function parseUploadRate(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		return value;
+	}
+
+	if (exists(value, "upload-rate")) {
+		obj.upload_rate = parseUploadRate(location + "/upload-rate", value["upload-rate"], errors);
+	}
+	else {
+		obj.upload_rate = 10000;
+	}
+
+	function parseDownloadRate(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		return value;
+	}
+
+	if (exists(value, "download-rate")) {
+		obj.download_rate = parseDownloadRate(location + "/download-rate", value["download-rate"], errors);
+	}
+	else {
+		obj.download_rate = 10000;
+	}
+
+	function parseUploadQuota(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		return value;
+	}
+
+	if (exists(value, "upload-quota")) {
+		obj.upload_quota = parseUploadQuota(location + "/upload-quota", value["upload-quota"], errors);
+	}
+	else {
+		obj.upload_quota = 10000;
+	}
+
+	function parseDownloadQuota(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		return value;
+	}
+
+	if (exists(value, "download-quota")) {
+		obj.download_quota = parseDownloadQuota(location + "/download-quota", value["download-quota"], errors);
+	}
+	else {
+		obj.download_quota = 10000;
+	}
+
+	return obj;
+}
+
+function instantiateInterfaceSsidRrm(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
+
+	let obj = {};
+
+	function parseNeighborReporting(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "neighbor-reporting")) {
-		assert(type(value["neighbor-reporting"]) == "bool", "Property interface.ssid.rrm.neighbor-reporting must be of type boolean");
-		obj.neighbor_reporting = value["neighbor-reporting"];
+		obj.neighbor_reporting = parseNeighborReporting(location + "/neighbor-reporting", value["neighbor-reporting"], errors);
 	}
 	else {
 		obj.neighbor_reporting = false;
 	}
 
+	function parseLci(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "lci")) {
-		assert(type(value["lci"]) == "string", "Property interface.ssid.rrm.lci must be of type string");
-		obj.lci = value["lci"];
+		obj.lci = parseLci(location + "/lci", value["lci"], errors);
+	}
+
+	function parseCivicLocation(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "civic-location")) {
-		assert(type(value["civic-location"]) == "string", "Property interface.ssid.rrm.civic-location must be of type string");
-		obj.civic_location = value["civic-location"];
+		obj.civic_location = parseCivicLocation(location + "/civic-location", value["civic-location"], errors);
+	}
+
+	function parseFtmResponder(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "ftm-responder")) {
-		assert(type(value["ftm-responder"]) == "bool", "Property interface.ssid.rrm.ftm-responder must be of type boolean");
-		obj.ftm_responder = value["ftm-responder"];
+		obj.ftm_responder = parseFtmResponder(location + "/ftm-responder", value["ftm-responder"], errors);
 	}
 	else {
 		obj.ftm_responder = false;
 	}
 
+	function parseStationaryAp(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "stationary-ap")) {
-		assert(type(value["stationary-ap"]) == "bool", "Property interface.ssid.rrm.stationary-ap must be of type boolean");
-		obj.stationary_ap = value["stationary-ap"];
+		obj.stationary_ap = parseStationaryAp(location + "/stationary-ap", value["stationary-ap"], errors);
 	}
 	else {
 		obj.stationary_ap = false;
@@ -775,24 +1495,47 @@ function instantiateInterfaceSsidRrm(value) {
 	return obj;
 }
 
-function instantiateInterfaceSsidRates(value) {
-	assert(type(value) == "object", "Property interface.ssid.rates must be of type object");
+function instantiateInterfaceSsidRates(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseBeacon(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (!(value in [ 0, 1000, 2000, 5500, 6000, 9000, 11000, 12000, 18000, 24000, 36000, 48000, 54000 ]))
+			push(errors, [ location, "must be one of [ 0, 1000, 2000, 5500, 6000, 9000, 11000, 12000, 18000, 24000, 36000, 48000, 54000 ]" ]);
+
+		return value;
+	}
+
 	if (exists(value, "beacon")) {
-		assert(type(value["beacon"]) == "int", "Property interface.ssid.rates.beacon must be of type integer");
-		assert(value["beacon"] in [ 0, 1000, 2000, 5500, 6000, 9000, 11000, 12000, 18000, 24000, 36000, 48000, 54000 ], "Property interface.ssid.rates.beacon must be one of [ 0, 1000, 2000, 5500, 6000, 9000, 11000, 12000, 18000, 24000, 36000, 48000, 54000 ]");
-		obj.beacon = value["beacon"];
+		obj.beacon = parseBeacon(location + "/beacon", value["beacon"], errors);
 	}
 	else {
 		obj.beacon = 0;
 	}
 
+	function parseMulticast(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (!(value in [ 0, 1000, 2000, 5500, 6000, 9000, 11000, 12000, 18000, 24000, 36000, 48000, 54000 ]))
+			push(errors, [ location, "must be one of [ 0, 1000, 2000, 5500, 6000, 9000, 11000, 12000, 18000, 24000, 36000, 48000, 54000 ]" ]);
+
+		return value;
+	}
+
 	if (exists(value, "multicast")) {
-		assert(type(value["multicast"]) == "int", "Property interface.ssid.rates.multicast must be of type integer");
-		assert(value["multicast"] in [ 0, 1000, 2000, 5500, 6000, 9000, 11000, 12000, 18000, 24000, 36000, 48000, 54000 ], "Property interface.ssid.rates.multicast must be one of [ 0, 1000, 2000, 5500, 6000, 9000, 11000, 12000, 18000, 24000, 36000, 48000, 54000 ]");
-		obj.multicast = value["multicast"];
+		obj.multicast = parseMulticast(location + "/multicast", value["multicast"], errors);
 	}
 	else {
 		obj.multicast = 0;
@@ -801,22 +1544,41 @@ function instantiateInterfaceSsidRates(value) {
 	return obj;
 }
 
-function instantiateInterfaceSsidRateLimit(value) {
-	assert(type(value) == "object", "Property interface.ssid.rate-limit must be of type object");
+function instantiateInterfaceSsidRateLimit(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseIngressRate(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "ingress-rate")) {
-		assert(type(value["ingress-rate"]) == "int", "Property interface.ssid.rate-limit.ingress-rate must be of type integer");
-		obj.ingress_rate = value["ingress-rate"];
+		obj.ingress_rate = parseIngressRate(location + "/ingress-rate", value["ingress-rate"], errors);
 	}
 	else {
 		obj.ingress_rate = 0;
 	}
 
+	function parseEgressRate(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "egress-rate")) {
-		assert(type(value["egress-rate"]) == "int", "Property interface.ssid.rate-limit.egress-rate must be of type integer");
-		obj.egress_rate = value["egress-rate"];
+		obj.egress_rate = parseEgressRate(location + "/egress-rate", value["egress-rate"], errors);
 	}
 	else {
 		obj.egress_rate = 0;
@@ -825,161 +1587,321 @@ function instantiateInterfaceSsidRateLimit(value) {
 	return obj;
 }
 
-function instantiateInterfaceSsidRoaming(value) {
-	assert(type(value) == "object", "Property interface.ssid.roaming must be of type object");
+function instantiateInterfaceSsidRoaming(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseMessageExchange(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!(value in [ "air", "ds" ]))
+			push(errors, [ location, "must be one of [ \"air\", \"ds\" ]" ]);
+
+		return value;
+	}
+
 	if (exists(value, "message-exchange")) {
-		assert(type(value["message-exchange"]) == "string", "Property interface.ssid.roaming.message-exchange must be of type string");
-		assert(value["message-exchange"] in [ "air", "ds" ], "Property interface.ssid.roaming.message-exchange must be one of [ \"air\", \"ds\" ]");
-		obj.message_exchange = value["message-exchange"];
+		obj.message_exchange = parseMessageExchange(location + "/message-exchange", value["message-exchange"], errors);
 	}
 	else {
 		obj.message_exchange = "ds";
 	}
 
+	function parseGeneratePsk(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "generate-psk")) {
-		assert(type(value["generate-psk"]) == "bool", "Property interface.ssid.roaming.generate-psk must be of type boolean");
-		obj.generate_psk = value["generate-psk"];
+		obj.generate_psk = parseGeneratePsk(location + "/generate-psk", value["generate-psk"], errors);
 	}
 	else {
 		obj.generate_psk = true;
 	}
 
+	function parseDomainIdentifier(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (length(value) > 4)
+			push(errors, [ location, "must be at most 4 characters long" ]);
+
+		if (length(value) < 4)
+			push(errors, [ location, "must be at least 4 characters long" ]);
+
+		return value;
+	}
+
 	if (exists(value, "domain-identifier")) {
-		assert(type(value["domain-identifier"]) == "string", "Property interface.ssid.roaming.domain-identifier must be of type string");
-		assert(length(value["domain-identifier"]) <= 4, "Property interface.ssid.roaming.domain-identifier must be <= 4 characters long");
-
-		assert(length(value["domain-identifier"]) >= 4, "Property interface.ssid.roaming.domain-identifier must be >= 4 characters long");
-
-		obj.domain_identifier = value["domain-identifier"];
+		obj.domain_identifier = parseDomainIdentifier(location + "/domain-identifier", value["domain-identifier"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateInterfaceSsidRadiusLocalUser(value) {
-	assert(type(value) == "object", "Property interface.ssid.radius.local-user must be of type object");
+function instantiateInterfaceSsidRadiusLocalUser(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseMac(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchUcMac(value))
+			push(errors, [ location, "must be a valid MAC address" ]);
+
+		return value;
+	}
+
 	if (exists(value, "mac")) {
-		assert(type(value["mac"]) == "string", "Property interface.ssid.radius.local-user.mac must be of type string");
-		assert(matchUcMac(value["mac"]), "Property interface.ssid.radius.local-user.mac must match uc-mac format");
-		obj.mac = value["mac"];
+		obj.mac = parseMac(location + "/mac", value["mac"], errors);
+	}
+
+	function parseUser(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (length(value) > 63)
+			push(errors, [ location, "must be at most 63 characters long" ]);
+
+		if (length(value) < 8)
+			push(errors, [ location, "must be at least 63 characters long" ]);
+
+		return value;
 	}
 
 	if (exists(value, "user")) {
-		assert(type(value["user"]) == "string", "Property interface.ssid.radius.local-user.user must be of type string");
-		assert(length(value["user"]) <= 63, "Property interface.ssid.radius.local-user.user must be <= 63 characters long");
+		obj.user = parseUser(location + "/user", value["user"], errors);
+	}
 
-		assert(length(value["user"]) >= 8, "Property interface.ssid.radius.local-user.user must be >= 8 characters long");
+	function parsePsk(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
 
-		obj.user = value["user"];
+		if (length(value) > 63)
+			push(errors, [ location, "must be at most 63 characters long" ]);
+
+		if (length(value) < 8)
+			push(errors, [ location, "must be at least 63 characters long" ]);
+
+		return value;
 	}
 
 	if (exists(value, "psk")) {
-		assert(type(value["psk"]) == "string", "Property interface.ssid.radius.local-user.psk must be of type string");
-		assert(length(value["psk"]) <= 63, "Property interface.ssid.radius.local-user.psk must be <= 63 characters long");
+		obj.psk = parsePsk(location + "/psk", value["psk"], errors);
+	}
 
-		assert(length(value["psk"]) >= 8, "Property interface.ssid.radius.local-user.psk must be >= 8 characters long");
+	function parseVid(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
 
-		obj.psk = value["psk"];
+		if (value > 4096)
+			push(errors, [ location, "must be lower than or equal to 4096" ]);
+
+		return value;
 	}
 
 	if (exists(value, "vid")) {
-		assert(type(value["vid"]) == "int", "Property interface.ssid.radius.local-user.vid must be of type integer");
-		assert(value["vid"] <= 4096, "Property interface.ssid.radius.local-user.vid must be <= 4096");
-		obj.vid = value["vid"];
+		obj.vid = parseVid(location + "/vid", value["vid"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateInterfaceSsidRadiusServer(value) {
-	assert(type(value) == "object", "Property interface.ssid.radius.server must be of type object");
+function instantiateInterfaceSsidRadiusServer(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseHost(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchUcHost(value))
+			push(errors, [ location, "must be a valid hostname or IP address" ]);
+
+		return value;
+	}
+
 	if (exists(value, "host")) {
-		assert(type(value["host"]) == "string", "Property interface.ssid.radius.server.host must be of type string");
-		assert(matchUcHost(value["host"]), "Property interface.ssid.radius.server.host must match uc-host format");
-		obj.host = value["host"];
+		obj.host = parseHost(location + "/host", value["host"], errors);
+	}
+
+	function parsePort(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (value > 65535)
+			push(errors, [ location, "must be lower than or equal to 65535" ]);
+
+		if (value < 1024)
+			push(errors, [ location, "must be bigger than or equal to 1024" ]);
+
+		return value;
 	}
 
 	if (exists(value, "port")) {
-		assert(type(value["port"]) == "int", "Property interface.ssid.radius.server.port must be of type integer");
-		assert(value["port"] <= 65535, "Property interface.ssid.radius.server.port must be <= 65535");
-		assert(value["port"] >= 1024, "Property interface.ssid.radius.server.port must be >= 1024");
-		obj.port = value["port"];
+		obj.port = parsePort(location + "/port", value["port"], errors);
+	}
+
+	function parseSecret(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "secret")) {
-		assert(type(value["secret"]) == "string", "Property interface.ssid.radius.server.secret must be of type string");
-		obj.secret = value["secret"];
+		obj.secret = parseSecret(location + "/secret", value["secret"], errors);
 	}
 
-	function parseRequestAttribute(value) {
-		assert(type(value) == "array", "Property interface.ssid.radius.server.request-attribute must be of type array");
+	function parseRequestAttribute(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
 
-		function parseItem(value) {
-			assert(type(value) == "object", "Property interface.ssid.radius.server.request-attribute.item must be of type object");
+		function parseItem(location, value, errors) {
+			if (type(value) != "object") {
+				push(errors, [ location, "must be of type object" ]);
+				return null;
+			}
 
 			let obj = {};
 
-			if (exists(value, "id")) {
-				assert(type(value["id"]) == "int", "Property interface.ssid.radius.server.request-attribute.item.id must be of type integer");
-				assert(value["id"] <= 255, "Property interface.ssid.radius.server.request-attribute.item.id must be <= 255");
-				assert(value["id"] >= 1, "Property interface.ssid.radius.server.request-attribute.item.id must be >= 1");
-				obj.id = value["id"];
+			function parseId(location, value, errors) {
+				if (type(value) != "int") {
+					push(errors, [ location, "must be of type integer" ]);
+					return null;
+				}
+
+				if (value > 255)
+					push(errors, [ location, "must be lower than or equal to 255" ]);
+
+				if (value < 1)
+					push(errors, [ location, "must be bigger than or equal to 1" ]);
+
+				return value;
 			}
 
-			function parseValue(value) {
-				function parseVariant0(value) {
-					assert(type(value) == "int", "Property interface.ssid.radius.server.request-attribute.item.value must be of type integer");
-					assert(value <= 4294967295, "Property interface.ssid.radius.server.request-attribute.item.value must be <= 4294967295");
-					assert(value >= 0, "Property interface.ssid.radius.server.request-attribute.item.value must be >= 0");
+			if (exists(value, "id")) {
+				obj.id = parseId(location + "/id", value["id"], errors);
+			}
+
+			function parseValue(location, value, errors) {
+				function parseVariant0(location, value, errors) {
+					if (type(value) != "int") {
+						push(errors, [ location, "must be of type integer" ]);
+						return null;
+					}
+
+					if (value > 4294967295)
+						push(errors, [ location, "must be lower than or equal to 4294967295" ]);
+
+					if (value < 0)
+						push(errors, [ location, "must be bigger than or equal to 0" ]);
 
 					return value;
 				}
 
-				function parseVariant1(value) {
-					assert(type(value) == "string", "Property interface.ssid.radius.server.request-attribute.item.value must be of type string");
+				function parseVariant1(location, value, errors) {
+					if (type(value) != "string") {
+						push(errors, [ location, "must be of type string" ]);
+						return null;
+					}
 
 					return value;
 				}
 
-				let success = 0, errors = [];
+				let success = 0, tryval, tryerr, verrors = [];
 
-				try { value = parseVariant0(value); success++; }
-				catch (e) { push(errors, e); }
+				tryerr = [];
+				tryval = parseVariant0(location, value, tryerr);
+				if (!length(tryerr)) {
+					value = tryval;
+					success++;
+				}
+				else {
+					push(verrors, join(" and\n", map(tryerr, err => "\t - " + err[1])));
+				}
 
-				try { value = parseVariant1(value); success++; }
-				catch (e) { push(errors, e); }
+				tryerr = [];
+				tryval = parseVariant1(location, value, tryerr);
+				if (!length(tryerr)) {
+					value = tryval;
+					success++;
+				}
+				else {
+					push(verrors, join(" and\n", map(tryerr, err => "\t - " + err[1])));
+				}
 
-				assert(success > 0, join("\n- or -\n", errors));
+				if (success == 0) {
+					push(errors, [ location, "must match at least one of the following constraints:\n" + join("\n- or -\n", verrors) ]);
+					return null;
+				}
 
 				return value;
 			}
 
 			if (exists(value, "value")) {
-				obj.value = parseValue(value["value"]);
+				obj.value = parseValue(location + "/value", value["value"], errors);
 			}
 
 			return obj;
 		}
 
-		return map(value, parseItem);
+		return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "request-attribute")) {
-		obj.request_attribute = parseRequestAttribute(value["request-attribute"]);
+		obj.request_attribute = parseRequestAttribute(location + "/request-attribute", value["request-attribute"], errors);
+	}
+
+	function parseRequestCui(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "request-cui")) {
-		assert(type(value["request-cui"]) == "bool", "Property interface.ssid.radius.server.request-cui must be of type boolean");
-		obj.request_cui = value["request-cui"];
+		obj.request_cui = parseRequestCui(location + "/request-cui", value["request-cui"], errors);
 	}
 	else {
 		obj.request_cui = false;
@@ -988,512 +1910,971 @@ function instantiateInterfaceSsidRadiusServer(value) {
 	return obj;
 }
 
-function instantiateInterfaceSsidRadius(value) {
-	assert(type(value) == "object", "Property interface.ssid.radius must be of type object");
+function instantiateInterfaceSsidRadius(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
-	function parseLocalUsers(value) {
-		assert(type(value) == "array", "Property interface.ssid.radius.local-users must be of type array");
+	function parseLocalUsers(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
 
-		return map(value, instantiateInterfaceSsidRadiusLocalUser);
+		return map(value, (item, i) => instantiateInterfaceSsidRadiusLocalUser(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "local-users")) {
-		obj.local_users = parseLocalUsers(value["local-users"]);
+		obj.local_users = parseLocalUsers(location + "/local-users", value["local-users"], errors);
 	}
 
 	if (exists(value, "authentication")) {
-		obj.authentication = instantiateInterfaceSsidRadiusServer(value["authentication"]);
+		obj.authentication = instantiateInterfaceSsidRadiusServer(location + "/authentication", value["authentication"], errors);
 	}
 
 	if (exists(value, "accounting")) {
-		obj.accounting = instantiateInterfaceSsidRadiusServer(value["accounting"]);
+		obj.accounting = instantiateInterfaceSsidRadiusServer(location + "/accounting", value["accounting"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateInterfaceSsidPassPoint(value) {
-	assert(type(value) == "object", "Property interface.ssid.pass-point must be of type object");
+function instantiateInterfaceSsidPassPoint(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseVenueName(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "venue-name")) {
-		assert(type(value["venue-name"]) == "string", "Property interface.ssid.pass-point.venue-name must be of type string");
-		obj.venue_name = value["venue-name"];
+		obj.venue_name = parseVenueName(location + "/venue-name", value["venue-name"], errors);
+	}
+
+	function parseVenueGroup(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (value > 32)
+			push(errors, [ location, "must be lower than or equal to 32" ]);
+
+		return value;
 	}
 
 	if (exists(value, "venue-group")) {
-		assert(type(value["venue-group"]) == "int", "Property interface.ssid.pass-point.venue-group must be of type integer");
-		assert(value["venue-group"] <= 32, "Property interface.ssid.pass-point.venue-group must be <= 32");
-		obj.venue_group = value["venue-group"];
+		obj.venue_group = parseVenueGroup(location + "/venue-group", value["venue-group"], errors);
+	}
+
+	function parseVenueType(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (value > 32)
+			push(errors, [ location, "must be lower than or equal to 32" ]);
+
+		return value;
 	}
 
 	if (exists(value, "venue-type")) {
-		assert(type(value["venue-type"]) == "int", "Property interface.ssid.pass-point.venue-type must be of type integer");
-		assert(value["venue-type"] <= 32, "Property interface.ssid.pass-point.venue-type must be <= 32");
-		obj.venue_type = value["venue-type"];
+		obj.venue_type = parseVenueType(location + "/venue-type", value["venue-type"], errors);
+	}
+
+	function parseVenueUrl(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchUri(value))
+			push(errors, [ location, "must be a valid URI" ]);
+
+		return value;
 	}
 
 	if (exists(value, "venue-url")) {
-		assert(type(value["venue-url"]) == "string", "Property interface.ssid.pass-point.venue-url must be of type string");
-		assert(matchUri(value["venue-url"]), "Property interface.ssid.pass-point.venue-url must match uri format");
-		obj.venue_url = value["venue-url"];
+		obj.venue_url = parseVenueUrl(location + "/venue-url", value["venue-url"], errors);
 	}
 
-	function parseAuthType(value) {
-		assert(type(value) == "object", "Property interface.ssid.pass-point.auth-type must be of type object");
+	function parseAuthType(location, value, errors) {
+		if (type(value) != "object") {
+			push(errors, [ location, "must be of type object" ]);
+			return null;
+		}
 
 		let obj = {};
 
+		function parseType(location, value, errors) {
+			if (type(value) != "string") {
+				push(errors, [ location, "must be of type string" ]);
+				return null;
+			}
+
+			if (!(value in [ "terms-and-conditions", "online-enrollment", "http-redirection", "dns-redirection" ]))
+				push(errors, [ location, "must be one of [ \"terms-and-conditions\", \"online-enrollment\", \"http-redirection\", \"dns-redirection\" ]" ]);
+
+			return value;
+		}
+
 		if (exists(value, "type")) {
-			assert(type(value["type"]) == "string", "Property interface.ssid.pass-point.auth-type.type must be of type string");
-			assert(value["type"] in [ "terms-and-conditions", "online-enrollment", "http-redirection", "dns-redirection" ], "Property interface.ssid.pass-point.auth-type.type must be one of [ \"terms-and-conditions\", \"online-enrollment\", \"http-redirection\", \"dns-redirection\" ]");
-			obj.type = value["type"];
+			obj.type = parseType(location + "/type", value["type"], errors);
+		}
+
+		function parseUri(location, value, errors) {
+			if (type(value) != "string") {
+				push(errors, [ location, "must be of type string" ]);
+				return null;
+			}
+
+			if (!matchUri(value))
+				push(errors, [ location, "must be a valid URI" ]);
+
+			return value;
 		}
 
 		if (exists(value, "uri")) {
-			assert(type(value["uri"]) == "string", "Property interface.ssid.pass-point.auth-type.uri must be of type string");
-			assert(matchUri(value["uri"]), "Property interface.ssid.pass-point.auth-type.uri must match uri format");
-			obj.uri = value["uri"];
+			obj.uri = parseUri(location + "/uri", value["uri"], errors);
 		}
 
 		return obj;
 	}
 
 	if (exists(value, "auth-type")) {
-		obj.auth_type = parseAuthType(value["auth-type"]);
+		obj.auth_type = parseAuthType(location + "/auth-type", value["auth-type"], errors);
+	}
+
+	function parseDomainName(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchHostname(value))
+			push(errors, [ location, "must be a valid hostname" ]);
+
+		return value;
 	}
 
 	if (exists(value, "domain-name")) {
-		assert(type(value["domain-name"]) == "string", "Property interface.ssid.pass-point.domain-name must be of type string");
-		assert(matchHostname(value["domain-name"]), "Property interface.ssid.pass-point.domain-name must match hostname format");
-		obj.domain_name = value["domain-name"];
+		obj.domain_name = parseDomainName(location + "/domain-name", value["domain-name"], errors);
+	}
+
+	function parseNaiRealm(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "nai-realm")) {
-		assert(type(value["nai-realm"]) == "string", "Property interface.ssid.pass-point.nai-realm must be of type string");
-		obj.nai_realm = value["nai-realm"];
+		obj.nai_realm = parseNaiRealm(location + "/nai-realm", value["nai-realm"], errors);
+	}
+
+	function parseOsen(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "osen")) {
-		assert(type(value["osen"]) == "bool", "Property interface.ssid.pass-point.osen must be of type boolean");
-		obj.osen = value["osen"];
+		obj.osen = parseOsen(location + "/osen", value["osen"], errors);
+	}
+
+	function parseAnqpDomain(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (value > 65535)
+			push(errors, [ location, "must be lower than or equal to 65535" ]);
+
+		if (value < 0)
+			push(errors, [ location, "must be bigger than or equal to 0" ]);
+
+		return value;
 	}
 
 	if (exists(value, "anqp-domain")) {
-		assert(type(value["anqp-domain"]) == "int", "Property interface.ssid.pass-point.anqp-domain must be of type integer");
-		assert(value["anqp-domain"] <= 65535, "Property interface.ssid.pass-point.anqp-domain must be <= 65535");
-		assert(value["anqp-domain"] >= 0, "Property interface.ssid.pass-point.anqp-domain must be >= 0");
-		obj.anqp_domain = value["anqp-domain"];
+		obj.anqp_domain = parseAnqpDomain(location + "/anqp-domain", value["anqp-domain"], errors);
+	}
+
+	function parseFriendlyName(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "friendly-name")) {
-		assert(type(value["friendly-name"]) == "string", "Property interface.ssid.pass-point.friendly-name must be of type string");
-		obj.friendly_name = value["friendly-name"];
+		obj.friendly_name = parseFriendlyName(location + "/friendly-name", value["friendly-name"], errors);
 	}
 
-	function parseIcon(value) {
-		assert(type(value) == "array", "Property interface.ssid.pass-point.icon must be of type array");
+	function parseIcon(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
 
-		function parseItem(value) {
-			assert(type(value) == "object", "Property interface.ssid.pass-point.icon.item must be of type object");
+		function parseItem(location, value, errors) {
+			if (type(value) != "object") {
+				push(errors, [ location, "must be of type object" ]);
+				return null;
+			}
 
 			let obj = {};
 
+			function parseWidth(location, value, errors) {
+				if (type(value) != "int") {
+					push(errors, [ location, "must be of type integer" ]);
+					return null;
+				}
+
+				return value;
+			}
+
 			if (exists(value, "width")) {
-				assert(type(value["width"]) == "int", "Property interface.ssid.pass-point.icon.item.width must be of type integer");
-				obj.width = value["width"];
+				obj.width = parseWidth(location + "/width", value["width"], errors);
+			}
+
+			function parseHeight(location, value, errors) {
+				if (type(value) != "int") {
+					push(errors, [ location, "must be of type integer" ]);
+					return null;
+				}
+
+				return value;
 			}
 
 			if (exists(value, "height")) {
-				assert(type(value["height"]) == "int", "Property interface.ssid.pass-point.icon.item.height must be of type integer");
-				obj.height = value["height"];
+				obj.height = parseHeight(location + "/height", value["height"], errors);
+			}
+
+			function parseType(location, value, errors) {
+				if (type(value) != "string") {
+					push(errors, [ location, "must be of type string" ]);
+					return null;
+				}
+
+				return value;
 			}
 
 			if (exists(value, "type")) {
-				assert(type(value["type"]) == "string", "Property interface.ssid.pass-point.icon.item.type must be of type string");
-				obj.type = value["type"];
+				obj.type = parseType(location + "/type", value["type"], errors);
+			}
+
+			function parseUri(location, value, errors) {
+				if (type(value) != "string") {
+					push(errors, [ location, "must be of type string" ]);
+					return null;
+				}
+
+				if (!matchUri(value))
+					push(errors, [ location, "must be a valid URI" ]);
+
+				return value;
 			}
 
 			if (exists(value, "uri")) {
-				assert(type(value["uri"]) == "string", "Property interface.ssid.pass-point.icon.item.uri must be of type string");
-				assert(matchUri(value["uri"]), "Property interface.ssid.pass-point.icon.item.uri must match uri format");
-				obj.uri = value["uri"];
+				obj.uri = parseUri(location + "/uri", value["uri"], errors);
+			}
+
+			function parseLanguage(location, value, errors) {
+				if (type(value) != "string") {
+					push(errors, [ location, "must be of type string" ]);
+					return null;
+				}
+
+				if (!match(value, regexp("^[a-z][a-z][a-z]$")))
+					push(errors, [ location, "must match regular expression /^[a-z][a-z][a-z]$/" ]);
+
+				return value;
 			}
 
 			if (exists(value, "language")) {
-				assert(type(value["language"]) == "string", "Property interface.ssid.pass-point.icon.item.language must be of type string");
-				assert(match(value["language"], /^[a-z][a-z][a-z]$/), "Property interface.ssid.pass-point.icon.item.language must match regular expression /^[a-z][a-z][a-z]$/");
-
-				obj.language = value["language"];
+				obj.language = parseLanguage(location + "/language", value["language"], errors);
 			}
 
 			return obj;
 		}
 
-		return map(value, parseItem);
+		return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "icon")) {
-		obj.icon = parseIcon(value["icon"]);
+		obj.icon = parseIcon(location + "/icon", value["icon"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateInterfaceSsid(value) {
-	assert(type(value) == "object", "Property interface.ssid must be of type object");
+function instantiateInterfaceSsid(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
-	if (exists(value, "name")) {
-		assert(type(value["name"]) == "string", "Property interface.ssid.name must be of type string");
-		assert(length(value["name"]) <= 32, "Property interface.ssid.name must be <= 32 characters long");
+	function parseName(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
 
-		assert(length(value["name"]) >= 1, "Property interface.ssid.name must be >= 1 characters long");
+		if (length(value) > 32)
+			push(errors, [ location, "must be at most 32 characters long" ]);
 
-		obj.name = value["name"];
+		if (length(value) < 1)
+			push(errors, [ location, "must be at least 32 characters long" ]);
+
+		return value;
 	}
 
-	function parseWifiBands(value) {
-		assert(type(value) == "array", "Property interface.ssid.wifi-bands must be of type array");
+	if (exists(value, "name")) {
+		obj.name = parseName(location + "/name", value["name"], errors);
+	}
 
-		return map(value, (item) => {
-			assert(type(item) == "string", "Items of interface.ssid.wifi-bands must be of type string");
-			assert(item in [ "2G", "5G", "6G" ], "Items of interface.ssid.wifi-bands must be one of [ \"2G\", \"5G\", \"6G\" ]");
-			return item;
-		});
+	function parseWifiBands(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
+
+		function parseItem(location, value, errors) {
+			if (type(value) != "string") {
+				push(errors, [ location, "must be of type string" ]);
+				return null;
+			}
+
+			if (!(value in [ "2G", "5G", "6G" ]))
+				push(errors, [ location, "must be one of [ \"2G\", \"5G\", \"6G\" ]" ]);
+
+			return value;
+		}
+
+		return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "wifi-bands")) {
-		obj.wifi_bands = parseWifiBands(value["wifi-bands"]);
+		obj.wifi_bands = parseWifiBands(location + "/wifi-bands", value["wifi-bands"], errors);
+	}
+
+	function parseBssMode(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!(value in [ "ap", "sta", "mesh", "wds-ap", "wds-sta", "wds-repeater" ]))
+			push(errors, [ location, "must be one of [ \"ap\", \"sta\", \"mesh\", \"wds-ap\", \"wds-sta\", \"wds-repeater\" ]" ]);
+
+		return value;
 	}
 
 	if (exists(value, "bss-mode")) {
-		assert(type(value["bss-mode"]) == "string", "Property interface.ssid.bss-mode must be of type string");
-		assert(value["bss-mode"] in [ "ap", "sta", "mesh", "wds-ap", "wds-sta", "wds-repeater" ], "Property interface.ssid.bss-mode must be one of [ \"ap\", \"sta\", \"mesh\", \"wds-ap\", \"wds-sta\", \"wds-repeater\" ]");
-		obj.bss_mode = value["bss-mode"];
+		obj.bss_mode = parseBssMode(location + "/bss-mode", value["bss-mode"], errors);
 	}
 	else {
 		obj.bss_mode = "ap";
 	}
 
+	function parseBssid(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchUcMac(value))
+			push(errors, [ location, "must be a valid MAC address" ]);
+
+		return value;
+	}
+
 	if (exists(value, "bssid")) {
-		assert(type(value["bssid"]) == "string", "Property interface.ssid.bssid must be of type string");
-		assert(matchUcMac(value["bssid"]), "Property interface.ssid.bssid must match uc-mac format");
-		obj.bssid = value["bssid"];
+		obj.bssid = parseBssid(location + "/bssid", value["bssid"], errors);
+	}
+
+	function parseHiddenSsid(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "hidden-ssid")) {
-		assert(type(value["hidden-ssid"]) == "bool", "Property interface.ssid.hidden-ssid must be of type boolean");
-		obj.hidden_ssid = value["hidden-ssid"];
+		obj.hidden_ssid = parseHiddenSsid(location + "/hidden-ssid", value["hidden-ssid"], errors);
+	}
+
+	function parseIsolateClients(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "isolate-clients")) {
-		assert(type(value["isolate-clients"]) == "bool", "Property interface.ssid.isolate-clients must be of type boolean");
-		obj.isolate_clients = value["isolate-clients"];
+		obj.isolate_clients = parseIsolateClients(location + "/isolate-clients", value["isolate-clients"], errors);
+	}
+
+	function parsePowerSave(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "power-save")) {
-		assert(type(value["power-save"]) == "bool", "Property interface.ssid.power-save must be of type boolean");
-		obj.power_save = value["power-save"];
+		obj.power_save = parsePowerSave(location + "/power-save", value["power-save"], errors);
+	}
+
+	function parseRtsThreshold(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (value > 65535)
+			push(errors, [ location, "must be lower than or equal to 65535" ]);
+
+		if (value < 1)
+			push(errors, [ location, "must be bigger than or equal to 1" ]);
+
+		return value;
 	}
 
 	if (exists(value, "rts-threshold")) {
-		assert(type(value["rts-threshold"]) == "int", "Property interface.ssid.rts-threshold must be of type integer");
-		assert(value["rts-threshold"] <= 65535, "Property interface.ssid.rts-threshold must be <= 65535");
-		assert(value["rts-threshold"] >= 1, "Property interface.ssid.rts-threshold must be >= 1");
-		obj.rts_threshold = value["rts-threshold"];
+		obj.rts_threshold = parseRtsThreshold(location + "/rts-threshold", value["rts-threshold"], errors);
+	}
+
+	function parseBroadcastTime(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "broadcast-time")) {
-		assert(type(value["broadcast-time"]) == "bool", "Property interface.ssid.broadcast-time must be of type boolean");
-		obj.broadcast_time = value["broadcast-time"];
+		obj.broadcast_time = parseBroadcastTime(location + "/broadcast-time", value["broadcast-time"], errors);
+	}
+
+	function parseUnicastConversion(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "unicast-conversion")) {
-		assert(type(value["unicast-conversion"]) == "bool", "Property interface.ssid.unicast-conversion must be of type boolean");
-		obj.unicast_conversion = value["unicast-conversion"];
+		obj.unicast_conversion = parseUnicastConversion(location + "/unicast-conversion", value["unicast-conversion"], errors);
 	}
 
-	function parseServices(value) {
-		assert(type(value) == "array", "Property interface.ssid.services must be of type array");
+	function parseServices(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
 
-		return map(value, (item) => {
-			assert(type(item) == "string", "Items of interface.ssid.services must be of type string");
-			return item;
-		});
+		function parseItem(location, value, errors) {
+			if (type(value) != "string") {
+				push(errors, [ location, "must be of type string" ]);
+				return null;
+			}
+
+			return value;
+		}
+
+		return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "services")) {
-		obj.services = parseServices(value["services"]);
+		obj.services = parseServices(location + "/services", value["services"], errors);
 	}
 
 	if (exists(value, "encryption")) {
-		obj.encryption = instantiateInterfaceSsidEncryption(value["encryption"]);
+		obj.encryption = instantiateInterfaceSsidEncryption(location + "/encryption", value["encryption"], errors);
 	}
 
-	function parseMultiPsk(value) {
-		assert(type(value) == "array", "Property interface.ssid.multi-psk must be of type array");
+	function parseMultiPsk(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
 
-		return map(value, instantiateInterfaceSsidMultiPsk);
+		return map(value, (item, i) => instantiateInterfaceSsidMultiPsk(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "multi-psk")) {
-		obj.multi_psk = parseMultiPsk(value["multi-psk"]);
+		obj.multi_psk = parseMultiPsk(location + "/multi-psk", value["multi-psk"], errors);
+	}
+
+	if (exists(value, "captive")) {
+		obj.captive = instantiateInterfaceSsidCaptive(location + "/captive", value["captive"], errors);
 	}
 
 	if (exists(value, "rrm")) {
-		obj.rrm = instantiateInterfaceSsidRrm(value["rrm"]);
+		obj.rrm = instantiateInterfaceSsidRrm(location + "/rrm", value["rrm"], errors);
 	}
 
 	if (exists(value, "rates")) {
-		obj.rates = instantiateInterfaceSsidRates(value["rates"]);
+		obj.rates = instantiateInterfaceSsidRates(location + "/rates", value["rates"], errors);
 	}
 
 	if (exists(value, "rate-limit")) {
-		obj.rate_limit = instantiateInterfaceSsidRateLimit(value["rate-limit"]);
+		obj.rate_limit = instantiateInterfaceSsidRateLimit(location + "/rate-limit", value["rate-limit"], errors);
 	}
 
 	if (exists(value, "roaming")) {
-		obj.roaming = instantiateInterfaceSsidRoaming(value["roaming"]);
+		obj.roaming = instantiateInterfaceSsidRoaming(location + "/roaming", value["roaming"], errors);
 	}
 
 	if (exists(value, "radius")) {
-		obj.radius = instantiateInterfaceSsidRadius(value["radius"]);
+		obj.radius = instantiateInterfaceSsidRadius(location + "/radius", value["radius"], errors);
 	}
 
 	if (exists(value, "pass-point")) {
-		obj.pass_point = instantiateInterfaceSsidPassPoint(value["pass-point"]);
+		obj.pass_point = instantiateInterfaceSsidPassPoint(location + "/pass-point", value["pass-point"], errors);
 	}
 
-	function parseHostapdBssRaw(value) {
-		assert(type(value) == "array", "Property interface.ssid.hostapd-bss-raw must be of type array");
+	function parseHostapdBssRaw(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
 
-		return map(value, (item) => {
-			assert(type(item) == "string", "Items of interface.ssid.hostapd-bss-raw must be of type string");
-			return item;
-		});
+		function parseItem(location, value, errors) {
+			if (type(value) != "string") {
+				push(errors, [ location, "must be of type string" ]);
+				return null;
+			}
+
+			return value;
+		}
+
+		return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "hostapd-bss-raw")) {
-		obj.hostapd_bss_raw = parseHostapdBssRaw(value["hostapd-bss-raw"]);
+		obj.hostapd_bss_raw = parseHostapdBssRaw(location + "/hostapd-bss-raw", value["hostapd-bss-raw"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateInterfaceTunnelMesh(value) {
-	assert(type(value) == "object", "Property interface.tunnel.mesh must be of type object");
+function instantiateInterfaceTunnelMesh(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseProto(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!(value in [ "mesh" ]))
+			push(errors, [ location, "must be one of [ \"mesh\" ]" ]);
+
+		return value;
+	}
+
 	if (exists(value, "proto")) {
-		assert(type(value["proto"]) == "string", "Property interface.tunnel.mesh.proto must be of type string");
-		assert(value["proto"] in [ "mesh" ], "Property interface.tunnel.mesh.proto must be one of [ \"mesh\" ]");
-		obj.proto = value["proto"];
+		obj.proto = parseProto(location + "/proto", value["proto"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateInterfaceTunnelVxlan(value) {
-	assert(type(value) == "object", "Property interface.tunnel.vxlan must be of type object");
+function instantiateInterfaceTunnelVxlan(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseProto(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!(value in [ "vxlan" ]))
+			push(errors, [ location, "must be one of [ \"vxlan\" ]" ]);
+
+		return value;
+	}
+
 	if (exists(value, "proto")) {
-		assert(type(value["proto"]) == "string", "Property interface.tunnel.vxlan.proto must be of type string");
-		assert(value["proto"] in [ "vxlan" ], "Property interface.tunnel.vxlan.proto must be one of [ \"vxlan\" ]");
-		obj.proto = value["proto"];
+		obj.proto = parseProto(location + "/proto", value["proto"], errors);
+	}
+
+	function parsePeerAddress(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchUcCidr4(value))
+			push(errors, [ location, "must be a valid IPv4 CIDR" ]);
+
+		return value;
 	}
 
 	if (exists(value, "peer-address")) {
-		assert(type(value["peer-address"]) == "string", "Property interface.tunnel.vxlan.peer-address must be of type string");
-		assert(matchUcCidr4(value["peer-address"]), "Property interface.tunnel.vxlan.peer-address must match uc-cidr4 format");
-		obj.peer_address = value["peer-address"];
+		obj.peer_address = parsePeerAddress(location + "/peer-address", value["peer-address"], errors);
+	}
+
+	function parsePeerPort(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (value > 65535)
+			push(errors, [ location, "must be lower than or equal to 65535" ]);
+
+		if (value < 1)
+			push(errors, [ location, "must be bigger than or equal to 1" ]);
+
+		return value;
 	}
 
 	if (exists(value, "peer-port")) {
-		assert(type(value["peer-port"]) == "int", "Property interface.tunnel.vxlan.peer-port must be of type integer");
-		assert(value["peer-port"] <= 65535, "Property interface.tunnel.vxlan.peer-port must be <= 65535");
-		assert(value["peer-port"] >= 1, "Property interface.tunnel.vxlan.peer-port must be >= 1");
-		obj.peer_port = value["peer-port"];
+		obj.peer_port = parsePeerPort(location + "/peer-port", value["peer-port"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateInterfaceTunnelGre(value) {
-	assert(type(value) == "object", "Property interface.tunnel.gre must be of type object");
+function instantiateInterfaceTunnelGre(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseProto(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!(value in [ "gre" ]))
+			push(errors, [ location, "must be one of [ \"gre\" ]" ]);
+
+		return value;
+	}
+
 	if (exists(value, "proto")) {
-		assert(type(value["proto"]) == "string", "Property interface.tunnel.gre.proto must be of type string");
-		assert(value["proto"] in [ "gre" ], "Property interface.tunnel.gre.proto must be one of [ \"gre\" ]");
-		obj.proto = value["proto"];
+		obj.proto = parseProto(location + "/proto", value["proto"], errors);
+	}
+
+	function parsePeerAddress(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchUcCidr4(value))
+			push(errors, [ location, "must be a valid IPv4 CIDR" ]);
+
+		return value;
 	}
 
 	if (exists(value, "peer-address")) {
-		assert(type(value["peer-address"]) == "string", "Property interface.tunnel.gre.peer-address must be of type string");
-		assert(matchUcCidr4(value["peer-address"]), "Property interface.tunnel.gre.peer-address must match uc-cidr4 format");
-		obj.peer_address = value["peer-address"];
+		obj.peer_address = parsePeerAddress(location + "/peer-address", value["peer-address"], errors);
+	}
+
+	function parseVlanId(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (value > 4096)
+			push(errors, [ location, "must be lower than or equal to 4096" ]);
+
+		return value;
 	}
 
 	if (exists(value, "vlan-id")) {
-		assert(type(value["vlan-id"]) == "int", "Property interface.tunnel.gre.vlan-id must be of type integer");
-		assert(value["vlan-id"] <= 4096, "Property interface.tunnel.gre.vlan-id must be <= 4096");
-		obj.vlan_id = value["vlan-id"];
+		obj.vlan_id = parseVlanId(location + "/vlan-id", value["vlan-id"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateInterfaceTunnel(value) {
-	function parseVariant0(value) {
-
-		let obj = instantiateInterfaceTunnelMesh(value);
-
-		return obj;
-	}
-
-	function parseVariant1(value) {
-
-		let obj = instantiateInterfaceTunnelVxlan(value);
+function instantiateInterfaceTunnel(location, value, errors) {
+	function parseVariant0(location, value, errors) {
+		let obj = instantiateInterfaceTunnelMesh(location, value, errors);
 
 		return obj;
 	}
 
-	function parseVariant2(value) {
-
-		let obj = instantiateInterfaceTunnelGre(value);
+	function parseVariant1(location, value, errors) {
+		let obj = instantiateInterfaceTunnelVxlan(location, value, errors);
 
 		return obj;
 	}
 
-	let success = 0, errors = [];
+	function parseVariant2(location, value, errors) {
+		let obj = instantiateInterfaceTunnelGre(location, value, errors);
 
-	try { value = parseVariant0(value); success++; }
-	catch (e) { push(errors, e); }
+		return obj;
+	}
 
-	try { value = parseVariant1(value); success++; }
-	catch (e) { push(errors, e); }
+	let success = 0, tryval, tryerr, verrors = [];
 
-	try { value = parseVariant2(value); success++; }
-	catch (e) { push(errors, e); }
+	tryerr = [];
+	tryval = parseVariant0(location, value, tryerr);
+	if (!length(tryerr)) {
+		value = tryval;
+		success++;
+	}
+	else {
+		push(verrors, join(" and\n", map(tryerr, err => "\t - " + err[1])));
+	}
 
-	assert(success == 1, join("\n- or -\n", errors));
+	tryerr = [];
+	tryval = parseVariant1(location, value, tryerr);
+	if (!length(tryerr)) {
+		value = tryval;
+		success++;
+	}
+	else {
+		push(verrors, join(" and\n", map(tryerr, err => "\t - " + err[1])));
+	}
+
+	tryerr = [];
+	tryval = parseVariant2(location, value, tryerr);
+	if (!length(tryerr)) {
+		value = tryval;
+		success++;
+	}
+	else {
+		push(verrors, join(" and\n", map(tryerr, err => "\t - " + err[1])));
+	}
+
+	if (success != 1) {
+		push(errors, [ location, "must match exactly one of the following constraints:\n" + join("\n- or -\n", verrors) ]);
+		return null;
+	}
 
 	return value;
 }
 
-function instantiateInterface(value) {
-	assert(type(value) == "object", "Property interface must be of type object");
+function instantiateInterface(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseName(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "name")) {
-		assert(type(value["name"]) == "string", "Property interface.name must be of type string");
-		obj.name = value["name"];
+		obj.name = parseName(location + "/name", value["name"], errors);
+	}
+
+	function parseRole(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!(value in [ "upstream", "downstream" ]))
+			push(errors, [ location, "must be one of [ \"upstream\", \"downstream\" ]" ]);
+
+		return value;
 	}
 
 	if (exists(value, "role")) {
-		assert(type(value["role"]) == "string", "Property interface.role must be of type string");
-		assert(value["role"] in [ "upstream", "downstream" ], "Property interface.role must be one of [ \"upstream\", \"downstream\" ]");
-		obj.role = value["role"];
+		obj.role = parseRole(location + "/role", value["role"], errors);
+	}
+
+	function parseIsolateHosts(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "isolate-hosts")) {
-		assert(type(value["isolate-hosts"]) == "bool", "Property interface.isolate-hosts must be of type boolean");
-		obj.isolate_hosts = value["isolate-hosts"];
+		obj.isolate_hosts = parseIsolateHosts(location + "/isolate-hosts", value["isolate-hosts"], errors);
+	}
+
+	function parseMetric(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (value > 4294967295)
+			push(errors, [ location, "must be lower than or equal to 4294967295" ]);
+
+		if (value < 0)
+			push(errors, [ location, "must be bigger than or equal to 0" ]);
+
+		return value;
 	}
 
 	if (exists(value, "metric")) {
-		assert(type(value["metric"]) == "int", "Property interface.metric must be of type integer");
-		assert(value["metric"] <= 4294967295, "Property interface.metric must be <= 4294967295");
-		assert(value["metric"] >= 0, "Property interface.metric must be >= 0");
-		obj.metric = value["metric"];
+		obj.metric = parseMetric(location + "/metric", value["metric"], errors);
 	}
 
-	function parseServices(value) {
-		assert(type(value) == "array", "Property interface.services must be of type array");
+	function parseServices(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
 
-		return map(value, (item) => {
-			assert(type(item) == "string", "Items of interface.services must be of type string");
-			return item;
-		});
+		function parseItem(location, value, errors) {
+			if (type(value) != "string") {
+				push(errors, [ location, "must be of type string" ]);
+				return null;
+			}
+
+			return value;
+		}
+
+		return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "services")) {
-		obj.services = parseServices(value["services"]);
+		obj.services = parseServices(location + "/services", value["services"], errors);
 	}
 
 	if (exists(value, "vlan")) {
-		obj.vlan = instantiateInterfaceVlan(value["vlan"]);
+		obj.vlan = instantiateInterfaceVlan(location + "/vlan", value["vlan"], errors);
 	}
 
 	if (exists(value, "bridge")) {
-		obj.bridge = instantiateInterfaceBridge(value["bridge"]);
+		obj.bridge = instantiateInterfaceBridge(location + "/bridge", value["bridge"], errors);
 	}
 
-	function parseEthernet(value) {
-		assert(type(value) == "array", "Property interface.ethernet must be of type array");
+	function parseEthernet(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
 
-		return map(value, instantiateInterfaceEthernet);
+		return map(value, (item, i) => instantiateInterfaceEthernet(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "ethernet")) {
-		obj.ethernet = parseEthernet(value["ethernet"]);
+		obj.ethernet = parseEthernet(location + "/ethernet", value["ethernet"], errors);
 	}
 
 	if (exists(value, "ipv4")) {
-		obj.ipv4 = instantiateInterfaceIpv4(value["ipv4"]);
+		obj.ipv4 = instantiateInterfaceIpv4(location + "/ipv4", value["ipv4"], errors);
 	}
 
 	if (exists(value, "ipv6")) {
-		obj.ipv6 = instantiateInterfaceIpv6(value["ipv6"]);
+		obj.ipv6 = instantiateInterfaceIpv6(location + "/ipv6", value["ipv6"], errors);
 	}
 
-	if (exists(value, "captive")) {
-		obj.captive = instantiateInterfaceCaptive(value["captive"]);
-	}
+	function parseSsids(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
 
-	function parseSsids(value) {
-		assert(type(value) == "array", "Property interface.ssids must be of type array");
-
-		return map(value, instantiateInterfaceSsid);
+		return map(value, (item, i) => instantiateInterfaceSsid(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "ssids")) {
-		obj.ssids = parseSsids(value["ssids"]);
+		obj.ssids = parseSsids(location + "/ssids", value["ssids"], errors);
 	}
 
 	if (exists(value, "tunnel")) {
-		obj.tunnel = instantiateInterfaceTunnel(value["tunnel"]);
+		obj.tunnel = instantiateInterfaceTunnel(location + "/tunnel", value["tunnel"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateServiceLldp(value) {
-	assert(type(value) == "object", "Property service.lldp must be of type object");
+function instantiateServiceLldp(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseDescribe(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "describe")) {
-		assert(type(value["describe"]) == "string", "Property service.lldp.describe must be of type string");
-		obj.describe = value["describe"];
+		obj.describe = parseDescribe(location + "/describe", value["describe"], errors);
 	}
 	else {
 		obj.describe = "uCentral Access Point";
 	}
 
+	function parseLocation(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "location")) {
-		assert(type(value["location"]) == "string", "Property service.lldp.location must be of type string");
-		obj.location = value["location"];
+		obj.location = parseLocation(location + "/location", value["location"], errors);
 	}
 	else {
 		obj.location = "uCentral Network";
@@ -1502,36 +2883,66 @@ function instantiateServiceLldp(value) {
 	return obj;
 }
 
-function instantiateServiceSsh(value) {
-	assert(type(value) == "object", "Property service.ssh must be of type object");
+function instantiateServiceSsh(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parsePort(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (value > 65535)
+			push(errors, [ location, "must be lower than or equal to 65535" ]);
+
+		return value;
+	}
+
 	if (exists(value, "port")) {
-		assert(type(value["port"]) == "int", "Property service.ssh.port must be of type integer");
-		assert(value["port"] <= 65535, "Property service.ssh.port must be <= 65535");
-		obj.port = value["port"];
+		obj.port = parsePort(location + "/port", value["port"], errors);
 	}
 	else {
 		obj.port = 22;
 	}
 
-	function parseAuthorizedKeys(value) {
-		assert(type(value) == "array", "Property service.ssh.authorized-keys must be of type array");
+	function parseAuthorizedKeys(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
 
-		return map(value, (item) => {
-			assert(type(item) == "string", "Items of service.ssh.authorized-keys must be of type string");
-			return item;
-		});
+		function parseItem(location, value, errors) {
+			if (type(value) != "string") {
+				push(errors, [ location, "must be of type string" ]);
+				return null;
+			}
+
+			return value;
+		}
+
+		return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "authorized-keys")) {
-		obj.authorized_keys = parseAuthorizedKeys(value["authorized-keys"]);
+		obj.authorized_keys = parseAuthorizedKeys(location + "/authorized-keys", value["authorized-keys"], errors);
+	}
+
+	function parsePasswordAuthentication(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "password-authentication")) {
-		assert(type(value["password-authentication"]) == "bool", "Property service.ssh.password-authentication must be of type boolean");
-		obj.password_authentication = value["password-authentication"];
+		obj.password_authentication = parsePasswordAuthentication(location + "/password-authentication", value["password-authentication"], errors);
 	}
 	else {
 		obj.password_authentication = true;
@@ -1540,41 +2951,74 @@ function instantiateServiceSsh(value) {
 	return obj;
 }
 
-function instantiateServiceNtp(value) {
-	assert(type(value) == "object", "Property service.ntp must be of type object");
+function instantiateServiceNtp(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
-	function parseServers(value) {
-		assert(type(value) == "array", "Property service.ntp.servers must be of type array");
+	function parseServers(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
 
-		return map(value, (item) => {
-			assert(type(item) == "string", "Items of service.ntp.servers must be of type string");
-			assert(matchUcHost(item), "Items of service.ntp.servers must match uc-host format");
-			return item;
-		});
+		function parseItem(location, value, errors) {
+			if (type(value) != "string") {
+				push(errors, [ location, "must be of type string" ]);
+				return null;
+			}
+
+			if (!matchUcHost(value))
+				push(errors, [ location, "must be a valid hostname or IP address" ]);
+
+			return value;
+		}
+
+		return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "servers")) {
-		obj.servers = parseServers(value["servers"]);
+		obj.servers = parseServers(location + "/servers", value["servers"], errors);
+	}
+
+	function parseLocalServer(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "local-server")) {
-		assert(type(value["local-server"]) == "bool", "Property service.ntp.local-server must be of type boolean");
-		obj.local_server = value["local-server"];
+		obj.local_server = parseLocalServer(location + "/local-server", value["local-server"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateServiceMdns(value) {
-	assert(type(value) == "object", "Property service.mdns must be of type object");
+function instantiateServiceMdns(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseEnable(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "enable")) {
-		assert(type(value["enable"]) == "bool", "Property service.mdns.enable must be of type boolean");
-		obj.enable = value["enable"];
+		obj.enable = parseEnable(location + "/enable", value["enable"], errors);
 	}
 	else {
 		obj.enable = false;
@@ -1583,69 +3027,147 @@ function instantiateServiceMdns(value) {
 	return obj;
 }
 
-function instantiateServiceRtty(value) {
-	assert(type(value) == "object", "Property service.rtty must be of type object");
+function instantiateServiceRtty(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseHost(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchUcHost(value))
+			push(errors, [ location, "must be a valid hostname or IP address" ]);
+
+		return value;
+	}
+
 	if (exists(value, "host")) {
-		assert(type(value["host"]) == "string", "Property service.rtty.host must be of type string");
-		assert(matchUcHost(value["host"]), "Property service.rtty.host must match uc-host format");
-		obj.host = value["host"];
+		obj.host = parseHost(location + "/host", value["host"], errors);
+	}
+
+	function parsePort(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (value > 65535)
+			push(errors, [ location, "must be lower than or equal to 65535" ]);
+
+		return value;
 	}
 
 	if (exists(value, "port")) {
-		assert(type(value["port"]) == "int", "Property service.rtty.port must be of type integer");
-		assert(value["port"] <= 65535, "Property service.rtty.port must be <= 65535");
-		obj.port = value["port"];
+		obj.port = parsePort(location + "/port", value["port"], errors);
 	}
 	else {
 		obj.port = 5912;
 	}
 
+	function parseToken(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (length(value) > 32)
+			push(errors, [ location, "must be at most 32 characters long" ]);
+
+		if (length(value) < 32)
+			push(errors, [ location, "must be at least 32 characters long" ]);
+
+		return value;
+	}
+
 	if (exists(value, "token")) {
-		assert(type(value["token"]) == "string", "Property service.rtty.token must be of type string");
-		assert(length(value["token"]) <= 32, "Property service.rtty.token must be <= 32 characters long");
-
-		assert(length(value["token"]) >= 32, "Property service.rtty.token must be >= 32 characters long");
-
-		obj.token = value["token"];
+		obj.token = parseToken(location + "/token", value["token"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateServiceLog(value) {
-	assert(type(value) == "object", "Property service.log must be of type object");
+function instantiateServiceLog(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseHost(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchUcHost(value))
+			push(errors, [ location, "must be a valid hostname or IP address" ]);
+
+		return value;
+	}
+
 	if (exists(value, "host")) {
-		assert(type(value["host"]) == "string", "Property service.log.host must be of type string");
-		assert(matchUcHost(value["host"]), "Property service.log.host must match uc-host format");
-		obj.host = value["host"];
+		obj.host = parseHost(location + "/host", value["host"], errors);
+	}
+
+	function parsePort(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (value > 65535)
+			push(errors, [ location, "must be lower than or equal to 65535" ]);
+
+		if (value < 100)
+			push(errors, [ location, "must be bigger than or equal to 100" ]);
+
+		return value;
 	}
 
 	if (exists(value, "port")) {
-		assert(type(value["port"]) == "int", "Property service.log.port must be of type integer");
-		assert(value["port"] <= 65535, "Property service.log.port must be <= 65535");
-		assert(value["port"] >= 100, "Property service.log.port must be >= 100");
-		obj.port = value["port"];
+		obj.port = parsePort(location + "/port", value["port"], errors);
+	}
+
+	function parseProto(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!(value in [ "tcp", "udp" ]))
+			push(errors, [ location, "must be one of [ \"tcp\", \"udp\" ]" ]);
+
+		return value;
 	}
 
 	if (exists(value, "proto")) {
-		assert(type(value["proto"]) == "string", "Property service.log.proto must be of type string");
-		assert(value["proto"] in [ "tcp", "udp" ], "Property service.log.proto must be one of [ \"tcp\", \"udp\" ]");
-		obj.proto = value["proto"];
+		obj.proto = parseProto(location + "/proto", value["proto"], errors);
 	}
 	else {
 		obj.proto = "udp";
 	}
 
+	function parseSize(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (value < 32)
+			push(errors, [ location, "must be bigger than or equal to 32" ]);
+
+		return value;
+	}
+
 	if (exists(value, "size")) {
-		assert(type(value["size"]) == "int", "Property service.log.size must be of type integer");
-		assert(value["size"] >= 32, "Property service.log.size must be >= 32");
-		obj.size = value["size"];
+		obj.size = parseSize(location + "/size", value["size"], errors);
 	}
 	else {
 		obj.size = 1000;
@@ -1654,16 +3176,31 @@ function instantiateServiceLog(value) {
 	return obj;
 }
 
-function instantiateServiceHttp(value) {
-	assert(type(value) == "object", "Property service.http must be of type object");
+function instantiateServiceHttp(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseHttpPort(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (value > 65535)
+			push(errors, [ location, "must be lower than or equal to 65535" ]);
+
+		if (value < 1)
+			push(errors, [ location, "must be bigger than or equal to 1" ]);
+
+		return value;
+	}
+
 	if (exists(value, "http-port")) {
-		assert(type(value["http-port"]) == "int", "Property service.http.http-port must be of type integer");
-		assert(value["http-port"] <= 65535, "Property service.http.http-port must be <= 65535");
-		assert(value["http-port"] >= 1, "Property service.http.http-port must be >= 1");
-		obj.http_port = value["http-port"];
+		obj.http_port = parseHttpPort(location + "/http-port", value["http-port"], errors);
 	}
 	else {
 		obj.http_port = 80;
@@ -1672,14 +3209,25 @@ function instantiateServiceHttp(value) {
 	return obj;
 }
 
-function instantiateServiceIgmp(value) {
-	assert(type(value) == "object", "Property service.igmp must be of type object");
+function instantiateServiceIgmp(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseEnable(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "enable")) {
-		assert(type(value["enable"]) == "bool", "Property service.igmp.enable must be of type boolean");
-		obj.enable = value["enable"];
+		obj.enable = parseEnable(location + "/enable", value["enable"], errors);
 	}
 	else {
 		obj.enable = false;
@@ -1688,14 +3236,25 @@ function instantiateServiceIgmp(value) {
 	return obj;
 }
 
-function instantiateServiceIeee8021x(value) {
-	assert(type(value) == "object", "Property service.ieee8021x must be of type object");
+function instantiateServiceIeee8021x(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseEnable(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "enable")) {
-		assert(type(value["enable"]) == "bool", "Property service.ieee8021x.enable must be of type boolean");
-		obj.enable = value["enable"];
+		obj.enable = parseEnable(location + "/enable", value["enable"], errors);
 	}
 	else {
 		obj.enable = false;
@@ -1704,60 +3263,121 @@ function instantiateServiceIeee8021x(value) {
 	return obj;
 }
 
-function instantiateServiceWifiSteering(value) {
-	assert(type(value) == "object", "Property service.wifi-steering must be of type object");
+function instantiateServiceWifiSteering(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
+
+	function parseMode(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!(value in [ "local", "cloud" ]))
+			push(errors, [ location, "must be one of [ \"local\", \"cloud\" ]" ]);
+
+		return value;
+	}
 
 	if (exists(value, "mode")) {
-		assert(type(value["mode"]) == "string", "Property service.wifi-steering.mode must be of type string");
-		assert(value["mode"] in [ "local", "cloud" ], "Property service.wifi-steering.mode must be one of [ \"local\", \"cloud\" ]");
-		obj.mode = value["mode"];
+		obj.mode = parseMode(location + "/mode", value["mode"], errors);
+	}
+
+	function parseNetwork(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		return value;
 	}
 
 	if (exists(value, "network")) {
-		assert(type(value["network"]) == "string", "Property service.wifi-steering.network must be of type string");
-		obj.network = value["network"];
+		obj.network = parseNetwork(location + "/network", value["network"], errors);
 	}
 	else {
 		obj.network = "upstream";
 	}
 
+	function parseAssocSteering(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "assoc-steering")) {
-		assert(type(value["assoc-steering"]) == "bool", "Property service.wifi-steering.assoc-steering must be of type boolean");
-		obj.assoc_steering = value["assoc-steering"];
+		obj.assoc_steering = parseAssocSteering(location + "/assoc-steering", value["assoc-steering"], errors);
 	}
 	else {
 		obj.assoc_steering = false;
 	}
 
+	function parseRequiredSnr(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "required-snr")) {
-		assert(type(value["required-snr"]) == "int", "Property service.wifi-steering.required-snr must be of type integer");
-		obj.required_snr = value["required-snr"];
+		obj.required_snr = parseRequiredSnr(location + "/required-snr", value["required-snr"], errors);
 	}
 	else {
 		obj.required_snr = 0;
 	}
 
+	function parseRequiredProbeSnr(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "required-probe-snr")) {
-		assert(type(value["required-probe-snr"]) == "int", "Property service.wifi-steering.required-probe-snr must be of type integer");
-		obj.required_probe_snr = value["required-probe-snr"];
+		obj.required_probe_snr = parseRequiredProbeSnr(location + "/required-probe-snr", value["required-probe-snr"], errors);
 	}
 	else {
 		obj.required_probe_snr = 0;
 	}
 
+	function parseRequiredRoamSnr(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "required-roam-snr")) {
-		assert(type(value["required-roam-snr"]) == "int", "Property service.wifi-steering.required-roam-snr must be of type integer");
-		obj.required_roam_snr = value["required-roam-snr"];
+		obj.required_roam_snr = parseRequiredRoamSnr(location + "/required-roam-snr", value["required-roam-snr"], errors);
 	}
 	else {
 		obj.required_roam_snr = 0;
 	}
 
+	function parseLoadKickThreshold(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "load-kick-threshold")) {
-		assert(type(value["load-kick-threshold"]) == "int", "Property service.wifi-steering.load-kick-threshold must be of type integer");
-		obj.load_kick_threshold = value["load-kick-threshold"];
+		obj.load_kick_threshold = parseLoadKickThreshold(location + "/load-kick-threshold", value["load-kick-threshold"], errors);
 	}
 	else {
 		obj.load_kick_threshold = 0;
@@ -1766,237 +3386,344 @@ function instantiateServiceWifiSteering(value) {
 	return obj;
 }
 
-function instantiateService(value) {
-	assert(type(value) == "object", "Property service must be of type object");
+function instantiateService(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
 	if (exists(value, "lldp")) {
-		obj.lldp = instantiateServiceLldp(value["lldp"]);
+		obj.lldp = instantiateServiceLldp(location + "/lldp", value["lldp"], errors);
 	}
 
 	if (exists(value, "ssh")) {
-		obj.ssh = instantiateServiceSsh(value["ssh"]);
+		obj.ssh = instantiateServiceSsh(location + "/ssh", value["ssh"], errors);
 	}
 
 	if (exists(value, "ntp")) {
-		obj.ntp = instantiateServiceNtp(value["ntp"]);
+		obj.ntp = instantiateServiceNtp(location + "/ntp", value["ntp"], errors);
 	}
 
 	if (exists(value, "mdns")) {
-		obj.mdns = instantiateServiceMdns(value["mdns"]);
+		obj.mdns = instantiateServiceMdns(location + "/mdns", value["mdns"], errors);
 	}
 
 	if (exists(value, "rtty")) {
-		obj.rtty = instantiateServiceRtty(value["rtty"]);
+		obj.rtty = instantiateServiceRtty(location + "/rtty", value["rtty"], errors);
 	}
 
 	if (exists(value, "log")) {
-		obj.log = instantiateServiceLog(value["log"]);
+		obj.log = instantiateServiceLog(location + "/log", value["log"], errors);
 	}
 
 	if (exists(value, "http")) {
-		obj.http = instantiateServiceHttp(value["http"]);
+		obj.http = instantiateServiceHttp(location + "/http", value["http"], errors);
 	}
 
 	if (exists(value, "igmp")) {
-		obj.igmp = instantiateServiceIgmp(value["igmp"]);
+		obj.igmp = instantiateServiceIgmp(location + "/igmp", value["igmp"], errors);
 	}
 
 	if (exists(value, "ieee8021x")) {
-		obj.ieee8021x = instantiateServiceIeee8021x(value["ieee8021x"]);
+		obj.ieee8021x = instantiateServiceIeee8021x(location + "/ieee8021x", value["ieee8021x"], errors);
 	}
 
 	if (exists(value, "wifi-steering")) {
-		obj.wifi_steering = instantiateServiceWifiSteering(value["wifi-steering"]);
+		obj.wifi_steering = instantiateServiceWifiSteering(location + "/wifi-steering", value["wifi-steering"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateMetricsStatistics(value) {
-	assert(type(value) == "object", "Property metrics.statistics must be of type object");
+function instantiateMetricsStatistics(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
-	if (exists(value, "interval")) {
-		assert(type(value["interval"]) == "int", "Property metrics.statistics.interval must be of type integer");
-		obj.interval = value["interval"];
+	function parseInterval(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (value < 60)
+			push(errors, [ location, "must be bigger than or equal to 60" ]);
+
+		return value;
 	}
 
-	function parseTypes(value) {
-		assert(type(value) == "array", "Property metrics.statistics.types must be of type array");
+	if (exists(value, "interval")) {
+		obj.interval = parseInterval(location + "/interval", value["interval"], errors);
+	}
 
-		return map(value, (item) => {
-			assert(type(item) == "string", "Items of metrics.statistics.types must be of type string");
-			assert(item in [ "ssids", "lldp", "clients" ], "Items of metrics.statistics.types must be one of [ \"ssids\", \"lldp\", \"clients\" ]");
-			return item;
-		});
+	function parseTypes(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
+
+		function parseItem(location, value, errors) {
+			if (type(value) != "string") {
+				push(errors, [ location, "must be of type string" ]);
+				return null;
+			}
+
+			if (!(value in [ "ssids", "lldp", "clients" ]))
+				push(errors, [ location, "must be one of [ \"ssids\", \"lldp\", \"clients\" ]" ]);
+
+			return value;
+		}
+
+		return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "types")) {
-		obj.types = parseTypes(value["types"]);
+		obj.types = parseTypes(location + "/types", value["types"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateMetricsHealth(value) {
-	assert(type(value) == "object", "Property metrics.health must be of type object");
+function instantiateMetricsHealth(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
+
+	function parseInterval(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		if (value < 60)
+			push(errors, [ location, "must be bigger than or equal to 60" ]);
+
+		return value;
+	}
 
 	if (exists(value, "interval")) {
-		assert(type(value["interval"]) == "int", "Property metrics.health.interval must be of type integer");
-		assert(value["interval"] >= 60, "Property metrics.health.interval must be >= 60");
-		obj.interval = value["interval"];
+		obj.interval = parseInterval(location + "/interval", value["interval"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateMetricsWifiFrames(value) {
-	assert(type(value) == "object", "Property metrics.wifi-frames must be of type object");
+function instantiateMetricsWifiFrames(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
-	function parseFilters(value) {
-		assert(type(value) == "array", "Property metrics.wifi-frames.filters must be of type array");
+	function parseFilters(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
 
-		return map(value, (item) => {
-			assert(type(item) == "string", "Items of metrics.wifi-frames.filters must be of type string");
-			assert(item in [ "probe", "auth", "assoc", "disassoc", "deauth", "local-deauth", "inactive-deauth", "key-mismatch", "beacon-report", "radar-detected" ], "Items of metrics.wifi-frames.filters must be one of [ \"probe\", \"auth\", \"assoc\", \"disassoc\", \"deauth\", \"local-deauth\", \"inactive-deauth\", \"key-mismatch\", \"beacon-report\", \"radar-detected\" ]");
-			return item;
-		});
+		function parseItem(location, value, errors) {
+			if (type(value) != "string") {
+				push(errors, [ location, "must be of type string" ]);
+				return null;
+			}
+
+			if (!(value in [ "probe", "auth", "assoc", "disassoc", "deauth", "local-deauth", "inactive-deauth", "key-mismatch", "beacon-report", "radar-detected" ]))
+				push(errors, [ location, "must be one of [ \"probe\", \"auth\", \"assoc\", \"disassoc\", \"deauth\", \"local-deauth\", \"inactive-deauth\", \"key-mismatch\", \"beacon-report\", \"radar-detected\" ]" ]);
+
+			return value;
+		}
+
+		return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "filters")) {
-		obj.filters = parseFilters(value["filters"]);
+		obj.filters = parseFilters(location + "/filters", value["filters"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateMetricsDhcpSnooping(value) {
-	assert(type(value) == "object", "Property metrics.dhcp-snooping must be of type object");
+function instantiateMetricsDhcpSnooping(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
-	function parseFilters(value) {
-		assert(type(value) == "array", "Property metrics.dhcp-snooping.filters must be of type array");
+	function parseFilters(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
 
-		return map(value, (item) => {
-			assert(type(item) == "string", "Items of metrics.dhcp-snooping.filters must be of type string");
-			assert(item in [ "ack", "discover", "offer", "request", "solicit", "reply", "renew" ], "Items of metrics.dhcp-snooping.filters must be one of [ \"ack\", \"discover\", \"offer\", \"request\", \"solicit\", \"reply\", \"renew\" ]");
-			return item;
-		});
+		function parseItem(location, value, errors) {
+			if (type(value) != "string") {
+				push(errors, [ location, "must be of type string" ]);
+				return null;
+			}
+
+			if (!(value in [ "ack", "discover", "offer", "request", "solicit", "reply", "renew" ]))
+				push(errors, [ location, "must be one of [ \"ack\", \"discover\", \"offer\", \"request\", \"solicit\", \"reply\", \"renew\" ]" ]);
+
+			return value;
+		}
+
+		return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "filters")) {
-		obj.filters = parseFilters(value["filters"]);
+		obj.filters = parseFilters(location + "/filters", value["filters"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateMetrics(value) {
-	assert(type(value) == "object", "Property metrics must be of type object");
+function instantiateMetrics(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
 	if (exists(value, "statistics")) {
-		obj.statistics = instantiateMetricsStatistics(value["statistics"]);
+		obj.statistics = instantiateMetricsStatistics(location + "/statistics", value["statistics"], errors);
 	}
 
 	if (exists(value, "health")) {
-		obj.health = instantiateMetricsHealth(value["health"]);
+		obj.health = instantiateMetricsHealth(location + "/health", value["health"], errors);
 	}
 
 	if (exists(value, "wifi-frames")) {
-		obj.wifi_frames = instantiateMetricsWifiFrames(value["wifi-frames"]);
+		obj.wifi_frames = instantiateMetricsWifiFrames(location + "/wifi-frames", value["wifi-frames"], errors);
 	}
 
 	if (exists(value, "dhcp-snooping")) {
-		obj.dhcp_snooping = instantiateMetricsDhcpSnooping(value["dhcp-snooping"]);
+		obj.dhcp_snooping = instantiateMetricsDhcpSnooping(location + "/dhcp-snooping", value["dhcp-snooping"], errors);
 	}
 
 	return obj;
 }
 
-function instantiateConfigRaw(value) {
-	assert(type(value) == "array", "Property config-raw must be of type array");
-
-	function parseItem(value) {
-		assert(type(value) == "array", "Property config-raw.item must be of type array");
-		assert(length(value) >= 2, "Property config-raw.item array length must be >= 2 items");
-
-
-		return map(value, (item) => {
-			assert(type(item) == "string", "Items of config-raw.item must be of type string");
-			return item;
-		});
+function instantiateConfigRaw(location, value, errors) {
+	if (type(value) != "array") {
+		push(errors, [ location, "must be of type array" ]);
+		return null;
 	}
 
-	return map(value, parseItem);
+	function parseItem(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
+
+		if (length(value) < 2)
+			push(errors, [ location, "must have at least 2 items" ]);
+
+		function parseItem(location, value, errors) {
+			if (type(value) != "string") {
+				push(errors, [ location, "must be of type string" ]);
+				return null;
+			}
+
+			return value;
+		}
+
+		return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
+	}
+
+	return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
 }
 
-function newUCentralState(value) {
-	assert(type(value) == "object", "Property UCentralState must be of type object");
+function newUCentralState(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
 
 	let obj = {};
 
+	function parseUuid(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "uuid")) {
-		assert(type(value["uuid"]) == "int", "Property UCentralState.uuid must be of type integer");
-		obj.uuid = value["uuid"];
+		obj.uuid = parseUuid(location + "/uuid", value["uuid"], errors);
 	}
 
 	if (exists(value, "unit")) {
-		obj.unit = instantiateUnit(value["unit"]);
+		obj.unit = instantiateUnit(location + "/unit", value["unit"], errors);
 	}
 
 	if (exists(value, "globals")) {
-		obj.globals = instantiateGlobals(value["globals"]);
+		obj.globals = instantiateGlobals(location + "/globals", value["globals"], errors);
 	}
 
 	if (exists(value, "definitions")) {
-		obj.definitions = instantiateDefinitions(value["definitions"]);
+		obj.definitions = instantiateDefinitions(location + "/definitions", value["definitions"], errors);
 	}
 
-	function parseRadios(value) {
-		assert(type(value) == "array", "Property UCentralState.radios must be of type array");
+	function parseRadios(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
 
-		return map(value, instantiateRadio);
+		return map(value, (item, i) => instantiateRadio(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "radios")) {
-		obj.radios = parseRadios(value["radios"]);
+		obj.radios = parseRadios(location + "/radios", value["radios"], errors);
 	}
 
-	function parseInterfaces(value) {
-		assert(type(value) == "array", "Property UCentralState.interfaces must be of type array");
+	function parseInterfaces(location, value, errors) {
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
+			return null;
+		}
 
-		return map(value, instantiateInterface);
+		return map(value, (item, i) => instantiateInterface(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "interfaces")) {
-		obj.interfaces = parseInterfaces(value["interfaces"]);
+		obj.interfaces = parseInterfaces(location + "/interfaces", value["interfaces"], errors);
 	}
 
 	if (exists(value, "services")) {
-		obj.services = instantiateService(value["services"]);
+		obj.services = instantiateService(location + "/services", value["services"], errors);
 	}
 
 	if (exists(value, "metrics")) {
-		obj.metrics = instantiateMetrics(value["metrics"]);
+		obj.metrics = instantiateMetrics(location + "/metrics", value["metrics"], errors);
 	}
 
 	if (exists(value, "config-raw")) {
-		obj.config_raw = instantiateConfigRaw(value["config-raw"]);
+		obj.config_raw = instantiateConfigRaw(location + "/config-raw", value["config-raw"], errors);
 	}
 
 	return obj;
 }
 
 return {
-	validate: (value) => newUCentralState(value)
+	validate: (value, errors) => {
+		let err = [];
+		let res = newUCentralState("", value, err);
+		if (errors) push(errors, ...map(err, e => "[E] (In " + e[0] + ") Value " + e[1]));
+		return length(errors) ? null : res;
+	}
 };

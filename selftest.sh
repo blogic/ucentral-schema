@@ -25,7 +25,9 @@ ucode -s '{%
 
 	try {
 		let logs = [];
-		let batch = renderer.render(schemareader.validate(inputjson), logs);
+
+		let state = schemareader.validate(inputjson, logs);
+		let batch = state ? renderer.render(state, logs) : "";
 
 		fs.stdout.write("Log messages:\n" + join("\n", logs) + "\n\n");
 
