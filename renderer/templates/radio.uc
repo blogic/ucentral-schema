@@ -62,19 +62,26 @@
 	}
 
 	function match_mimo(available_ant, wanted_mimo) {
-		// FIXME: use `(1 << (N * M) - 1` instead? 5x5 or 6x6 appears to be a thing as well...
-		let valid_modes = { "1x1": 1, "2x2": 3, "3x3": 8, "4x4": 15,
-				    "5x5": 31, "6x6": 63, "7x7": 127, "8x8": 255 },
-		    use_ant = valid_modes[wanted_mimo];
+		if (!radio.mimo)
+			return available_ant;
 
-		if (!use_ant || use_ant > available_ant) {
+		let shift = ((available_ant & 0xf0) == available_ant) ? 4 : 0;
+		let m = match(wanted_mimo, /^([0-9]+)x([0-9]+$)/);
+		if (!m) {
+			warn("Failed to parse MIMO mode, falling back to %d", available_ant);
+
+			return available_ant;
+		}
+		let use_ant = (m[1] * m[2] - 1) || 1;
+
+		if (!use_ant || (use_ant << shift) > available_ant) {
 			warn("Invalid or unsupported MIMO mode %s specified, falling back to %d",
-				wanted_mimo, available_ant);
+				wanted_mimo || 'none', available_ant);
 
 			return available_ant;
 		}
 
-		return use_ant;
+		return use_ant << shift;
 	}
 
 	function match_require_mode(require_mode) {
