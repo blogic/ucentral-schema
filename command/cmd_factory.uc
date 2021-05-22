@@ -10,7 +10,7 @@
 		let files = [
 				"/etc/ucentral/cas.pem", "/etc/ucentral/cert.pem",
 				"/etc/ucentral/redirector.json", "/etc/ucentral/dev-id",
-				"/etc/ucentral/key.pem"
+				"/etc/ucentral/key.pem", "/etc/config/ucentral"
 		];
 		for (let f in files)
 			if (fs.stat(f))
