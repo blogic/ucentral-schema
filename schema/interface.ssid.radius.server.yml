@@ -57,8 +57,3 @@ properties:
         value: Example Operator
     examples:
     - 126:s:Operator
-  request-cui:
-    description:
-      This will enable support for Chargeable-User-Identity (RFC 4372).
-    type: boolean
-    default: false

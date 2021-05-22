@@ -773,16 +773,19 @@
                     "examples": [
                         "126:s:Operator"
                     ]
-                },
-                "request-cui": {
-                    "type": "boolean",
-                    "default": false
                 }
             }
         },
         "interface.ssid.radius": {
             "type": "object",
             "properties": {
+                "nas-identifier": {
+                    "type": "string"
+                },
+                "chargeable-user-id": {
+                    "type": "boolean",
+                    "default": false
+                },
                 "local-users": {
                     "type": "array",
                     "items": {
@@ -794,13 +797,11 @@
                 },
                 "accounting": {
                     "$ref": "#/$defs/interface.ssid.radius.server",
-                    "properties": {
-                        "interval": {
-                            "type": "integer",
-                            "maximum": 600,
-                            "minimum": 60,
-                            "default": 60
-                        }
+                    "interval": {
+                        "type": "integer",
+                        "maximum": 600,
+                        "minimum": 60,
+                        "default": 60
                     }
                 }
             }
@@ -809,7 +810,10 @@
             "type": "object",
             "properties": {
                 "venue-name": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "venue-group": {
                     "type": "integer",
@@ -820,8 +824,11 @@
                     "maximum": 32
                 },
                 "venue-url": {
-                    "type": "string",
-                    "format": "uri"
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "format": "uri"
+                    }
                 },
                 "auth-type": {
                     "type": "object",
@@ -852,7 +859,10 @@
                     "format": "hostname"
                 },
                 "nai-realm": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "osen": {
                     "type": "boolean"
@@ -863,7 +873,10 @@
                     "minimum": 0
                 },
                 "friendly-name": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "icon": {
                     "type": "array",

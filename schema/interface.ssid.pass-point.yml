@@ -6,7 +6,9 @@ properties:
     description:
       This parameter can be used to configure one or more Venue Name Duples
       for Venue Name ANQP information.
-    type: string
+    type: array
+    items:
+      type: string
   venue-group:
     description:
       The available values are defined in 802.11u.
@@ -21,8 +23,10 @@ properties:
     description:
       This parameter can be used to configure one or more Venue URL Duples to
       provide additional information corresponding to Venue Name information.
-    type: string
-    format: uri
+    type: array
+    items:
+      type: string
+      format: uri
   auth-type:
     description:
       This parameter indicates what type of network authentication is used in
@@ -56,7 +60,9 @@ properties:
   nai-realm:
     description:
       NAI Realm information
-    type: string
+    type: array
+    items:
+      type: string
   osen:
     description:
       OSU Server-Only Authenticated L2 Encryption Network;
@@ -72,7 +78,9 @@ properties:
     description:
       This parameter can be used to configure one or more Operator Friendly
       Name Duples.
-    type: string
+    type: array
+    items:
+      type: string
   icon:
     description:
       The operator icons.

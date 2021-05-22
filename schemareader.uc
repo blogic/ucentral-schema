@@ -1891,22 +1891,6 @@ function instantiateInterfaceSsidRadiusServer(location, value, errors) {
 		obj.request_attribute = parseRequestAttribute(location + "/request-attribute", value["request-attribute"], errors);
 	}
 
-	function parseRequestCui(location, value, errors) {
-		if (type(value) != "bool") {
-			push(errors, [ location, "must be of type boolean" ]);
-			return null;
-		}
-
-		return value;
-	}
-
-	if (exists(value, "request-cui")) {
-		obj.request_cui = parseRequestCui(location + "/request-cui", value["request-cui"], errors);
-	}
-	else {
-		obj.request_cui = false;
-	}
-
 	return obj;
 }
 
@@ -1917,6 +1901,35 @@ function instantiateInterfaceSsidRadius(location, value, errors) {
 	}
 
 	let obj = {};
+
+	function parseNasIdentifier(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		return value;
+	}
+
+	if (exists(value, "nas-identifier")) {
+		obj.nas_identifier = parseNasIdentifier(location + "/nas-identifier", value["nas-identifier"], errors);
+	}
+
+	function parseChargeableUserId(location, value, errors) {
+		if (type(value) != "bool") {
+			push(errors, [ location, "must be of type boolean" ]);
+			return null;
+		}
+
+		return value;
+	}
+
+	if (exists(value, "chargeable-user-id")) {
+		obj.chargeable_user_id = parseChargeableUserId(location + "/chargeable-user-id", value["chargeable-user-id"], errors);
+	}
+	else {
+		obj.chargeable_user_id = false;
+	}
 
 	function parseLocalUsers(location, value, errors) {
 		if (type(value) != "array") {
@@ -1951,12 +1964,21 @@ function instantiateInterfaceSsidPassPoint(location, value, errors) {
 	let obj = {};
 
 	function parseVenueName(location, value, errors) {
-		if (type(value) != "string") {
-			push(errors, [ location, "must be of type string" ]);
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
 			return null;
 		}
 
-		return value;
+		function parseItem(location, value, errors) {
+			if (type(value) != "string") {
+				push(errors, [ location, "must be of type string" ]);
+				return null;
+			}
+
+			return value;
+		}
+
+		return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "venue-name")) {
@@ -1996,15 +2018,24 @@ function instantiateInterfaceSsidPassPoint(location, value, errors) {
 	}
 
 	function parseVenueUrl(location, value, errors) {
-		if (type(value) != "string") {
-			push(errors, [ location, "must be of type string" ]);
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
 			return null;
 		}
 
-		if (!matchUri(value))
-			push(errors, [ location, "must be a valid URI" ]);
+		function parseItem(location, value, errors) {
+			if (type(value) != "string") {
+				push(errors, [ location, "must be of type string" ]);
+				return null;
+			}
 
-		return value;
+			if (!matchUri(value))
+				push(errors, [ location, "must be a valid URI" ]);
+
+			return value;
+		}
+
+		return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "venue-url")) {
@@ -2075,12 +2106,21 @@ function instantiateInterfaceSsidPassPoint(location, value, errors) {
 	}
 
 	function parseNaiRealm(location, value, errors) {
-		if (type(value) != "string") {
-			push(errors, [ location, "must be of type string" ]);
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
 			return null;
 		}
 
-		return value;
+		function parseItem(location, value, errors) {
+			if (type(value) != "string") {
+				push(errors, [ location, "must be of type string" ]);
+				return null;
+			}
+
+			return value;
+		}
+
+		return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "nai-realm")) {
@@ -2120,12 +2160,21 @@ function instantiateInterfaceSsidPassPoint(location, value, errors) {
 	}
 
 	function parseFriendlyName(location, value, errors) {
-		if (type(value) != "string") {
-			push(errors, [ location, "must be of type string" ]);
+		if (type(value) != "array") {
+			push(errors, [ location, "must be of type array" ]);
 			return null;
 		}
 
-		return value;
+		function parseItem(location, value, errors) {
+			if (type(value) != "string") {
+				push(errors, [ location, "must be of type string" ]);
+				return null;
+			}
+
+			return value;
+		}
+
+		return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
 	}
 
 	if (exists(value, "friendly-name")) {

@@ -3,6 +3,16 @@ description:
   allowing us to connect to the AAA servers.
 type: object
 properties:
+  nas-identifier:
+    description:
+      NAS-Identifier string for RADIUS messages. When used, this should be unique
+      to the NAS within the scope of the RADIUS server.
+    type: string
+  chargeable-user-id:
+    description:
+      This will enable support for Chargeable-User-Identity (RFC 4372).
+    type: boolean
+    default: false
   local-users:
     description:
       Specifies a collection of local EAP user/psk/vid triplets.
@@ -13,11 +23,10 @@ properties:
     $ref: "https://ucentral.io/schema/v1/interface/ssid/radius/server/"
   accounting:
     $ref: "https://ucentral.io/schema/v1/interface/ssid/radius/server/"
-    properties:
-      interval:
-        description:
-          The interim accounting update interval. This value is defined in seconds.
-        type: integer
-        maximum: 600
-        minimum: 60
-        default: 60
+    interval:
+      description:
+        The interim accounting update interval. This value is defined in seconds.
+      type: integer
+      maximum: 600
+      minimum: 60
+      default: 60

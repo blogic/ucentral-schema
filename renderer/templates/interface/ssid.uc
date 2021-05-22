@@ -18,16 +18,19 @@
 				proto: ssid.encryption.proto,
 				key: ssid.encryption.key
 		};
+		warn(ssid.encryption.proto);
 		if (ssid.encryption.proto in [ "wpa", "wpa2", "wpa-mixed", "wpa3", "wpa3-mixed" ] &&
-		    ssid.encryption.radius && ssid.encryption.radius.authentication &&
-		    ssid.encryption.radius.authentication.host &&
-		    ssid.encryption.radius.authentication.port &&
-		    ssid.encryption.radius.authentication.secret)
+		    ssid.radius && ssid.radius.authentication &&
+		    ssid.radius.authentication.host &&
+		    ssid.radius.authentication.port &&
+		    ssid.radius.authentication.secret)
 			return {
 				proto: ssid.encryption.proto,
-				auth: ssid.encryption.ssid.encryption.radius.authentication,
-				acct: ssid.encryption.ssid.encryption.radius.accounting
+				auth: ssid.radius.authentication,
+				acct: ssid.radius.accounting,
+				radius: ssid.radius
 			};
+		warn("Can't find any valid encryption settings");
 		return false;
 	}
 
@@ -40,6 +43,16 @@
 
 	function match_wds() {
 		return index([ "wds-ap", "wds-sta", "wds-repeater" ], ssid.bss_mode);
+	}
+
+	function match_hs20_auth_type(auth_type) {
+		let types = {
+			"terms-and-conditions": "00",
+			"online-enrollment": "01",
+			"http-redirection": "02",
+			"dns-redirection": "03"
+		};
+		return (auth_type && auth_type.type) ? types[auth_type.type] : '';
 	}
 
 	let bss_mode = ssid.bss_mode;
@@ -100,16 +113,51 @@ set wireless.{{ section }}.mcast_rate={{ ssid.rates.multicast }}
 set wireless.{{ section }}.ieee80211w={{ match_ieee80211w() }}
 set wireless.{{ section }}.encryption={{ crypto.proto }}
 set wireless.{{ section }}.key={{ crypto.key }}
+{%   if (crypto.radius): %}
+set wireless.{{ section }}.request_cui={{ b(crypto.radius.chargeable_user_id) }}
+set wireless.{{ section }}.nasid={{ s(crypto.radius.nas_identifier) }}
+{%   endif %}
 {%   if (crypto.auth): %}
 set wireless.{{ section }}.auth_server={{ crypto.auth.host }}
 set wireless.{{ section }}.auth_port={{ crypto.auth.port }}
 set wireless.{{ section }}.auth_secret={{ crypto.auth.secret }}
+{%     for (let request in crypto.auth.request_attribute): %}
+add_list wireless.{{ section }}.radius_auth_req_attr={{ s(request.id + ':' + request.value) }}
+{%     endfor %}
 {%   endif %}
 {%   if (crypto.acct): %}
 set wireless.{{ section }}.acct_server={{ crypto.acct.host }}
 set wireless.{{ section }}.acct_port={{ crypto.acct.port }}
 set wireless.{{ section }}.acct_secret={{ crypto.acct.secret }}
 set wireless.{{ section }}.acct_interval={{ crypto.acct.interval }}
+{%     for (let request in crypto.acct.request_attribute): %}
+add_list wireless.{{ section }}.radius_acct_req_attr={{ s(request.id + ':' + request.value) }}
+{%     endfor %}
+{%   endif %}
+{%   if (ssid.pass_point): %}
+set wireless.{{ section }}.interworking=1
+set wireless.{{ section }}.hs20=1
+{%     for (let name in ssid.pass_point.venue_name): %}
+add_list wireless.{{ section }}.iw_venue_name={{ s(name) }}
+{%     endfor %}
+set wireless.{{ section }}.iw_venue_group='{{ ssid.pass_point.venue_group }}'
+set wireless.{{ section }}.iw_venue_type='{{ ssid.pass_point.venue_type }}'
+{%     for (let n, url in ssid.pass_point.venue_url): %}
+add_list wireless.{{ section }}.iw_venue_url={{ s((n + 1) + ":" +url) }}
+{%     endfor %}
+set wireless.{{ section }}.iw_network_auth_type='{{ match_hs20_auth_type(ssid.pass_point.auth_type) }}'
+set wireless.{{ section }}.iw_domain_name={{ s(ssid.pass_point.domain_name) }}
+{%     for (let realm in ssid.pass_point.nai_realm): %}
+set wireless.{{ section }}.iw_nai_realm='{{ realm }}'
+{%     endfor %}
+set wireless.{{ section }}.osen={{ b(ssid.pass_point.osen) }}
+set wireless.{{ section }}.anqp_domain_id='{{ ssid.pass_point.anqp_domain }}'
+{%     for (let name in ssid.pass_point.friendly_name): %}
+add_list wireless.{{ section }}.hs20_oper_friendly_name={{ s(name) }}
+{%     endfor %}
+{%     for (let icon in ssid.pass_point.icon): %}
+add_list wireless.{{ section }}.operator_icon={{ s(icon.uri) }}
+{%     endfor %}
 {%   endif %}
 set wireless.{{ section }}.wds='{{ b(match_wds()) }}'
 {%   if (ssid.rate_limit && (ssid.rate_limit.ingress_rate || ssid.rate_limit.egress_rate)): %}
