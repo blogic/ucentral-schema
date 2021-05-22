@@ -3,7 +3,7 @@
 
 	ctx.call("system", "reboot");
 
-	let err = ubus.error();
+	let err = ctx.error();
 
 	if (err != null)
 		result(2, "Reboot call failed with status %s", err);
