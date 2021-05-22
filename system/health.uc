@@ -33,7 +33,7 @@ function radius_probe(server, port, secret)
 	if (f) {
 		f.write(sprintf("authserver %s:%d\n", server, port));
 		f.write("servers /tmp/radius.servers\n");
-		f.write("dictionary /etc/radli/dictionary\n");
+		f.write("dictionary /etc/radcli/dictionary\n");
 		f.write("radius_timeout 3\n");
 		f.write("radius_retries 1\n");
 		f.write("bindaddr *\n");
