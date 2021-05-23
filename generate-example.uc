@@ -212,6 +212,23 @@ function random_value(kind, minLength, maxLength) {
 }
 
 let GeneratorProto = {
+	type_keywords: {
+		number: [
+			'minimum', 'maximum', 'exclusiveMinimum', 'exclusiveMaximum',
+			'multipleOf'
+		],
+		string: [
+			'pattern', 'format', 'minLength', 'maxLength'
+		],
+		array: [
+			'minItems', 'maxItems', 'items'
+		],
+		object: [
+			'additionalProperties', 'minProperties', 'maxProperties',
+			'properties', 'propertyNames'
+		]
+	},
+
 	is_ref: function(value)
 	{
 		return (
@@ -257,6 +274,24 @@ let GeneratorProto = {
 		return ref;
 	},
 
+	infer_type: function(valueSpec)
+	{
+		if (exists(valueSpec, 'type')) {
+			if (type(valueSpec.type) == 'array')
+				return random_item(valueSpec.type);
+
+			return valueSpec.type;
+		}
+
+		for (let type, keywords in this.type_keywords) {
+			for (let keyword in keywords)
+				if (exists(valueSpec, keyword))
+					return type;
+		}
+
+		return null;
+	},
+
 	emit_generic: function(objectSpec)
 	{
 		if (is_array(objectSpec.enum))
@@ -272,8 +307,6 @@ let GeneratorProto = {
 	{
 		let object = {};
 
-		assert(objectSpec.type == "object", "Expecting object type");
-
 		if (type(objectSpec.properties) == "object") {
 			for (let propertyName, propertySpec in objectSpec.properties) {
 				let value = this.emit_spec(propertySpec);
@@ -288,8 +321,6 @@ let GeneratorProto = {
 	emit_array: function(arraySpec)
 	{
 		let array = [];
-
-		assert(arraySpec.type == "array", "Expecting array type");
 
 		if (type(arraySpec.items) == "object") {
 			let len = 3;
@@ -327,8 +358,6 @@ let GeneratorProto = {
 
 	emit_string: function(stringSpec, noExample)
 	{
-		assert(stringSpec.type == "string", "Expecting string type");
-
 		let rv = this.emit_generic(stringSpec);
 
 		if (rv == rv)
@@ -353,8 +382,6 @@ let GeneratorProto = {
 
 	emit_number: function(numberSpec)
 	{
-		assert(numberSpec.type == "integer", "Expecting number type");
-
 		let rv = this.emit_generic(numberSpec);
 
 		if (rv == rv)
@@ -397,8 +424,6 @@ let GeneratorProto = {
 
 	emit_boolean: function(boolSpec)
 	{
-		assert(boolSpec.type == "boolean", "Expecting boolean type");
-
 		let rv = this.emit_generic(boolSpec);
 
 		if (rv == rv)
@@ -430,7 +455,7 @@ let GeneratorProto = {
 		if (type(alternatives) == 'array' && length(alternatives) > 0)
 			return this.emit_spec(alternatives[math.rand() % length(alternatives)], noExample);
 
-		switch (valueSpec.type) {
+		switch (this.infer_type(valueSpec)) {
 		case "object":
 			return this.emit_object(valueSpec);
 
