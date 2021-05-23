@@ -3721,6 +3721,6 @@ return {
 		let err = [];
 		let res = newUCentralState("", value, err);
 		if (errors) push(errors, ...map(err, e => "[E] (In " + e[0] + ") Value " + e[1]));
-		return length(errors) ? null : res;
+		return length(err) ? null : res;
 	}
 };
