@@ -1,8 +1,7 @@
 #!/usr/bin/env ucode
 {%
 
-push(REQUIRE_SEARCH_PATH,
-	"/usr/local/lib/ucode/*.so");
+"use strict";
 
 let fs = require("fs");
 let math = require("math");
@@ -129,20 +128,20 @@ let GeneratorProto = {
 		) ? value["$ref"] : null;
 	},
 
-	emit_test_expression: function(path, condExpr, errorMsg, isTerminal)
+	emit_test_expression: function(indent, condExpr, errorMsg, isTerminal)
 	{
-		this.print(path, 'if (%s)%s', condExpr, isTerminal ? ' {' : '');
-		this.print(path, '	push(errors, [ location, %J ]);', errorMsg);
+		this.print(indent, 'if (%s)%s', condExpr, isTerminal ? ' {' : '');
+		this.print(indent, '	push(errors, [ location, %J ]);', errorMsg);
 
 		if (isTerminal) {
-			this.print(path, '	return null;');
-			this.print(path, '}');
+			this.print(indent, '	return null;');
+			this.print(indent, '}');
 		}
 
-		this.print(path, '');
+		this.print(indent, '');
 	},
 
-	emit_format_asserts: function(path, valueExpr, valueSpec)
+	emit_format_tests: function(indent, valueExpr, valueSpec)
 	{
 		if (!valueSpec.format)
 			return;
@@ -152,31 +151,31 @@ let GeneratorProto = {
 			return;
 		}
 
-		this.emit_test_expression(path,
+		this.emit_test_expression(indent,
 			sprintf('!%s(%s)', to_method_name('match', valueSpec.format), valueExpr),
 			sprintf('must be a valid %s', this.format_validators[valueSpec.format].desc),
 			false);
 	},
 
-	emit_generic_asserts: function(path, valueExpr, valueSpec)
+	emit_generic_tests: function(indent, valueExpr, valueSpec)
 	{
 		if (type(valueSpec.enum) == 'array' && length(valueSpec.enum) > 0)
-			this.emit_test_expression(path,
+			this.emit_test_expression(indent,
 				sprintf('!(%s in %J)', valueExpr, valueSpec.enum),
 				sprintf('must be one of %J', valueSpec.enum),
 				false);
 
 		if (exists(valueSpec, 'const'))
-			this.emit_test_expression(path,
+			this.emit_test_expression(indent,
 				sprintf('%s != %J', valueExpr, valueSpec.const),
 				sprintf('must have value %J', valueSpec.const),
 				false);
 	},
 
-	emit_number_asserts: function(path, valueExpr, valueSpec)
+	emit_number_tests: function(indent, valueExpr, valueSpec)
 	{
 		if (exists(valueSpec, 'multipleOf')) {
-			this.emit_test_expression(path,
+			this.emit_test_expression(indent,
 				sprintf('%s / %J != int(%s / %J)', valueExpr, valueSpec.multipleOf, valueExpr, valueSpec.multipleOf),
 				sprintf('must be divisible by %J', valueSpec.multipleOf),
 				false);
@@ -191,20 +190,20 @@ let GeneratorProto = {
 
 		for (let keyword, op_desc in constraints) {
 			if (exists(valueSpec, keyword))
-				this.emit_test_expression(path,
+				this.emit_test_expression(indent,
 					sprintf('%s %s %J', valueExpr, op_desc[0], valueSpec[keyword]),
 					sprintf('must be %s %J', op_desc[1], valueSpec[keyword]),
 					false);
 		}
 	},
 
-	emit_string_asserts: function(path, valueExpr, valueSpec)
+	emit_string_tests: function(indent, valueExpr, valueSpec)
 	{
 		if (exists(valueSpec, 'pattern')) {
 			try {
 				regexp(valueSpec.pattern);
 
-				this.emit_test_expression(path,
+				this.emit_test_expression(indent,
 					sprintf('!match(%s, regexp(%J))', valueExpr, valueSpec.pattern),
 					sprintf('must match regular expression /%s/', valueSpec.pattern),
 					false);
@@ -215,31 +214,31 @@ let GeneratorProto = {
 		}
 
 		if (exists(valueSpec, 'maxLength')) {
-			this.emit_test_expression(path,
+			this.emit_test_expression(indent,
 				sprintf('length(%s) > %J', valueExpr, valueSpec.maxLength),
 				sprintf('must be at most %J characters long', valueSpec.maxLength),
 				false);
 		}
 
 		if (exists(valueSpec, 'minLength')) {
-			this.emit_test_expression(path,
+			this.emit_test_expression(indent,
 				sprintf('length(%s) < %J', valueExpr, valueSpec.minLength),
 				sprintf('must be at least %J characters long', valueSpec.maxLength),
 				false);
 		}
 	},
 
-	emit_array_asserts: function(path, valueExpr, valueSpec)
+	emit_array_tests: function(indent, valueExpr, valueSpec)
 	{
 		if (exists(valueSpec, 'maxItems')) {
-			this.emit_test_expression(path,
+			this.emit_test_expression(indent,
 				sprintf('length(%s) > %J', valueExpr, valueSpec.maxItems),
 				sprintf('must not have more than %J items', valueSpec.maxItems),
 				false);
 		}
 
 		if (exists(valueSpec, 'minItems')) {
-			this.emit_test_expression(path,
+			this.emit_test_expression(indent,
 				sprintf('length(%s) < %J', valueExpr, valueSpec.minItems),
 				sprintf('must have at least %J items', valueSpec.minItems),
 				false);
@@ -248,17 +247,17 @@ let GeneratorProto = {
 		/* XXX: uniqueItems, maxContains, minContains */
 	},
 
-	emit_object_asserts: function(path, valueExpr, valueSpec)
+	emit_object_tests: function(indent, valueExpr, valueSpec)
 	{
 		if (exists(valueSpec, 'maxProperties')) {
-			this.emit_test_expression(path,
+			this.emit_test_expression(indent,
 				sprintf('length(%s) > %J', valueExpr, valueSpec.maxProperties),
 				sprintf('must have at most %J properties', valueSpec.maxProperties),
 				false);
 		}
 
 		if (exists(valueSpec, 'minProperties')) {
-			this.emit_test_expression(path,
+			this.emit_test_expression(indent,
 				sprintf('length(%s) < %J', valueExpr, valueSpec.minProperties),
 				sprintf('must have at least %J properties', valueSpec.minProperties),
 				false);
@@ -279,19 +278,17 @@ let GeneratorProto = {
 		return schema;
 	},
 
-	print: function(path, fmt, ...args)
+	print: function(indent, fmt, ...args)
 	{
 		if (length(fmt)) {
-			for (let _ in path)
-				print("\t");
-
+			print(indent);
 			printf(fmt, ...args);
 		}
 
 		print("\n");
 	},
 
-	emit_spec_validation_asserts: function(path, valueExpr, valueSpec)
+	emit_spec_validation_tests: function(indent, valueExpr, valueSpec)
 	{
 		let typeMap = {
 			string: 'type(%s) != "string"',
@@ -303,14 +300,14 @@ let GeneratorProto = {
 		};
 
 		if (exists(typeMap, valueSpec.type)) {
-			this.emit_test_expression(path,
+			this.emit_test_expression(indent,
 				sprintf(typeMap[valueSpec.type], valueExpr),
 				sprintf('must be of type %s', valueSpec.type),
 				true);
 		}
 
-		this.emit_generic_asserts(path, valueExpr, valueSpec);
-		this.emit_format_asserts(path, valueExpr, valueSpec);
+		this.emit_generic_tests(indent, valueExpr, valueSpec);
+		this.emit_format_tests(indent, valueExpr, valueSpec);
 
 		let variantSpecs, variantErrorCond, variantErrorMsg;
 
@@ -334,68 +331,68 @@ let GeneratorProto = {
 			let functionNames = [];
 
 			for (let i, subSpec in variantSpecs)
-				push(functionNames, this.emit_spec_validation_function(path, 'parseVariant', i, subSpec));
+				push(functionNames, this.emit_spec_validation_function(indent, 'parseVariant', i, subSpec));
 
-			this.print(path, 'let success = 0, tryval, tryerr, verrors = [];\n');
+			this.print(indent, 'let success = 0, tryval, tryerr, verrors = [];\n');
 
 			for (let functionName in functionNames) {
-				this.print(path, 'tryerr = [];');
-				this.print(path, 'tryval = %s(location, value, tryerr);', functionName);
-				this.print(path, 'if (!length(tryerr)) {');
-				this.print(path, '	value = tryval;');
-				this.print(path, '	success++;');
-				this.print(path, '}');
-				this.print(path, 'else {');
-				this.print(path, '	push(verrors, join(" and\\n", map(tryerr, err => "\\t - " + err[1])));');
-				this.print(path, '}\n');
+				this.print(indent, 'tryerr = [];');
+				this.print(indent, 'tryval = %s(location, value, tryerr);', functionName);
+				this.print(indent, 'if (!length(tryerr)) {');
+				this.print(indent, '	value = tryval;');
+				this.print(indent, '	success++;');
+				this.print(indent, '}');
+				this.print(indent, 'else {');
+				this.print(indent, '	push(verrors, join(" and\\n", map(tryerr, err => "\\t - " + err[1])));');
+				this.print(indent, '}\n');
 			}
 
-			this.print(path, 'if (success %s) {', variantErrorCond);
-			this.print(path, '	push(errors, [ location, "must match %s of the following constraints:\\n" + join("\\n- or -\\n", verrors) ]);', variantErrorMsg);
-			this.print(path, '	return null;');
-			this.print(path, '}\n');
+			this.print(indent, 'if (success %s) {', variantErrorCond);
+			this.print(indent, '	push(errors, [ location, "must match %s of the following constraints:\\n" + join("\\n- or -\\n", verrors) ]);', variantErrorMsg);
+			this.print(indent, '	return null;');
+			this.print(indent, '}\n');
 		}
 
 		switch (valueSpec.type) {
 		case 'number':
 		case 'integer':
-			this.emit_number_asserts(path, valueExpr, valueSpec);
+			this.emit_number_tests(indent, valueExpr, valueSpec);
 			break;
 
 		case 'string':
-			this.emit_string_asserts(path, valueExpr, valueSpec);
+			this.emit_string_tests(indent, valueExpr, valueSpec);
 			break;
 
 		case 'array':
-			this.emit_array_asserts(path, valueExpr, valueSpec);
+			this.emit_array_tests(indent, valueExpr, valueSpec);
 			break;
 
 		case 'object':
-			this.emit_object_asserts(path, valueExpr, valueSpec);
+			this.emit_object_tests(indent, valueExpr, valueSpec);
 			break;
 		}
 	},
 
-	emit_format_validation_function: function(path, verb, formatName, formatCode)
+	emit_format_validation_function: function(indent, verb, formatName, formatCode)
 	{
 		let functionName = to_method_name(verb, formatName);
 
-		this.print(path, 'function %s(value) {', functionName);
+		this.print(indent, 'function %s(value) {', functionName);
 
 		for (let line in formatCode)
-			this.print(path, '	' + line);
+			this.print(indent, '	' + line);
 
-		this.print(path, '}\n');
+		this.print(indent, '}\n');
 	},
 
-	emit_spec_validation_function: function(path, verb, propertyName, valueSpec)
+	emit_spec_validation_function: function(indent, verb, propertyName, valueSpec)
 	{
 		let functionName = to_method_name(verb, propertyName),
 		    isRef = this.is_ref(valueSpec);
 
-		this.print(path, 'function %s(location, value, errors) {', functionName);
+		this.print(indent, 'function %s(location, value, errors) {', functionName);
 
-		this.emit_spec_validation_asserts([...path, propertyName], 'value', valueSpec);
+		this.emit_spec_validation_tests(indent + '\t', 'value', valueSpec);
 
 		/* Derive type from referenced subschema if possible */
 		if (!exists(valueSpec, 'type') && isRef) {
@@ -410,16 +407,16 @@ let GeneratorProto = {
 
 			if (type(itemSpec) == "object") {
 				if (isRef) {
-					this.print(path, '	return map(value, (item, i) => %s(location + "/" + i, item, errors));',
+					this.print(indent, '	return map(value, (item, i) => %s(location + "/" + i, item, errors));',
 						to_method_name('instantiate', replace(isRef, '#/$defs/', '')));
 				}
 				else {
-					this.emit_spec_validation_function([...path, propertyName], 'parse', 'item', itemSpec);
-					this.print(path, '	return map(value, (item, i) => parseItem(location + "/" + i, item, errors));');
+					this.emit_spec_validation_function(indent + '\t', 'parse', 'item', itemSpec);
+					this.print(indent, '	return map(value, (item, i) => parseItem(location + "/" + i, item, errors));');
 				}
 			}
 			else {
-				this.print(path, '	return value;');
+				this.print(indent, '	return value;');
 			}
 
 			break;
@@ -428,25 +425,25 @@ let GeneratorProto = {
 			if (type(valueSpec.propertyNames) == "object") {
 				let keySpec = { type: 'string', ...(valueSpec.propertyNames) };
 
-				this.print(path, '	for (let propertyName in value) {');
-				this.emit_spec_validation_asserts([...path, propertyName, '$'], 'propertyName', keySpec);
-				this.print(path, '	}');
-				this.print(path, '');
+				this.print(indent, '	for (let propertyName in value) {');
+				this.emit_spec_validation_tests(indent + '\t\t', 'propertyName', keySpec);
+				this.print(indent, '	}');
+				this.print(indent, '');
 			}
 
 			if (exists(valueSpec, "$ref")) {
 				let fn = to_method_name('instantiate', replace(valueSpec['$ref'], '#/$defs/', ''));
 
 				if (valueSpec.additionalProperties === true)
-					this.print(path, '	let obj = { ...value, ...(%s(location, value, errors)) };\n', fn);
+					this.print(indent, '	let obj = { ...value, ...(%s(location, value, errors)) };\n', fn);
 				else
-					this.print(path, '	let obj = %s(location, value, errors);\n', fn);
+					this.print(indent, '	let obj = %s(location, value, errors);\n', fn);
 			}
 			else {
 				if (valueSpec.additionalProperties === true)
-					this.print(path, '	let obj = { ...value };\n');
+					this.print(indent, '	let obj = { ...value };\n');
 				else
-					this.print(path, '	let obj = {};\n');
+					this.print(indent, '	let obj = {};\n');
 			}
 
 			if (type(valueSpec.properties) == "object") {
@@ -456,90 +453,90 @@ let GeneratorProto = {
 
 					if (!isRef) {
 						this.emit_spec_validation_function(
-							[...path, propertyName],
+							indent + '\t',
 							'parse',
 							objectPropertyName,
 							propertySpec);
 					}
 
-					this.print(path, '	if (exists(value, %J)) {',
+					this.print(indent, '	if (exists(value, %J)) {',
 						objectPropertyName);
 
 					if (isRef) {
-						this.print(path, '		obj.%s = %s(location + "/%s", %s, errors);',
+						this.print(indent, '		obj.%s = %s(location + "/%s", %s, errors);',
 							to_property_name(objectPropertyName),
 							to_method_name('instantiate', replace(isRef, '#/$defs/', '')),
 							to_json_ptr(objectPropertyName),
 							valueExpr);
 					}
 					else {
-						this.print(path, '		obj.%s = %s(location + "/%s", %s, errors);',
+						this.print(indent, '		obj.%s = %s(location + "/%s", %s, errors);',
 							to_property_name(objectPropertyName),
 							to_method_name('parse', objectPropertyName),
 							to_json_ptr(objectPropertyName),
 							valueExpr);
 					}
 
-					this.print(path, '	}');
+					this.print(indent, '	}');
 
 					if (exists(propertySpec, 'default')) {
-						this.print(path, '	else {');
+						this.print(indent, '	else {');
 
-						this.print(path, '		obj.%s = %J;',
+						this.print(indent, '		obj.%s = %J;',
 							to_property_name(objectPropertyName),
 							propertySpec.default);
 
-						this.print(path, '	}');
+						this.print(indent, '	}');
 					}
 					else if (objectPropertyName in valueSpec.required) {
-						this.print(path, '	else {');
-						this.print(path, '		push(errors, [ location, "is required" ]);');
-						this.print(path, '	}');
+						this.print(indent, '	else {');
+						this.print(indent, '		push(errors, [ location, "is required" ]);');
+						this.print(indent, '	}');
 					}
 
-					this.print(path, '');
+					this.print(indent, '');
 				}
 			}
 
-			this.print(path, '	return obj;');
+			this.print(indent, '	return obj;');
 			break;
 
 		default:
-			this.print(path, '	return value;');
+			this.print(indent, '	return value;');
 			break;
 		}
 
-		this.print(path, '}\n');
+		this.print(indent, '}\n');
 
 		return functionName;
 	},
 
 	generate: function()
 	{
-		let path = [];
+		let indent = '';
 
 		this.schema = this.read_schema(this.path);
 
-		this.print(path, '{%');
-		this.print(path, '// Automatically generated from %s - do not edit!', this.path);
-		this.print(path, '"use strict";\n');
+		this.print(indent, '{%');
+		this.print(indent, '// Automatically generated from %s - do not edit!', this.path);
+		this.print(indent, '"use strict";\n');
 
 		for (let formatName, formatCode in this.format_validators)
-			this.emit_format_validation_function(path, 'match', formatName, formatCode.code);
+			this.emit_format_validation_function(indent, 'match', formatName, formatCode.code);
 
 		for (let definitionId, definitionSpec in this.schema['$defs'])
-			this.emit_spec_validation_function(path, 'instantiate', definitionId, definitionSpec);
+			this.emit_spec_validation_function(indent, 'instantiate', definitionId, definitionSpec);
 
-		this.emit_spec_validation_function(path, 'new', "UCentralState", this.schema);
+		this.emit_spec_validation_function(indent, 'new', "UCentralState", this.schema);
 
-		this.print(path, 'return {');
-		this.print(path, '	validate: (value, errors) => {');
-		this.print(path, '		let err = [];');
-		this.print(path, '		let res = newUCentralState("", value, err);');
-		this.print(path, '		if (errors) push(errors, ...map(err, e => "[E] (In " + e[0] + ") Value " + e[1]));');
-		this.print(path, '		return length(errors) ? null : res;');
-		this.print(path, '	}');
-		this.print(path, '};');
+		this.print(indent, 'return {');
+		this.print(indent, '	validate: (value, errors) => {');
+		this.print(indent, '		let err = [];');
+		this.print(indent, '		let res = newUCentralState("", value, err);');
+		this.print(indent, '		if (errors) push(errors, ...map(err, e => "[E] (In " + e[0] + ") Value " + e[1]));');
+		this.print(indent, '		return length(errors) ? null : res;');
+		this.print(indent, '	}');
+		this.print(indent, '};');
 	}
 };
 

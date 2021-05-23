@@ -304,8 +304,8 @@ function instantiateRadio(location, value, errors) {
 				return null;
 			}
 
-			if (!(value in [ "auto" ]))
-				push(errors, [ location, "must be one of [ \"auto\" ]" ]);
+			if (value != "auto")
+				push(errors, [ location, "must have value \"auto\"" ]);
 
 			return value;
 		}
@@ -1157,6 +1157,132 @@ function instantiateInterfaceIpv6(location, value, errors) {
 	return obj;
 }
 
+function instantiateInterfaceCaptive(location, value, errors) {
+	if (type(value) != "object") {
+		push(errors, [ location, "must be of type object" ]);
+		return null;
+	}
+
+	let obj = {};
+
+	function parseGatewayName(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		return value;
+	}
+
+	if (exists(value, "gateway-name")) {
+		obj.gateway_name = parseGatewayName(location + "/gateway-name", value["gateway-name"], errors);
+	}
+	else {
+		obj.gateway_name = "uCentral - Captive Portal";
+	}
+
+	function parseGatewayFqdn(location, value, errors) {
+		if (type(value) != "string") {
+			push(errors, [ location, "must be of type string" ]);
+			return null;
+		}
+
+		if (!matchFqdn(value))
+			push(errors, [ location, "must be a valid fully qualified domain name" ]);
+
+		return value;
+	}
+
+	if (exists(value, "gateway-fqdn")) {
+		obj.gateway_fqdn = parseGatewayFqdn(location + "/gateway-fqdn", value["gateway-fqdn"], errors);
+	}
+	else {
+		obj.gateway_fqdn = "ucentral.splash";
+	}
+
+	function parseMaxClients(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		return value;
+	}
+
+	if (exists(value, "max-clients")) {
+		obj.max_clients = parseMaxClients(location + "/max-clients", value["max-clients"], errors);
+	}
+	else {
+		obj.max_clients = 32;
+	}
+
+	function parseUploadRate(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		return value;
+	}
+
+	if (exists(value, "upload-rate")) {
+		obj.upload_rate = parseUploadRate(location + "/upload-rate", value["upload-rate"], errors);
+	}
+	else {
+		obj.upload_rate = 0;
+	}
+
+	function parseDownloadRate(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		return value;
+	}
+
+	if (exists(value, "download-rate")) {
+		obj.download_rate = parseDownloadRate(location + "/download-rate", value["download-rate"], errors);
+	}
+	else {
+		obj.download_rate = 0;
+	}
+
+	function parseUploadQuota(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		return value;
+	}
+
+	if (exists(value, "upload-quota")) {
+		obj.upload_quota = parseUploadQuota(location + "/upload-quota", value["upload-quota"], errors);
+	}
+	else {
+		obj.upload_quota = 0;
+	}
+
+	function parseDownloadQuota(location, value, errors) {
+		if (type(value) != "int") {
+			push(errors, [ location, "must be of type integer" ]);
+			return null;
+		}
+
+		return value;
+	}
+
+	if (exists(value, "download-quota")) {
+		obj.download_quota = parseDownloadQuota(location + "/download-quota", value["download-quota"], errors);
+	}
+	else {
+		obj.download_quota = 0;
+	}
+
+	return obj;
+}
+
 function instantiateInterfaceSsidEncryption(location, value, errors) {
 	if (type(value) != "object") {
 		push(errors, [ location, "must be of type object" ]);
@@ -1279,132 +1405,6 @@ function instantiateInterfaceSsidMultiPsk(location, value, errors) {
 
 	if (exists(value, "vlan-id")) {
 		obj.vlan_id = parseVlanId(location + "/vlan-id", value["vlan-id"], errors);
-	}
-
-	return obj;
-}
-
-function instantiateInterfaceSsidCaptive(location, value, errors) {
-	if (type(value) != "object") {
-		push(errors, [ location, "must be of type object" ]);
-		return null;
-	}
-
-	let obj = {};
-
-	function parseGatewayName(location, value, errors) {
-		if (type(value) != "string") {
-			push(errors, [ location, "must be of type string" ]);
-			return null;
-		}
-
-		return value;
-	}
-
-	if (exists(value, "gateway-name")) {
-		obj.gateway_name = parseGatewayName(location + "/gateway-name", value["gateway-name"], errors);
-	}
-	else {
-		obj.gateway_name = "uCentral - Captive Portal";
-	}
-
-	function parseGatewayFqdn(location, value, errors) {
-		if (type(value) != "string") {
-			push(errors, [ location, "must be of type string" ]);
-			return null;
-		}
-
-		if (!matchFqdn(value))
-			push(errors, [ location, "must be a valid fully qualified domain name" ]);
-
-		return value;
-	}
-
-	if (exists(value, "gateway-fqdn")) {
-		obj.gateway_fqdn = parseGatewayFqdn(location + "/gateway-fqdn", value["gateway-fqdn"], errors);
-	}
-	else {
-		obj.gateway_fqdn = "ucentral.splash";
-	}
-
-	function parseMaxclients(location, value, errors) {
-		if (type(value) != "int") {
-			push(errors, [ location, "must be of type integer" ]);
-			return null;
-		}
-
-		return value;
-	}
-
-	if (exists(value, "maxclients")) {
-		obj.maxclients = parseMaxclients(location + "/maxclients", value["maxclients"], errors);
-	}
-	else {
-		obj.maxclients = 32;
-	}
-
-	function parseUploadRate(location, value, errors) {
-		if (type(value) != "int") {
-			push(errors, [ location, "must be of type integer" ]);
-			return null;
-		}
-
-		return value;
-	}
-
-	if (exists(value, "upload-rate")) {
-		obj.upload_rate = parseUploadRate(location + "/upload-rate", value["upload-rate"], errors);
-	}
-	else {
-		obj.upload_rate = 10000;
-	}
-
-	function parseDownloadRate(location, value, errors) {
-		if (type(value) != "int") {
-			push(errors, [ location, "must be of type integer" ]);
-			return null;
-		}
-
-		return value;
-	}
-
-	if (exists(value, "download-rate")) {
-		obj.download_rate = parseDownloadRate(location + "/download-rate", value["download-rate"], errors);
-	}
-	else {
-		obj.download_rate = 10000;
-	}
-
-	function parseUploadQuota(location, value, errors) {
-		if (type(value) != "int") {
-			push(errors, [ location, "must be of type integer" ]);
-			return null;
-		}
-
-		return value;
-	}
-
-	if (exists(value, "upload-quota")) {
-		obj.upload_quota = parseUploadQuota(location + "/upload-quota", value["upload-quota"], errors);
-	}
-	else {
-		obj.upload_quota = 10000;
-	}
-
-	function parseDownloadQuota(location, value, errors) {
-		if (type(value) != "int") {
-			push(errors, [ location, "must be of type integer" ]);
-			return null;
-		}
-
-		return value;
-	}
-
-	if (exists(value, "download-quota")) {
-		obj.download_quota = parseDownloadQuota(location + "/download-quota", value["download-quota"], errors);
-	}
-	else {
-		obj.download_quota = 10000;
 	}
 
 	return obj;
@@ -2440,10 +2440,6 @@ function instantiateInterfaceSsid(location, value, errors) {
 		obj.multi_psk = parseMultiPsk(location + "/multi-psk", value["multi-psk"], errors);
 	}
 
-	if (exists(value, "captive")) {
-		obj.captive = instantiateInterfaceSsidCaptive(location + "/captive", value["captive"], errors);
-	}
-
 	if (exists(value, "rrm")) {
 		obj.rrm = instantiateInterfaceSsidRrm(location + "/rrm", value["rrm"], errors);
 	}
@@ -2507,8 +2503,8 @@ function instantiateInterfaceTunnelMesh(location, value, errors) {
 			return null;
 		}
 
-		if (!(value in [ "mesh" ]))
-			push(errors, [ location, "must be one of [ \"mesh\" ]" ]);
+		if (value != "mesh")
+			push(errors, [ location, "must have value \"mesh\"" ]);
 
 		return value;
 	}
@@ -2534,8 +2530,8 @@ function instantiateInterfaceTunnelVxlan(location, value, errors) {
 			return null;
 		}
 
-		if (!(value in [ "vxlan" ]))
-			push(errors, [ location, "must be one of [ \"vxlan\" ]" ]);
+		if (value != "vxlan")
+			push(errors, [ location, "must have value \"vxlan\"" ]);
 
 		return value;
 	}
@@ -2596,8 +2592,8 @@ function instantiateInterfaceTunnelGre(location, value, errors) {
 			return null;
 		}
 
-		if (!(value in [ "gre" ]))
-			push(errors, [ location, "must be one of [ \"gre\" ]" ]);
+		if (value != "gre")
+			push(errors, [ location, "must have value \"gre\"" ]);
 
 		return value;
 	}
@@ -2818,6 +2814,10 @@ function instantiateInterface(location, value, errors) {
 
 	if (exists(value, "ipv6")) {
 		obj.ipv6 = instantiateInterfaceIpv6(location + "/ipv6", value["ipv6"], errors);
+	}
+
+	if (exists(value, "captive")) {
+		obj.captive = instantiateInterfaceCaptive(location + "/captive", value["captive"], errors);
 	}
 
 	function parseSsids(location, value, errors) {
@@ -3450,9 +3450,6 @@ function instantiateMetricsStatistics(location, value, errors) {
 			push(errors, [ location, "must be of type integer" ]);
 			return null;
 		}
-
-		if (value < 60)
-			push(errors, [ location, "must be bigger than or equal to 60" ]);
 
 		return value;
 	}
