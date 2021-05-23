@@ -6,8 +6,7 @@ properties:
     description:
       This field must be set to gre.
     type: string
-    enum:
-      - gre
+    const: gre
   peer-address:
     description:
       This is the IP address of the remote host, that the GRE tunnel shall be

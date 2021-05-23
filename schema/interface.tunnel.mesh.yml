@@ -6,5 +6,4 @@ properties:
     description:
       This field must be set to mesh.
     type: string
-    enum:
-      - mesh
+    const: mesh

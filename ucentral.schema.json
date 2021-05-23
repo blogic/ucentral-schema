@@ -135,9 +135,7 @@
                         },
                         {
                             "type": "string",
-                            "enum": [
-                                "auto"
-                            ]
+                            "const": "auto"
                         }
                     ]
                 },
@@ -1049,9 +1047,7 @@
             "properties": {
                 "proto": {
                     "type": "string",
-                    "enum": [
-                        "mesh"
-                    ]
+                    "const": "mesh"
                 }
             }
         },
@@ -1060,9 +1056,7 @@
             "properties": {
                 "proto": {
                     "type": "string",
-                    "enum": [
-                        "vxlan"
-                    ]
+                    "const": "vxlan"
                 },
                 "peer-address": {
                     "type": "string",
@@ -1084,9 +1078,7 @@
             "properties": {
                 "proto": {
                     "type": "string",
-                    "enum": [
-                        "gre"
-                    ]
+                    "const": "gre"
                 },
                 "peer-address": {
                     "type": "string",

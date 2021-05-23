@@ -6,8 +6,7 @@ properties:
     description:
       This field must be set to vxlan.
     type: string
-    enum:
-      - vxlan
+    const: vxlan
   peer-address:
     description:
       This is the IP address of the remote host, that the VXLAN tunnel shall be

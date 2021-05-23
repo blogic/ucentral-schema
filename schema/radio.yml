@@ -26,8 +26,7 @@ properties:
         maximum: 171
         minimum: 1
       - type: string
-        enum:
-          - auto
+        const: auto
   country:
     description:
       Specifies the country code, affects the available channels and
