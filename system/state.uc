@@ -130,9 +130,13 @@
 			continue;
 
 		let radio = {};
-		radio.frequencies = vap.frequency;
+		radio.channel = vap.channel;
 		radio.channel_width = vap.ch_width;
 		radio.tx_power = vap.tx_power;
+		let survey = ctx.call('wifi', 'survey', { 'channel': radio.channel[0] });
+		for (let k, v in survey)
+			radio[k] = v;
+		delete radio.in_use;
 		push(state.radios, radio);
 	}
 	if (!length(state.radios))
