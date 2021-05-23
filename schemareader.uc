@@ -1948,8 +1948,78 @@ function instantiateInterfaceSsidRadius(location, value, errors) {
 		obj.authentication = instantiateInterfaceSsidRadiusServer(location + "/authentication", value["authentication"], errors);
 	}
 
+	function parseAccounting(location, value, errors) {
+		function parseVariant0(location, value, errors) {
+			let obj = instantiateInterfaceSsidRadiusServer(location, value, errors);
+
+			return obj;
+		}
+
+		function parseVariant1(location, value, errors) {
+			if (type(value) != "object") {
+				push(errors, [ location, "must be of type object" ]);
+				return null;
+			}
+
+			let obj = {};
+
+			function parseInterval(location, value, errors) {
+				if (type(value) != "int") {
+					push(errors, [ location, "must be of type integer" ]);
+					return null;
+				}
+
+				if (value > 600)
+					push(errors, [ location, "must be lower than or equal to 600" ]);
+
+				if (value < 60)
+					push(errors, [ location, "must be bigger than or equal to 60" ]);
+
+				return value;
+			}
+
+			if (exists(value, "interval")) {
+				obj.interval = parseInterval(location + "/interval", value["interval"], errors);
+			}
+			else {
+				obj.interval = 60;
+			}
+
+			return obj;
+		}
+
+		let success = 0, tryval, tryerr, verrors = [];
+
+		tryerr = [];
+		tryval = parseVariant0(location, value, tryerr);
+		if (!length(tryerr)) {
+			value = tryval;
+			success++;
+		}
+		else {
+			push(verrors, join(" and\n", map(tryerr, err => "\t - " + err[1])));
+		}
+
+		tryerr = [];
+		tryval = parseVariant1(location, value, tryerr);
+		if (!length(tryerr)) {
+			value = tryval;
+			success++;
+		}
+		else {
+			push(verrors, join(" and\n", map(tryerr, err => "\t - " + err[1])));
+		}
+
+		if (success != 2) {
+			push(errors, [ location, "must match all of the following constraints:\n" + join("\n- or -\n", verrors) ]);
+			return null;
+		}
+
+		return value;
+	}
+
 	if (exists(value, "accounting")) {
-		obj.accounting = instantiateInterfaceSsidRadiusServer(location + "/accounting", value["accounting"], errors);
+		obj.accounting = parseAccounting(location + "/accounting", value["accounting"], errors);
 	}
 
 	return obj;

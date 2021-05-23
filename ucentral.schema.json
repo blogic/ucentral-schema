@@ -796,13 +796,22 @@
                     "$ref": "#/$defs/interface.ssid.radius.server"
                 },
                 "accounting": {
-                    "$ref": "#/$defs/interface.ssid.radius.server",
-                    "interval": {
-                        "type": "integer",
-                        "maximum": 600,
-                        "minimum": 60,
-                        "default": 60
-                    }
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/interface.ssid.radius.server"
+                        },
+                        {
+                            "type": "object",
+                            "properties": {
+                                "interval": {
+                                    "type": "integer",
+                                    "maximum": 600,
+                                    "minimum": 60,
+                                    "default": 60
+                                }
+                            }
+                        }
+                    ]
                 }
             }
         },
