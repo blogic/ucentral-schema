@@ -17,7 +17,7 @@
 	cursor.set("rtty", "@rtty[-1]", "port", args.port);
 	cursor.set("rtty", "@rtty[-1]", "token", args.token);
 	cursor.set("rtty", "@rtty[-1]", "timeout", args.timeout);
-	cursor.set("rtty", "@rtty[-1]", "ssl", args.ssl || 0);
+	cursor.set("rtty", "@rtty[-1]", "ssl", 1);
 	cursor.commit();
 
 	system("/etc/init.d/rtty restart");
