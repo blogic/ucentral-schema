@@ -1347,6 +1347,31 @@
                 }
             }
         },
+        "service.radius-proxy": {
+            "type": "object",
+            "required": [
+                "host",
+                "port",
+                "secret"
+            ],
+            "properties": {
+                "host": {
+                    "type": "string",
+                    "format": "uc-host",
+                    "examples": [
+                        "192.168.1.10"
+                    ]
+                },
+                "port": {
+                    "type": "integer",
+                    "maximum": 65535,
+                    "default": 2083
+                },
+                "secret": {
+                    "type": "string"
+                }
+            }
+        },
         "service.wifi-steering": {
             "type": "object",
             "properties": {
@@ -1415,6 +1440,9 @@
                 },
                 "ieee8021x": {
                     "$ref": "#/$defs/service.ieee8021x"
+                },
+                "radius-proxy": {
+                    "$ref": "#/$defs/service.radius-proxy"
                 },
                 "wifi-steering": {
                     "$ref": "#/$defs/service.wifi-steering"

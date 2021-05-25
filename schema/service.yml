@@ -21,5 +21,7 @@ properties:
     $ref: "https://ucentral.io/schema/v1/service/igmp/"
   ieee8021x:
     $ref: "https://ucentral.io/schema/v1/service/ieee8021x/"
+  radius-proxy:
+    $ref: "https://ucentral.io/schema/v1/service/radius-proxy/"
   wifi-steering:
     $ref: "https://ucentral.io/schema/v1/service/wifi-steering/"

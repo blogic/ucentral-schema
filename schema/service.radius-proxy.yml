@@ -1,0 +1,22 @@
+description:
+  This section can be used to setup a radius security proxy instance (radsecproxy).
+type: object
+required: [ "host", "port", "secret" ]
+properties:
+  host:
+    description:
+      The remote proxy server that the device shall connect to.
+    type: string
+    format: uc-host
+    examples:
+    - 192.168.1.10
+  port:
+    description:
+      The remote proxy port that the device shall connect to.
+    type: integer
+    maximum: 65535
+    default: 2083
+  secret:
+    description:
+      The radius secret that will be used for the connection.
+    type: string

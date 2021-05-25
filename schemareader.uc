@@ -3444,6 +3444,73 @@ function instantiateServiceIeee8021x(location, value, errors) {
 	return value;
 }
 
+function instantiateServiceRadiusProxy(location, value, errors) {
+	if (type(value) == "object") {
+		let obj = {};
+
+		function parseHost(location, value, errors) {
+			if (type(value) == "string") {
+				if (!matchUcHost(value))
+					push(errors, [ location, "must be a valid hostname or IP address" ]);
+
+			}
+
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "host")) {
+			obj.host = parseHost(location + "/host", value["host"], errors);
+		}
+		else {
+			push(errors, [ location, "is required" ]);
+		}
+
+		function parsePort(location, value, errors) {
+			if (type(value) in [ "int", "double" ]) {
+				if (value > 65535)
+					push(errors, [ location, "must be lower than or equal to 65535" ]);
+
+			}
+
+			if (type(value) != "int")
+				push(errors, [ location, "must be of type integer" ]);
+
+			return value;
+		}
+
+		if (exists(value, "port")) {
+			obj.port = parsePort(location + "/port", value["port"], errors);
+		}
+		else {
+			obj.port = 2083;
+		}
+
+		function parseSecret(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "secret")) {
+			obj.secret = parseSecret(location + "/secret", value["secret"], errors);
+		}
+		else {
+			push(errors, [ location, "is required" ]);
+		}
+
+		return obj;
+	}
+
+	if (type(value) != "object")
+		push(errors, [ location, "must be of type object" ]);
+
+	return value;
+}
+
 function instantiateServiceWifiSteering(location, value, errors) {
 	if (type(value) == "object") {
 		let obj = {};
@@ -3593,6 +3660,10 @@ function instantiateService(location, value, errors) {
 
 		if (exists(value, "ieee8021x")) {
 			obj.ieee8021x = instantiateServiceIeee8021x(location + "/ieee8021x", value["ieee8021x"], errors);
+		}
+
+		if (exists(value, "radius-proxy")) {
+			obj.radius_proxy = instantiateServiceRadiusProxy(location + "/radius-proxy", value["radius-proxy"], errors);
 		}
 
 		if (exists(value, "wifi-steering")) {
