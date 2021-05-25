@@ -18,7 +18,7 @@
 				proto: ssid.encryption.proto,
 				key: ssid.encryption.key
 		};
-		warn(ssid.encryption.proto);
+
 		if (ssid.encryption.proto in [ "wpa", "wpa2", "wpa-mixed", "wpa3", "wpa3-mixed" ] &&
 		    ssid.radius && ssid.radius.authentication &&
 		    ssid.radius.authentication.host &&
