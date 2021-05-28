@@ -160,6 +160,10 @@
 		if (!length(status))
 			return;
 
+		let device = ctx.call("network.device", "status", { name });
+
+		if (device && length(device["bridge-members"]))
+		iface.ports = device["bridge-members"];
 		iface.uptime = status.uptime;
 
 		if (length(status["ipv4-address"])) {
