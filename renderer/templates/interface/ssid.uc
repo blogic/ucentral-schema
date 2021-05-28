@@ -42,7 +42,7 @@
 	}
 
 	function match_wds() {
-		return index([ "wds-ap", "wds-sta", "wds-repeater" ], ssid.bss_mode);
+		return index([ "wds-ap", "wds-sta", "wds-repeater" ], ssid.bss_mode) >= 0;
 	}
 
 	function match_hs20_auth_type(auth_type) {
