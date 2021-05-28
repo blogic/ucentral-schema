@@ -49,6 +49,7 @@ let scope = {
 	/* ressources */
 	cursor: uci.cursor(),
 	ctx,
+	fs,
 
 	/* log helper */
 	log,
