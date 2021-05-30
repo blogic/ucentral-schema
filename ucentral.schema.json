@@ -153,7 +153,8 @@
                         "HT",
                         "VHT",
                         "HE"
-                    ]
+                    ],
+                    "default": "HE"
                 },
                 "channel-width": {
                     "type": "integer",
@@ -163,7 +164,8 @@
                         80,
                         160,
                         8080
-                    ]
+                    ],
+                    "default": 80
                 },
                 "require-mode": {
                     "type": "string",

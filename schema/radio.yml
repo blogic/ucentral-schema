@@ -46,6 +46,7 @@ properties:
     - HT
     - VHT
     - HE
+    default: HE
   channel-width:
     description:
       The channel width that the radio shall use. This is just a hint for the AP. If the
@@ -57,6 +58,7 @@ properties:
     - 80
     - 160
     - 8080
+    default: 80
   require-mode:
     description:
       Stations that do no fulfill these HT modes will be rejected.

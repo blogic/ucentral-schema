@@ -372,6 +372,9 @@ function instantiateRadio(location, value, errors) {
 		if (exists(value, "channel-mode")) {
 			obj.channel_mode = parseChannelMode(location + "/channel-mode", value["channel-mode"], errors);
 		}
+		else {
+			obj.channel_mode = "HE";
+		}
 
 		function parseChannelWidth(location, value, errors) {
 			if (type(value) != "int")
@@ -385,6 +388,9 @@ function instantiateRadio(location, value, errors) {
 
 		if (exists(value, "channel-width")) {
 			obj.channel_width = parseChannelWidth(location + "/channel-width", value["channel-width"], errors);
+		}
+		else {
+			obj.channel_width = 80;
 		}
 
 		function parseRequireMode(location, value, errors) {
