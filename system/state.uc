@@ -32,7 +32,7 @@
 	let wifiiface = ctx.call("wifi", "iface");
 	let stations = ctx.call("wifi", "station");
 	let ports = ctx.call("topology", "port");
-	let lldp = {};
+	let lldp = [];
 
 	/* prepare dhcp leases cache */
 	let ip4leases = {};
@@ -65,48 +65,50 @@
 		let stdout = fs.popen("lldpcli -f json show neighbors");
 		let tmp;
 		if (stdout) {
-			tmp = json(stdout.read("all")).lldp.interface;
+			tmp = json(stdout.read("all")).lldp[0].interface;
 			stdout.close();
 		} else {
 			log("LLDP cli command failed: %s", fs.error());
 		}
 
 		for (let key, iface in tmp) {
-			for (let port, info in iface) {
-				let peer = { };
+			let peer = { };
+			for (let host, chassis in iface.chassis) {
+				if (!length(chassis.id) ||
+				    !length(chassis.descr))
+					continue;
+				peer.mac = chassis.id[0].value;
+				peer.port = iface.name;
+				peer.description = chassis.descr[0].value;
 
-				for (let host, chassis in info.chassis) {
-					if (!length(chassis.id) ||
-					    !length(chassis.descr))
-						continue;
-					peer.mac = chassis.id.value;
-					peer.port = port;
-					peer.description = chassis.descr;
+				if (length(chassis.name))
+					peer.name = chassis.name[0].value;
 
-					if (length(chassis.mgmt_ip))
-						peer.management_ips = chassis["mgmt-ip"];
+				if (length(chassis.mgmt_ip)) {
+					let ipaddr = [];
 
-					if (length(chassis.capability)) {
-						let cap = [];
-
-						for (let c in chassis.capability) {
-							if (!c.enabled)
-								continue;
-							push(cap, c.type);
-						}
-						peer.capability = cap;
-					}
-
+					for (let ip in chassis["mgmt-ip"])
+						push(ipaddr, ip.value);
+					peer.ips = ips;
 				}
 
-				if (!length(peer) ||
-				    !length(info.port) ||
-				    !length(info.port.id) ||
-				    !info.port.id.value)
-					continue;
+				if (length(chassis.capability)) {
+					let cap = [];
 
-				lldp[info.port.id.value] = peer;
+					for (let c in chassis.capability) {
+						if (!c.enabled)
+							continue;
+						push(cap, c.type);
+					}
+					peer.capability = cap;
+				}
+
 			}
+
+			if (!length(peer))
+				continue;
+
+			push(lldp, peer);
 		}
 	}
 	catch(e) {
@@ -151,7 +153,6 @@
 
 		let iface = { name, location: d.ucentral_path, ipv4:{}, ipv6:{} };
 		let ipv4leases = [];
-		let lldp_neigh = [];
 
 		push(state.interfaces, iface);
 
@@ -228,9 +229,6 @@
 				if (length(ip4leases[mac]))
 					push(ipv4leases, ip4leases[mac]);
 
-				if (length(lldp[mac]))
-					push(lldp_neigh, lldp[mac]);
-
 				client.mac = mac;
 				if (length(topo["ipv4"]))
 					client.ipv4_addresses = topo["ipv4"];
@@ -245,11 +243,20 @@
 			if (length(ipv4leases))
 				iface.ipv4.leases = ipv4leases;
 
-			if (index(stats.types, 'clients') >= 0 && length(lldp_neigh))
-				iface.lldp = lldp_neigh;
 
 			if (length(clients))
 				iface.clients = clients;
+		}
+
+		if (index(stats.types, 'lldp') >= 0) {
+			let lldp_neigh = [];
+
+			for (let port in iface.ports)
+				for (let l in lldp)
+					if (l.port == port)
+						push(lldp_neigh, l);
+			if (length(lldp_neigh))
+				iface.lldp = lldp_neigh;
 		}
 
 		if (index(stats.types, 'ssids') >= 0 && length(wifistatus)) {
