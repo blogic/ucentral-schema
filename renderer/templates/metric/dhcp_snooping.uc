@@ -8,7 +8,8 @@ set event.dhcp.filter='*'
 {{ n ? 'add_list' : 'set' }} event.dhcp.filter={{ filter }}
 {% endfor %}
 
+set dhcpsnooping.@snooping[-1].enable=1
 {% for (let interface in interfaces): %}
 {%	let name = ethernet.calculate_name(interface) %}
-set dhcpsnooping.@snooping[0].{{ name }}=1
+add_list dhcpsnooping.@snooping[-1].network={{ s(name) }}
 {% endfor %}
