@@ -15,7 +15,7 @@ add_list dropbear.@dropbear[-1].pubkey={{ s(key) }}
 add firewall rule
 set firewall.@rule[-1].name='Allow-ssh-{{ name }}'
 set firewall.@rule[-1].src='{{ name }}'
-set firewall.@rule[-1].port='{{ ssh.port }}'
+set firewall.@rule[-1].dest_port='{{ ssh.port }}'
 set firewall.@rule[-1].proto='tcp'
 set firewall.@rule[-1].target='ACCEPT'
 {% endfor %}
