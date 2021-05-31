@@ -8,15 +8,13 @@ set firewall.@zone[-1].forward='REJECT'
 set firewall.@zone[-1].masq=1
 set firewall.@zone[-1].mtu_fix=1
 {% else %}
-add firewall forwarding
-set firewall.@forwarding[-1].src={{ s(name) }}
-set firewall.@forwarding[-1].dest='up{{ interface.vlan ? interface.vlan.id : '' }}'
-
-add firewall zone
-set firewall.@zone[-1].name={{ s(name) }}
 set firewall.@zone[-1].input='ACCEPT'
 set firewall.@zone[-1].output='ACCEPT'
 set firewall.@zone[-1].forward='ACCEPT'
+
+add firewall forwarding
+set firewall.@forwarding[-1].src={{ s(name) }}
+set firewall.@forwarding[-1].dest='up{{ interface.vlan ? interface.vlan.id : '' }}'
 {% endif %}
 {% for (let network in ethernet.calculate_names(interface)): %}
 add_list firewall.@zone[-1].network={{ s(network) }}
@@ -118,7 +116,7 @@ set firewall.@rule[-1].target='ACCEPT'
 
 {% if (interface.role == "downstream"): %}
 add firewall rule
-set firewall.@rule[-1].name='Allow-DNS-Guest'
+set firewall.@rule[-1].name='Allow-DNS-{{ name }}'
 set firewall.@rule[-1].src={{ s(name) }}
 set firewall.@rule[-1].dest_port='53'
 set firewall.@rule[-1].family='ipv4'
@@ -127,7 +125,7 @@ add_list firewall.@rule[-1].proto='udp'
 set firewall.@rule[-1].target='ACCEPT'
 
 add firewall rule
-set firewall.@rule[-1].name='Allow-DHCP-Guest'
+set firewall.@rule[-1].name='Allow-DHCP-{{ name }}'
 set firewall.@rule[-1].src={{ s(name) }}
 set firewall.@rule[-1].dest_port=67
 set firewall.@rule[-1].family='ipv4'
@@ -135,7 +133,7 @@ set firewall.@rule[-1].proto='udp'
 set firewall.@rule[-1].target='ACCEPT'
 
 add firewall rule
-set firewall.@rule[-1].name='Allow-DHCPv6-Guest'
+set firewall.@rule[-1].name='Allow-DHCPv6-{{ name }}'
 set firewall.@rule[-1].src={{ s(name) }}
 set firewall.@rule[-1].dest_port=547
 set firewall.@rule[-1].family='ipv6'
