@@ -1089,7 +1089,7 @@
                 },
                 "peer-address": {
                     "type": "string",
-                    "format": "uc-cidr4",
+                    "format": "ipv4",
                     "example": "192.168.100.1"
                 },
                 "peer-port": {
@@ -1111,7 +1111,7 @@
                 },
                 "peer-address": {
                     "type": "string",
-                    "format": "uc-cidr4",
+                    "format": "ipv4",
                     "example": "192.168.100.1"
                 },
                 "vlan-id": {

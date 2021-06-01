@@ -2708,8 +2708,8 @@ function instantiateInterfaceTunnelVxlan(location, value, errors) {
 
 		function parsePeerAddress(location, value, errors) {
 			if (type(value) == "string") {
-				if (!matchUcCidr4(value))
-					push(errors, [ location, "must be a valid IPv4 CIDR" ]);
+				if (!matchIpv4(value))
+					push(errors, [ location, "must be a valid IPv4 address" ]);
 
 			}
 
@@ -2772,8 +2772,8 @@ function instantiateInterfaceTunnelGre(location, value, errors) {
 
 		function parsePeerAddress(location, value, errors) {
 			if (type(value) == "string") {
-				if (!matchUcCidr4(value))
-					push(errors, [ location, "must be a valid IPv4 CIDR" ]);
+				if (!matchIpv4(value))
+					push(errors, [ location, "must be a valid IPv4 address" ]);
 
 			}
 

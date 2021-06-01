@@ -12,7 +12,7 @@ properties:
       This is the IP address of the remote host, that the GRE tunnel shall be
       established with.
     type: string
-    format: uc-cidr4
+    format: ipv4
     example: '192.168.100.1'
   vlan-id:
     description:
