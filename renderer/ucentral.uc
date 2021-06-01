@@ -17,33 +17,38 @@ inputfile.close();
 let logs = [];
 
 try {
-	let batch = renderer.render(schemareader.validate(inputjson), logs);
+	let state = schemareader.validate(inputjson, logs);
+
+	let batch = state ? renderer.render(state, logs) : "";
 
 	fs.stdout.write("Log messages:\n" + join("\n", logs) + "\n\n");
 
 	fs.stdout.write("UCI batch output:\n" + batch + "\n");
 
-	let outputjson = fs.open("/tmp/ucentral.uci", "w");
-	outputjson.write(batch);
-	outputjson.close();
+	if (state) {
+		let outputjson = fs.open("/tmp/ucentral.uci", "w");
+		outputjson.write(batch);
+		outputjson.close();
 
-	for (let cmd in [ 'rm -rf /tmp/config-shadow',
-			  'cp -r /etc/config-shadow /tmp' ])
-		system(cmd);
+		for (let cmd in [ 'rm -rf /tmp/config-shadow',
+				  'cp -r /etc/config-shadow /tmp' ])
+			system(cmd);
 
-	let apply = fs.popen("/sbin/uci -c /tmp/config-shadow batch", "w");
-	apply.write(batch);
-	apply.close();
+		let apply = fs.popen("/sbin/uci -c /tmp/config-shadow batch", "w");
+		apply.write(batch);
+		apply.close();
 
-	for (let cmd in [ 'uci -c /tmp/config-shadow commit',
-			  'cp /tmp/config-shadow/* /etc/config/',
-			  'rm -rf /tmp/config-shadow',
-			  'reload_config'])
-		system(cmd);
+		for (let cmd in [ 'uci -c /tmp/config-shadow commit',
+				  'cp /tmp/config-shadow/* /etc/config/',
+				  'rm -rf /tmp/config-shadow',
+				  'reload_config'])
+			system(cmd);
 
-	fs.unlink('/etc/ucentral/ucentral.active');
-	fs.symlink(ARGV[2], '/etc/ucentral/ucentral.active');
-
+		fs.unlink('/etc/ucentral/ucentral.active');
+		fs.symlink(ARGV[2], '/etc/ucentral/ucentral.active');
+	} else {
+		error = 1;
+	}
 }
 catch (e) {
 	error = 1;
