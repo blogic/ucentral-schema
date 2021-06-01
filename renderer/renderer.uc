@@ -184,6 +184,9 @@ let ethernet = {
 		if (interface.captive)
 			return 'captive';
 
+		if (interface.tunnel)
+			return 'tunnel';
+
 		return (interface.role == 'upstream' ? 'up' : 'down') + vid;
 	},
 
