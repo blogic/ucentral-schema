@@ -1,7 +1,6 @@
 {%
 	function set_led(val, path)
 	{
-		let cursor = uci.cursor(path);
 		cursor.set("system", "@system[-1]", "leds_off", val);
 		cursor.commit();
 	}
