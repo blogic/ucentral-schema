@@ -17,10 +17,12 @@ set network.gre.peeraddr='{{ interface.tunnel.peer_address }}'
 
 {%
 interface.type = 'bridge';
-include("ip-auto.uc", {
+include("common.uc", {
 	name: 'gretun_' + interface.vlan.id,
 	netdev: 'gre4t-gre.' + interface.vlan.id,
-	interface, location, ipv4_mode, ipv6_mode
+	this_vid: interface.vlan.id,
+	ipv4_mode, ipv4: interface.ipv4 || {},
+	ipv6_mode, ipv6: interface.ipv6 || {}
 });
 %}
 
