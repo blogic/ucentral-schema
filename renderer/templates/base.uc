@@ -16,7 +16,3 @@ set network.@device[-1].type=bridge
 set network.up_none=interface
 set network.up_none.ifname=up
 set network.up_none.proto=none
-
-set network.down_none=interface
-set network.down_none.ifname=down
-set network.down_none.proto=none
