@@ -186,6 +186,10 @@ add_list wireless.{{ section }}.operator_icon={{ s(icon.uri) }}
 {%     endfor %}
 {%   endif %}
 set wireless.{{ section }}.wds='{{ b(match_wds()) }}'
+add wireless wifi-vlan
+set wireless.@wifi-vlan[-1].iface={{ section }}
+set wireless.@wifi-vlan[-1].name='#'
+set wireless.@wifi-vlan[-1].vid='*'
 {%   if (ssid.rate_limit && (ssid.rate_limit.ingress_rate || ssid.rate_limit.egress_rate)): %}
 
 add ratelimit rate
