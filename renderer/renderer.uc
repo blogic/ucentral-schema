@@ -21,7 +21,7 @@ function b(val) {
 // Formats a given input value as single quoted string, honouring uci
 // specific escaping semantics.
 function s(str) {
-	if (s === null || s === '')
+	if (str === null || str === '')
 		return '';
 
 	return sprintf("'%s'", replace(str, /'/g, "'\\''"));
