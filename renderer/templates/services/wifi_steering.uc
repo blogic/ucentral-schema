@@ -1,4 +1,5 @@
-{% if (wifi_steering.mode == 'local'): %}
+{% let ssids = services.lookup_ssids("wifi-steering") %}
+{% if (wifi_steering.mode == 'local' && length(ssids)): %}
 
 # Wifi-Steering service configuration
 set usteer.@usteer[-1].network={{ s(wifi_steering.network) }}
@@ -13,4 +14,6 @@ set usteer.@usteer[-1].load_kick_threshold={{ wifi_steering.load_kick_threshold 
 {%   for (let ssid in ssids): %}
 add_list usteer.@usteer[-1].ssid_list={{ ssid.name }}
 {%   endfor %}
+{% else %}
+set usteer.@usteer[-1].enabled=0
 {% endif %}
