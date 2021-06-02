@@ -355,6 +355,7 @@ return {
 			ipcalc,
 			services,
 			location: '/',
+			fs,
 
 			warn: (fmt, ...args) => push(logs, sprintf("[W] (In %s) ", location || '/') + sprintf(fmt, ...args)),
 			info: (fmt, ...args) => push(logs, sprintf("[!] (In %s) ", location || '/') + sprintf(fmt, ...args))

@@ -20,6 +20,15 @@
 		};
 
 		if (ssid.encryption.proto in [ "wpa", "wpa2", "wpa-mixed", "wpa3", "wpa3-mixed" ] &&
+		    ssid.radius && ssid.radius.local)
+			return {
+				proto: ssid.encryption.proto,
+				eap_local: ssid.radius.local,
+				eap_user: "/tmp/ucentral/" + replace(location, "/", "_") + ".eap_user"
+			};
+
+
+		if (ssid.encryption.proto in [ "wpa", "wpa2", "wpa-mixed", "wpa3", "wpa3-mixed" ] &&
 		    ssid.radius && ssid.radius.authentication &&
 		    ssid.radius.authentication.host &&
 		    ssid.radius.authentication.port &&
@@ -104,6 +113,8 @@ set wireless.{{ section }}.ieee80211r=1
 set wireless.{{ section }}.ft_over_ds={{ b(ssid.roaming.message_exchange == "ds") }}
 set wireless.{{ section }}.ft_psk_generate_local={{ b(ssid.roaming.generate_psk) }}
 set wireless.{{ section }}.mobility_domain={{ ssid.roaming.domain_identifier }}
+set wireless.{{ section }}.r0kh={{ s(ssid.roaming.pmk_r0_key_holder) }}
+set wireless.{{ section }}.r1kh={{ s(ssid.roaming.pmk_r1_key_holder) }}
 {%     endif %}
 {%   endif %}
 {%   if (ssid.rates): %}
@@ -117,6 +128,21 @@ set wireless.{{ section }}.key={{ crypto.key }}
 set wireless.{{ section }}.request_cui={{ b(crypto.radius.chargeable_user_id) }}
 set wireless.{{ section }}.nasid={{ s(crypto.radius.nas_identifier) }}
 {%   endif %}
+{%   if (crypto.eap_local): %}
+set wireless.{{ section }}.eap_server=1
+set wireless.{{ section }}.ca_cert={{ s(crypto.eap_local.ca_certificate) }}
+set wireless.{{ section }}.server_cert={{ s(crypto.eap_local.server_certificate) }}
+set wireless.{{ section }}.private_key={{ s(crypto.eap_local.private_key) }}
+set wireless.{{ section }}.private_key_passwd={{ s(crypto.eap_local.private_key_password) }}
+set wireless.{{ section }}.server_id={{ s(crypto.eap_local.server_identity) }}
+set wireless.{{ section }}.eap_user_file={{ s(crypto.eap_user) }}
+{%	let user_file = fs.open(crypto.eap_user, "w");
+	for (let user in crypto.eap_local.users)
+		user_file.write('"' + user.user_name + '"\tPWD\t"' + user.password + '"\n');
+	if (crypto.eap_local.ca_certificate && crypto.eap_local.server_certificate && crypto.eap_local.private_key)
+		user_file.write('* TLS,TTLS\n');
+	user_file.close();
+     endif %}
 {%   if (crypto.auth): %}
 set wireless.{{ section }}.auth_server={{ crypto.auth.host }}
 set wireless.{{ section }}.auth_port={{ crypto.auth.port }}

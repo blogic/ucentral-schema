@@ -25,3 +25,17 @@ properties:
     minLength: 4
     examples:
     - abcd
+  pmk-r0-key-holder:
+    description:
+      The pairwise master key R0. This is unique to the mobility domain
+      and is required for fast roaming over the air. If the field is left
+      empty a deterministic key is generated.
+    type: string
+    example: 14:DD:20:47:14:E4,14DD204714E4,00112233445566778899aabbccddeeff
+  pmk-r1-key-holder:
+    description:
+      The pairwise master key R1. This is unique to the mobility domain
+      and is required for fast roaming over the air. If the field is left
+      empty a deterministic key is generated.
+    type: string
+    example: 14:DD:20:47:14:E4,14DD204714E4,00112233445566778899aabbccddeeff

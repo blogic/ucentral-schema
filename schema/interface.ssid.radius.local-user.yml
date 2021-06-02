@@ -5,15 +5,14 @@ properties:
   mac:
     type: string
     format: uc-mac
-  user:
+  user-name:
+    type: string
+    minLength: 1
+  password:
     type: string
     maxLength: 63
     minLength: 8
-  psk:
-    type: string
-    maxLength: 63
-    minLength: 8
-  vid:
+  vlan-id:
     type: integer
     maximum: 4096
     examples:

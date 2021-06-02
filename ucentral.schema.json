@@ -679,6 +679,14 @@
                     "examples": [
                         "abcd"
                     ]
+                },
+                "pmk-r0-key-holder": {
+                    "type": "string",
+                    "example": "14:DD:20:47:14:E4,14DD204714E4,00112233445566778899aabbccddeeff"
+                },
+                "pmk-r1-key-holder": {
+                    "type": "string",
+                    "example": "14:DD:20:47:14:E4,14DD204714E4,00112233445566778899aabbccddeeff"
                 }
             }
         },
@@ -689,17 +697,16 @@
                     "type": "string",
                     "format": "uc-mac"
                 },
-                "user": {
+                "user-name": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "password": {
                     "type": "string",
                     "maxLength": 63,
                     "minLength": 8
                 },
-                "psk": {
-                    "type": "string",
-                    "maxLength": 63,
-                    "minLength": 8
-                },
-                "vid": {
+                "vlan-id": {
                     "type": "integer",
                     "maximum": 4096,
                     "examples": [
@@ -708,6 +715,33 @@
                         200,
                         4094
                     ]
+                }
+            }
+        },
+        "interface.ssid.radius.local": {
+            "type": "object",
+            "properties": {
+                "ca-certificate": {
+                    "type": "string"
+                },
+                "server-certificate": {
+                    "type": "string"
+                },
+                "private-key": {
+                    "type": "string"
+                },
+                "private-key-password": {
+                    "type": "string"
+                },
+                "server-identity": {
+                    "type": "string",
+                    "default": "uCentral"
+                },
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/interface.ssid.radius.local-user"
+                    }
                 }
             }
         },
@@ -793,11 +827,8 @@
                     "type": "boolean",
                     "default": false
                 },
-                "local-users": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/$defs/interface.ssid.radius.local-user"
-                    }
+                "local": {
+                    "$ref": "#/$defs/interface.ssid.radius.local"
                 },
                 "authentication": {
                     "$ref": "#/$defs/interface.ssid.radius.server"

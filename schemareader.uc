@@ -1649,6 +1649,28 @@ function instantiateInterfaceSsidRoaming(location, value, errors) {
 			obj.domain_identifier = parseDomainIdentifier(location + "/domain-identifier", value["domain-identifier"], errors);
 		}
 
+		function parsePmkR0KeyHolder(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "pmk-r0-key-holder")) {
+			obj.pmk_r0_key_holder = parsePmkR0KeyHolder(location + "/pmk-r0-key-holder", value["pmk-r0-key-holder"], errors);
+		}
+
+		function parsePmkR1KeyHolder(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "pmk-r1-key-holder")) {
+			obj.pmk_r1_key_holder = parsePmkR1KeyHolder(location + "/pmk-r1-key-holder", value["pmk-r1-key-holder"], errors);
+		}
+
 		return obj;
 	}
 
@@ -1679,7 +1701,24 @@ function instantiateInterfaceSsidRadiusLocalUser(location, value, errors) {
 			obj.mac = parseMac(location + "/mac", value["mac"], errors);
 		}
 
-		function parseUser(location, value, errors) {
+		function parseUserName(location, value, errors) {
+			if (type(value) == "string") {
+				if (length(value) < 1)
+					push(errors, [ location, "must be at least 1 characters long" ]);
+
+			}
+
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "user-name")) {
+			obj.user_name = parseUserName(location + "/user-name", value["user-name"], errors);
+		}
+
+		function parsePassword(location, value, errors) {
 			if (type(value) == "string") {
 				if (length(value) > 63)
 					push(errors, [ location, "must be at most 63 characters long" ]);
@@ -1695,31 +1734,11 @@ function instantiateInterfaceSsidRadiusLocalUser(location, value, errors) {
 			return value;
 		}
 
-		if (exists(value, "user")) {
-			obj.user = parseUser(location + "/user", value["user"], errors);
+		if (exists(value, "password")) {
+			obj.password = parsePassword(location + "/password", value["password"], errors);
 		}
 
-		function parsePsk(location, value, errors) {
-			if (type(value) == "string") {
-				if (length(value) > 63)
-					push(errors, [ location, "must be at most 63 characters long" ]);
-
-				if (length(value) < 8)
-					push(errors, [ location, "must be at least 8 characters long" ]);
-
-			}
-
-			if (type(value) != "string")
-				push(errors, [ location, "must be of type string" ]);
-
-			return value;
-		}
-
-		if (exists(value, "psk")) {
-			obj.psk = parsePsk(location + "/psk", value["psk"], errors);
-		}
-
-		function parseVid(location, value, errors) {
+		function parseVlanId(location, value, errors) {
 			if (type(value) in [ "int", "double" ]) {
 				if (value > 4096)
 					push(errors, [ location, "must be lower than or equal to 4096" ]);
@@ -1732,8 +1751,94 @@ function instantiateInterfaceSsidRadiusLocalUser(location, value, errors) {
 			return value;
 		}
 
-		if (exists(value, "vid")) {
-			obj.vid = parseVid(location + "/vid", value["vid"], errors);
+		if (exists(value, "vlan-id")) {
+			obj.vlan_id = parseVlanId(location + "/vlan-id", value["vlan-id"], errors);
+		}
+
+		return obj;
+	}
+
+	if (type(value) != "object")
+		push(errors, [ location, "must be of type object" ]);
+
+	return value;
+}
+
+function instantiateInterfaceSsidRadiusLocal(location, value, errors) {
+	if (type(value) == "object") {
+		let obj = {};
+
+		function parseCaCertificate(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "ca-certificate")) {
+			obj.ca_certificate = parseCaCertificate(location + "/ca-certificate", value["ca-certificate"], errors);
+		}
+
+		function parseServerCertificate(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "server-certificate")) {
+			obj.server_certificate = parseServerCertificate(location + "/server-certificate", value["server-certificate"], errors);
+		}
+
+		function parsePrivateKey(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "private-key")) {
+			obj.private_key = parsePrivateKey(location + "/private-key", value["private-key"], errors);
+		}
+
+		function parsePrivateKeyPassword(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "private-key-password")) {
+			obj.private_key_password = parsePrivateKeyPassword(location + "/private-key-password", value["private-key-password"], errors);
+		}
+
+		function parseServerIdentity(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "server-identity")) {
+			obj.server_identity = parseServerIdentity(location + "/server-identity", value["server-identity"], errors);
+		}
+		else {
+			obj.server_identity = "uCentral";
+		}
+
+		function parseUsers(location, value, errors) {
+			if (type(value) == "array") {
+				return map(value, (item, i) => instantiateInterfaceSsidRadiusLocalUser(location + "/" + i, item, errors));
+			}
+
+			if (type(value) != "array")
+				push(errors, [ location, "must be of type array" ]);
+
+			return value;
+		}
+
+		if (exists(value, "users")) {
+			obj.users = parseUsers(location + "/users", value["users"], errors);
 		}
 
 		return obj;
@@ -1951,19 +2056,8 @@ function instantiateInterfaceSsidRadius(location, value, errors) {
 			obj.chargeable_user_id = false;
 		}
 
-		function parseLocalUsers(location, value, errors) {
-			if (type(value) == "array") {
-				return map(value, (item, i) => instantiateInterfaceSsidRadiusLocalUser(location + "/" + i, item, errors));
-			}
-
-			if (type(value) != "array")
-				push(errors, [ location, "must be of type array" ]);
-
-			return value;
-		}
-
-		if (exists(value, "local-users")) {
-			obj.local_users = parseLocalUsers(location + "/local-users", value["local-users"], errors);
+		if (exists(value, "local")) {
+			obj.local = instantiateInterfaceSsidRadiusLocal(location + "/local", value["local"], errors);
 		}
 
 		if (exists(value, "authentication")) {

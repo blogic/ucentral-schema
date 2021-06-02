@@ -1,0 +1,32 @@
+description:
+  Describe the properties of the local Radius server inside hostapd.
+type: object
+properties:
+  ca-certificate:
+    description:
+       The local servers CA bundle.
+    type: string
+  server-certificate:
+    description:
+       The local servers certificate.
+    type: string
+  private-key:
+    description:
+      The local servers private key/
+    type: string
+  private-key-password:
+    description:
+      The password required to read the private key.
+    type: string
+  server-identity:
+    description:
+      EAP methods that provide mechanism for authenticated server identity delivery
+      use this value.
+    type: string
+    default: uCentral
+  users:
+    description:
+      Specifies a collection of local EAP user/psk/vid triplets.
+    type: array
+    items:
+      $ref: "https://ucentral.io/schema/v1/interface/ssid/radius/local-user/"
