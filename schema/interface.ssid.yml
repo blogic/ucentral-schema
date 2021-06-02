@@ -74,6 +74,11 @@ properties:
       type: string
       examples:
       - wifi-steering
+  maximum-associations:
+    description:
+      Set the maximum number of clients that may connect to this VAP.
+    type: integer
+    example: 64
   encryption:
     $ref: "https://ucentral.io/schema/v1/interface/ssid/encryption/"
   multi-psk:

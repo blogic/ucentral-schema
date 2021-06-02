@@ -209,6 +209,10 @@
                     "maximum": 255,
                     "minimum": 1
                 },
+                "maximum-associations": {
+                    "type": "integer",
+                    "example": 64
+                },
                 "he-settings": {
                     "$ref": "#/$defs/radio.he"
                 },
@@ -1056,6 +1060,10 @@
                             "wifi-steering"
                         ]
                     }
+                },
+                "maximum-associations": {
+                    "type": "integer",
+                    "example": 64
                 },
                 "encryption": {
                     "$ref": "#/$defs/interface.ssid.encryption"

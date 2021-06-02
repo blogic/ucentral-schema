@@ -109,6 +109,12 @@ properties:
     default: 2
     maximum: 255
     minimum: 1
+  maximum-associations:
+    description:
+      Set the maximum number of clients that may connect to this radio. This
+      value is accumulative for all attached VAP interfaces.
+    type: integer
+    example: 64
   he-settings:
     $ref: "https://ucentral.io/schema/v1/radio/he/"
   hostapd-iface-raw:
