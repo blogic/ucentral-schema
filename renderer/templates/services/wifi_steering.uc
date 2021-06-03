@@ -3,7 +3,7 @@ add usteer usteer
 {% if (wifi_steering.mode == 'local' && length(ssids)): %}
 
 # Wifi-Steering service configuration
-set usteer.@usteer[-1].network={{ s(wifi_steering.network) }}
+set usteer.@usteer[-1].network='up'
 set usteer.@usteer[-1].key={{ s(wifi_steering.key) }}
 set usteer.@usteer[-1].assoc_steering={{ b(wifi_steering.assoc_steering) }}
 set usteer.@usteer[-1].min_snr={{ wifi_steering.required_snr }}

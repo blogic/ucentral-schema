@@ -3707,20 +3707,6 @@ function instantiateServiceWifiSteering(location, value, errors) {
 			obj.mode = parseMode(location + "/mode", value["mode"], errors);
 		}
 
-		function parseNetwork(location, value, errors) {
-			if (type(value) != "string")
-				push(errors, [ location, "must be of type string" ]);
-
-			return value;
-		}
-
-		if (exists(value, "network")) {
-			obj.network = parseNetwork(location + "/network", value["network"], errors);
-		}
-		else {
-			obj.network = "upstream";
-		}
-
 		function parseAssocSteering(location, value, errors) {
 			if (type(value) != "bool")
 				push(errors, [ location, "must be of type boolean" ]);

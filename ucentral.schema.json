@@ -1445,10 +1445,6 @@
                         "local"
                     ]
                 },
-                "network": {
-                    "type": "string",
-                    "default": "upstream"
-                },
                 "assoc-steering": {
                     "type": "boolean",
                     "default": false

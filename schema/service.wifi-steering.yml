@@ -11,11 +11,6 @@ properties:
       - cloud
     examples:
     - local
-  network:
-    description:
-      The network that shall be used to communicate with the other peers.
-    type: string
-    default: upstream
   assoc-steering:
     description:
       Allow rejecting assoc requests for steering purposes.
