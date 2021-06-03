@@ -74,7 +74,7 @@ properties:
       type: string
       examples:
       - wifi-steering
-  maximum-associations:
+  maximum-clients:
     description:
       Set the maximum number of clients that may connect to this VAP.
     type: integer

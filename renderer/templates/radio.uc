@@ -108,7 +108,7 @@ set wireless.{{ phy.section }}.require_mode={{ s(match_require_mode(radio.requir
 set wireless.{{ phy.section }}.txpower={{ radio.tx_power }}
 set wireless.{{ phy.section }}.legacy_rates={{ b(radio.legacy_rates) }}
 set wireless.{{ phy.section }}.chan_bw={{ radio.bandwidth }}
-set wireless.{{ phy.section }}.maxassoc={{ radio.maximum_associations }}
+set wireless.{{ phy.section }}.maxassoc={{ radio.maximum_clients }}
 {% if (radio.he_settings && phy.he_mac_capa && match(htmode, /HE.*/)): %}
 set wireless.{{ phy.section }}.he_bss_color={{ radio.he_settings.bss_color }}
 set wireless.{{ phy.section }}.multiple_bssid={{ b(radio.he_settings.multiple_bssid) }}

@@ -101,7 +101,7 @@ set wireless.{{ section }}.isolate={{ b(ssid.isolate_clients) }}
 set wireless.{{ section }}.uapsd={{ b(ssid.power_save) }}
 set wireless.{{ section }}.rts_threshold={{ ssid.rts_threshold }}
 set wireless.{{ section }}.multicast_to_unicast={{ b(ssid.unicast_conversion) }}
-set wireless.{{ section }}.maxassoc={{ ssid.maximum_associations }}
+set wireless.{{ section }}.maxassoc={{ ssid.maximum_clients }}
 {%     if (ssid.rrm): %}
 set wireless.{{ section }}.ieee80211k={{ b(ssid.rrm.neighbor_reporting) }}
 set wireless.{{ section }}.ftm_responder={{ b(ssid.rrm.ftm_responder) }}

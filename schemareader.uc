@@ -501,15 +501,15 @@ function instantiateRadio(location, value, errors) {
 			obj.dtim_period = 2;
 		}
 
-		function parseMaximumAssociations(location, value, errors) {
+		function parseMaximumClients(location, value, errors) {
 			if (type(value) != "int")
 				push(errors, [ location, "must be of type integer" ]);
 
 			return value;
 		}
 
-		if (exists(value, "maximum-associations")) {
-			obj.maximum_associations = parseMaximumAssociations(location + "/maximum-associations", value["maximum-associations"], errors);
+		if (exists(value, "maximum-clients")) {
+			obj.maximum_clients = parseMaximumClients(location + "/maximum-clients", value["maximum-clients"], errors);
 		}
 
 		if (exists(value, "he-settings")) {
@@ -2692,15 +2692,15 @@ function instantiateInterfaceSsid(location, value, errors) {
 			obj.services = parseServices(location + "/services", value["services"], errors);
 		}
 
-		function parseMaximumAssociations(location, value, errors) {
+		function parseMaximumClients(location, value, errors) {
 			if (type(value) != "int")
 				push(errors, [ location, "must be of type integer" ]);
 
 			return value;
 		}
 
-		if (exists(value, "maximum-associations")) {
-			obj.maximum_associations = parseMaximumAssociations(location + "/maximum-associations", value["maximum-associations"], errors);
+		if (exists(value, "maximum-clients")) {
+			obj.maximum_clients = parseMaximumClients(location + "/maximum-clients", value["maximum-clients"], errors);
 		}
 
 		if (exists(value, "encryption")) {

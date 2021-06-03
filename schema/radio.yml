@@ -109,7 +109,7 @@ properties:
     default: 2
     maximum: 255
     minimum: 1
-  maximum-associations:
+  maximum-clients:
     description:
       Set the maximum number of clients that may connect to this radio. This
       value is accumulative for all attached VAP interfaces.
