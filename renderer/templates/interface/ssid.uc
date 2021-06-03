@@ -122,6 +122,10 @@ set wireless.{{ section }}.r1kh={{ s(ssid.roaming.pmk_r1_key_holder) }}
 set wireless.{{ section }}.beacon_rate={{ ssid.rates.beacon }}
 set wireless.{{ section }}.mcast_rate={{ ssid.rates.multicast }}
 {%   endif %}
+{%   if (ssid.quality_tresholds): %}
+set wireless.{{ section }}.rssi_reject_assoc_rssi={{ ssid.quality_tresholds.association-request-rssi }}
+set wireless.{{ section }}.rssi_ignore_probe_request={{ ssid.quality_tresholds.probe-request-rssi }}
+{%   endif %}
 set wireless.{{ section }}.ieee80211w={{ match_ieee80211w() }}
 set wireless.{{ section }}.encryption={{ crypto.proto }}
 set wireless.{{ section }}.key={{ crypto.key }}
@@ -186,6 +190,7 @@ add_list wireless.{{ section }}.hs20_oper_friendly_name={{ s(name) }}
 add_list wireless.{{ section }}.operator_icon={{ s(icon.uri) }}
 {%     endfor %}
 {%   endif %}
+
 set wireless.{{ section }}.wds='{{ b(match_wds()) }}'
 add wireless wifi-vlan
 set wireless.@wifi-vlan[-1].iface={{ section }}

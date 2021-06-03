@@ -997,6 +997,17 @@
                 }
             }
         },
+        "interface.ssid.quality-tresholds": {
+            "type": "object",
+            "properties": {
+                "probe-request-rssi": {
+                    "type": "integer"
+                },
+                "association-request-rssi": {
+                    "type": "integer"
+                }
+            }
+        },
         "interface.ssid": {
             "type": "object",
             "properties": {
@@ -1091,6 +1102,9 @@
                 },
                 "pass-point": {
                     "$ref": "#/$defs/interface.ssid.pass-point"
+                },
+                "quality-tresholds": {
+                    "$ref": "#/$defs/interface.ssid.quality-tresholds"
                 },
                 "hostapd-bss-raw": {
                     "type": "array",

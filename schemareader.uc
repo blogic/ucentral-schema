@@ -2512,6 +2512,41 @@ function instantiateInterfaceSsidPassPoint(location, value, errors) {
 	return value;
 }
 
+function instantiateInterfaceSsidQualityTresholds(location, value, errors) {
+	if (type(value) == "object") {
+		let obj = {};
+
+		function parseProbeRequestRssi(location, value, errors) {
+			if (type(value) != "int")
+				push(errors, [ location, "must be of type integer" ]);
+
+			return value;
+		}
+
+		if (exists(value, "probe-request-rssi")) {
+			obj.probe_request_rssi = parseProbeRequestRssi(location + "/probe-request-rssi", value["probe-request-rssi"], errors);
+		}
+
+		function parseAssociationRequestRssi(location, value, errors) {
+			if (type(value) != "int")
+				push(errors, [ location, "must be of type integer" ]);
+
+			return value;
+		}
+
+		if (exists(value, "association-request-rssi")) {
+			obj.association_request_rssi = parseAssociationRequestRssi(location + "/association-request-rssi", value["association-request-rssi"], errors);
+		}
+
+		return obj;
+	}
+
+	if (type(value) != "object")
+		push(errors, [ location, "must be of type object" ]);
+
+	return value;
+}
+
 function instantiateInterfaceSsid(location, value, errors) {
 	if (type(value) == "object") {
 		let obj = {};
@@ -2744,6 +2779,10 @@ function instantiateInterfaceSsid(location, value, errors) {
 
 		if (exists(value, "pass-point")) {
 			obj.pass_point = instantiateInterfaceSsidPassPoint(location + "/pass-point", value["pass-point"], errors);
+		}
+
+		if (exists(value, "quality-tresholds")) {
+			obj.quality_tresholds = instantiateInterfaceSsidQualityTresholds(location + "/quality-tresholds", value["quality-tresholds"], errors);
 		}
 
 		function parseHostapdBssRaw(location, value, errors) {

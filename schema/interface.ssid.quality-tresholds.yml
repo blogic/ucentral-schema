@@ -1,0 +1,12 @@
+description:
+  The thresholds that need to be meet for a clien association to be allowed.
+type: object
+properties:
+  probe-request-rssi:
+    description:
+      Probe requests will be ignored if the rssi is below this threshold.
+    type: integer
+  association-request-rssi:
+    description:
+      Association requests will be denied if the rssi is below this threshold.
+    type: integer
