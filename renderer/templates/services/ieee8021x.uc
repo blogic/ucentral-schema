@@ -1,7 +1,10 @@
+{% let interfaces = services.lookup_interfaces("ieee8021x") %}
+{% let enable = length(interfaces) %}
+{% services.set_enabled("ieee8021x", enable) %}
+{% if (!enable) return %}
 
 # IEEE8021x service configuration
 
-{% let interfaces = services.lookup_interfaces("ieee8021x") %}
 {% for (let interface in interfaces): %}
 {%   let name = ethernet.calculate_name(interface) %}
 add ieee8021x network

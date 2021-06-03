@@ -312,6 +312,20 @@ let ipcalc = {
 };
 
 let services = {
+	state: {
+		'umdns': false,
+		'usteer': false,
+		'uhttpd': false,
+		'dropbear': false,
+		'igmpproxy': false,
+		'ieee8021x': false,
+		'radsecproxy': false
+	},
+
+	set_enabled: function(name, state) {
+		this.state[name] = state;
+	},
+
 	lookup_interfaces: function(service) {
 		let interfaces = [];
 
@@ -360,5 +374,9 @@ return {
 			warn: (fmt, ...args) => push(logs, sprintf("[W] (In %s) ", location || '/') + sprintf(fmt, ...args)),
 			info: (fmt, ...args) => push(logs, sprintf("[!] (In %s) ", location || '/') + sprintf(fmt, ...args))
 		});
+	},
+
+	services_state: function() {
+		return services.state;
 	}
 };
