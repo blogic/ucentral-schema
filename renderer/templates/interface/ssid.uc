@@ -132,6 +132,7 @@ set wireless.{{ section }}.key={{ crypto.key }}
 {%   if (crypto.radius): %}
 set wireless.{{ section }}.request_cui={{ b(crypto.radius.chargeable_user_id) }}
 set wireless.{{ section }}.nasid={{ s(crypto.radius.nas_identifier) }}
+set wireless.{{ section }}.dynamic_vlan=1
 {%   endif %}
 {%   if (crypto.eap_local): %}
 set wireless.{{ section }}.eap_server=1
