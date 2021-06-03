@@ -1,4 +1,5 @@
 {% let ssids = services.lookup_ssids("wifi-steering") %}
+add usteer usteer
 {% if (wifi_steering.mode == 'local' && length(ssids)): %}
 
 # Wifi-Steering service configuration
