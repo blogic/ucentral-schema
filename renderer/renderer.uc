@@ -17,6 +17,8 @@ assert(cursor, "Unable to instantiate uci");
 assert(conn, "Unable to connect to ubus");
 assert(capab, "Unable to load capabilities");
 
+let topdir = sourcepath(0, true);
+
 // Formats a given input value as uci boolean value.
 function b(val) {
 	return val ? '1' : '0';
@@ -335,6 +337,32 @@ let services = {
 		}
 
 		return ssids;
+	},
+
+	lookup_services: function() {
+		let rv = [];
+
+		for (let incfile in fs.glob(topdir + '/templates/services/*.uc')) {
+			let m = match(incfile, /^.+\/([^\/]+)\.uc$/);
+
+			if (m)
+				push(rv, m[1]);
+		}
+
+		return rv;
+	},
+
+	lookup_metrics: function() {
+		let rv = [];
+
+		for (let incfile in fs.glob(topdir + '/templates/metric/*.uc')) {
+			let m = match(incfile, /^.+\/([^\/]+)\.uc$/);
+
+			if (m)
+				push(rv, m[1]);
+		}
+
+		return rv;
 	}
 };
 
