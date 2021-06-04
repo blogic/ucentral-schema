@@ -40,14 +40,7 @@ function tryinclude(path, scope) {
 		return;
 	}
 
-	let parent_path = null;
-
-	// XXX: This is a somewhat convoluted way to obtain the filename of the
-	//      calling template we're including the file for. Might eventually
-	//      replace it with something cleaner.
-	try { die(); } catch(e) {
-		parent_path = replace(e.stacktrace[1].filename, /\/[^\/]+$/, '');
-	}
+	let parent_path = sourcepath(1, true);
 
 	assert(parent_path, "Unable to determine calling template path");
 
