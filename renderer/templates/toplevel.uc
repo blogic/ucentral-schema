@@ -23,16 +23,16 @@
 	if (state.unit)
 		include('unit.uc', { location: '/unit', unit: state.unit });
 
-	for (let service in state.services)
+	for (let service in services.lookup_services())
 		tryinclude('services/' + service + '.uc', {
 			location: '/services/' + service,
-			[service]: state.services[service]
+			[service]: state.services[service] || {}
 		});
 
-	for (let metric in state.metrics)
+	for (let metric in services.lookup_metrics())
 		tryinclude('metric/' + metric + '.uc', {
 			location: '/metric/' + metric,
-			[metric]: state.metrics[metric]
+			[metric]: state.metrics[metric] || {}
 		});
 
 	for (let i, radio in state.radios)
