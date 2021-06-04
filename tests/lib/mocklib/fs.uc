@@ -136,5 +136,46 @@
 			};
 		},
 
+		glob: (...patterns) => {
+			let rv = [];
+
+			for (let pattern in patterns) {
+				let parts = split(pattern, '/'),
+				    candidates = [],
+				    found = false;
+
+				for (let i = length(parts); i > 0; i--) {
+					let file = sprintf("fs/glob~%s.json", replace(join('/', parts), /[^A-Za-z0-9_-]+/g, '_')),
+					    mock = mocklib.read_json_file(file);
+
+					push(candidates, file);
+					shift(parts);
+
+					if (mock) {
+						if (mock != mock) {
+							mocklib.W("Invalid JSON in mock file %s\n", file);
+							continue;
+						}
+
+						if (type(mock) != "array") {
+							mocklib.W("Expecting an array in JSON mock file %s\n", file);
+							continue;
+						}
+
+						push(rv, ...mock);
+						found = true;
+						break;
+					}
+				}
+
+				if (!found) {
+					mocklib.I("No glob result fixture defined for fs.glob() call with pattern %s.", pattern);
+					mocklib.I("Provide a mock result through one of the following JSON files:\n%s\n", join("\n", candidates));
+				}
+			}
+
+			return rv;
+		},
+
 		error: () => "Unspecified error"
 	};
