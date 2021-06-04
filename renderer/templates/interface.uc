@@ -84,7 +84,9 @@
 	// Compute unique logical name and netdev name to use
 	let name = ethernet.calculate_name(interface);
 	let bridgedev = 'up';
-	if (interface.role == "downstream")
+	if (capab.platform == "switch")
+		bridgedev = 'up';
+	else if (interface.role == "downstream")
 		bridgedev = 'down';
 	let netdev = bridgedev + '.' + this_vid;
 

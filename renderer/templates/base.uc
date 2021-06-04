@@ -9,10 +9,12 @@ add network device
 set network.@device[-1].name=up
 set network.@device[-1].type=bridge
 
+{% if (capab.platform != "switch"): %}
 add network device
 set network.@device[-1].name=down
 set network.@device[-1].type=bridge
 
+{% endif %}
 set network.up_none=interface
 set network.up_none.ifname=up
 set network.up_none.proto=none

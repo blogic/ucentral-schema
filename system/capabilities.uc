@@ -16,13 +16,16 @@ ctx = ubus.connect();
 capa.compatible = replace(board.model.id, ',', '_');
 capa.model = board.model.name;
 capa.network = board.network;
-if (board["bridge"])
-	capa["bridge-vlan"] = true;
-if (board["switch"])
-	capa["switch"] = board["switch"];
+
+if (board.bridge && board.bridge.name == "switch")
+	capa.platform = "switch";
+if (board.switch)
+	capa.switch = board.switch;
 wifi = ctx.call("wifi", "phy");
-if (length(wifi))
+if (length(wifi)) {
 	capa.wifi = wifi;
+	capa.platform = "ap";
+}
 
 capafile = fs.open("/etc/ucentral/capabilities.json", "w");
 capafile.write(capa);
