@@ -15,17 +15,30 @@ capa = {};
 ctx = ubus.connect();
 capa.compatible = replace(board.model.id, ',', '_');
 capa.model = board.model.name;
-capa.network = board.network;
 
 if (board.bridge && board.bridge.name == "switch")
 	capa.platform = "switch";
+else if (length(wifi))
+	capa.platform = "ap";
+else
+	capa.platform = "unknown";
+
+let roles = {
+	"wan": "upstream",
+	"lan": "downstream"
+};
+capa.network = {};
+for (let k, v in board.network) {
+	if (!v.ifname && !roles[k])
+		continue;
+	capa.network[roles[k]] = split(replace(v.ifname, /^ */, ''), " ");
+}
+
 if (board.switch)
 	capa.switch = board.switch;
 wifi = ctx.call("wifi", "phy");
-if (length(wifi)) {
+if (length(wifi))
 	capa.wifi = wifi;
-	capa.platform = "ap";
-}
 
 capafile = fs.open("/etc/ucentral/capabilities.json", "w");
 capafile.write(capa);
