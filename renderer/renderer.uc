@@ -10,8 +10,12 @@ let fs = require("fs");
 let cursor = uci ? uci.cursor() : null;
 let conn = ubus ? ubus.connect() : null;
 
+let capabfile = fs.open("/etc/ucentral/capabilities.json", "r");
+let capab = capabfile ? json(capabfile.read("all")) : null;
+
 assert(cursor, "Unable to instantiate uci");
 assert(conn, "Unable to connect to ubus");
+assert(capab, "Unable to load capabilities");
 
 // Formats a given input value as uci boolean value.
 function b(val) {
@@ -55,9 +59,6 @@ function tryinclude(path, scope) {
 
 function discover_ports() {
 	let roles = {};
-
-	let capabfile = fs.open("/etc/ucentral/capabilities.json", "r");
-	let capab = json(capabfile.read("all"));
 
 	/* Derive ethernet port names and roles from default config */
 	for (let role, spec in capab.network) {
@@ -356,6 +357,7 @@ return {
 			services,
 			location: '/',
 			fs,
+			capab,
 
 			warn: (fmt, ...args) => push(logs, sprintf("[W] (In %s) ", location || '/') + sprintf(fmt, ...args)),
 			info: (fmt, ...args) => push(logs, sprintf("[!] (In %s) ", location || '/') + sprintf(fmt, ...args))
