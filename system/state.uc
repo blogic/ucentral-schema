@@ -32,6 +32,7 @@
 	let wifiiface = ctx.call("wifi", "iface");
 	let stations = ctx.call("wifi", "station");
 	let ports = ctx.call("topology", "port");
+	let poe = ctx.call("poe", "info");
 	let lldp = [];
 
 	/* prepare dhcp leases cache */
@@ -300,6 +301,21 @@
 		if (!length(iface.ipv6))
 			delete iface.ipv6;
 	});
+
+	if (length(poe)) {
+		state.poe = {};
+		state.poe.consumption = poe.consumption;
+		state.poe.ports = [];
+		for (let k, v in poe.ports) {
+			let port = {
+				id: replace(k, 'lan', ''),
+				status: v.status
+			};
+			if (v.consumption)
+				port.consumption = v.consumption;
+			push(state.poe.ports, port);
+		}
+	}
 
 	printf("%s\n", state);
 
