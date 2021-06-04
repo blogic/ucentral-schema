@@ -23,15 +23,11 @@ else if (length(wifi))
 else
 	capa.platform = "unknown";
 
-let roles = {
-	"wan": "upstream",
-	"lan": "downstream"
-};
 capa.network = {};
 for (let k, v in board.network) {
-	if (!v.ifname && !roles[k])
+	if (!v.ifname)
 		continue;
-	capa.network[roles[k]] = split(replace(v.ifname, /^ */, ''), " ");
+	capa.network[k] = split(replace(v.ifname, /^ */, ''), " ");
 }
 
 if (board.switch)

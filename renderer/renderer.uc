@@ -62,16 +62,12 @@ function discover_ports() {
 
 	/* Derive ethernet port names and roles from default config */
 	for (let role, spec in capab.network) {
-		if (type(spec) == "object" && type(spec.ifname) == "string") {
-			for (let i, ifname in split(spec.ifname, /\s+/)) {
-				if (ifname != "") {
-					role = uc(role);
-					push(roles[role] = roles[role] || [], {
-						netdev: ifname,
-						index: i
-					});
-				}
-			}
+		for (let i, ifname in spec) {
+			role = uc(role);
+			push(roles[role] = roles[role] || [], {
+				netdev: ifname,
+				index: i
+			});
 		}
 	}
 

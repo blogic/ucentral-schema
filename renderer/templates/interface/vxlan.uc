@@ -29,7 +29,7 @@ set network.{{ name }}_vx_l2.type='bridge'
 
 add firewall rule
 set firewall.@rule[-1].name='Allow-VXLAN'
-set firewall.@rule[-1].src='wan'
+set firewall.@rule[-1].src='up'
 set firewall.@rule[-1].proto='udp'
 set firewall.@rule[-1].target='ACCEPT'
 set firewall.@rule[-1].port={{ interface.tunnel.peer_port }}
