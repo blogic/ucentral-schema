@@ -307,7 +307,7 @@ let services = {
 	state: {},
 
 	set_enabled: function(name, state) {
-		this.state[name] = b(state);
+		this.state[name] = state ? true : false;
 	},
 
 	lookup_interfaces: function(service) {
