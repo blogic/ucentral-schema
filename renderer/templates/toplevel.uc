@@ -23,6 +23,9 @@
 	if (state.unit)
 		include('unit.uc', { location: '/unit', unit: state.unit });
 
+	if (!state.services)
+                state.services = {};
+
 	for (let service in services.lookup_services())
 		tryinclude('services/' + service + '.uc', {
 			location: '/services/' + service,
