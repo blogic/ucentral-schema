@@ -1,3 +1,6 @@
+{% let enable = length(rtty) %}
+{% services.set_enabled("rtty", enable) %}
+{% if (!enable) return %}
 
 # RTTY service configuration
 

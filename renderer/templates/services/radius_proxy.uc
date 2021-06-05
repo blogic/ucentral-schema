@@ -1,7 +1,10 @@
+{% let enable = length(radius_proxy) %}
+{% services.set_enabled("radsecproxy", enable) %}
+{% if (!enable) return %}
 {%
 	if (!radius_proxy.host || !radius_proxy.port || !radius_proxy.secret) {
 		warn("Can't start radius-proxy due to missing settings.");
-
+		services.set_enabled("radsecproxy", false);
 		return;
 	}
 %}
@@ -20,7 +23,7 @@ add radsecproxy tls
 set radsecproxy.@tls[-1].name='tls'
 set radsecproxy.@tls[-1].CACertificateFile='/etc/ucentral/cas.pem'
 set radsecproxy.@tls[-1].certificateFile='/etc/ucentral/cert.pem'
-set radsecproxy.@tls[-1].certificateKeyFile='/etc/ucentral/cert.key'
+set radsecproxy.@tls[-1].certificateKeyFile='/etc/ucentral/key.pem'
 set radsecproxy.@tls[-1].certificateKeyPassword=''
 
 add radsecproxy server

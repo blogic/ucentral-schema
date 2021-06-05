@@ -1,3 +1,4 @@
+{% if (!wifi_frames) return %}
 
 # Wifi-frame reporting configuration
 set event.wifi=event

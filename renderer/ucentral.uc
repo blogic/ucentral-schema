@@ -16,6 +16,15 @@ let error = 0;
 inputfile.close();
 let logs = [];
 
+function set_service_state(state) {
+	for (let service, enable in renderer.services_state()) {
+		if (enable != state)
+			continue;
+		printf("%s %s\n", service, enable ? "starting" : "stopping");
+		system(sprintf("/etc/init.d/%s %s", service, enable ? "start" : "stop"));
+	}
+}
+
 try {
 	let state = schemareader.validate(inputjson, logs);
 
@@ -38,6 +47,8 @@ try {
 		apply.write(batch);
 		apply.close();
 
+		set_service_state(false);
+
 		for (let cmd in [ 'uci -c /tmp/config-shadow commit',
 				  'cp /tmp/config-shadow/* /etc/config/',
 				  'rm -rf /tmp/config-shadow',
@@ -46,6 +57,9 @@ try {
 
 		fs.unlink('/etc/ucentral/ucentral.active');
 		fs.symlink(ARGV[2], '/etc/ucentral/ucentral.active');
+
+		set_service_state(true);
+
 	} else {
 		error = 1;
 	}

@@ -1,3 +1,4 @@
+{% if (!length(ntp)) return %}
 
 # NTP service configuration
 

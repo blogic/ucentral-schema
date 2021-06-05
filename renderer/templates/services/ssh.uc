@@ -1,3 +1,7 @@
+{% let interfaces = services.lookup_interfaces("ssh") %}
+{% let enable = length(interfaces) %}
+{% services.set_enabled("dropbear", enable) %}
+{% if (!enable) return %}
 
 # SSH service configuration
 
@@ -8,7 +12,6 @@ set dropbear.@dropbear[-1].PasswordAuth={{ b(ssh.password_authentication) }}
 add_list dropbear.@dropbear[-1].pubkey={{ s(key) }}
 {% endfor %}
 
-{% let interfaces = services.lookup_interfaces("ssh") %}
 {% for (let interface in interfaces): %}
 {%    let name = ethernet.calculate_name(interface) %}
 

@@ -304,6 +304,12 @@ let ipcalc = {
 };
 
 let services = {
+	state: {},
+
+	set_enabled: function(name, state) {
+		this.state[name] = b(state);
+	},
+
 	lookup_interfaces: function(service) {
 		let interfaces = [];
 
@@ -379,5 +385,9 @@ return {
 			warn: (fmt, ...args) => push(logs, sprintf("[W] (In %s) ", location || '/') + sprintf(fmt, ...args)),
 			info: (fmt, ...args) => push(logs, sprintf("[!] (In %s) ", location || '/') + sprintf(fmt, ...args))
 		});
+	},
+
+	services_state: function() {
+		return services.state;
 	}
 };

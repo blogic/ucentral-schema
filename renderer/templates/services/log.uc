@@ -1,3 +1,4 @@
+{% if (!length(log)) return %}
 
 # Syslog service configuration
 

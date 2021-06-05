@@ -1,3 +1,4 @@
+{% if (!statistics) return %}
 
 # Statistics configuration
 set ustats.stats.interval={{ statistics.interval }}
