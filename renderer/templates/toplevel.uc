@@ -32,6 +32,9 @@
 			[service]: state.services[service] || {}
 		});
 
+	if (!state.metrics)
+		state.metrics = {};
+
 	for (let metric in services.lookup_metrics())
 		tryinclude('metric/' + metric + '.uc', {
 			location: '/metric/' + metric,
