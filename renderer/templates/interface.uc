@@ -18,6 +18,9 @@
 		if (other_interface.tunnel && index([ "mesh" ], other_interface.tunnel.proto) < 0)
 			continue;
 
+		if (!other_interface.ethernet)
+			continue;
+
 		let other_vid = other_interface.vlan ? other_interface.vlan.id : '';
 
 		if (interface.role === other_interface.role && this_vid === other_vid) {
