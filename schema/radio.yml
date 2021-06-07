@@ -1,13 +1,20 @@
 description:
-  Describe a physical radio on the AP. A radio s be parent to several VAPs.
+  Describe a physical radio on the AP. A radio is be parent to several VAPs.
   They all share the same physical properties.
 type: object
 properties:
   band:
+    description:
+      Specifies the wireless band to configure the radio for. Available radio device
+      phys on the target system are matched by the wireless band given here.
+      If multiple radio phys support the same band, the settings specified here will
+      be applied to all of them.
     type: string
     enum:
     - 2G
     - 5G
+    - 5G-lower
+    - 5G-upper
     - 6G
   bandwidth:
     description:

@@ -20,6 +20,8 @@ properties:
       enum:
       - 2G
       - 5G
+      - 5G-lower
+      - 5G-upper
       - 6G
   bss-mode:
     description:
