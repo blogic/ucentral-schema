@@ -1,5 +1,10 @@
 {%
-	let phys = filter(map(ssid.wifi_bands, band => wiphy.lookup_by_band(band)), phy => phy && phy.section);
+	let phys = [];
+
+	for (let band in ssid.wifi_bands)
+		for (let phy in wiphy.lookup_by_band(band))
+			if (phy.section)
+				push(phys, phy);
 
 	if (!length(phys)) {
 		warn("Can't find any suitable radio phy for SSID '%s' settings", ssid.name);

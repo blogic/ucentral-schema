@@ -1,8 +1,8 @@
 {%
-	let phy = wiphy.lookup_by_band(radio.band);
+	let phys = wiphy.lookup_by_band(radio.band);
 
-	if (!phy) {
-		warn("Can't find a suitable radio phy for band %s radio settings", radio.band);
+	if (!length(phys)) {
+		warn("Can't find any suitable radio phy for band %s radio settings", radio.band);
 
 		return;
 	}
@@ -89,16 +89,16 @@
 
 		return modes[require_mode] || '';
 	}
-
-	let htmode = match_htmode(phy, radio.channel_mode, radio.channel_width);
 %}
 
 # Wireless Configuration
+{% for (let phy in phys): %}
+{%  let htmode = match_htmode(phy, radio.channel_mode, radio.channel_width) %}
 set wireless.{{ phy.section }}.disabled=0
 set wireless.{{ phy.section }}.htmode={{ htmode }}
-{% if (radio.channel): %}
+{%  if (radio.channel): %}
 set wireless.{{ phy.section }}.channel={{ match_channel(phy, radio.channel) }}
-{% endif %}
+{%  endif %}
 set wireless.{{ phy.section }}.txantenna={{ match_mimo(phy.tx_ant, radio.mimo) }}
 set wireless.{{ phy.section }}.rxantenna={{ match_mimo(phy.rx_ant, radio.mimo) }}
 set wireless.{{ phy.section }}.beacon_int={{ radio.beacon_interval }}
@@ -109,9 +109,9 @@ set wireless.{{ phy.section }}.txpower={{ radio.tx_power }}
 set wireless.{{ phy.section }}.legacy_rates={{ b(radio.legacy_rates) }}
 set wireless.{{ phy.section }}.chan_bw={{ radio.bandwidth }}
 set wireless.{{ phy.section }}.maxassoc={{ radio.maximum_clients }}
-{% if (radio.he_settings && phy.he_mac_capa && match(htmode, /HE.*/)): %}
+{%  if (radio.he_settings && phy.he_mac_capa && match(htmode, /HE.*/)): %}
 set wireless.{{ phy.section }}.he_bss_color={{ radio.he_settings.bss_color }}
 set wireless.{{ phy.section }}.multiple_bssid={{ b(radio.he_settings.multiple_bssid) }}
 set wireless.{{ phy.section }}.ema={{ b(radio.he_settings.ema) }}
-{% endif %}
-
+{%  endif %}
+{% endfor %}

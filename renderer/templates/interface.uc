@@ -160,14 +160,12 @@
 		let modes = (ssid.bss_mode == "wds-repeater") ?
 			[ "wds-sta", "wds-ap" ] : [ ssid.bss_mode ];
 		for (let mode in modes) {
-			ssid.bss_mode = mode;
 			include('interface/ssid.uc', {
 				location: location + '/ssids/' + i,
-				ssid,
-				name,
-				count
+				ssid: { ...ssid, bss_mode: mode },
+				count: count++,
+				name
 			});
-			count++;
 		}
 	}
 
