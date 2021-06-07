@@ -244,8 +244,8 @@ function instantiateRadio(location, value, errors) {
 			if (type(value) != "string")
 				push(errors, [ location, "must be of type string" ]);
 
-			if (!(value in [ "2G", "5G", "6G" ]))
-				push(errors, [ location, "must be one of \"2G\", \"5G\" or \"6G\"" ]);
+			if (!(value in [ "2G", "5G", "5G-lower", "5G-upper", "6G" ]))
+				push(errors, [ location, "must be one of \"2G\", \"5G\", \"5G-lower\", \"5G-upper\" or \"6G\"" ]);
 
 			return value;
 		}
@@ -2599,8 +2599,8 @@ function instantiateInterfaceSsid(location, value, errors) {
 					if (type(value) != "string")
 						push(errors, [ location, "must be of type string" ]);
 
-					if (!(value in [ "2G", "5G", "6G" ]))
-						push(errors, [ location, "must be one of \"2G\", \"5G\" or \"6G\"" ]);
+					if (!(value in [ "2G", "5G", "5G-lower", "5G-upper", "6G" ]))
+						push(errors, [ location, "must be one of \"2G\", \"5G\", \"5G-lower\", \"5G-upper\" or \"6G\"" ]);
 
 					return value;
 				}
