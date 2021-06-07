@@ -4,9 +4,13 @@
 
 # DHCP/DHCPv6 server configuration on {{ name }}
 {% if (dhcp.relay_server): %}
+{%   dhcp_relay.init() %}
 add dhcp relay
 set dhcp.@relay[-1].server_addr={{s(dhcp.relay_server)}}
 set dhcp.@relay[-1].local_addr={{ s(split(ipv4.subnet, "/")[0]) }}
+set dhcp.@relay[-1].interface='up'
+set dhcp.@relay[-1].suboption1={{ s(dhcp.circuit_id_format || '') }}
+set dhcp.@relay[-1].suboption2={{ s(dhcp.remote_id_format || '') }}
 
 set firewall.dhcp_relay=rule
 set firewall.dhcp_relay.name='Allow-DHCP-Relay'

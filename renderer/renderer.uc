@@ -369,6 +369,34 @@ let services = {
 	}
 };
 
+let dhcp_relay = {
+	state: {
+		"AP-MAC": "%a",
+		"AP-MAC-Hex": "%A",
+		"Client-MAC": "%c",
+		"Client-MAC-Hex": "%C",
+		"Interface": "%i"
+	},
+
+	init: function() {
+		cursor.load("system");
+
+		let system = cursor.get_all("system", "@system[-1]");
+		this.state.Name = (system && system.hostname) ? system.hostname : "unknown";
+		this.state.Location = (system && system.notes) ? system.notes : "unknown";
+		this.state["VLAN-Id"] = (interface.vlan ? interface.vlan.id : "0") || "0";
+		this.state.Model = capab.compatible || "unknown";
+		this.state.SSID = (interface.ssid && interface.ssid[0].name) ? interface.ssid[0].name : "unknown";
+		this.state.Crypto = "unknown";
+	},
+
+	replace: function(str) {
+		return replace(str, /\{(.+?)\}/g, (m, var) => {
+    			return this.state[var];
+		});
+	}
+};
+
 return {
 	render: function(state, logs) {
 		logs = logs || [];
@@ -382,6 +410,7 @@ return {
 			ethernet,
 			ipcalc,
 			services,
+			dhcp_relay,
 			location: '/',
 			fs,
 			capab,
