@@ -1,3 +1,4 @@
+{% if (!services.is_present("lldpd")) return %}
 {% let interfaces = services.lookup_interfaces("lldp") %}
 {% let enable = length(interfaces) %}
 {% services.set_enabled("lldpd", enable) %}

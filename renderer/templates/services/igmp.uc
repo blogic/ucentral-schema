@@ -1,3 +1,4 @@
+{% if (!services.is_present("igmpproxy")) return %}
 {% let interfaces = services.lookup_interfaces("igmp") %}
 {% let enable = length(interfaces) %}
 {% services.set_enabled("igmpproxy", enable) %}

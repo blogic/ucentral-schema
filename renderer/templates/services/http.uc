@@ -1,3 +1,4 @@
+{% if (!services.is_present("uhttpd")) return %}
 {% let interfaces = services.lookup_interfaces("http") %}
 {% let enable = length(interfaces) %}
 {% services.set_enabled("uhttpd", enable) %}

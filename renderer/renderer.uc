@@ -310,6 +310,10 @@ let services = {
 		this.state[name] = state ? true : false;
 	},
 
+	is_present: function(name) {
+		return length(fs.stat("/etc/init.d/" + name)) > 0;
+	},
+
 	lookup_interfaces: function(service) {
 		let interfaces = [];
 

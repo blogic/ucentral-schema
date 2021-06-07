@@ -1,3 +1,4 @@
+{% if (!services.is_present("radsecproxy")) return %}
 {% let enable = length(radius_proxy) %}
 {% services.set_enabled("radsecproxy", enable) %}
 {% if (!enable) return %}

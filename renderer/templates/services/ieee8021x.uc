@@ -1,3 +1,4 @@
+{% if (!services.is_present("ieee8021x")) return %}
 {% let interfaces = services.lookup_interfaces("ieee8021x") %}
 {% let enable = length(interfaces) %}
 {% services.set_enabled("ieee8021x", enable) %}
