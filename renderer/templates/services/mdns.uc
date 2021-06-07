@@ -1,3 +1,4 @@
+{% if (!services.is_present("umdns")) return %}
 {% let interfaces = services.lookup_interfaces("mdns") %}
 {% let enable = length(interfaces) %}
 {% services.set_enabled("umdns", enable) %}

@@ -1,3 +1,4 @@
+{% if (!services.is_present("usteer")) return %}
 {% let ssids = services.lookup_ssids("wifi-steering") %}
 {% let enable = (wifi_steering.mode == 'local' && length(ssids)) %}
 {% services.set_enabled("usteer", enable) %}

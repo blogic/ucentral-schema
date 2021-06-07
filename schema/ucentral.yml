@@ -5,7 +5,7 @@ type: object
 properties:
   uuid:
     description:
-      The uniquie ID of the configuration. This is the unix timestamp of when the config was created.
+      The unique ID of the configuration. This is the unix timestamp of when the config was created.
     type: integer
   unit:
     $ref: "https://ucentral.io/schema/v1/unit/"
