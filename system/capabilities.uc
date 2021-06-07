@@ -13,6 +13,7 @@ boardfile.close();
 
 capa = {};
 ctx = ubus.connect();
+let wifi = ctx.call("wifi", "phy");
 capa.compatible = replace(board.model.id, ',', '_');
 capa.model = board.model.name;
 
@@ -32,7 +33,6 @@ for (let k, v in board.network) {
 
 if (board.switch)
 	capa.switch = board.switch;
-wifi = ctx.call("wifi", "phy");
 if (length(wifi))
 	capa.wifi = wifi;
 
