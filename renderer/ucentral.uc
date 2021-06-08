@@ -55,11 +55,13 @@ try {
 				  'reload_config'])
 			system(cmd);
 
+		let old_config = fs.readlink("/etc/ucentral/ucentral.active");
 		fs.unlink('/etc/ucentral/ucentral.active');
 		fs.symlink(ARGV[2], '/etc/ucentral/ucentral.active');
 
 		set_service_state(true);
 
+		fs.unlink(old_config);
 	} else {
 		error = 1;
 	}
