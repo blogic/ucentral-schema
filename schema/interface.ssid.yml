@@ -79,6 +79,12 @@ properties:
       Set the maximum number of clients that may connect to this VAP.
     type: integer
     example: 64
+  proxy-arp:
+    description:
+      Proxy ARP is the technique in which the host router, answers ARP requests
+      intended for another machine.
+    type: boolean
+    default: false
   encryption:
     $ref: "https://ucentral.io/schema/v1/interface/ssid/encryption/"
   multi-psk:

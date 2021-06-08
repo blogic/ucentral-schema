@@ -2760,6 +2760,20 @@ function instantiateInterfaceSsid(location, value, errors) {
 			obj.maximum_clients = parseMaximumClients(location + "/maximum-clients", value["maximum-clients"], errors);
 		}
 
+		function parseProxyArp(location, value, errors) {
+			if (type(value) != "bool")
+				push(errors, [ location, "must be of type boolean" ]);
+
+			return value;
+		}
+
+		if (exists(value, "proxy-arp")) {
+			obj.proxy_arp = parseProxyArp(location + "/proxy-arp", value["proxy-arp"], errors);
+		}
+		else {
+			obj.proxy_arp = false;
+		}
+
 		if (exists(value, "encryption")) {
 			obj.encryption = instantiateInterfaceSsidEncryption(location + "/encryption", value["encryption"], errors);
 		}

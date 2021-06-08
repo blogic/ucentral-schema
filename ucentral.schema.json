@@ -1091,6 +1091,10 @@
                     "type": "integer",
                     "example": 64
                 },
+                "proxy-arp": {
+                    "type": "boolean",
+                    "default": false
+                },
                 "encryption": {
                     "$ref": "#/$defs/interface.ssid.encryption"
                 },

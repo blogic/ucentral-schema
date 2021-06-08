@@ -93,6 +93,7 @@ set wireless.{{ section }}.network={{ name }}_mesh
 set wireless.{{ section }}.ssid={{ s(ssid.name) }}
 set wireless.{{ section }}.mode={{ s(bss_mode) }}
 set wireless.{{ section }}.bssid={{ ssid.bssid }}
+set wireless.{{ section }}.proxy_arp={{ b(ssid.proxy_arp) }}
 {%   endif %}
 {%   if (bss_mode == 'ap'): %}
 set wireless.{{ section }}.hidden={{ b(ssid.hidden_ssid) }}
