@@ -21,6 +21,14 @@
 
 		if (ssid.encryption.proto in [ "wpa", "wpa2", "wpa-mixed", "wpa3", "wpa3-mixed" ] &&
 		    ssid.radius && ssid.radius.local)
+			if (ssid.radius.local.use_local_certificates) {
+				cursor.load("system");
+				let certs = cursor.get_all("system", "@certificates[-1]");
+				ssid.radius.local.ca_certificate = certs.ca;
+				ssid.radius.local.server_certificate = certs.cert;
+				ssid.radius.local.private_key = certs.key;
+			}
+
 			return {
 				proto: ssid.encryption.proto,
 				eap_local: ssid.radius.local,

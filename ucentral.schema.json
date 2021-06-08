@@ -743,6 +743,10 @@
                 "ca-certificate": {
                     "type": "string"
                 },
+                "use-local-certificates": {
+                    "type": "boolean",
+                    "default": false
+                },
                 "server-certificate": {
                     "type": "string"
                 },

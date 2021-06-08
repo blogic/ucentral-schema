@@ -1812,6 +1812,20 @@ function instantiateInterfaceSsidRadiusLocal(location, value, errors) {
 			obj.ca_certificate = parseCaCertificate(location + "/ca-certificate", value["ca-certificate"], errors);
 		}
 
+		function parseUseLocalCertificates(location, value, errors) {
+			if (type(value) != "bool")
+				push(errors, [ location, "must be of type boolean" ]);
+
+			return value;
+		}
+
+		if (exists(value, "use-local-certificates")) {
+			obj.use_local_certificates = parseUseLocalCertificates(location + "/use-local-certificates", value["use-local-certificates"], errors);
+		}
+		else {
+			obj.use_local_certificates = false;
+		}
+
 		function parseServerCertificate(location, value, errors) {
 			if (type(value) != "string")
 				push(errors, [ location, "must be of type string" ]);

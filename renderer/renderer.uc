@@ -418,6 +418,7 @@ return {
 			dhcp_relay,
 			location: '/',
 			fs,
+			cursor,
 			capab,
 
 			warn: (fmt, ...args) => push(logs, sprintf("[W] (In %s) ", location || '/') + sprintf(fmt, ...args)),
