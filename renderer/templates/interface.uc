@@ -8,6 +8,9 @@
 		return;
 	}
 
+	// store our index
+	interface.index = substr(location, rindex(location, "/") + 1);
+
 	// Check this interface for role/vlan uniqueness...
 	let this_vid = interface.vlan ? interface.vlan.id : 1;
 
@@ -18,7 +21,7 @@
 		if (other_interface.tunnel && index([ "mesh" ], other_interface.tunnel.proto) < 0)
 			continue;
 
-		if (!other_interface.ethernet)
+		if (!other_interface.ethernet && length(interface.ssids) == 1)
 			continue;
 
 		let other_vid = other_interface.vlan ? other_interface.vlan.id : '';
@@ -124,11 +127,15 @@
 	if (tunnel_proto == "mesh")
 		include("interface/mesh.uc", { name });
 
-	// All none L2/3 tunnel require a vlan inside their bridge (unless we run a captive portal)
-	if (interface.captive) {
+	if (!interface.ethernet && length(interface.ssids) == 1 && !tunnel_proto)
+		// interfaces with a single ssid and no tunnel do not need a bridge
+		netdev = ''
+	else if (interface.captive) {
+		// captive portal gets a dedicated bridge
 		netdev = '';
 		interface.type = 'bridge';
 	} else {
+		// anything else requires a bridge-vlan
 		include("interface/bridge-vlan.uc", { interface, name, eth_ports, this_vid, bridgedev });
 	}
 

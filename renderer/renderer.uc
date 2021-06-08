@@ -174,10 +174,13 @@ let ethernet = {
 		let vid = interface.vlan ? interface.vlan.id : '';
 
 		if (interface.captive)
-			return 'captive';
+			return 'captive' + interface.index;
 
 		if (interface.tunnel)
-			return 'tunnel';
+			return 'tunnel' + interface.index;
+
+		if (!interface.ethernet && length(interface.ssids) == 1)
+			return 'wifi' + interface.index;
 
 		return (interface.role == 'upstream' ? 'up' : 'down') + vid;
 	},
