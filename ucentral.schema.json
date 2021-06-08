@@ -1428,9 +1428,24 @@
         "service.ieee8021x": {
             "type": "object",
             "properties": {
-                "enable": {
+                "ca-certificate": {
+                    "type": "string"
+                },
+                "use-local-certificates": {
                     "type": "boolean",
                     "default": false
+                },
+                "server-certificate": {
+                    "type": "string"
+                },
+                "private-key": {
+                    "type": "string"
+                },
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/interface.ssid.radius.local-user"
+                    }
                 }
             }
         },

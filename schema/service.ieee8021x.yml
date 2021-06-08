@@ -2,8 +2,27 @@ description:
   This section allows enabling wired ieee802.1X
 type: object
 properties:
-  enable:
+  ca-certificate:
     description:
-      This option defines if ieee8021x shall be enabled on the device.
+       The local servers CA bundle.
+    type: string
+  use-local-certificates:
+    description:
+      The device will use its local certificate bundle for the Radius server and
+      ignore all other certificate options in this section.
     type: boolean
     default: false
+  server-certificate:
+    description:
+       The local servers certificate.
+    type: string
+  private-key:
+    description:
+      The local servers private key/
+    type: string
+  users:
+    description:
+      Specifies a collection of local EAP user/psk/vid triplets.
+    type: array
+    items:
+      $ref: "https://ucentral.io/schema/v1/interface/ssid/radius/local-user/"

@@ -6,6 +6,19 @@
 
 # IEEE8021x service configuration
 
+add ieee8021x certificates
+{% if (ieee8021x.use_local_certificates): %}
+{%   cursor.load("system") %}
+{%   let certs = cursor.get_all("system", "@certificates[-1]") %}
+set ieee8021x.@certificates[-1].ca={{ s(certs.ca) }}
+set ieee8021x.@certificates[-1].cert={{ s(certs.cert) }}
+set ieee8021x.@certificates[-1].key={{ s(certs.key) }}
+{% else %}
+set ieee8021x.@certificates[-1].ca={{ s(ieee8021x.ca_certificate) }}
+set ieee8021x.@certificates[-1].cert={{ s(ieee8021x.server_certificate) }}
+set ieee8021x.@certificates[-1].key={{ s(ieee8021x.private_key) }}
+{% endif %}
+
 {% for (let interface in interfaces): %}
 {%   let name = ethernet.calculate_name(interface) %}
 add ieee8021x network
@@ -20,3 +33,8 @@ set network.@device[-1].name={{ s(port) }}
 set network.@device[-1].auth='1'
 {%  endfor %}
 {% endfor %}
+{% let user_file = fs.open("/var/run/hostapd-ieee8021x.eap_user", "w");
+   for (let user in ieee8021x.users)
+     user_file.write('"' + user.user_name + '"\tPWD\t"' + user.password + '"\n');
+   user_file.write('* TLS,TTLS\n');
+   user_file.close();%}
