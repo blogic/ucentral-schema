@@ -1,4 +1,4 @@
-{% if (interface.role == 'upstream' && interface.vlan): %}
+{% if (interface.role == 'upstream' && ethernet.has_vlan(interface)): %}
 set network.{{ name }}.ip4table={{ this_vid }}
 {% endif %}
 {% if (ipv4_mode == 'static'): %}

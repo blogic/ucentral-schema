@@ -15,7 +15,7 @@ set network.{{ afname }}.proto=dhcpv6
 {%  else %}
 set network.{{ afname }}.proto=none
 {%  endif %}
-{%  if (interface.role == "downstream" && interface.vlan): %}
+{%  if (interface.role == "downstream" && ethernet.has_vlan(interface)): %}
 add network rule
 set network.@rule[-1].in={{ afname }}
 set network.@rule[-1].lookup={{ interface.vlan.id }}

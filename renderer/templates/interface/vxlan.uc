@@ -3,7 +3,7 @@ if (!interface.ipv4 || !interface.ipv4.subnet || interface.ipv4.addressing != 's
         warn("A VXLAN tunnel can only be created with a valid and static ivp4 address");
         return;
 }
-if (!interface.vlan || !interface.vlan.id ) {
+if (!ethernet.has_vlan(interface)) {
         warn("A VXLAN tunnel can only be created with a valid and static ivp4 address");
         return;
 }

@@ -1,5 +1,5 @@
 {%
-if (!interface.vlan || !interface.vlan.id ) {
+if (!ethernet.has_vlan(interface)) {
         warn("A GRE tunnel can only be created with a valid VLAN ID");
         return;
 }

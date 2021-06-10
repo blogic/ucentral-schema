@@ -9,7 +9,7 @@
 	}
 
 	// Check this interface for role/vlan uniqueness...
-	let this_vid = interface.vlan ? interface.vlan.id : 1;
+	let this_vid = interface.vlan.id || interface.vlan.dyn_id;
 
 	for (let other_interface in state.interfaces) {
 		if (other_interface == interface)
@@ -18,7 +18,7 @@
 		if (!other_interface.ethernet && length(interface.ssids) == 1)
 			continue;
 
-		let other_vid = other_interface.vlan ? other_interface.vlan.id : '';
+		let other_vid = other_interface.vlan.id || '';
 
 		if (interface.role === other_interface.role && this_vid === other_vid) {
 			warn("Multiple interfaces with same role and VLAN ID defined, ignoring conflicting interface");
@@ -33,7 +33,7 @@
 	}
 
 	// check if a downstream interface with a vlan has a matching upstream interface
-	if (interface.vlan && interface.role == "downstream" && index(vlans, this_vid) < 0) {
+	if (ethernet.has_vlan(interface) && interface.role == "downstream" && index(vlans, this_vid) < 0) {
 		warn("Trying to create a downstream interface with a VLAN ID, without matching upstream interface.");
 		return;
 	}

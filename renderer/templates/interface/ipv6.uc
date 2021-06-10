@@ -1,4 +1,4 @@
-{% if (interface.role == 'upstream' && interface.vlan): %}
+{% if (interface.role == 'upstream' && ethernet.has_vlan(interface)): %}
 set network.{{ name }}.ip6table={{ this_vid }}
 {% endif %}
 {% if (ipv6_mode == 'static'): %}

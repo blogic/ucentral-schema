@@ -26,6 +26,8 @@
 	for (let i, interface in state.interfaces)
 		if (ethernet.has_vlan(interface))
 			push(vlans, interface.vlan.id);
+		else
+			interface.vlan = { id: 0};
 
 	let vid = 1;
 	function next_free_vid() {
@@ -35,12 +37,9 @@
 	}
 
 	/* dynamically assign vlan ids to all interfaces that have none yet */
-	for (let i, interface in state.interfaces) {
-		if (!interface.vlan)
-			interface.vlan = {};
+	for (let i, interface in state.interfaces)
 		if (!interface.vlan.id)
 			interface.vlan.dyn_id = next_free_vid();
-	}
 
 	include('base.uc');
 

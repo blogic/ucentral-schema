@@ -244,7 +244,7 @@ let ethernet = {
 	},
 
 	calculate_name: function(interface) {
-		let vid = interface.vlan ? interface.vlan.id : '0';
+		let vid = interface.vlan.id;
 
 		return (interface.role == 'upstream' ? 'up' : 'down') + interface.index + 'v' + vid;
 	},
@@ -455,7 +455,7 @@ let dhcp_relay = {
 		let system = cursor.get_all("system", "@system[-1]");
 		this.state.Name = (system && system.hostname) ? system.hostname : "unknown";
 		this.state.Location = (system && system.notes) ? system.notes : "unknown";
-		this.state["VLAN-Id"] = (interface.vlan ? interface.vlan.id : "0") || "0";
+		this.state["VLAN-Id"] = interface.vlan.id;
 		this.state.Model = capab.compatible || "unknown";
 		this.state.SSID = (interface.ssids && interface.ssids[0].name) ? interface.ssids[0].name : "unknown";
 		this.state.Crypto = "unknown";
