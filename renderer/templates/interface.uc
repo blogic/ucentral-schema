@@ -18,9 +18,6 @@
 		if (other_interface == interface)
 			continue;
 
-		if (other_interface.tunnel && index([ "mesh" ], other_interface.tunnel.proto) < 0)
-			continue;
-
 		if (!other_interface.ethernet && length(interface.ssids) == 1)
 			continue;
 
@@ -90,9 +87,7 @@
 	// Compute unique logical name and netdev name to use
 	let name = ethernet.calculate_name(interface);
 	let bridgedev = 'up';
-	if (capab.platform == "switch")
-		bridgedev = 'up';
-	else if (interface.role == "downstream")
+	if (capab.platform != "switch" && interface.role == "downstream")
 		bridgedev = 'down';
 	let netdev = bridgedev + '.' + this_vid;
 
@@ -130,14 +125,9 @@
 	if (!interface.ethernet && length(interface.ssids) == 1 && !tunnel_proto)
 		// interfaces with a single ssid and no tunnel do not need a bridge
 		netdev = ''
-	else if (interface.captive) {
-		// captive portal gets a dedicated bridge
-		netdev = '';
-		interface.type = 'bridge';
-	} else {
+	else
 		// anything else requires a bridge-vlan
 		include("interface/bridge-vlan.uc", { interface, name, eth_ports, this_vid, bridgedev });
-	}
 
 	include("interface/common.uc", {
 		name, this_vid, netdev,

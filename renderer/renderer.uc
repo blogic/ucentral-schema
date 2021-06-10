@@ -244,18 +244,9 @@ let ethernet = {
 	},
 
 	calculate_name: function(interface) {
-		let vid = interface.vlan ? interface.vlan.id : '';
+		let vid = interface.vlan ? interface.vlan.id : '0';
 
-		if (interface.captive)
-			return 'captive' + interface.index;
-
-		if (interface.tunnel)
-			return 'tunnel' + interface.index;
-
-		if (!interface.ethernet && length(interface.ssids) == 1)
-			return 'wifi' + interface.index;
-
-		return (interface.role == 'upstream' ? 'up' : 'down') + vid;
+		return (interface.role == 'upstream' ? 'up' : 'down') + interface.index + 'v' + vid;
 	},
 
 	calculate_names: function(interface) {
