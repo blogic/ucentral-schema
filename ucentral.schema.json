@@ -241,8 +241,7 @@
             "properties": {
                 "id": {
                     "type": "integer",
-                    "minimum": 2,
-                    "maximum": 4096
+                    "maximum": 4050
                 },
                 "proto": {
                     "decription": "The L2 vlan tag that shall be added (1q,1ad)",

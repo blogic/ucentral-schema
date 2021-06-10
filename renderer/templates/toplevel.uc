@@ -29,11 +29,11 @@
 		else
 			interface.vlan = { id: 0};
 
-	let vid = 1;
+	let vid = 4090;
 	function next_free_vid() {
 		while (index(vlans, vid) >= 0)
-			vid++;
-		return vid++;
+			vid--;
+		return vid--;
 	}
 
 	/* dynamically assign vlan ids to all interfaces that have none yet */

@@ -553,11 +553,8 @@ function instantiateInterfaceVlan(location, value, errors) {
 
 		function parseId(location, value, errors) {
 			if (type(value) in [ "int", "double" ]) {
-				if (value > 4096)
-					push(errors, [ location, "must be lower than or equal to 4096" ]);
-
-				if (value < 2)
-					push(errors, [ location, "must be bigger than or equal to 2" ]);
+				if (value > 4050)
+					push(errors, [ location, "must be lower than or equal to 4050" ]);
 
 			}
 
