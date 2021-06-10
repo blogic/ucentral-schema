@@ -2,28 +2,6 @@ description:
   Describe the properties of the local Radius server inside hostapd.
 type: object
 properties:
-  ca-certificate:
-    description:
-       The local servers CA bundle.
-    type: string
-  use-local-certificates:
-    description:
-      The device will use its local certificate bundle for the Radius server and
-      ignore all other certificate options in this section.
-    type: boolean
-    default: false
-  server-certificate:
-    description:
-       The local servers certificate.
-    type: string
-  private-key:
-    description:
-      The local servers private key/
-    type: string
-  private-key-password:
-    description:
-      The password required to read the private key.
-    type: string
   server-identity:
     description:
       EAP methods that provide mechanism for authenticated server identity delivery

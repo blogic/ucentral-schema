@@ -12,28 +12,19 @@
 		return;
 	}
 
-	function validate_encryption() {
-		if (!ssid.encryption || ssid.encryption.proto in [ "none" ])
-			return {
-				proto: 'none'
-			};
-		if (ssid.encryption.proto in [ "psk", "psk2", "psk-mixed", "sae", "sae-mixed" ] &&
-		    ssid.encryption.key)
-			return {
-				proto: ssid.encryption.proto,
-				key: ssid.encryption.key
-		};
+	let certificates = ssid.certificates || {};
+	if (certificates.use_local_certificates) {
+		cursor.load("system");
+		let certs = cursor.get_all("system", "@certificates[-1]");
+		certificates.ca_certificate = certs.ca;
+		certificates.certificate = certs.cert;
+		certificates.private_key = certs.key;
+	}
 
+	function validate_encryption_ap() {
 		if (ssid.encryption.proto in [ "wpa", "wpa2", "wpa-mixed", "wpa3", "wpa3-mixed" ] &&
-		    ssid.radius && ssid.radius.local)
-			if (ssid.radius.local.use_local_certificates) {
-				cursor.load("system");
-				let certs = cursor.get_all("system", "@certificates[-1]");
-				ssid.radius.local.ca_certificate = certs.ca;
-				ssid.radius.local.server_certificate = certs.cert;
-				ssid.radius.local.private_key = certs.key;
-			}
-
+		    ssid.radius && ssid.radius.local &&
+		    length(certificates))
 			return {
 				proto: ssid.encryption.proto,
 				eap_local: ssid.radius.local,
@@ -54,6 +45,42 @@
 			};
 		warn("Can't find any valid encryption settings");
 		return false;
+	}
+
+	function validate_encryption_sta() {
+		if (ssid.encryption.proto in [ "wpa", "wpa2", "wpa-mixed", "wpa3", "wpa3-mixed" ] &&
+		    length(certificates))
+			return {
+				proto: ssid.encryption.proto,
+				client_tls: certificates
+			};
+		warn("Can't find any valid encryption settings");
+		return false;
+	}
+
+	function validate_encryption() {
+		if (!ssid.encryption || ssid.encryption.proto in [ "none" ])
+			return {
+				proto: 'none'
+			};
+
+		if (ssid.encryption.proto in [ "psk", "psk2", "psk-mixed", "sae", "sae-mixed" ] &&
+		    ssid.encryption.key)
+			return {
+				proto: ssid.encryption.proto,
+				key: ssid.encryption.key
+		};
+
+		switch(ssid.bss_mode) {
+		case 'ap':
+		case 'wds-ap':
+			return validate_encryption_ap();
+
+		case 'sta':
+		case 'wds-sta':
+			return validate_encryption_sta();
+
+		}
 	}
 
 	function match_ieee80211w() {
@@ -106,63 +133,30 @@ set wireless.{{ section }}.network={{ name }}_mesh
 set wireless.{{ section }}.ssid={{ s(ssid.name) }}
 set wireless.{{ section }}.mode={{ s(bss_mode) }}
 set wireless.{{ section }}.bssid={{ ssid.bssid }}
-set wireless.{{ section }}.proxy_arp={{ b(ssid.proxy_arp) }}
+set wireless.{{ section }}.wds='{{ b(match_wds()) }}'
 {%   endif %}
-{%   if (bss_mode == 'ap'): %}
-set wireless.{{ section }}.hidden={{ b(ssid.hidden_ssid) }}
-set wireless.{{ section }}.time_advertisement={{ ssid.broadcast_time }}
-set wireless.{{ section }}.isolate={{ b(ssid.isolate_clients) }}
-set wireless.{{ section }}.uapsd={{ b(ssid.power_save) }}
-set wireless.{{ section }}.rts_threshold={{ ssid.rts_threshold }}
-set wireless.{{ section }}.multicast_to_unicast={{ b(ssid.unicast_conversion) }}
-set wireless.{{ section }}.maxassoc={{ ssid.maximum_clients }}
-{%     if (ssid.rrm): %}
-set wireless.{{ section }}.ieee80211k={{ b(ssid.rrm.neighbor_reporting) }}
-set wireless.{{ section }}.ftm_responder={{ b(ssid.rrm.ftm_responder) }}
-set wireless.{{ section }}.stationary_ap={{ b(ssid.rrm.stationary_ap) }}
-set wireless.{{ section }}.lci={{ b(ssid.rrm.lci) }}
-set wireless.{{ section }}.civic={{ ssid.rrm.civic }}
-{%     endif %}
-{%     if (ssid.roaming): %}
-set wireless.{{ section }}.ieee80211r=1
-set wireless.{{ section }}.ft_over_ds={{ b(ssid.roaming.message_exchange == "ds") }}
-set wireless.{{ section }}.ft_psk_generate_local={{ b(ssid.roaming.generate_psk) }}
-set wireless.{{ section }}.mobility_domain={{ ssid.roaming.domain_identifier }}
-set wireless.{{ section }}.r0kh={{ s(ssid.roaming.pmk_r0_key_holder) }}
-set wireless.{{ section }}.r1kh={{ s(ssid.roaming.pmk_r1_key_holder) }}
-{%     endif %}
-{%   endif %}
-{%   if (ssid.rates): %}
-set wireless.{{ section }}.beacon_rate={{ ssid.rates.beacon }}
-set wireless.{{ section }}.mcast_rate={{ ssid.rates.multicast }}
-{%   endif %}
-{%   if (ssid.quality_tresholds): %}
-set wireless.{{ section }}.rssi_reject_assoc_rssi={{ ssid.quality_tresholds.association-request-rssi }}
-set wireless.{{ section }}.rssi_ignore_probe_request={{ ssid.quality_tresholds.probe-request-rssi }}
-{%   endif %}
+
+# Crypto settings
 set wireless.{{ section }}.ieee80211w={{ match_ieee80211w() }}
 set wireless.{{ section }}.encryption={{ crypto.proto }}
 set wireless.{{ section }}.key={{ crypto.key }}
-{%   if (crypto.radius): %}
-set wireless.{{ section }}.request_cui={{ b(crypto.radius.chargeable_user_id) }}
-set wireless.{{ section }}.nasid={{ s(crypto.radius.nas_identifier) }}
-set wireless.{{ section }}.dynamic_vlan=1
-{%   endif %}
+
 {%   if (crypto.eap_local): %}
 set wireless.{{ section }}.eap_server=1
-set wireless.{{ section }}.ca_cert={{ s(crypto.eap_local.ca_certificate) }}
-set wireless.{{ section }}.server_cert={{ s(crypto.eap_local.server_certificate) }}
-set wireless.{{ section }}.private_key={{ s(crypto.eap_local.private_key) }}
-set wireless.{{ section }}.private_key_passwd={{ s(crypto.eap_local.private_key_password) }}
+set wireless.{{ section }}.ca_cert={{ s(certificates.ca_certificate) }}
+set wireless.{{ section }}.server_cert={{ s(certificates.certificate) }}
+set wireless.{{ section }}.private_key={{ s(certificates.private_key) }}
+set wireless.{{ section }}.private_key_passwd={{ s(certificates.private_key_password) }}
 set wireless.{{ section }}.server_id={{ s(crypto.eap_local.server_identity) }}
 set wireless.{{ section }}.eap_user_file={{ s(crypto.eap_user) }}
-{%	let user_file = fs.open(crypto.eap_user, "w");
-	for (let user in crypto.eap_local.users)
-		user_file.write('"' + user.user_name + '"\tPWD\t"' + user.password + '"\n');
-	if (crypto.eap_local.ca_certificate && crypto.eap_local.server_certificate && crypto.eap_local.private_key)
-		user_file.write('* TLS,TTLS\n');
+{%   let user_file = fs.open(crypto.eap_user, "w");
+     for (let user in crypto.eap_local.users)
+	user_file.write('"' + user.user_name + '"\tPWD\t"' + user.password + '"\n');
+     if (certificates.ca_certificate && certificates.certificate && certificates.private_key)
+	user_file.write('* TLS,TTLS\n');
 	user_file.close();
      endif %}
+
 {%   if (crypto.auth): %}
 set wireless.{{ section }}.auth_server={{ crypto.auth.host }}
 set wireless.{{ section }}.auth_port={{ crypto.auth.port }}
@@ -171,6 +165,7 @@ set wireless.{{ section }}.auth_secret={{ crypto.auth.secret }}
 add_list wireless.{{ section }}.radius_auth_req_attr={{ s(request.id + ':' + request.value) }}
 {%     endfor %}
 {%   endif %}
+
 {%   if (crypto.acct): %}
 set wireless.{{ section }}.acct_server={{ crypto.acct.host }}
 set wireless.{{ section }}.acct_port={{ crypto.acct.port }}
@@ -180,51 +175,107 @@ set wireless.{{ section }}.acct_interval={{ crypto.acct.interval }}
 add_list wireless.{{ section }}.radius_acct_req_attr={{ s(request.id + ':' + request.value) }}
 {%     endfor %}
 {%   endif %}
-{%   if (ssid.pass_point): %}
-set wireless.{{ section }}.interworking=1
-set wireless.{{ section }}.hs20=1
-{%     for (let name in ssid.pass_point.venue_name): %}
-add_list wireless.{{ section }}.iw_venue_name={{ s(name) }}
-{%     endfor %}
-set wireless.{{ section }}.iw_venue_group='{{ ssid.pass_point.venue_group }}'
-set wireless.{{ section }}.iw_venue_type='{{ ssid.pass_point.venue_type }}'
-{%     for (let n, url in ssid.pass_point.venue_url): %}
-add_list wireless.{{ section }}.iw_venue_url={{ s((n + 1) + ":" +url) }}
-{%     endfor %}
-set wireless.{{ section }}.iw_network_auth_type='{{ match_hs20_auth_type(ssid.pass_point.auth_type) }}'
-set wireless.{{ section }}.iw_domain_name={{ s(ssid.pass_point.domain_name) }}
-{%     for (let realm in ssid.pass_point.nai_realm): %}
-set wireless.{{ section }}.iw_nai_realm='{{ realm }}'
-{%     endfor %}
-set wireless.{{ section }}.osen={{ b(ssid.pass_point.osen) }}
-set wireless.{{ section }}.anqp_domain_id='{{ ssid.pass_point.anqp_domain }}'
-{%     for (let name in ssid.pass_point.friendly_name): %}
-add_list wireless.{{ section }}.hs20_oper_friendly_name={{ s(name) }}
-{%     endfor %}
-{%     for (let icon in ssid.pass_point.icon): %}
-add_list wireless.{{ section }}.operator_icon={{ s(icon.uri) }}
-{%     endfor %}
+
+{%   if (crypto.radius): %}
+set wireless.{{ section }}.request_cui={{ b(crypto.radius.chargeable_user_id) }}
+set wireless.{{ section }}.nasid={{ s(crypto.radius.nas_identifier) }}
+set wireless.{{ section }}.dynamic_vlan=1
 {%   endif %}
 
-set wireless.{{ section }}.wds='{{ b(match_wds()) }}'
+{%   if (crypto.client_tls): %}
+set wireless.{{ section }}.eap_type='tls'
+set wireless.{{ section }}.ca_cert={{ s(certificates.ca_certificate) }}
+set wireless.{{ section }}.client_cert={{ s(certificates.certificate)}}
+set wireless.{{ section }}.priv_key={{ s(certificates.private_key) }}
+set wireless.{{ section }}.priv_key_pwd={{ s(certificates.private_key_password) }}
+{%   endif %}
+
+# AP specific setings
+{%   if (bss_mode == 'ap'): %}
+set wireless.{{ section }}.proxy_arp={{ b(ssid.proxy_arp) }}
+set wireless.{{ section }}.hidden={{ b(ssid.hidden_ssid) }}
+set wireless.{{ section }}.time_advertisement={{ ssid.broadcast_time }}
+set wireless.{{ section }}.isolate={{ b(ssid.isolate_clients) }}
+set wireless.{{ section }}.uapsd={{ b(ssid.power_save) }}
+set wireless.{{ section }}.rts_threshold={{ ssid.rts_threshold }}
+set wireless.{{ section }}.multicast_to_unicast={{ b(ssid.unicast_conversion) }}
+set wireless.{{ section }}.maxassoc={{ ssid.maximum_clients }}
+
+{%     if (ssid.rrm): %}
+set wireless.{{ section }}.ieee80211k={{ b(ssid.rrm.neighbor_reporting) }}
+set wireless.{{ section }}.ftm_responder={{ b(ssid.rrm.ftm_responder) }}
+set wireless.{{ section }}.stationary_ap={{ b(ssid.rrm.stationary_ap) }}
+set wireless.{{ section }}.lci={{ b(ssid.rrm.lci) }}
+set wireless.{{ section }}.civic={{ ssid.rrm.civic }}
+{%     endif %}
+
+{%     if (ssid.roaming): %}
+set wireless.{{ section }}.ieee80211r=1
+set wireless.{{ section }}.ft_over_ds={{ b(ssid.roaming.message_exchange == "ds") }}
+set wireless.{{ section }}.ft_psk_generate_local={{ b(ssid.roaming.generate_psk) }}
+set wireless.{{ section }}.mobility_domain={{ ssid.roaming.domain_identifier }}
+set wireless.{{ section }}.r0kh={{ s(ssid.roaming.pmk_r0_key_holder) }}
+set wireless.{{ section }}.r1kh={{ s(ssid.roaming.pmk_r1_key_holder) }}
+{%     endif %}
+
+{%     if (ssid.rates): %}
+set wireless.{{ section }}.beacon_rate={{ ssid.rates.beacon }}
+set wireless.{{ section }}.mcast_rate={{ ssid.rates.multicast }}
+{%     endif %}
+
+{%     if (ssid.quality_tresholds): %}
+set wireless.{{ section }}.rssi_reject_assoc_rssi={{ ssid.quality_tresholds.association-request-rssi }}
+set wireless.{{ section }}.rssi_ignore_probe_request={{ ssid.quality_tresholds.probe-request-rssi }}
+{%     endif %}
+
+{%     if (ssid.pass_point): %}
+set wireless.{{ section }}.interworking=1
+set wireless.{{ section }}.hs20=1
+{%       for (let name in ssid.pass_point.venue_name): %}
+add_list wireless.{{ section }}.iw_venue_name={{ s(name) }}
+{%       endfor %}
+set wireless.{{ section }}.iw_venue_group='{{ ssid.pass_point.venue_group }}'
+set wireless.{{ section }}.iw_venue_type='{{ ssid.pass_point.venue_type }}'
+{%       for (let n, url in ssid.pass_point.venue_url): %}
+add_list wireless.{{ section }}.iw_venue_url={{ s((n + 1) + ":" +url) }}
+{%       endfor %}
+set wireless.{{ section }}.iw_network_auth_type='{{ match_hs20_auth_type(ssid.pass_point.auth_type) }}'
+set wireless.{{ section }}.iw_domain_name={{ s(ssid.pass_point.domain_name) }}
+{%       for (let realm in ssid.pass_point.nai_realm): %}
+set wireless.{{ section }}.iw_nai_realm='{{ realm }}'
+{%       endfor %}
+set wireless.{{ section }}.osen={{ b(ssid.pass_point.osen) }}
+set wireless.{{ section }}.anqp_domain_id='{{ ssid.pass_point.anqp_domain }}'
+{%       for (let name in ssid.pass_point.friendly_name): %}
+add_list wireless.{{ section }}.hs20_oper_friendly_name={{ s(name) }}
+{%       endfor %}
+{%       for (let icon in ssid.pass_point.icon): %}
+add_list wireless.{{ section }}.operator_icon={{ s(icon.uri) }}
+{%       endfor %}
+{%     endif %}
+
 add wireless wifi-vlan
 set wireless.@wifi-vlan[-1].iface={{ section }}
 set wireless.@wifi-vlan[-1].name='v#'
 set wireless.@wifi-vlan[-1].vid='*'
-{%   if (ssid.rate_limit && (ssid.rate_limit.ingress_rate || ssid.rate_limit.egress_rate)): %}
+{%     if (ssid.rate_limit && (ssid.rate_limit.ingress_rate || ssid.rate_limit.egress_rate)): %}
 
 add ratelimit rate
 set ratelimit.@rate[-1].ssid={{ s(ssid.name) }}
 set ratelimit.@rate[-1].ingress={{ ssid.rate_limit.ingress_rate }}
 set ratelimit.@rate[-1].egress={{ ssid.rate_limit.egress_rate }}
-{%   endif %}
-{%   for (let psk in ssid.multi_psk): %}
-{%     if (!psk.key) continue %}
+{%     endif %}
+{%     for (let psk in ssid.multi_psk): %}
+{%       if (!psk.key) continue %}
 
 add wireless wifi-station
 set wireless.@wifi-station[-1].iface={{ s(section) }}
 set wireless.@wifi-station[-1].mac={{ psk.mac }}
 set wireless.@wifi-station[-1].key={{ psk.key }}
 set wireless.@wifi-station[-1].vid={{ psk.vlan_id }}
-{%   endfor %}
+{%     endfor %}
+{%   else %}
+
+# STA specific settings
+{%   endif %}
 {% endfor %}

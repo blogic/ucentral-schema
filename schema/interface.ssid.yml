@@ -103,6 +103,8 @@ properties:
     $ref: "https://ucentral.io/schema/v1/interface/ssid/roaming/"
   radius:
     $ref: "https://ucentral.io/schema/v1/interface/ssid/radius/"
+  certificates:
+    $ref: "https://ucentral.io/schema/v1/interface/ssid/certificates/"
   pass-point:
     $ref: "https://ucentral.io/schema/v1/interface/ssid/pass-point/"
   quality-tresholds:

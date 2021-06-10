@@ -741,22 +741,6 @@
         "interface.ssid.radius.local": {
             "type": "object",
             "properties": {
-                "ca-certificate": {
-                    "type": "string"
-                },
-                "use-local-certificates": {
-                    "type": "boolean",
-                    "default": false
-                },
-                "server-certificate": {
-                    "type": "string"
-                },
-                "private-key": {
-                    "type": "string"
-                },
-                "private-key-password": {
-                    "type": "string"
-                },
                 "server-identity": {
                     "type": "string",
                     "default": "uCentral"
@@ -874,6 +858,27 @@
                             }
                         }
                     ]
+                }
+            }
+        },
+        "interface.ssid.certificates": {
+            "type": "object",
+            "properties": {
+                "use-local-certificates": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "ca-certificate": {
+                    "type": "string"
+                },
+                "certificate": {
+                    "type": "string"
+                },
+                "private-key": {
+                    "type": "string"
+                },
+                "private-key-password": {
+                    "type": "string"
                 }
             }
         },
@@ -1125,6 +1130,9 @@
                 },
                 "radius": {
                     "$ref": "#/$defs/interface.ssid.radius"
+                },
+                "certificates": {
+                    "$ref": "#/$defs/interface.ssid.certificates"
                 },
                 "pass-point": {
                     "$ref": "#/$defs/interface.ssid.pass-point"

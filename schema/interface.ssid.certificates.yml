@@ -1,0 +1,27 @@
+description:
+  When running a local EAP server or using STA/MESH to connect to another BSS
+  a set of certificates is required.
+type: object
+properties:
+  use-local-certificates:
+    description:
+      The device will use its local certificate bundle for the TLS setup and
+      ignores all other certificate options in this section.
+    type: boolean
+    default: false
+  ca-certificate:
+    description:
+       The local servers CA bundle.
+    type: string
+  certificate:
+    description:
+       The local servers certificate.
+    type: string
+  private-key:
+    description:
+      The local servers private key/
+    type: string
+  private-key-password:
+    description:
+      The password required to read the private key.
+    type: string

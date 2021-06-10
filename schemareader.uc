@@ -1798,64 +1798,6 @@ function instantiateInterfaceSsidRadiusLocal(location, value, errors) {
 	if (type(value) == "object") {
 		let obj = {};
 
-		function parseCaCertificate(location, value, errors) {
-			if (type(value) != "string")
-				push(errors, [ location, "must be of type string" ]);
-
-			return value;
-		}
-
-		if (exists(value, "ca-certificate")) {
-			obj.ca_certificate = parseCaCertificate(location + "/ca-certificate", value["ca-certificate"], errors);
-		}
-
-		function parseUseLocalCertificates(location, value, errors) {
-			if (type(value) != "bool")
-				push(errors, [ location, "must be of type boolean" ]);
-
-			return value;
-		}
-
-		if (exists(value, "use-local-certificates")) {
-			obj.use_local_certificates = parseUseLocalCertificates(location + "/use-local-certificates", value["use-local-certificates"], errors);
-		}
-		else {
-			obj.use_local_certificates = false;
-		}
-
-		function parseServerCertificate(location, value, errors) {
-			if (type(value) != "string")
-				push(errors, [ location, "must be of type string" ]);
-
-			return value;
-		}
-
-		if (exists(value, "server-certificate")) {
-			obj.server_certificate = parseServerCertificate(location + "/server-certificate", value["server-certificate"], errors);
-		}
-
-		function parsePrivateKey(location, value, errors) {
-			if (type(value) != "string")
-				push(errors, [ location, "must be of type string" ]);
-
-			return value;
-		}
-
-		if (exists(value, "private-key")) {
-			obj.private_key = parsePrivateKey(location + "/private-key", value["private-key"], errors);
-		}
-
-		function parsePrivateKeyPassword(location, value, errors) {
-			if (type(value) != "string")
-				push(errors, [ location, "must be of type string" ]);
-
-			return value;
-		}
-
-		if (exists(value, "private-key-password")) {
-			obj.private_key_password = parsePrivateKeyPassword(location + "/private-key-password", value["private-key-password"], errors);
-		}
-
 		function parseServerIdentity(location, value, errors) {
 			if (type(value) != "string")
 				push(errors, [ location, "must be of type string" ]);
@@ -2193,6 +2135,77 @@ function instantiateInterfaceSsidRadius(location, value, errors) {
 
 		if (exists(value, "accounting")) {
 			obj.accounting = parseAccounting(location + "/accounting", value["accounting"], errors);
+		}
+
+		return obj;
+	}
+
+	if (type(value) != "object")
+		push(errors, [ location, "must be of type object" ]);
+
+	return value;
+}
+
+function instantiateInterfaceSsidCertificates(location, value, errors) {
+	if (type(value) == "object") {
+		let obj = {};
+
+		function parseUseLocalCertificates(location, value, errors) {
+			if (type(value) != "bool")
+				push(errors, [ location, "must be of type boolean" ]);
+
+			return value;
+		}
+
+		if (exists(value, "use-local-certificates")) {
+			obj.use_local_certificates = parseUseLocalCertificates(location + "/use-local-certificates", value["use-local-certificates"], errors);
+		}
+		else {
+			obj.use_local_certificates = false;
+		}
+
+		function parseCaCertificate(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "ca-certificate")) {
+			obj.ca_certificate = parseCaCertificate(location + "/ca-certificate", value["ca-certificate"], errors);
+		}
+
+		function parseCertificate(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "certificate")) {
+			obj.certificate = parseCertificate(location + "/certificate", value["certificate"], errors);
+		}
+
+		function parsePrivateKey(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "private-key")) {
+			obj.private_key = parsePrivateKey(location + "/private-key", value["private-key"], errors);
+		}
+
+		function parsePrivateKeyPassword(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "private-key-password")) {
+			obj.private_key_password = parsePrivateKeyPassword(location + "/private-key-password", value["private-key-password"], errors);
 		}
 
 		return obj;
@@ -2822,6 +2835,10 @@ function instantiateInterfaceSsid(location, value, errors) {
 
 		if (exists(value, "radius")) {
 			obj.radius = instantiateInterfaceSsidRadius(location + "/radius", value["radius"], errors);
+		}
+
+		if (exists(value, "certificates")) {
+			obj.certificates = instantiateInterfaceSsidCertificates(location + "/certificates", value["certificates"], errors);
 		}
 
 		if (exists(value, "pass-point")) {
