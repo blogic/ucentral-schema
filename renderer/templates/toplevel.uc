@@ -18,6 +18,9 @@
 		die('Configuration must contain at least one valid upstream interface. Rejecting whole file');
 	}
 
+	for (let i, interface in state.interfaces)
+		interface.index = i;
+
 	include('base.uc');
 
 	if (state.unit)

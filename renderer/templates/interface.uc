@@ -8,9 +8,6 @@
 		return;
 	}
 
-	// store our index
-	interface.index = substr(location, rindex(location, "/") + 1);
-
 	// Check this interface for role/vlan uniqueness...
 	let this_vid = interface.vlan ? interface.vlan.id : 1;
 
