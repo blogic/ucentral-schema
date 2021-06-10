@@ -14,7 +14,7 @@ set firewall.@zone[-1].forward='ACCEPT'
 
 add firewall forwarding
 set firewall.@forwarding[-1].src={{ s(name) }}
-set firewall.@forwarding[-1].dest='up{{ interface.vlan ? interface.vlan.id : '' }}'
+set firewall.@forwarding[-1].dest='{{ s(ethernet.find_interface("upstream", interface.vlan.id)) }}'
 {% endif %}
 {% for (let network in ethernet.calculate_names(interface)): %}
 add_list firewall.@zone[-1].network={{ s(network) }}

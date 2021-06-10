@@ -7,7 +7,7 @@
 # Wifi-Steering service configuration
 
 add usteer usteer
-set usteer.@usteer[-1].network='up'
+set usteer.@usteer[-1].network='{{ s(ethernet.find_interface("upstream", 0)) }}'
 set usteer.@usteer[-1].key={{ s(wifi_steering.key) }}
 set usteer.@usteer[-1].assoc_steering={{ b(wifi_steering.assoc_steering) }}
 set usteer.@usteer[-1].min_snr={{ wifi_steering.required_snr }}
