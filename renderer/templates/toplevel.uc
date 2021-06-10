@@ -21,6 +21,27 @@
 	for (let i, interface in state.interfaces)
 		interface.index = i;
 
+	/* find out which vlans are used and which should be assigned dynamically */
+	let vlans = [];
+	for (let i, interface in state.interfaces)
+		if (ethernet.has_vlan(interface))
+			push(vlans, interface.vlan.id);
+
+	let vid = 1;
+	function next_free_vid() {
+		while (index(vlans, vid) >= 0)
+			vid++;
+		return vid++;
+	}
+
+	/* dynamically assign vlan ids to all interfaces that have none yet */
+	for (let i, interface in state.interfaces) {
+		if (!interface.vlan)
+			interface.vlan = {};
+		if (!interface.vlan.id)
+			interface.vlan.dyn_id = next_free_vid();
+	}
+
 	include('base.uc');
 
 	if (state.unit)
@@ -47,7 +68,6 @@
 	for (let i, radio in state.radios)
 		include('radio.uc', { location: '/radios/' + i, radio });
 
-	let vlans = [];
 	function iterate_interfaces(role) {
 		for (let i, interface in state.interfaces) {
 			if (interface.role != role)

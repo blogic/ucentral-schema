@@ -265,6 +265,10 @@ let ethernet = {
 		let name = this.calculate_name(interface);
 
 		return this.is_single_config(interface) ? name : name + '_6';
+	},
+
+	has_vlan: function(interface) {
+		return interface.vlan && interface.vlan.id;
 	}
 };
 

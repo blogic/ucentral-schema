@@ -78,9 +78,6 @@
 		return;
 	}
 
-	// store the VLAN id assigned to this interface
-	push(vlans, this_vid);
-
 	// Compute unique logical name and netdev name to use
 	let name = ethernet.calculate_name(interface);
 	let bridgedev = 'up';
