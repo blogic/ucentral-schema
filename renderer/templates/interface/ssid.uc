@@ -90,6 +90,15 @@
 		return index([ "disabled", "optional", "required" ], ssid.encryption.ieee80211w);
 	}
 
+	function match_proto(proto) {
+		let protos = {
+			"wpa3": "eap256",
+			"wpa3-mixed": "eap-eap192"
+		};
+
+		return protos[proto] || proto;
+	}
+
 	function match_wds() {
 		return index([ "wds-ap", "wds-sta", "wds-repeater" ], ssid.bss_mode) >= 0;
 	}
