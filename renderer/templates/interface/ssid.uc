@@ -188,6 +188,7 @@ set wireless.{{ section }}.ca_cert={{ s(certificates.ca_certificate) }}
 set wireless.{{ section }}.client_cert={{ s(certificates.certificate)}}
 set wireless.{{ section }}.priv_key={{ s(certificates.private_key) }}
 set wireless.{{ section }}.priv_key_pwd={{ s(certificates.private_key_password) }}
+set wireless.{{ section }}.identity='uCentral'
 {%   endif %}
 
 # AP specific setings

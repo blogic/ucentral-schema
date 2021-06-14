@@ -10,7 +10,6 @@
 	}
 
 	cursor.load("rtty");
-	cursor.set("rtty", "@rtty[-1]", "interface", "up");
 	cursor.set("rtty", "@rtty[-1]", "enable", 1);
 	cursor.set("rtty", "@rtty[-1]", "id", args.id);
 	cursor.set("rtty", "@rtty[-1]", "host", args.server);
@@ -20,6 +19,7 @@
 	cursor.set("rtty", "@rtty[-1]", "ssl", 1);
 	cursor.commit();
 
+	system("/etc/init.d/rtty restart");
 	system("/etc/init.d/rtty restart");
 	result_json({
 		"error": 0,
