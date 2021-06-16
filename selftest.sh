@@ -28,10 +28,16 @@ ucode -s '{%
 
 		let state = schemareader.validate(inputjson, logs);
 		let batch = state ? renderer.render(state, logs) : "";
+		let files = state ? renderer.files_state() : {};
 
 		fs.stdout.write("Log messages:\n" + join("\n", logs) + "\n\n");
 
 		fs.stdout.write("UCI batch output:\n" + batch + "\n");
+
+		fs.stdout.write("Files:\n\n");
+
+		for (let path in sort(keys(files)))
+			fs.stdout.write(" * " + path + "\n   --\n   " + replace(files[path], "\n", "\n   ") + "\n   --\n\n");
 	}
 	catch (e) {
 		warn("Fatal error while generating UCI: ", e, "\n", e.stacktrace[0].context, "\n");
