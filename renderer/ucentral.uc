@@ -51,6 +51,8 @@ try {
 		apply.write(batch);
 		apply.close();
 
+		renderer.write_files(logs);
+
 		set_service_state(false);
 
 		for (let cmd in [ 'uci -c /tmp/config-shadow commit',

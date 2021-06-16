@@ -200,13 +200,8 @@ set wireless.{{ section }}.private_key={{ s(certificates.private_key) }}
 set wireless.{{ section }}.private_key_passwd={{ s(certificates.private_key_password) }}
 set wireless.{{ section }}.server_id={{ s(crypto.eap_local.server_identity) }}
 set wireless.{{ section }}.eap_user_file={{ s(crypto.eap_user) }}
-{%   let user_file = fs.open(crypto.eap_user, "w");
-     for (let user in crypto.eap_local.users)
-	user_file.write('"' + user.user_name + '"\tPWD\t"' + user.password + '"\n');
-     if (certificates.ca_certificate && certificates.certificate && certificates.private_key)
-	user_file.write('* TLS,TTLS\n');
-	user_file.close();
-     endif %}
+{%     files.add_named(crypto.eap_user, render("../eap_users.uc", { users: crypto.eap_local.users })) %}
+{%   endif %}
 
 {%   if (crypto.auth): %}
 set wireless.{{ section }}.auth_server={{ crypto.auth.host }}
