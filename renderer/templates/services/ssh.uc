@@ -2,15 +2,13 @@
 {% let enable = length(interfaces) %}
 {% services.set_enabled("dropbear", enable) %}
 {% if (!enable) return %}
+{% files.add_named("/etc/dropbear/authorized_keys", join("\n", ssh.authorized_keys || []) + "\n") %}
 
 # SSH service configuration
 
-set dropbear.@dropbear[-1].enable={{ b(length(filter(state.interfaces, interface => ("ssh" in interface.services)))) }}
+set dropbear.@dropbear[-1].enable={{ b(enable) }}
 set dropbear.@dropbear[-1].Port={{ s(ssh.port) }}
 set dropbear.@dropbear[-1].PasswordAuth={{ b(ssh.password_authentication) }}
-{% for (let key in ssh.authorized_keys): %}
-add_list dropbear.@dropbear[-1].pubkey={{ s(key) }}
-{% endfor %}
 
 {% for (let interface in interfaces): %}
 {%    let name = ethernet.calculate_name(interface) %}

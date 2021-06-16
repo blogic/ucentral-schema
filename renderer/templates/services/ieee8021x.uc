@@ -33,8 +33,4 @@ set network.@device[-1].name={{ s(port) }}
 set network.@device[-1].auth='1'
 {%  endfor %}
 {% endfor %}
-{% let user_file = fs.open("/var/run/hostapd-ieee8021x.eap_user", "w");
-   for (let user in ieee8021x.users)
-     user_file.write('"' + user.user_name + '"\tPWD\t"' + user.password + '"\n');
-   user_file.write('* TLS,TTLS\n');
-   user_file.close();%}
+{% files.add_named("/var/run/hostapd-ieee8021x.eap_user", render("../eap_users.uc", { users: ieee8021x.users })) %}
