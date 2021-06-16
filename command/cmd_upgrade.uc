@@ -67,7 +67,7 @@
 
 	let sysupgrade_cmdline = [
 		'sysupgrade',
-		...(args.keep_redirector ? [ '-f', '/tmp/sysupgrade.tgz' ] : []),
+		...(args.keep_redirector ? [ '-f', '/tmp/sysupgrade.tgz' ] : [ '-n' ]),
 		image_path
 	];
 
