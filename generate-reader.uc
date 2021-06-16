@@ -91,6 +91,12 @@ let GeneratorProto = {
 				'return match(value, /^[0-9]+[smhdw]$/);'
 			]
 		},
+		"uc-base64": {
+			desc: 'base64 encoded data',
+			code: [
+				'return b64dec(value) != null;'
+			]
+		},
 		"hostname": {
 			desc: 'hostname',
 			code: [

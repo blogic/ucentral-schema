@@ -34,6 +34,10 @@ function matchUcTimeout(value) {
 	return match(value, /^[0-9]+[smhdw]$/);
 }
 
+function matchUcBase64(value) {
+	return b64dec(value) != null;
+}
+
 function matchHostname(value) {
 	if (length(value) > 255) return false;
 	let labels = split(value, ".");

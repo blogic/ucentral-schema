@@ -203,6 +203,9 @@ function random_value(kind, minLength, maxLength) {
 
 		break;
 
+	case 'uc-base64':
+		return b64enc(random_phrase(50, 100));
+
 	default:
 		if (minLength <= 15 && maxLength >= 20)
 			return random_phrase(minLength, maxLength);
