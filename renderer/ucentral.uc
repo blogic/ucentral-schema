@@ -60,7 +60,7 @@ try {
 		fs.symlink(ARGV[2], '/etc/ucentral/ucentral.active');
 
 		set_service_state(true);
-		if (split(old_config, ".")[1] == "/etc/ucentral/ucentral")
+		if (old_config && split(old_config, ".")[1] == "/etc/ucentral/ucentral")
 			fs.unlink(old_config);
 	} else {
 		error = 1;

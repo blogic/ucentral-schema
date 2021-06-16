@@ -2597,6 +2597,23 @@ function instantiateInterfaceSsid(location, value, errors) {
 	if (type(value) == "object") {
 		let obj = {};
 
+		function parsePurpose(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			if (!(value in [ "user-defined", "onboarding-ap", "onboarding-sta" ]))
+				push(errors, [ location, "must be one of \"user-defined\", \"onboarding-ap\" or \"onboarding-sta\"" ]);
+
+			return value;
+		}
+
+		if (exists(value, "purpose")) {
+			obj.purpose = parsePurpose(location + "/purpose", value["purpose"], errors);
+		}
+		else {
+			obj.purpose = "user-defined";
+		}
+
 		function parseName(location, value, errors) {
 			if (type(value) == "string") {
 				if (length(value) > 32)

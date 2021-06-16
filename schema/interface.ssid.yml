@@ -3,6 +3,16 @@ description:
   These properties are described inside this object.
 type: object
 properties:
+  purpose:
+    description:
+      An SSID can have a special purpose such as the hidden on-boarding BSS.
+      All purposes other than "user-defined" are static pre-defined configurations.
+    type: string
+    enum:
+    - user-defined
+    - onboarding-ap
+    - onboarding-sta
+    default: user-defined
   name:
     description:
       The broadcasted SSID of the wireless network and for for managed mode

@@ -1036,6 +1036,15 @@
         "interface.ssid": {
             "type": "object",
             "properties": {
+                "purpose": {
+                    "type": "string",
+                    "enum": [
+                        "user-defined",
+                        "onboarding-ap",
+                        "onboarding-sta"
+                    ],
+                    "default": "user-defined"
+                },
                 "name": {
                     "type": "string",
                     "maxLength": 32,

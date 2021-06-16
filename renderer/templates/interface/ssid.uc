@@ -1,4 +1,45 @@
 {%
+	let purpose = {
+		"onboarding-ap": {
+			"name": "OpenWifi-onboarding",
+			"hidden_ssid": true,
+			"isolate_clients": true,
+			"wifi_bands": [
+				"2G"
+			],
+			"bss_mode": "ap",
+			"encryption": {
+				"proto": "wpa2",
+				"ieee80211w": "required"
+			},
+			"certificates": {
+				"use_local_certificates": true
+			},
+			"radius": {
+				"local": {
+					"server-identity": "uCentral-EAP"
+				}
+			}
+		},
+		"onboarding-sta": {
+			"name": "OpenWifi-onboarding",
+			"wifi_bands": [
+				"2G"
+			],
+			"bss_mode": "sta",
+			"encryption": {
+				"proto": "wpa2",
+				"ieee80211w": "required"
+			},
+			"certificates": {
+				"use_local_certificates": true
+			}
+		}
+	};
+
+	if (purpose[ssid.purpose])
+		ssid = purpose[ssid.purpose];
+
 	let phys = [];
 
 	for (let band in ssid.wifi_bands)
