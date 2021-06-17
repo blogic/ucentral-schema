@@ -73,13 +73,14 @@ catch (e) {
 
 let ubus = require("ubus").connect();
 
-ubus.call("ucentral", "result", {
-	uuid: inputjson.uuid || 0,
-	id: +ARGV[3] || 0,
-	status: {
-		error,
-		text: error ? "Failed" : "Success",
-		rejected: logs || []
-	}
-});
+if (inputjson.uuid && inputjson.uuid > 1)
+	ubus.call("ucentral", "result", {
+		uuid: inputjson.uuid || 0,
+		id: +ARGV[3] || 0,
+		status: {
+			error,
+			text: error ? "Failed" : "Success",
+			rejected: logs || []
+		}
+	});
 %}
