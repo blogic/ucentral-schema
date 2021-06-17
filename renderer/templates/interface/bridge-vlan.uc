@@ -12,3 +12,9 @@ network.@bridge-vlan[-1].txqueuelen={{ interface.bridge.tx_queue_len }}
 network.@bridge-vlan[-1].isolate={{interface.bridge.isolate_ports }}
 network.@bridge-vlan[-1].mtu={{ interface.bridge.mtu }}
 {% endif %}
+
+add network device
+set network.@device[-1].type=8021q
+set network.@device[-1].name={{ name }}
+set network.@device[-1].ifname={{ bridgedev }}
+set network.@device[-1].vid={{ this_vid }}

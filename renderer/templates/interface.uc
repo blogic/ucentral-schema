@@ -83,7 +83,7 @@
 	let bridgedev = 'up';
 	if (capab.platform != "switch" && interface.role == "downstream")
 		bridgedev = 'down';
-	let netdev = bridgedev + '.' + this_vid;
+	let netdev = name;
 
 	// Determine the IPv4 and IPv6 configuration modes and figure out if we
 	// can set them both in a single interface (automatic) or whether we need
