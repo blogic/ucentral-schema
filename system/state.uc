@@ -33,6 +33,7 @@
 	let stations = ctx.call("wifi", "station");
 	let ports = ctx.call("topology", "port");
 	let poe = ctx.call("poe", "info");
+	let gps = ctx.call("gps", "info");
 	let lldp = [];
 
 	/* prepare dhcp leases cache */
@@ -316,6 +317,13 @@
 			push(state.poe.ports, port);
 		}
 	}
+
+	if (length(gps) && gps.latitude)
+		state.gps = {
+			latitude: gps.latitude,
+			longitude: gps.longitude,
+			elevation: gps.elevation
+		};
 
 	printf("%s\n", state);
 
