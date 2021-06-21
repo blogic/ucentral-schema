@@ -18,7 +18,7 @@ properties:
     - 6G
   bandwidth:
     description:
-      Specifies a narrow channel width in MHz, possible values are: 5, 10, 20.
+      Specifies a narrow channel width in MHz, possible values are 5, 10, 20.
     type: integer
     enum:
     - 5
