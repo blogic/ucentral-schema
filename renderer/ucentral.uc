@@ -26,8 +26,8 @@ function set_service_state(state) {
 }
 
 try {
-	for (let cmd in [ 'rm -rf /tmp/ucentral.tmp',
-			  'mkdir /tmp/ucentral.tmp' ])
+	for (let cmd in [ 'rm -rf /tmp/ucentral',
+			  'mkdir /tmp/ucentral' ])
 		system(cmd);
 
 	let state = schemareader.validate(inputjson, logs);
@@ -56,7 +56,6 @@ try {
 		for (let cmd in [ 'uci -c /tmp/config-shadow commit',
 				  'cp /tmp/config-shadow/* /etc/config/',
 				  'rm -rf /tmp/config-shadow',
-				  'mv /tmp/ucentral.tmp /tmp/ucentral',
 				  'reload_config'])
 			system(cmd);
 

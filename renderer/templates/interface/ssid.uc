@@ -69,7 +69,7 @@
 			return {
 				proto: ssid.encryption.proto,
 				eap_local: ssid.radius.local,
-				eap_user: "/tmp/ucentral.new/" + replace(location, "/", "_") + ".eap_user"
+				eap_user: "/tmp/ucentral/" + replace(location, "/", "_") + ".eap_user"
 			};
 
 
