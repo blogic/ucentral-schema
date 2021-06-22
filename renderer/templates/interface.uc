@@ -116,7 +116,11 @@
 	if (tunnel_proto == "mesh")
 		include("interface/mesh.uc", { name });
 
-	if (!interface.ethernet && length(interface.ssids) == 1 && !tunnel_proto)
+	if (interface.captive) {
+		interface.type = 'bridge';
+		netdev = '';
+		delete interface.ipv6;
+	} else if (!interface.ethernet && length(interface.ssids) == 1 && !tunnel_proto)
 		// interfaces with a single ssid and no tunnel do not need a bridge
 		netdev = ''
 	else
@@ -154,5 +158,5 @@
 	}
 
 	if (interface.captive)
-		include('interface/captive.uc', { netdev });
+		include('interface/captive.uc', { name });
 %}
