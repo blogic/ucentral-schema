@@ -2,7 +2,6 @@
 	let purpose = {
 		"onboarding-ap": {
 			"name": "OpenWifi-onboarding",
-			"hidden_ssid": true,
 			"isolate_clients": true,
 			"wifi_bands": [
 				"2G"
