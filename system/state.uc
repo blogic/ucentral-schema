@@ -167,7 +167,7 @@
 
 		if (device && length(device["bridge-members"]))
 		iface.ports = device["bridge-members"];
-		iface.uptime = status.uptime;
+		iface.uptime = status.uptime || 0;
 
 		if (length(status["ipv4-address"])) {
 			let ipv4 = [];
