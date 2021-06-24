@@ -47,6 +47,7 @@ function result_json(status) {
 /* Scope of functions and ressources the command includes have access to */
 let scope = {
 	/* ressources */
+	uci,
 	cursor: uci.cursor(),
 	ctx,
 	fs,

@@ -101,6 +101,20 @@ function instantiateUnit(location, value, errors) {
 			obj.timezone = parseTimezone(location + "/timezone", value["timezone"], errors);
 		}
 
+		function parseLedActive(location, value, errors) {
+			if (type(value) != "bool")
+				push(errors, [ location, "must be of type boolean" ]);
+
+			return value;
+		}
+
+		if (exists(value, "led-active")) {
+			obj.led_active = parseLedActive(location + "/led-active", value["led-active"], errors);
+		}
+		else {
+			obj.led_active = true;
+		}
+
 		return obj;
 	}
 
