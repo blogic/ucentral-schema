@@ -97,6 +97,11 @@ properties:
       intended for another machine.
     type: boolean
     default: false
+  vendor-elements:
+    decription:
+      This option allows embedding custom vendor specific IEs inside the beacons of
+      a BSS in AP mode.
+    type: string
   encryption:
     $ref: "https://ucentral.io/schema/v1/interface/ssid/encryption/"
   multi-psk:

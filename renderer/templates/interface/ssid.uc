@@ -184,6 +184,7 @@ set wireless.{{ section }}.mode={{ s(bss_mode) }}
 set wireless.{{ section }}.bssid={{ ssid.bssid }}
 set wireless.{{ section }}.wds='{{ b(match_wds()) }}'
 set wireless.{{ section }}.wpa_disable_eapol_key_retries=1
+set wireless.{{ section }}.vendor_elements='{{ ssid.vendor_elements }}'
 {%   endif %}
 
 # Crypto settings

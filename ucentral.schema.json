@@ -1120,6 +1120,10 @@
                     "type": "boolean",
                     "default": false
                 },
+                "vendor-elements": {
+                    "decription": "This option allows embedding custom vendor specific IEs inside the beacons of a BSS in AP mode.",
+                    "type": "string"
+                },
                 "encryption": {
                     "$ref": "#/$defs/interface.ssid.encryption"
                 },

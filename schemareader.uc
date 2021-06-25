@@ -2829,6 +2829,17 @@ function instantiateInterfaceSsid(location, value, errors) {
 			obj.proxy_arp = false;
 		}
 
+		function parseVendorElements(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "vendor-elements")) {
+			obj.vendor_elements = parseVendorElements(location + "/vendor-elements", value["vendor-elements"], errors);
+		}
+
 		if (exists(value, "encryption")) {
 			obj.encryption = instantiateInterfaceSsidEncryption(location + "/encryption", value["encryption"], errors);
 		}
