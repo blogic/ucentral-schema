@@ -1,7 +1,8 @@
 {%
 	log("Initiating reboot");
 
-	ctx.call("system", "reboot");
+	system("(sleep 10; reboot)&");
+	system("/etc/init.d/ucentral stop");
 
 	let err = ctx.error();
 
