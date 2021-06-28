@@ -505,12 +505,14 @@ let files = {
 		if (dir == null)
 			dir = this.basedir;
 
-		let d = fs.opendir(this.basedir);
+		let d = fs.opendir(dir);
 
 		if (d) {
 			let e;
 
 			while ((e = d.read()) != null) {
+				if (e == '.' || e == '..')
+					continue;
 				let p = dir + '/' + e,
 				    s = fs.lstat(p);
 
