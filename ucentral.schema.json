@@ -952,6 +952,9 @@
                     "maximum": 65535,
                     "minimum": 0
                 },
+                "anqp-3gpp-cell-net": {
+                    "type": "string"
+                },
                 "friendly-name": {
                     "type": "array",
                     "items": {

@@ -276,7 +276,7 @@ set wireless.{{ section }}.rssi_ignore_probe_request={{ ssid.quality_tresholds.p
 {%     endif %}
 
 {%     if (ssid.pass_point): %}
-set wireless.{{ section }}.interworking=1
+set wireless.{{ section }}.iw_enable=1
 set wireless.{{ section }}.hs20=1
 {%       for (let name in ssid.pass_point.venue_name): %}
 add_list wireless.{{ section }}.iw_venue_name={{ s(name) }}
@@ -293,6 +293,7 @@ set wireless.{{ section }}.iw_nai_realm='{{ realm }}'
 {%       endfor %}
 set wireless.{{ section }}.osen={{ b(ssid.pass_point.osen) }}
 set wireless.{{ section }}.anqp_domain_id='{{ ssid.pass_point.anqp_domain }}'
+set wireless.{{ section }}.anqp_3gpp_cell_net='{{ ssid.anqp_3gpp_cell_net }}'
 {%       for (let name in ssid.pass_point.friendly_name): %}
 add_list wireless.{{ section }}.hs20_oper_friendly_name={{ s(name) }}
 {%       endfor %}

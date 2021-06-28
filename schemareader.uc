@@ -2450,6 +2450,17 @@ function instantiateInterfaceSsidPassPoint(location, value, errors) {
 			obj.anqp_domain = parseAnqpDomain(location + "/anqp-domain", value["anqp-domain"], errors);
 		}
 
+		function parseAnqp3gppCellNet(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "anqp-3gpp-cell-net")) {
+			obj.anqp_3gpp_cell_net = parseAnqp3gppCellNet(location + "/anqp-3gpp-cell-net", value["anqp-3gpp-cell-net"], errors);
+		}
+
 		function parseFriendlyName(location, value, errors) {
 			if (type(value) == "array") {
 				function parseItem(location, value, errors) {

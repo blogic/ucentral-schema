@@ -74,6 +74,10 @@ properties:
     type: integer
     maximum: 65535
     minimum: 0
+  anqp-3gpp-cell-net:
+    description:
+      The ANQP 3GPP Cellular Network information.
+    type: string
   friendly-name:
     description:
       This parameter can be used to configure one or more Operator Friendly
