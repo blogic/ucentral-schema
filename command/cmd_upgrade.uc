@@ -65,18 +65,12 @@
 		return;
 	}
 
-	let sysupgrade_cmdline = [
-		'sysupgrade',
-		...(args.keep_redirector ? [ '-f', '/tmp/sysupgrade.tgz' ] : [ '-n' ]),
-		image_path
-	];
+	let sysupgrade_cmdline = sprintf("sysupgrade %s %s",
+					 args.keep_redirector ? "-f /tmp/sysupgrade.tgz" : "-n",
+					 image_path);
 
 	warn("Upgrading firmware\n");
 
-	system(['/etc/init.d/network', 'stop']);
-
-	rc = system(sysupgrade_cmdline);
-
-	if (rc != 0)
-		result(2, "System upgrade command %s exited with non-zero code %d", sysupgrade_cmdline, rc);
+	system("(sleep 10; /etc/init.d/network stop; " + sysupgrade_cmdline + ")&");
+	system("/etc/init.d/ucentral stop");
 %}
