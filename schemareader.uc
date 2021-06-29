@@ -199,6 +199,53 @@ function instantiateDefinitions(location, value, errors) {
 	return value;
 }
 
+function instantiateRadioRates(location, value, errors) {
+	if (type(value) == "object") {
+		let obj = {};
+
+		function parseBeacon(location, value, errors) {
+			if (type(value) != "int")
+				push(errors, [ location, "must be of type integer" ]);
+
+			if (!(value in [ 0, 1000, 2000, 5500, 6000, 9000, 11000, 12000, 18000, 24000, 36000, 48000, 54000 ]))
+				push(errors, [ location, "must be one of 0, 1000, 2000, 5500, 6000, 9000, 11000, 12000, 18000, 24000, 36000, 48000 or 54000" ]);
+
+			return value;
+		}
+
+		if (exists(value, "beacon")) {
+			obj.beacon = parseBeacon(location + "/beacon", value["beacon"], errors);
+		}
+		else {
+			obj.beacon = 6000;
+		}
+
+		function parseMulticast(location, value, errors) {
+			if (type(value) != "int")
+				push(errors, [ location, "must be of type integer" ]);
+
+			if (!(value in [ 0, 1000, 2000, 5500, 6000, 9000, 11000, 12000, 18000, 24000, 36000, 48000, 54000 ]))
+				push(errors, [ location, "must be one of 0, 1000, 2000, 5500, 6000, 9000, 11000, 12000, 18000, 24000, 36000, 48000 or 54000" ]);
+
+			return value;
+		}
+
+		if (exists(value, "multicast")) {
+			obj.multicast = parseMulticast(location + "/multicast", value["multicast"], errors);
+		}
+		else {
+			obj.multicast = 24000;
+		}
+
+		return obj;
+	}
+
+	if (type(value) != "object")
+		push(errors, [ location, "must be of type object" ]);
+
+	return value;
+}
+
 function instantiateRadioHe(location, value, errors) {
 	if (type(value) == "object") {
 		let obj = {};
@@ -528,6 +575,10 @@ function instantiateRadio(location, value, errors) {
 
 		if (exists(value, "maximum-clients")) {
 			obj.maximum_clients = parseMaximumClients(location + "/maximum-clients", value["maximum-clients"], errors);
+		}
+
+		if (exists(value, "rates")) {
+			obj.rates = instantiateRadioRates(location + "/rates", value["rates"], errors);
 		}
 
 		if (exists(value, "he-settings")) {
@@ -1543,53 +1594,6 @@ function instantiateInterfaceSsidRrm(location, value, errors) {
 		}
 		else {
 			obj.stationary_ap = false;
-		}
-
-		return obj;
-	}
-
-	if (type(value) != "object")
-		push(errors, [ location, "must be of type object" ]);
-
-	return value;
-}
-
-function instantiateInterfaceSsidRates(location, value, errors) {
-	if (type(value) == "object") {
-		let obj = {};
-
-		function parseBeacon(location, value, errors) {
-			if (type(value) != "int")
-				push(errors, [ location, "must be of type integer" ]);
-
-			if (!(value in [ 0, 1000, 2000, 5500, 6000, 9000, 11000, 12000, 18000, 24000, 36000, 48000, 54000 ]))
-				push(errors, [ location, "must be one of 0, 1000, 2000, 5500, 6000, 9000, 11000, 12000, 18000, 24000, 36000, 48000 or 54000" ]);
-
-			return value;
-		}
-
-		if (exists(value, "beacon")) {
-			obj.beacon = parseBeacon(location + "/beacon", value["beacon"], errors);
-		}
-		else {
-			obj.beacon = 0;
-		}
-
-		function parseMulticast(location, value, errors) {
-			if (type(value) != "int")
-				push(errors, [ location, "must be of type integer" ]);
-
-			if (!(value in [ 0, 1000, 2000, 5500, 6000, 9000, 11000, 12000, 18000, 24000, 36000, 48000, 54000 ]))
-				push(errors, [ location, "must be one of 0, 1000, 2000, 5500, 6000, 9000, 11000, 12000, 18000, 24000, 36000, 48000 or 54000" ]);
-
-			return value;
-		}
-
-		if (exists(value, "multicast")) {
-			obj.multicast = parseMulticast(location + "/multicast", value["multicast"], errors);
-		}
-		else {
-			obj.multicast = 0;
 		}
 
 		return obj;
@@ -2876,10 +2880,6 @@ function instantiateInterfaceSsid(location, value, errors) {
 
 		if (exists(value, "rrm")) {
 			obj.rrm = instantiateInterfaceSsidRrm(location + "/rrm", value["rrm"], errors);
-		}
-
-		if (exists(value, "rates")) {
-			obj.rates = instantiateInterfaceSsidRates(location + "/rates", value["rates"], errors);
 		}
 
 		if (exists(value, "rate-limit")) {

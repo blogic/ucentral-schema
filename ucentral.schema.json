@@ -94,6 +94,49 @@
                 }
             }
         },
+        "radio.rates": {
+            "type": "object",
+            "properties": {
+                "beacon": {
+                    "type": "integer",
+                    "default": 6000,
+                    "enum": [
+                        0,
+                        1000,
+                        2000,
+                        5500,
+                        6000,
+                        9000,
+                        11000,
+                        12000,
+                        18000,
+                        24000,
+                        36000,
+                        48000,
+                        54000
+                    ]
+                },
+                "multicast": {
+                    "type": "integer",
+                    "default": 24000,
+                    "enum": [
+                        0,
+                        1000,
+                        2000,
+                        5500,
+                        6000,
+                        9000,
+                        11000,
+                        12000,
+                        18000,
+                        24000,
+                        36000,
+                        48000,
+                        54000
+                    ]
+                }
+            }
+        },
         "radio.he": {
             "type": "object",
             "properties": {
@@ -218,6 +261,9 @@
                 "maximum-clients": {
                     "type": "integer",
                     "example": 64
+                },
+                "rates": {
+                    "$ref": "#/$defs/radio.rates"
                 },
                 "he-settings": {
                     "$ref": "#/$defs/radio.he"
@@ -622,49 +668,6 @@
                 "stationary-ap": {
                     "type": "boolean",
                     "default": false
-                }
-            }
-        },
-        "interface.ssid.rates": {
-            "type": "object",
-            "properties": {
-                "beacon": {
-                    "type": "integer",
-                    "default": 0,
-                    "enum": [
-                        0,
-                        1000,
-                        2000,
-                        5500,
-                        6000,
-                        9000,
-                        11000,
-                        12000,
-                        18000,
-                        24000,
-                        36000,
-                        48000,
-                        54000
-                    ]
-                },
-                "multicast": {
-                    "type": "integer",
-                    "default": 0,
-                    "enum": [
-                        0,
-                        1000,
-                        2000,
-                        5500,
-                        6000,
-                        9000,
-                        11000,
-                        12000,
-                        18000,
-                        24000,
-                        36000,
-                        48000,
-                        54000
-                    ]
                 }
             }
         },
@@ -1138,9 +1141,6 @@
                 },
                 "rrm": {
                     "$ref": "#/$defs/interface.ssid.rrm"
-                },
-                "rates": {
-                    "$ref": "#/$defs/interface.ssid.rates"
                 },
                 "rate-limit": {
                     "$ref": "#/$defs/interface.ssid.rate-limit"

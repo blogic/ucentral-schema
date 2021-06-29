@@ -114,4 +114,7 @@ set wireless.{{ phy.section }}.he_bss_color={{ radio.he_settings.bss_color }}
 set wireless.{{ phy.section }}.multiple_bssid={{ b(radio.he_settings.multiple_bssid) }}
 set wireless.{{ phy.section }}.ema={{ b(radio.he_settings.ema) }}
 {%  endif %}
+{%  if (radio.rates): %}
+set wireless.{{ phy.section }}.basic_rate={{ radio.rates.multicast }}
+{%  endif %}
 {% endfor %}

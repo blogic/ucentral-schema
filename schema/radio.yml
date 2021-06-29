@@ -122,6 +122,8 @@ properties:
       value is accumulative for all attached VAP interfaces.
     type: integer
     example: 64
+  rates:
+    $ref: "https://ucentral.io/schema/v1/radio/rates/"
   he-settings:
     $ref: "https://ucentral.io/schema/v1/radio/he/"
   hostapd-iface-raw:

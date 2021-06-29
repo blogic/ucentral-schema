@@ -110,8 +110,6 @@ properties:
       $ref: "https://ucentral.io/schema/v1/interface/ssid/multi-psk/"
   rrm:
     $ref: "https://ucentral.io/schema/v1/interface/ssid/rrm/"
-  rates:
-    $ref: "https://ucentral.io/schema/v1/interface/ssid/rates/"
   rate-limit:
     $ref: "https://ucentral.io/schema/v1/interface/ssid/rate-limit/"
   roaming:

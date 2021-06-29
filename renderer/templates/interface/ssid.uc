@@ -267,9 +267,8 @@ set wireless.{{ section }}.r0kh={{ s(ssid.roaming.pmk_r0_key_holder) }}
 set wireless.{{ section }}.r1kh={{ s(ssid.roaming.pmk_r1_key_holder) }}
 {%     endif %}
 
-{%     if (ssid.rates): %}
-set wireless.{{ section }}.beacon_rate={{ ssid.rates.beacon }}
-set wireless.{{ section }}.mcast_rate={{ ssid.rates.multicast }}
+{%     if (bss_mode == "mesh"): %}
+set wireless.{{ section }}.mcast_rate=24000
 {%     endif %}
 
 {%     if (ssid.quality_thresholds): %}
