@@ -10,5 +10,5 @@
 add umdns umdns
 set umdns.@umdns[-1].enable=1
 {% for (let interface in interfaces): %}
-add_list umdns.@umdns[-1].network={{ s(interface) }}
+add_list umdns.@umdns[-1].network={{ s(ethernet.calculate_name(interface)) }}
 {% endfor %}
