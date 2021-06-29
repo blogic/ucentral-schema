@@ -22,6 +22,6 @@ add_list usteer.@usteer[-1].ssid_list={{ ssid.name }}
 add firewall rule
 set firewall.@rule[-1].name='Allow-usteer-{{ name }}'
 set firewall.@rule[-1].src='{{ name }}'
-set firewall.@rule[-1].dest_port='{{ 16720 }}'
+set firewall.@rule[-1].dest_port='16720'
 set firewall.@rule[-1].proto='udp'
 set firewall.@rule[-1].target='ACCEPT'

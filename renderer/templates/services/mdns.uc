@@ -12,3 +12,14 @@ set umdns.@umdns[-1].enable=1
 {% for (let interface in interfaces): %}
 add_list umdns.@umdns[-1].network={{ s(ethernet.calculate_name(interface)) }}
 {% endfor %}
+
+{% for (let interface in interfaces): %}
+{%   let name = ethernet.calculate_name(interface) %}
+add firewall rule
+set firewall.@rule[-1].name='Allow-mdns-{{ name }}'
+set firewall.@rule[-1].src='{{ name }}'
+set firewall.@rule[-1].dest_port='53'
+set firewall.@rule[-1].proto='udp'
+set firewall.@rule[-1].target='ACCEPT'
+{% endfor %}
+
