@@ -121,6 +121,7 @@
 			return validate_encryption_sta();
 
 		}
+		warn("Can't find any valid encryption settings");
 	}
 
 	function match_ieee80211w() {
