@@ -3,11 +3,11 @@
 {% let enable = (wifi_steering.mode == 'local' && length(ssids)) %}
 {% services.set_enabled("usteer", enable) %}
 {% if (!enable) return %}
-
+{% let name = ethernet.find_interface("upstream", 0) %}
 # Wifi-Steering service configuration
 
 add usteer usteer
-set usteer.@usteer[-1].network='{{ s(ethernet.find_interface("upstream", 0)) }}'
+set usteer.@usteer[-1].network='{{ s(name) }}'
 set usteer.@usteer[-1].key={{ s(wifi_steering.key) }}
 set usteer.@usteer[-1].assoc_steering={{ b(wifi_steering.assoc_steering) }}
 set usteer.@usteer[-1].min_snr={{ wifi_steering.required_snr }}
@@ -18,3 +18,10 @@ set usteer.@usteer[-1].load_kick_threshold={{ wifi_steering.load_kick_threshold 
 {% for (let ssid in ssids): %}
 add_list usteer.@usteer[-1].ssid_list={{ ssid.name }}
 {% endfor %}
+
+add firewall rule
+set firewall.@rule[-1].name='Allow-usteer-{{ name }}'
+set firewall.@rule[-1].src='{{ name }}'
+set firewall.@rule[-1].dest_port='{{ 16720 }}'
+set firewall.@rule[-1].proto='udp'
+set firewall.@rule[-1].target='ACCEPT'
