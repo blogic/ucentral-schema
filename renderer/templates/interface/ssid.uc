@@ -3,6 +3,7 @@
 		"onboarding-ap": {
 			"name": "OpenWifi-onboarding",
 			"isolate_clients": true,
+			"hidden": true,
 			"wifi_bands": [
 				"2G"
 			],
