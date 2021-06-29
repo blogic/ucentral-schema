@@ -272,9 +272,9 @@ set wireless.{{ section }}.beacon_rate={{ ssid.rates.beacon }}
 set wireless.{{ section }}.mcast_rate={{ ssid.rates.multicast }}
 {%     endif %}
 
-{%     if (ssid.quality_tresholds): %}
-set wireless.{{ section }}.rssi_reject_assoc_rssi={{ ssid.quality_tresholds.association-request-rssi }}
-set wireless.{{ section }}.rssi_ignore_probe_request={{ ssid.quality_tresholds.probe-request-rssi }}
+{%     if (ssid.quality_thresholds): %}
+set wireless.{{ section }}.rssi_reject_assoc_rssi={{ ssid.quality_thresholds.association_request_rssi }}
+set wireless.{{ section }}.rssi_ignore_probe_request={{ ssid.quality_thresholds.probe_request_rssi }}
 {%     endif %}
 
 {%     if (ssid.pass_point): %}

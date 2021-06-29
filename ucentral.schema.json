@@ -1029,7 +1029,7 @@
                 }
             }
         },
-        "interface.ssid.quality-tresholds": {
+        "interface.ssid.quality-thresholds": {
             "type": "object",
             "properties": {
                 "probe-request-rssi": {
@@ -1157,8 +1157,8 @@
                 "pass-point": {
                     "$ref": "#/$defs/interface.ssid.pass-point"
                 },
-                "quality-tresholds": {
-                    "$ref": "#/$defs/interface.ssid.quality-tresholds"
+                "quality-thresholds": {
+                    "$ref": "#/$defs/interface.ssid.quality-thresholds"
                 },
                 "hostapd-bss-raw": {
                     "type": "array",

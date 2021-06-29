@@ -2587,7 +2587,7 @@ function instantiateInterfaceSsidPassPoint(location, value, errors) {
 	return value;
 }
 
-function instantiateInterfaceSsidQualityTresholds(location, value, errors) {
+function instantiateInterfaceSsidQualityThresholds(location, value, errors) {
 	if (type(value) == "object") {
 		let obj = {};
 
@@ -2902,8 +2902,8 @@ function instantiateInterfaceSsid(location, value, errors) {
 			obj.pass_point = instantiateInterfaceSsidPassPoint(location + "/pass-point", value["pass-point"], errors);
 		}
 
-		if (exists(value, "quality-tresholds")) {
-			obj.quality_tresholds = instantiateInterfaceSsidQualityTresholds(location + "/quality-tresholds", value["quality-tresholds"], errors);
+		if (exists(value, "quality-thresholds")) {
+			obj.quality_thresholds = instantiateInterfaceSsidQualityThresholds(location + "/quality-thresholds", value["quality-thresholds"], errors);
 		}
 
 		function parseHostapdBssRaw(location, value, errors) {
