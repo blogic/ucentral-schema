@@ -694,7 +694,7 @@
                 },
                 "generate-psk": {
                     "type": "boolean",
-                    "default": true
+                    "default": false
                 },
                 "domain-identifier": {
                     "type": "string",

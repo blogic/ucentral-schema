@@ -1674,7 +1674,7 @@ function instantiateInterfaceSsidRoaming(location, value, errors) {
 			obj.generate_psk = parseGeneratePsk(location + "/generate-psk", value["generate-psk"], errors);
 		}
 		else {
-			obj.generate_psk = true;
+			obj.generate_psk = false;
 		}
 
 		function parseDomainIdentifier(location, value, errors) {

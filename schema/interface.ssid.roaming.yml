@@ -16,7 +16,7 @@ properties:
       Whether to generate FT response locally for PSK networks. This avoids
       use of PMK-R1 push/pull from other APs with FT-PSK networks.
     type: boolean
-    default: true
+    default: false
   domain-identifier:
     description:
       Mobility Domain identifier (dot11FTMobilityDomainID, MDID).
