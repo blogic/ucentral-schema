@@ -486,6 +486,21 @@ let dhcp_relay = {
 	}
 };
 
+let local_profile = {
+	get: function() {
+		let profile_file = fs.open("/etc/ucentral/profile.json");
+
+		if (profile_file) {
+			let profile = json(profile_file.read("all"));
+
+			profile_file.close();
+
+			return profile;
+		}
+		return null;
+	}
+};
+
 let files = {
 	files: {},
 	basedir: '/tmp/ucentral',
@@ -606,6 +621,7 @@ return {
 			ipcalc,
 			services,
 			dhcp_relay,
+			local_profile,
 			location: '/',
 			cursor,
 			capab,

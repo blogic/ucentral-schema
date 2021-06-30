@@ -27,6 +27,7 @@ properties:
     - pap
     - chap
     - pap-chap
+    default: none
   pin-code:
     description:
       The PIN that shall be used to unlock the SIM card.
@@ -47,3 +48,4 @@ properties:
     - ipv4
     - ipv6
     - dual-stack
+    default: dual-stack

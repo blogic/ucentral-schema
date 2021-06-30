@@ -18,6 +18,7 @@
 		die('Configuration must contain at least one valid upstream interface. Rejecting whole file');
 	}
 
+
 	for (let i, interface in state.interfaces)
 		interface.index = i;
 
@@ -28,6 +29,12 @@
 			push(vlans, interface.vlan.id);
 		else
 			interface.vlan = { id: 0};
+
+	// populate the broad-band profile if present. This needs to happen after the default vlans 
+	// and before the dynamic vlan are assigned
+	let profile = local_profile.get();
+	if (profile && profile.broadband)
+		include('broadband.uc', { broadband: profile.broadband });
 
 	let vid = 4090;
 	function next_free_vid() {
@@ -66,9 +73,6 @@
 
 	for (let i, radio in state.radios)
 		include('radio.uc', { location: '/radios/' + i, radio });
-
-	if (fs.stat("/etc/ucentral/isp-profile.json"))
-		include('interface/isp.uc');
 
 	function iterate_interfaces(role) {
 		for (let i, interface in state.interfaces) {

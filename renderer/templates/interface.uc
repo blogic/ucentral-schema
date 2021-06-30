@@ -109,6 +109,12 @@
 	// Some tunnels do not need the normal bridge-vlan setup
 	if (tunnel_proto in [ "vxlan", 'gre' ]) {
 		include("interface/" + tunnel_proto + ".uc", { interface, name, location, netdev, ipv4_mode, ipv6_mode });
+		include('interface/firewall.uc', { name, true, false });
+		return;
+	}
+
+	if (interface.broad_band) {
+		include("interface/broadband.uc", { interface, name, location, eth_ports });
 		return;
 	}
 
