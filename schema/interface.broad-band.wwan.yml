@@ -1,0 +1,49 @@
+description:
+  This Object defines the properties of a broad-band uplink.
+type: object
+properties:
+  protocol:
+    description:
+      This uplink uses WWAN/LTE
+    type: string
+    const: wwan
+  modem-type:
+    description:
+      The local protocol that the modem supports.
+    type: string
+    enum:
+    - qmi
+  access-point-name:
+    description:
+      Commonly known as APN. The name of a gateway between a mobile network
+      and the internet.
+    type: string
+  authentication-type:
+    description:
+      The authentication mode that shall be used.
+    type: string
+    enum:
+    - none
+    - pap
+    - chap
+    - pap-chap
+  pin-code:
+    description:
+      The PIN that shall be used to unlock the SIM card.
+    type: string
+  user-name:
+    description:
+      This option is only required if an authentication-type is defined.
+    type: string
+  password:
+    description:
+      This option is only required if an authentication-type is defined.
+    type: string
+  packet-data-protocol:
+    description:
+      Define what kind of IP stack shall be used.
+    type: string
+    enum:
+    - ipv4
+    - ipv6
+    - dual-stack

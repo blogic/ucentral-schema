@@ -552,6 +552,77 @@
                 }
             }
         },
+        "interface.broad-band.wwan": {
+            "type": "object",
+            "properties": {
+                "protocol": {
+                    "type": "string",
+                    "const": "wwan"
+                },
+                "modem-type": {
+                    "type": "string",
+                    "enum": [
+                        "qmi"
+                    ]
+                },
+                "access-point-name": {
+                    "type": "string"
+                },
+                "authentication-type": {
+                    "type": "string",
+                    "enum": [
+                        "none",
+                        "pap",
+                        "chap",
+                        "pap-chap"
+                    ],
+                    "default": "none"
+                },
+                "pin-code": {
+                    "type": "string"
+                },
+                "user-name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "packet-data-protocol": {
+                    "type": "string",
+                    "enum": [
+                        "ipv4",
+                        "ipv6",
+                        "dual-stack"
+                    ],
+                    "default": "dual-stack"
+                }
+            }
+        },
+        "interface.broad-band.pppoe": {
+            "type": "object",
+            "properties": {
+                "protocol": {
+                    "type": "string",
+                    "const": "pppoe"
+                },
+                "user-name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "interface.broad-band": {
+            "oneOf": [
+                {
+                    "$ref": "#/$defs/interface.broad-band.wwan"
+                },
+                {
+                    "$ref": "#/$defs/interface.broad-band.pppoe"
+                }
+            ]
+        },
         "interface.captive": {
             "type": "object",
             "properties": {
@@ -1291,6 +1362,9 @@
                 },
                 "ipv6": {
                     "$ref": "#/$defs/interface.ipv6"
+                },
+                "broad-band": {
+                    "$ref": "#/$defs/interface.broad-band"
                 },
                 "captive": {
                     "$ref": "#/$defs/interface.captive"

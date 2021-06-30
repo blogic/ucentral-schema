@@ -1,0 +1,3 @@
+oneOf:
+ - $ref: 'https://ucentral.io/schema/v1/interface/broad-band/wwan/'
+ - $ref: 'https://ucentral.io/schema/v1/interface/broad-band/pppoe/'

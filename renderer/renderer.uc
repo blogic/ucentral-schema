@@ -277,6 +277,14 @@ let ethernet = {
 			    interface.vlan.id == vid)
 				return this.calculate_name(interface);
 		return '';
+	},
+
+	get_interface: function(role, vid) {
+		for (let interface in state.interfaces)
+			if (interface.role == role &&
+			    interface.vlan.id == vid)
+				return interface;
+		return null;
 	}
 };
 

@@ -1,0 +1,17 @@
+description:
+  This Object defines the properties of a PPPoE uplink.
+type: object
+properties:
+  protocol:
+    description:
+      This uplink uses PPPoE
+    type: string
+    const: pppoe
+  user-name:
+    description:
+      The username used to authenticate.
+    type: string
+  password:
+    description:
+      The password used to authenticate.
+    type: string

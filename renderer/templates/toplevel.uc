@@ -67,6 +67,9 @@
 	for (let i, radio in state.radios)
 		include('radio.uc', { location: '/radios/' + i, radio });
 
+	if (fs.stat("/etc/ucentral/isp-profile.json"))
+		include('interface/isp.uc');
+
 	function iterate_interfaces(role) {
 		for (let i, interface in state.interfaces) {
 			if (interface.role != role)

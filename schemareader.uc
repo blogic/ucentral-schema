@@ -1280,6 +1280,227 @@ function instantiateInterfaceIpv6(location, value, errors) {
 	return value;
 }
 
+function instantiateInterfaceBroadBandWwan(location, value, errors) {
+	if (type(value) == "object") {
+		let obj = {};
+
+		function parseProtocol(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			if (value != "wwan")
+				push(errors, [ location, "must have value \"wwan\"" ]);
+
+			return value;
+		}
+
+		if (exists(value, "protocol")) {
+			obj.protocol = parseProtocol(location + "/protocol", value["protocol"], errors);
+		}
+
+		function parseModemType(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			if (!(value in [ "qmi" ]))
+				push(errors, [ location, "must be one of \"qmi\"" ]);
+
+			return value;
+		}
+
+		if (exists(value, "modem-type")) {
+			obj.modem_type = parseModemType(location + "/modem-type", value["modem-type"], errors);
+		}
+
+		function parseAccessPointName(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "access-point-name")) {
+			obj.access_point_name = parseAccessPointName(location + "/access-point-name", value["access-point-name"], errors);
+		}
+
+		function parseAuthenticationType(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			if (!(value in [ "none", "pap", "chap", "pap-chap" ]))
+				push(errors, [ location, "must be one of \"none\", \"pap\", \"chap\" or \"pap-chap\"" ]);
+
+			return value;
+		}
+
+		if (exists(value, "authentication-type")) {
+			obj.authentication_type = parseAuthenticationType(location + "/authentication-type", value["authentication-type"], errors);
+		}
+		else {
+			obj.authentication_type = "none";
+		}
+
+		function parsePinCode(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "pin-code")) {
+			obj.pin_code = parsePinCode(location + "/pin-code", value["pin-code"], errors);
+		}
+
+		function parseUserName(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "user-name")) {
+			obj.user_name = parseUserName(location + "/user-name", value["user-name"], errors);
+		}
+
+		function parsePassword(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "password")) {
+			obj.password = parsePassword(location + "/password", value["password"], errors);
+		}
+
+		function parsePacketDataProtocol(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			if (!(value in [ "ipv4", "ipv6", "dual-stack" ]))
+				push(errors, [ location, "must be one of \"ipv4\", \"ipv6\" or \"dual-stack\"" ]);
+
+			return value;
+		}
+
+		if (exists(value, "packet-data-protocol")) {
+			obj.packet_data_protocol = parsePacketDataProtocol(location + "/packet-data-protocol", value["packet-data-protocol"], errors);
+		}
+		else {
+			obj.packet_data_protocol = "dual-stack";
+		}
+
+		return obj;
+	}
+
+	if (type(value) != "object")
+		push(errors, [ location, "must be of type object" ]);
+
+	return value;
+}
+
+function instantiateInterfaceBroadBandPppoe(location, value, errors) {
+	if (type(value) == "object") {
+		let obj = {};
+
+		function parseProtocol(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			if (value != "pppoe")
+				push(errors, [ location, "must have value \"pppoe\"" ]);
+
+			return value;
+		}
+
+		if (exists(value, "protocol")) {
+			obj.protocol = parseProtocol(location + "/protocol", value["protocol"], errors);
+		}
+
+		function parseUserName(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "user-name")) {
+			obj.user_name = parseUserName(location + "/user-name", value["user-name"], errors);
+		}
+
+		function parsePassword(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "password")) {
+			obj.password = parsePassword(location + "/password", value["password"], errors);
+		}
+
+		return obj;
+	}
+
+	if (type(value) != "object")
+		push(errors, [ location, "must be of type object" ]);
+
+	return value;
+}
+
+function instantiateInterfaceBroadBand(location, value, errors) {
+	function parseVariant0(location, value, errors) {
+		value = instantiateInterfaceBroadBandWwan(location, value, errors);
+
+		return value;
+	}
+
+	function parseVariant1(location, value, errors) {
+		value = instantiateInterfaceBroadBandPppoe(location, value, errors);
+
+		return value;
+	}
+
+	let success = 0, tryval, tryerr, vvalue = null, verrors = [];
+
+	tryerr = [];
+	tryval = parseVariant0(location, value, tryerr);
+	if (!length(tryerr)) {
+		if (type(vvalue) == "object" && type(tryval) == "object")
+			vvalue = { ...vvalue, ...tryval };
+		else
+			vvalue = tryval;
+
+		success++;
+	}
+	else {
+		push(verrors, join(" and\n", map(tryerr, err => "\t - " + err[1])));
+	}
+
+	tryerr = [];
+	tryval = parseVariant1(location, value, tryerr);
+	if (!length(tryerr)) {
+		if (type(vvalue) == "object" && type(tryval) == "object")
+			vvalue = { ...vvalue, ...tryval };
+		else
+			vvalue = tryval;
+
+		success++;
+	}
+	else {
+		push(verrors, join(" and\n", map(tryerr, err => "\t - " + err[1])));
+	}
+
+	if (success != 1) {
+		push(errors, [ location, "must match exactly one of the following constraints:\n" + join("\n- or -\n", verrors) ]);
+		return null;
+	}
+
+	value = vvalue;
+
+	return value;
+}
+
 function instantiateInterfaceCaptive(location, value, errors) {
 	if (type(value) == "object") {
 		let obj = {};
@@ -3273,6 +3494,10 @@ function instantiateInterface(location, value, errors) {
 
 		if (exists(value, "ipv6")) {
 			obj.ipv6 = instantiateInterfaceIpv6(location + "/ipv6", value["ipv6"], errors);
+		}
+
+		if (exists(value, "broad-band")) {
+			obj.broad_band = instantiateInterfaceBroadBand(location + "/broad-band", value["broad-band"], errors);
 		}
 
 		if (exists(value, "captive")) {
