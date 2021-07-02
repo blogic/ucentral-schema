@@ -277,7 +277,7 @@ set wireless.{{ section }}.rssi_ignore_probe_request={{ ssid.quality_thresholds.
 {%     endif %}
 
 {%     if (ssid.pass_point): %}
-set wireless.{{ section }}.iw_enable=1
+set wireless.{{ section }}.iw_enabled=1
 set wireless.{{ section }}.hs20=1
 {%       for (let name in ssid.pass_point.venue_name): %}
 add_list wireless.{{ section }}.iw_venue_name={{ s(name) }}
@@ -294,12 +294,22 @@ set wireless.{{ section }}.iw_nai_realm='{{ realm }}'
 {%       endfor %}
 set wireless.{{ section }}.osen={{ b(ssid.pass_point.osen) }}
 set wireless.{{ section }}.anqp_domain_id='{{ ssid.pass_point.anqp_domain }}'
-set wireless.{{ section }}.anqp_3gpp_cell_net='{{ ssid.anqp_3gpp_cell_net }}'
+{%       for (let cell_net in ssid.pass_point.anqp_3gpp_cell_net): %}
+add_list wireless.{{ section }}.iw_anqp_3gpp_cell_net='{{ s(cell_net) }}'
+{%       endfor %}
 {%       for (let name in ssid.pass_point.friendly_name): %}
 add_list wireless.{{ section }}.hs20_oper_friendly_name={{ s(name) }}
 {%       endfor %}
-{%       for (let icon in ssid.pass_point.icon): %}
-add_list wireless.{{ section }}.operator_icon={{ s(icon.uri) }}
+{%     endif %}
+
+{%     if (ssid.pass_point): %}
+{%       for (let id, icon in ssid.pass_point.icons): %}
+add wireless hs20-icon
+set wireless.@hs20-icon[-1].width={{ s(icon.width) }}
+set wireless.@hs20-icon[-1].height={{ s(icon.height) }}
+set wireless.@hs20-icon[-1].type={{ s(icon.type) }}
+set wireless.@hs20-icon[-1].lang={{ s(icon.language) }}
+set wireless.@hs20-icon[-1].path={{ s(files.add_anonymous(location, 'hs20_icon_' + id, b64dec(icon.icon))) }}
 {%       endfor %}
 {%     endif %}
 

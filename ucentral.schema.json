@@ -1027,7 +1027,10 @@
                     "minimum": 0
                 },
                 "anqp-3gpp-cell-net": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "friendly-name": {
                     "type": "array",
@@ -1035,7 +1038,7 @@
                         "type": "string"
                     }
                 },
-                "icon": {
+                "icons": {
                     "type": "array",
                     "items": {
                         "type": "object",
@@ -1058,12 +1061,9 @@
                                     "image/png"
                                 ]
                             },
-                            "uri": {
+                            "icon": {
                                 "type": "string",
-                                "format": "uri",
-                                "examples": [
-                                    "http://example.org/operator-64x64.png"
-                                ]
+                                "format": "uc-base64"
                             },
                             "language": {
                                 "type": "string",
@@ -1081,22 +1081,8 @@
                                 "width": 32,
                                 "height": 32,
                                 "type": "image/png",
-                                "uri": "http://example.org/operator-32x32.png",
-                                "language": "eng"
-                            },
-                            {
-                                "width": 64,
-                                "height": 64,
-                                "type": "image/png",
-                                "uri": "http://example.org/operator-64x64.png",
-                                "language": "eng"
-                            },
-                            {
-                                "width": 16,
-                                "height": 16,
-                                "type": "image/gif",
-                                "uri": "data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7",
-                                "language": "eng"
+                                "language": "eng",
+                                "icon": "R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7"
                             }
                         ]
                     }

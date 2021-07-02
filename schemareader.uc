@@ -2676,8 +2676,19 @@ function instantiateInterfaceSsidPassPoint(location, value, errors) {
 		}
 
 		function parseAnqp3gppCellNet(location, value, errors) {
-			if (type(value) != "string")
-				push(errors, [ location, "must be of type string" ]);
+			if (type(value) == "array") {
+				function parseItem(location, value, errors) {
+					if (type(value) != "string")
+						push(errors, [ location, "must be of type string" ]);
+
+					return value;
+				}
+
+				return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
+			}
+
+			if (type(value) != "array")
+				push(errors, [ location, "must be of type array" ]);
 
 			return value;
 		}
@@ -2708,7 +2719,7 @@ function instantiateInterfaceSsidPassPoint(location, value, errors) {
 			obj.friendly_name = parseFriendlyName(location + "/friendly-name", value["friendly-name"], errors);
 		}
 
-		function parseIcon(location, value, errors) {
+		function parseIcons(location, value, errors) {
 			if (type(value) == "array") {
 				function parseItem(location, value, errors) {
 					if (type(value) == "object") {
@@ -2747,10 +2758,10 @@ function instantiateInterfaceSsidPassPoint(location, value, errors) {
 							obj.type = parseType(location + "/type", value["type"], errors);
 						}
 
-						function parseUri(location, value, errors) {
+						function parseIcon(location, value, errors) {
 							if (type(value) == "string") {
-								if (!matchUri(value))
-									push(errors, [ location, "must be a valid URI" ]);
+								if (!matchUcBase64(value))
+									push(errors, [ location, "must be a valid base64 encoded data" ]);
 
 							}
 
@@ -2760,8 +2771,8 @@ function instantiateInterfaceSsidPassPoint(location, value, errors) {
 							return value;
 						}
 
-						if (exists(value, "uri")) {
-							obj.uri = parseUri(location + "/uri", value["uri"], errors);
+						if (exists(value, "icon")) {
+							obj.icon = parseIcon(location + "/icon", value["icon"], errors);
 						}
 
 						function parseLanguage(location, value, errors) {
@@ -2799,8 +2810,8 @@ function instantiateInterfaceSsidPassPoint(location, value, errors) {
 			return value;
 		}
 
-		if (exists(value, "icon")) {
-			obj.icon = parseIcon(location + "/icon", value["icon"], errors);
+		if (exists(value, "icons")) {
+			obj.icons = parseIcons(location + "/icons", value["icons"], errors);
 		}
 
 		return obj;
