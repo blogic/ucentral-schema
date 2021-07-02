@@ -562,7 +562,9 @@
                 "modem-type": {
                     "type": "string",
                     "enum": [
-                        "qmi"
+                        "qmi",
+                        "mbim",
+                        "wwan"
                     ]
                 },
                 "access-point-name": {

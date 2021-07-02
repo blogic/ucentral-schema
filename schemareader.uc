@@ -1302,8 +1302,8 @@ function instantiateInterfaceBroadBandWwan(location, value, errors) {
 			if (type(value) != "string")
 				push(errors, [ location, "must be of type string" ]);
 
-			if (!(value in [ "qmi" ]))
-				push(errors, [ location, "must be one of \"qmi\"" ]);
+			if (!(value in [ "qmi", "mbim", "wwan" ]))
+				push(errors, [ location, "must be one of \"qmi\", \"mbim\" or \"wwan\"" ]);
 
 			return value;
 		}

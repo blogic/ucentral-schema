@@ -13,6 +13,8 @@ properties:
     type: string
     enum:
     - qmi
+    - mbim
+    - wwan
   access-point-name:
     description:
       Commonly known as APN. The name of a gateway between a mobile network

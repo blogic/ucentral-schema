@@ -17,7 +17,7 @@ uplink.role = "upstream";
 uplink.vlan = {	id: 0 };
 uplink.metric = 1;
 
-if (broadband.protocol == "wwan" && broadband['modem-type'] == "qmi") {
+if (broadband.protocol == "wwan" && index([ "qmi", "mbim", "wwan" ], broadband['modem-type']) >= 0) {
 	let wwan = { };
 
 	wwan.protocol = 'wwan';
