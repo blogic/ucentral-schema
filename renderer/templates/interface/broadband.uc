@@ -42,4 +42,4 @@ set network.{{ name }}.timeout={{ s(interface.broad_band.timeout) }}
 {% endif %}
 
 
-{% include('firewall.uc', { name, true, true }); %}
+{% include('firewall.uc', { name, ipv4: true, ipv6: true }); %}
