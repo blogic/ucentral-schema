@@ -14,10 +14,6 @@ function match_authtype() {
 		return 'both';
 	return interface.broad_band.authentication_type;
 }
-
-let dual = interface.broad_band.packet_data_protocol == "dual-stack";
-let ipv4 = interface.broad_band.packet_data_protocol == "ipv4" || dual;
-let ipv6 = interface.broad_band.packet_data_protocol == "ipv6" || dual;
 %}
 
 set network.{{ name }}=interface
@@ -34,7 +30,6 @@ set network.{{ name }}.password={{ s(interface.broad_band.password) }}
 {% endif %}
 
 {% if (interface.broad_band.protocol == 'pppoe'): %}
-{%   let ipv4 = true, ipv6 = true;%}
 
 set network.{{ name }}=interface
 set network.{{ name }}.ucentral_name={{ s(interface.name) }}
@@ -47,7 +42,4 @@ set network.{{ name }}.timeout={{ s(interface.broad_band.timeout) }}
 {% endif %}
 
 
-{%
-if (ipv4 || ipv6)
-	include('firewall.uc', { name, ipv4, ipv6 });
-%}
+{% include('firewall.uc', { name, true, true }); %}
