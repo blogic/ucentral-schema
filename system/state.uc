@@ -291,7 +291,7 @@
 				iface.ssids = ssids;
 		}
 
-		if (length(ports[name]) && length(ports[name].stats)) {
+		if (length(ports) && length(ports[name]) && length(ports[name].stats)) {
 			iface.counters = ports[name].stats;
 			for (let key in iface.counters)
 				if (!iface.counters[key])
