@@ -4094,6 +4094,122 @@ function instantiateServiceRadiusProxy(location, value, errors) {
 	return value;
 }
 
+function instantiateServiceOnlineCheck(location, value, errors) {
+	if (type(value) == "object") {
+		let obj = {};
+
+		function parsePingHosts(location, value, errors) {
+			if (type(value) == "array") {
+				function parseItem(location, value, errors) {
+					if (type(value) == "string") {
+						if (!matchUcHost(value))
+							push(errors, [ location, "must be a valid hostname or IP address" ]);
+
+					}
+
+					if (type(value) != "string")
+						push(errors, [ location, "must be of type string" ]);
+
+					return value;
+				}
+
+				return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
+			}
+
+			if (type(value) != "array")
+				push(errors, [ location, "must be of type array" ]);
+
+			return value;
+		}
+
+		if (exists(value, "ping-hosts")) {
+			obj.ping_hosts = parsePingHosts(location + "/ping-hosts", value["ping-hosts"], errors);
+		}
+
+		function parseDownloadHosts(location, value, errors) {
+			if (type(value) == "array") {
+				function parseItem(location, value, errors) {
+					if (type(value) != "string")
+						push(errors, [ location, "must be of type string" ]);
+
+					return value;
+				}
+
+				return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
+			}
+
+			if (type(value) != "array")
+				push(errors, [ location, "must be of type array" ]);
+
+			return value;
+		}
+
+		if (exists(value, "download-hosts")) {
+			obj.download_hosts = parseDownloadHosts(location + "/download-hosts", value["download-hosts"], errors);
+		}
+
+		function parseCheckInterval(location, value, errors) {
+			if (!(type(value) in [ "int", "double" ]))
+				push(errors, [ location, "must be of type number" ]);
+
+			return value;
+		}
+
+		if (exists(value, "check-interval")) {
+			obj.check_interval = parseCheckInterval(location + "/check-interval", value["check-interval"], errors);
+		}
+		else {
+			obj.check_interval = 60;
+		}
+
+		function parseCheckThreshold(location, value, errors) {
+			if (!(type(value) in [ "int", "double" ]))
+				push(errors, [ location, "must be of type number" ]);
+
+			return value;
+		}
+
+		if (exists(value, "check-threshold")) {
+			obj.check_threshold = parseCheckThreshold(location + "/check-threshold", value["check-threshold"], errors);
+		}
+		else {
+			obj.check_threshold = 1;
+		}
+
+		function parseAction(location, value, errors) {
+			if (type(value) == "array") {
+				function parseItem(location, value, errors) {
+					if (type(value) != "string")
+						push(errors, [ location, "must be of type string" ]);
+
+					if (!(value in [ "wifi", "leds" ]))
+						push(errors, [ location, "must be one of \"wifi\" or \"leds\"" ]);
+
+					return value;
+				}
+
+				return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
+			}
+
+			if (type(value) != "array")
+				push(errors, [ location, "must be of type array" ]);
+
+			return value;
+		}
+
+		if (exists(value, "action")) {
+			obj.action = parseAction(location + "/action", value["action"], errors);
+		}
+
+		return obj;
+	}
+
+	if (type(value) != "object")
+		push(errors, [ location, "must be of type object" ]);
+
+	return value;
+}
+
 function instantiateServiceWifiSteering(location, value, errors) {
 	if (type(value) == "object") {
 		let obj = {};
@@ -4233,6 +4349,10 @@ function instantiateService(location, value, errors) {
 
 		if (exists(value, "radius-proxy")) {
 			obj.radius_proxy = instantiateServiceRadiusProxy(location + "/radius-proxy", value["radius-proxy"], errors);
+		}
+
+		if (exists(value, "online-check")) {
+			obj.online_check = instantiateServiceOnlineCheck(location + "/online-check", value["online-check"], errors);
 		}
 
 		if (exists(value, "wifi-steering")) {

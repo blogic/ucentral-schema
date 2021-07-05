@@ -1,0 +1,45 @@
+description:
+  This section can be used to configure the online check service.
+type: object
+properties:
+  ping-hosts:
+    description:
+      Hosts that shall be pinged to find out if we are online.
+    type: array
+    items:
+      type: string
+      format: uc-host
+      examples:
+      - 192.168.1.10
+  download-hosts:
+    description:
+      URLs to which a http/s connection shall be established to
+      find out if we are online. The service will try to download
+      http://$string/online.txt and expects the content of that
+      file to be "Ok". HTTP 30x is support allowing https redirects.
+    type: array
+    items:
+      type: string
+      examples:
+      - www.example.org
+  check-interval:
+    description:
+      The interval in seconds in between each online-check.
+    type: number
+    default: 60
+  check-threshold:
+    description:
+      How often does the online check need to fail until the system
+      assumes that it has lost online connectivity.
+    type: number
+    default: 1
+  action:
+    description:
+      The action that the device shall execute when it has detected
+      that it is not online.
+    type: array
+    items:
+      type: string
+      enum:
+      - wifi
+      - leds

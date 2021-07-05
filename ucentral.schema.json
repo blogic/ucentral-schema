@@ -1563,6 +1563,48 @@
                 }
             }
         },
+        "service.online-check": {
+            "type": "object",
+            "properties": {
+                "ping-hosts": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "format": "uc-host",
+                        "examples": [
+                            "192.168.1.10"
+                        ]
+                    }
+                },
+                "download-hosts": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "examples": [
+                            "www.example.org"
+                        ]
+                    }
+                },
+                "check-interval": {
+                    "type": "number",
+                    "default": 60
+                },
+                "check-threshold": {
+                    "type": "number",
+                    "default": 1
+                },
+                "action": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "wifi",
+                            "leds"
+                        ]
+                    }
+                }
+            }
+        },
         "service.wifi-steering": {
             "type": "object",
             "properties": {
@@ -1630,6 +1672,9 @@
                 },
                 "radius-proxy": {
                     "$ref": "#/$defs/service.radius-proxy"
+                },
+                "online-check": {
+                    "$ref": "#/$defs/service.online-check"
                 },
                 "wifi-steering": {
                     "$ref": "#/$defs/service.wifi-steering"
