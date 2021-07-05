@@ -2,6 +2,7 @@
 {%
 push(REQUIRE_SEARCH_PATH,
 	"/usr/lib/ucode/*.so",
+	"/usr/lib/ucode/",
 	"/usr/share/ucentral/*.uc");
 
 let schemareader = require("schemareader");
