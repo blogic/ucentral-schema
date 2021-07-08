@@ -607,6 +607,27 @@ let files = {
 	}
 };
 
+let shell = {
+	password: function() {
+		if (length(fs.stat("/tmp/ucentral.pwd")))
+			return;
+		let math = require("math");
+		let passwd = "";
+		for (let i = 0; i < 32; i++) {
+			let r = math.rand() % 62;
+			if (r < 10)
+				passwd += r;
+		else if (r < 36)
+				passwd += sprintf("%c", 55 + r);
+			else
+				passwd += sprintf("%c", 61 + r);
+		}
+		system("(echo " + passwd + "; sleep 1; echo " + passwd + ") | passwd root");
+		system("touch /tmp/ucentral.pwd");
+		conn.call("ucentral", "password", { passwd });
+	}
+};
+
 return {
 	render: function(state, logs) {
 		logs = logs || [];
@@ -626,6 +647,7 @@ return {
 			cursor,
 			capab,
 			files,
+			shell,
 
 			warn: (fmt, ...args) => push(logs, sprintf("[W] (In %s) ", location || '/') + sprintf(fmt, ...args)),
 			info: (fmt, ...args) => push(logs, sprintf("[!] (In %s) ", location || '/') + sprintf(fmt, ...args))

@@ -26,3 +26,8 @@ properties:
       This allows forcing all LEDs off.
     type: boolean
     default: true
+  random-password:
+    description:
+      The device shall create a random root password and tell the gateway about it.
+    type: boolean
+    default: false

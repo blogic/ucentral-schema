@@ -119,6 +119,20 @@ function instantiateUnit(location, value, errors) {
 			obj.leds_active = true;
 		}
 
+		function parseRandomPassword(location, value, errors) {
+			if (type(value) != "bool")
+				push(errors, [ location, "must be of type boolean" ]);
+
+			return value;
+		}
+
+		if (exists(value, "random-password")) {
+			obj.random_password = parseRandomPassword(location + "/random-password", value["random-password"], errors);
+		}
+		else {
+			obj.random_password = false;
+		}
+
 		return obj;
 	}
 

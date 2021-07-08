@@ -58,6 +58,10 @@
                 "leds-active": {
                     "type": "boolean",
                     "default": true
+                },
+                "random-password": {
+                    "type": "boolean",
+                    "default": false
                 }
             }
         },

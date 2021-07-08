@@ -10,3 +10,7 @@ set system.@system[-1].notes={{ s(unit.location) }}
 set system.@system[-1].timezone={{ s(unit.timezone) }}
 {% endif %}
 set system.@system[-1].leds_off={{ b(!unit.leds_active) }}
+{%
+if (unit.random_password)
+	shell.password();
+%}
