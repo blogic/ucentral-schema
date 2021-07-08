@@ -23,6 +23,7 @@ function set_service_state(state) {
 		printf("%s %s\n", service, enable ? "starting" : "stopping");
 		system(sprintf("/etc/init.d/%s %s", service, enable ? "start" : "stop"));
 	}
+	system(sprintf("/etc/init.d/ucentral-wifi restart"));
 }
 
 try {
