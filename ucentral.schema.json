@@ -1637,6 +1637,10 @@
                 "load-kick-threshold": {
                     "type": "integer",
                     "default": 0
+                },
+                "auto-channel": {
+                    "type": "boolean",
+                    "default": false
                 }
             }
         },

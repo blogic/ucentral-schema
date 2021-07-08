@@ -39,3 +39,9 @@ properties:
       Minimum channel load (%) before kicking clients
     type: integer
     default: 0
+  auto-channel:
+    description:
+      Allow multiple instances of the steering daemon to coordinate the best channel
+      usage amongst eachother.
+    type: boolean
+    default: false

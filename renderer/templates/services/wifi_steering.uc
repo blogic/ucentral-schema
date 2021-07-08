@@ -15,6 +15,7 @@ set usteer.@usteer[-1].min_connect_snr={{ wifi_steering.required_probe_snr }}
 set usteer.@usteer[-1].roam_scan_snr={{ wifi_steering.required_roam_snr }}
 set usteer.@usteer[-1].load_kick_enabled={{ b(wifi_steering.load_kick_threshold) }}
 set usteer.@usteer[-1].load_kick_threshold={{ wifi_steering.load_kick_threshold }}
+set usteer.@usteer[-1].autochannel={{ b(wifi_steering.auto_channel) }}
 {% for (let ssid in ssids): %}
 add_list usteer.@usteer[-1].ssid_list={{ ssid.name }}
 {% endfor %}

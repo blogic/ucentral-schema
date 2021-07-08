@@ -4298,6 +4298,20 @@ function instantiateServiceWifiSteering(location, value, errors) {
 			obj.load_kick_threshold = 0;
 		}
 
+		function parseAutoChannel(location, value, errors) {
+			if (type(value) != "bool")
+				push(errors, [ location, "must be of type boolean" ]);
+
+			return value;
+		}
+
+		if (exists(value, "auto-channel")) {
+			obj.auto_channel = parseAutoChannel(location + "/auto-channel", value["auto-channel"], errors);
+		}
+		else {
+			obj.auto_channel = false;
+		}
+
 		return obj;
 	}
 
