@@ -152,6 +152,8 @@
 		let name = d[".name"];
 		if (name == "loopback")
 			return;
+		if (!d.ucentral_path)
+			return;
 
 		let iface = { name, location: d.ucentral_path, ipv4:{}, ipv6:{} };
 		let ipv4leases = [];
