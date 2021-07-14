@@ -59,7 +59,7 @@
 		}
 	}
 	catch(e) {
-		log("Failed to parse dhcp leases cache: %s\n%s\n", e, e.stacktrace[0].context);
+		printf("Failed to parse dhcp leases cache: %s\n%s\n", e, e.stacktrace[0].context);
 	}
 
 	/* prepare lldp cache */
@@ -70,7 +70,7 @@
 			tmp = json(stdout.read("all")).lldp[0].interface;
 			stdout.close();
 		} else {
-			log("LLDP cli command failed: %s", fs.error());
+			printf("LLDP cli command failed: %s", fs.error());
 		}
 
 		for (let key, iface in tmp) {
@@ -114,7 +114,7 @@
 		}
 	}
 	catch(e) {
-		log("Failed to parse LLDP cli output: %s\n%s\n", e, e.stacktrace[0].context);
+		printf("Failed to parse LLDP cli output: %s\n%s\n", e, e.stacktrace[0].context);
 	}
 
 	/* system state */
@@ -345,6 +345,6 @@
 		f.close();
 	}
 	else {
-		log("Unable to open %s for writing: %s", statefile_path, fs.error());
+		printf("Unable to open %s for writing: %s", statefile_path, fs.error());
 	}
 %}
