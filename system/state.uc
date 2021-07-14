@@ -125,6 +125,9 @@
 	state.unit.memory.total = system.memory.total;
 	state.unit.memory.free = system.memory.free;
 
+	for (let l = 0; l < 3; l++)
+		state.unit.load[l] /= 65535.0;
+
 	/* wifi radios */
 	for (let radio, data in wifistatus) {
 		if (!length(data.interfaces))
