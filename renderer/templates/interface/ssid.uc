@@ -126,6 +126,9 @@
 	}
 
 	function match_ieee80211w() {
+		if (!ssid.encryption)
+			return 0;
+
 		if (ssid.encryption.proto in [ "sae", "sae-mixed", "wpa3", "wpa3-mixed" ])
 			return 2;
 
