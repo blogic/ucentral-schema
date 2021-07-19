@@ -1,0 +1,24 @@
+description:
+  This Object defines the properties of a l2tp tunnel.
+type: object
+properties:
+  proto:
+    description:
+      This field must be set to vxlan.
+    type: string
+    const: l2tp
+  server:
+    description:
+      This is the IP address of the remote host, that the L2TP tunnel shall be
+      established with.
+    type: string
+    format: ipv4
+    example: '192.168.100.1'
+  user-name:
+    description:
+      The username used to authenticate.
+    type: string
+  password:
+    description:
+      The password used to authenticate.
+    type: string

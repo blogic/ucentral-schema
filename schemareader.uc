@@ -3274,6 +3274,72 @@ function instantiateInterfaceTunnelVxlan(location, value, errors) {
 	return value;
 }
 
+function instantiateInterfaceTunnelL2tp(location, value, errors) {
+	if (type(value) == "object") {
+		let obj = {};
+
+		function parseProto(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			if (value != "l2tp")
+				push(errors, [ location, "must have value \"l2tp\"" ]);
+
+			return value;
+		}
+
+		if (exists(value, "proto")) {
+			obj.proto = parseProto(location + "/proto", value["proto"], errors);
+		}
+
+		function parseServer(location, value, errors) {
+			if (type(value) == "string") {
+				if (!matchIpv4(value))
+					push(errors, [ location, "must be a valid IPv4 address" ]);
+
+			}
+
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "server")) {
+			obj.server = parseServer(location + "/server", value["server"], errors);
+		}
+
+		function parseUserName(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "user-name")) {
+			obj.user_name = parseUserName(location + "/user-name", value["user-name"], errors);
+		}
+
+		function parsePassword(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "password")) {
+			obj.password = parsePassword(location + "/password", value["password"], errors);
+		}
+
+		return obj;
+	}
+
+	if (type(value) != "object")
+		push(errors, [ location, "must be of type object" ]);
+
+	return value;
+}
+
 function instantiateInterfaceTunnelGre(location, value, errors) {
 	if (type(value) == "object") {
 		let obj = {};
@@ -3349,6 +3415,12 @@ function instantiateInterfaceTunnel(location, value, errors) {
 	}
 
 	function parseVariant2(location, value, errors) {
+		value = instantiateInterfaceTunnelL2tp(location, value, errors);
+
+		return value;
+	}
+
+	function parseVariant3(location, value, errors) {
 		value = instantiateInterfaceTunnelGre(location, value, errors);
 
 		return value;
@@ -3386,6 +3458,20 @@ function instantiateInterfaceTunnel(location, value, errors) {
 
 	tryerr = [];
 	tryval = parseVariant2(location, value, tryerr);
+	if (!length(tryerr)) {
+		if (type(vvalue) == "object" && type(tryval) == "object")
+			vvalue = { ...vvalue, ...tryval };
+		else
+			vvalue = tryval;
+
+		success++;
+	}
+	else {
+		push(verrors, join(" and\n", map(tryerr, err => "\t - " + err[1])));
+	}
+
+	tryerr = [];
+	tryval = parseVariant3(location, value, tryerr);
 	if (!length(tryerr)) {
 		if (type(vvalue) == "object" && type(tryval) == "object")
 			vvalue = { ...vvalue, ...tryval };

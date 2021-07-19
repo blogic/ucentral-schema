@@ -1272,6 +1272,26 @@
                 }
             }
         },
+        "interface.tunnel.l2tp": {
+            "type": "object",
+            "properties": {
+                "proto": {
+                    "type": "string",
+                    "const": "l2tp"
+                },
+                "server": {
+                    "type": "string",
+                    "format": "ipv4",
+                    "example": "192.168.100.1"
+                },
+                "user-name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
         "interface.tunnel.gre": {
             "type": "object",
             "properties": {
@@ -1297,6 +1317,9 @@
                 },
                 {
                     "$ref": "#/$defs/interface.tunnel.vxlan"
+                },
+                {
+                    "$ref": "#/$defs/interface.tunnel.l2tp"
                 },
                 {
                     "$ref": "#/$defs/interface.tunnel.gre"
