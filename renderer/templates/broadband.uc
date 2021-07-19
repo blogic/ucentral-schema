@@ -17,14 +17,14 @@ uplink.role = "upstream";
 uplink.vlan = {	id: 0 };
 uplink.metric = 1;
 
-if (broadband.protocol == "wwan" && index([ "qmi", "mbim", "wwan" ], broadband['modem-type']) >= 0) {
+if (broadband.protocol == "wwan") {
 	let wwan = { };
 
 	wwan.protocol = 'wwan';
-	wwan.modem_type = broadband['modem-type'];
+	wwan.modem_type = broadband['modem-type'] || 'wwan';
 	wwan.pin_code = broadband['pin-code'] || '';
 	wwan.access_point_name = broadband['access-point-name'] || '';
-	wwan.packet_data_protocol = broadband['packet-data-protocol'] || 'dual';
+	wwan.packet_data_protocol = broadband['packet-data-protocol'] || 'dual-stack';
 	wwan.authentication_type = broadband['authentication-type'] || 'none';
 	wwan.username = broadband.username || '';
 	wwan.password = broadband.password || '';
