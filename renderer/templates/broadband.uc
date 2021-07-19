@@ -5,7 +5,7 @@ let uplink = ethernet.get_interface("upstream", 0);
 if (!uplink)
 	return;
 
-if (index([ "wwan", "pppoe" ], broadband.protocol) < 0)
+if (index([ "wwan", "pppoe", "static", "dhcp" ], broadband.protocol) < 0)
 	return;
 
 for (let k, v in uplink)
@@ -36,7 +36,7 @@ if (broadband.protocol == "pppoe") {
 	let pppoe = { };
 
 	pppoe.protocol = 'pppoe';
-	pppoe.username = broadband.username || '';
+	pppoe.username = broadband['user-name'] || '';
 	pppoe.password = broadband.password || '';
 	pppoe.timeout = broadband.timeout || '30';
 
@@ -46,6 +46,31 @@ if (broadband.protocol == "pppoe") {
 			"select_ports": [ "WAN*" ]
 		}
 	];
+}
+
+if (broadband.protocol == "static") {
+	uplink.ethernet = [
+		{
+			"select_ports": [ "WAN*" ]
+		}
+	];
+	uplink.ipv4 = {
+		addressing: "static",
+		subnet: broadband['ipv4-address'],
+		gateway: broadband['ipv4-gateway'],
+		"use-dns": broadband['use-dns'],
+	};
+}
+
+if (broadband.protocol == "dhcp") {
+	uplink.ethernet = [
+		{
+			"select_ports": [ "WAN*" ]
+		}
+	];
+	uplink.ipv4 = {
+		addressing: "dynamic",
+	};
 }
 
 %}
