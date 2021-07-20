@@ -4310,6 +4310,30 @@ function instantiateServiceOnlineCheck(location, value, errors) {
 	return value;
 }
 
+function instantiateServiceOpenFlow(location, value, errors) {
+	if (type(value) == "object") {
+		let obj = {};
+
+		function parseController(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "controller")) {
+			obj.controller = parseController(location + "/controller", value["controller"], errors);
+		}
+
+		return obj;
+	}
+
+	if (type(value) != "object")
+		push(errors, [ location, "must be of type object" ]);
+
+	return value;
+}
+
 function instantiateServiceWifiSteering(location, value, errors) {
 	if (type(value) == "object") {
 		let obj = {};
@@ -4467,6 +4491,10 @@ function instantiateService(location, value, errors) {
 
 		if (exists(value, "online-check")) {
 			obj.online_check = instantiateServiceOnlineCheck(location + "/online-check", value["online-check"], errors);
+		}
+
+		if (exists(value, "open-flow")) {
+			obj.open_flow = instantiateServiceOpenFlow(location + "/open-flow", value["open-flow"], errors);
 		}
 
 		if (exists(value, "wifi-steering")) {

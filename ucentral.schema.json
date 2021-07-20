@@ -1632,6 +1632,16 @@
                 }
             }
         },
+        "service.open-flow": {
+            "type": "object",
+            "properties": {
+                "controller": {
+                    "type": "string",
+                    "uc-format": "cidr",
+                    "example": "192.168.10.1"
+                }
+            }
+        },
         "service.wifi-steering": {
             "type": "object",
             "properties": {
@@ -1706,6 +1716,9 @@
                 },
                 "online-check": {
                     "$ref": "#/$defs/service.online-check"
+                },
+                "open-flow": {
+                    "$ref": "#/$defs/service.open-flow"
                 },
                 "wifi-steering": {
                     "$ref": "#/$defs/service.wifi-steering"

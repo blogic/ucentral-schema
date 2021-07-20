@@ -1,0 +1,10 @@
+description:
+  This section can be used to configure and upstream OpenFlow controller.
+type: object
+properties:
+  controller:
+    description:
+      The CIDR of the upstream OpenFlow controller.
+    type: string
+    uc-format: cidr
+    example: 192.168.10.1

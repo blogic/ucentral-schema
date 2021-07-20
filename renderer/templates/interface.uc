@@ -119,13 +119,15 @@
 	}
 
 	// Mesh requires the 2 additional interface sections
-	if (tunnel_proto in [ "mesh" ])
-		include("interface/" + tunnel_proto + ".uc", { interface, name, location, netdev, ipv4_mode, ipv6_mode });
+	if (tunnel_proto in [ "mesh", "ovs" ])
+		include("interface/" + tunnel_proto + ".uc", { interface, name, eth_ports, location, netdev, ipv4_mode, ipv6_mode });
 
 	if (interface.captive) {
 		interface.type = 'bridge';
 		netdev = '';
 		delete interface.ipv6;
+	} else if (interface.tunnel && interface.tunnel.proto == "ovs") {
+		netdev = 'ovs-gw-' + name;
 	} else if (!interface.ethernet && length(interface.ssids) == 1 && !tunnel_proto)
 		// interfaces with a single ssid and no tunnel do not need a bridge
 		netdev = ''
