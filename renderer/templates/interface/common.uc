@@ -18,7 +18,7 @@ set network.{{ afname }}.proto=none
 {%  if (interface.role == "downstream" && ethernet.has_vlan(interface)): %}
 add network rule
 set network.@rule[-1].in={{ afname }}
-set network.@rule[-1].lookup={{ interface.vlan.id }}
+set network.@rule[-1].lookup={{ routing_table.get(interface.vlan.id) }}
 {%  endif %}
 {%  if ((length(afnames) == 1 && ipv4_mode != 'none') || (afidx == 0 && ipv4_mode != 'none')): %}
 {%   include('ipv4.uc', { name: afname }) %}

@@ -1,5 +1,5 @@
 {% if (interface.role == 'upstream' && ethernet.has_vlan(interface)): %}
-set network.{{ name }}.ip4table={{ this_vid }}
+set network.{{ name }}.ip4table={{ routing_table.get(this_vid) }}
 {% endif %}
 {% if (ipv4_mode == 'static'): %}
 set network.{{ name }}.ipaddr={{ ipv4.subnet }}

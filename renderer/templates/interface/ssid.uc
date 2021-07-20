@@ -158,6 +158,17 @@
 		return (auth_type && auth_type.type) ? types[auth_type.type] : '';
 	}
 
+	function openflow_ifname(n, count) {
+		if (!length(openflow_prefix))
+			return '';
+
+		let ifname = openflow_prefix + n + '_' + count;
+%}
+add_list openvswitch.@ovs_bridge[-1].ports="{{ ifname }}"
+{%
+		return ifname
+	}
+
 	let bss_mode = ssid.bss_mode;
 	if (ssid.bss_mode == "wds-ap")
 		bss_mode =  "ap";
@@ -170,10 +181,12 @@
 {%   let section = name + '_' + n + '_' + count; %}
 {%   let id = wiphy.allocate_ssid_section_id(phy) %}
 {%   let crypto = validate_encryption(); %}
+{%   let ifname = openflow_ifname(n, count) %}
 {%   if (!crypto) continue; %}
 set wireless.{{ section }}=wifi-iface
 set wireless.{{ section }}.ucentral_path={{ s(location) }}
 set wireless.{{ section }}.device={{ phy.section }}
+set wireless.{{ section }}.ifname={{ s(ifname) }}
 {%   if (bss_mode == 'mesh'): %}
 set wireless.{{ section }}.mode={{ bss_mode }}
 set wireless.{{ section }}.mesh_id={{ s(ssid.name) }}
@@ -182,7 +195,7 @@ set wireless.{{ section }}.network={{ name }}_mesh
 {%   endif %}
 {%   if (index([ 'ap', 'sta' ], bss_mode) >= 0): %}
 {%     for (let i, name in ethernet.calculate_names(interface)): %}
-{{ i ? 'add_list' : 'set' }} wireless.{{ section }}.network={{ name }}
+{{ i ? 'add_list' : 'set' }} wireless.{{ section }}.network={{ network }}
 {%     endfor %}
 set wireless.{{ section }}.ssid={{ s(ssid.name) }}
 set wireless.{{ section }}.mode={{ s(bss_mode) }}

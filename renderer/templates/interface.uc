@@ -84,6 +84,8 @@
 	if (capab.platform != "switch" && interface.role == "downstream")
 		bridgedev = 'down';
 	let netdev = name;
+	let network = name;
+	let openflow_prefix;
 
 	// Determine the IPv4 and IPv6 configuration modes and figure out if we
 	// can set them both in a single interface (automatic) or whether we need
@@ -107,7 +109,7 @@
 	//
 
 	// Some tunnels do not need the normal bridge-vlan setup
-	if (tunnel_proto in [ "vxlan", 'gre', "l2tp" ]) {
+	if (tunnel_proto in [ "vxlan", 'gre' ]) {
 		include("interface/" + tunnel_proto + ".uc", { interface, name, location, netdev, ipv4_mode, ipv6_mode });
 		include('interface/firewall.uc', { name, true, false });
 		return;
@@ -119,15 +121,17 @@
 	}
 
 	// Mesh requires the 2 additional interface sections
-	if (tunnel_proto in [ "mesh", "ovs" ])
-		include("interface/" + tunnel_proto + ".uc", { interface, name, eth_ports, location, netdev, ipv4_mode, ipv6_mode });
+	if (tunnel_proto in [ "mesh", "l2tp" ])
+		include("interface/" + tunnel_proto + ".uc", { interface, name, eth_ports, location, netdev, ipv4_mode, ipv6_mode, this_vid });
 
 	if (interface.captive) {
 		interface.type = 'bridge';
 		netdev = '';
 		delete interface.ipv6;
-	} else if (interface.tunnel && interface.tunnel.proto == "ovs") {
-		netdev = 'ovs-gw-' + name;
+	} else if ("open-flow" in interface.services) {
+		netdev = "gw0";
+		network = "";
+		openflow_prefix = "ofwlan";
 	} else if (!interface.ethernet && length(interface.ssids) == 1 && !tunnel_proto)
 		// interfaces with a single ssid and no tunnel do not need a bridge
 		netdev = ''
@@ -160,7 +164,9 @@
 				location: location + '/ssids/' + i,
 				ssid: { ...ssid, bss_mode: mode },
 				count: count++,
-				name
+				name,
+				network,
+				openflow_prefix,
 			});
 		}
 	}

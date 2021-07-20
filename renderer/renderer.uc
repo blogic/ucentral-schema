@@ -628,6 +628,18 @@ let shell = {
 	}
 };
 
+let routing_table = {
+	used_tables: {},
+
+	next: 1,
+
+	get: function(id) {
+		if (!this.used_tables[id])
+			this.used_tables[id] = this.next++;
+		return this.used_tables[id];
+	}
+};
+
 return {
 	render: function(state, logs) {
 		logs = logs || [];
@@ -648,6 +660,7 @@ return {
 			capab,
 			files,
 			shell,
+			routing_table,
 
 			warn: (fmt, ...args) => push(logs, sprintf("[W] (In %s) ", location || '/') + sprintf(fmt, ...args)),
 			info: (fmt, ...args) => push(logs, sprintf("[!] (In %s) ", location || '/') + sprintf(fmt, ...args))

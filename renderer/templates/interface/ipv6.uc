@@ -1,5 +1,5 @@
 {% if (interface.role == 'upstream' && ethernet.has_vlan(interface)): %}
-set network.{{ name }}.ip6table={{ this_vid }}
+set network.{{ name }}.ip6table={{ routing_table.get(this_vid) }}
 {% endif %}
 {% if (ipv6_mode == 'static'): %}
 set network.{{ name }}.ip6addr={{ ipv6.subnet }}
