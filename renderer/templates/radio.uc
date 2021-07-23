@@ -95,6 +95,7 @@
 {% for (let phy in phys): %}
 {%  let htmode = match_htmode(phy, radio.channel_mode, radio.channel_width) %}
 set wireless.{{ phy.section }}.disabled=0
+set wireless.{{ phy.section }}.ucentral_path={{ s(location) }}
 set wireless.{{ phy.section }}.htmode={{ htmode }}
 {%  if (radio.channel): %}
 set wireless.{{ phy.section }}.channel={{ match_channel(phy, radio.channel) }}
