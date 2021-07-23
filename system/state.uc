@@ -144,6 +144,7 @@
 		for (let k, v in survey)
 			radio[k] = v;
 		delete radio.in_use;
+		radio.phy = data.config.path;
 		push(state.radios, radio);
 	}
 	if (!length(state.radios))
@@ -279,7 +280,8 @@
 						continue;
 					let iface = wifiiface[vap.ifname];
 					let ssid = {
-						radio:{"$ref": sprintf("#/radios/%d", counter)}
+						radio:{"$ref": sprintf("#/radios/%d", counter)},
+						phy: data.config.path
 					};
 
 					ssid.ssid = iface.ssid;
