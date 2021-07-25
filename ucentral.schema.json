@@ -1642,6 +1642,26 @@
                 }
             }
         },
+        "service.data-plane": {
+            "type": "object",
+            "properties": {
+                "ingress-filters": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "program": {
+                                "type": "string",
+                                "format": "uc-base64"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "service.wifi-steering": {
             "type": "object",
             "properties": {
@@ -1719,6 +1739,9 @@
                 },
                 "open-flow": {
                     "$ref": "#/$defs/service.open-flow"
+                },
+                "data-plane": {
+                    "$ref": "#/$defs/service.data-plane"
                 },
                 "wifi-steering": {
                     "$ref": "#/$defs/service.wifi-steering"
