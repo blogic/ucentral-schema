@@ -85,7 +85,7 @@ if (inputjson.uuid && inputjson.uuid > 1)
 		uuid: inputjson.uuid || 0,
 		id: +ARGV[3] || 0,
 		status: {
-			error,
+			error: logs ? 1 : error,
 			text: error ? "Failed" : "Success",
 			rejected: logs || []
 		}
