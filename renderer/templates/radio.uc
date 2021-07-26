@@ -16,6 +16,8 @@
 			let m = match(mode, /^([A-Z]+)(.+)$/);
 			return [ mode, mode_weight[m[1]] * (m[2] == "80+80" ? 159 : +m[2]) ];
 		}), (a, b) => (b[1] - a[1])), i => i[0]);
+		supported_phy_modes = filter(supported_phy_modes, mode =>
+			!((index(phy.bands, "2G") >= 0 && mode == "VHT80") || (index(phy.bands, "5G") >= 0 && mode == "VHT160")));
 
 		if (wanted_mode in supported_phy_modes)
 			return wanted_mode;
