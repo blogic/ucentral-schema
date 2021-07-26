@@ -5,7 +5,7 @@ set network.@bridge-vlan[-1].vlan={{ this_vid }}
 add_list network.@bridge-vlan[-1].ports={{ port }}{{ ((interface.role == 'upstream') && ethernet.has_vlan(interface)) ? ':t' : '' }}
 {%  endfor %}
 {% if (interface.tunnel && interface.tunnel.proto == "mesh"): %}
-add_list network.@bridge-vlan[-1].ports={{ name }}_bat
+add_list network.@bridge-vlan[-1].ports=batman{{ ethernet.has_vlan(interface) ? "." + this_vid + ":t" : '' }}
 {% endif %}
 {% if (interface.bridge): %}
 network.@bridge-vlan[-1].txqueuelen={{ interface.bridge.tx_queue_len }}

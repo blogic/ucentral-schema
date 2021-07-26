@@ -1,11 +1,17 @@
 
-set network.{{ name }}_bat=interface
-set network.{{ name }}_bat.proto=batadv
-set network.{{ name }}_bat.multicast_mode=0
-set network.{{ name }}_bat.distributed_arp_table=0
-set network.{{ name }}_bat.orig_interval=5000
+set network.batman=interface
+set network.batman.proto=batadv
+set network.batman.multicast_mode=0
+set network.batman.distributed_arp_table=0
+set network.batman.orig_interval=5000
 
-set network.{{ name }}_mesh=interface
-set network.{{ name }}_mesh.proto=batadv_hardif
-set network.{{ name }}_mesh.master={{ name }}_bat
-set network.{{ name }}_mesh.mtu=1532
+{% if (ethernet.has_vlan(interface)): %}
+set network.batman_v{{ this_vid }}=interface
+set network.batman_v{{ this_vid }}.proto=batadv_vlan
+set network.batman_v{{ this_vid }}.ifname='batman.{{ this_vid }}'
+{% else %}
+set network.batman_mesh=interface
+set network.batman_mesh.proto=batadv_hardif
+set network.batman_mesh.master=batman
+set network.batman_mesh.mtu=1532
+{% endif %}

@@ -191,7 +191,7 @@ set wireless.{{ section }}.ifname={{ s(ifname) }}
 set wireless.{{ section }}.mode={{ bss_mode }}
 set wireless.{{ section }}.mesh_id={{ s(ssid.name) }}
 set wireless.{{ section }}.mesh_fwding=0
-set wireless.{{ section }}.network={{ name }}_mesh
+set wireless.{{ section }}.network=batman_mesh
 {%   endif %}
 {%   if (index([ 'ap', 'sta' ], bss_mode) >= 0): %}
 {%     for (let i, name in ethernet.calculate_names(interface)): %}
