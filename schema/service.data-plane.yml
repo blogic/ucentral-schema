@@ -1,0 +1,21 @@
+description:
+  This section can be used to define eBPF and cBPF blobs that shall be
+  loaded for virtual data-planes and SDN.
+type: object
+properties:
+  ingress-filters:
+    description:
+      A list of programs that can be loaded as ingress filters on interfaces.
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          description:
+            The name of the ingress filter.
+          type: string
+        program:
+          description:
+            The base64 encoded xBPF.
+          type: string
+          format: uc-base64
