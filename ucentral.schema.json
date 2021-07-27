@@ -1189,6 +1189,11 @@
                     "type": "boolean",
                     "default": false
                 },
+                "disassoc-low-ack": {
+                    "decription": "Disassociate stations based on excessive transmission failures or other indications of connection loss.",
+                    "type": "boolean",
+                    "default": false
+                },
                 "vendor-elements": {
                     "decription": "This option allows embedding custom vendor specific IEs inside the beacons of a BSS in AP mode.",
                     "type": "string"

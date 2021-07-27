@@ -3094,6 +3094,20 @@ function instantiateInterfaceSsid(location, value, errors) {
 			obj.proxy_arp = false;
 		}
 
+		function parseDisassocLowAck(location, value, errors) {
+			if (type(value) != "bool")
+				push(errors, [ location, "must be of type boolean" ]);
+
+			return value;
+		}
+
+		if (exists(value, "disassoc-low-ack")) {
+			obj.disassoc_low_ack = parseDisassocLowAck(location + "/disassoc-low-ack", value["disassoc-low-ack"], errors);
+		}
+		else {
+			obj.disassoc_low_ack = false;
+		}
+
 		function parseVendorElements(location, value, errors) {
 			if (type(value) != "string")
 				push(errors, [ location, "must be of type string" ]);
