@@ -29,6 +29,7 @@
 	let ipv6leases = ctx.call("dhcp", "ipv6leases");
 	let topology = ctx.call("topology", "mac");
 	let wifistatus = ctx.call("network.wireless", "status");
+	let wifiphy = ctx.call("wifi", "phy");
 	let wifiiface = ctx.call("wifi", "iface");
 	let stations = ctx.call("wifi", "station");
 	let ports = ctx.call("topology", "port");
@@ -145,6 +146,8 @@
 			radio[k] = v;
 		delete radio.in_use;
 		radio.phy = data.config.path;
+		if (wifiphy[data.config.path] && wifiphy[data.config.path].temperature)
+			radio.temperature = wifiphy[data.config.path].temperature;
 		push(state.radios, radio);
 	}
 	if (!length(state.radios))
