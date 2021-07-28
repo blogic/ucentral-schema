@@ -16,8 +16,6 @@ let error = 0;
 inputfile.close();
 let logs = [];
 
-system("/etc/init.d/ucentral-wifi restart; sleep 1");
-
 function set_service_state(state) {
 	for (let service, enable in renderer.services_state()) {
 		if (enable != state)
