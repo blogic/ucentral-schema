@@ -3091,7 +3091,7 @@ function instantiateInterfaceSsid(location, value, errors) {
 			obj.proxy_arp = parseProxyArp(location + "/proxy-arp", value["proxy-arp"], errors);
 		}
 		else {
-			obj.proxy_arp = false;
+			obj.proxy_arp = true;
 		}
 
 		function parseDisassocLowAck(location, value, errors) {

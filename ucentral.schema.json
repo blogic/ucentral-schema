@@ -1187,7 +1187,7 @@
                 },
                 "proxy-arp": {
                     "type": "boolean",
-                    "default": false
+                    "default": true
                 },
                 "disassoc-low-ack": {
                     "decription": "Disassociate stations based on excessive transmission failures or other indications of connection loss.",

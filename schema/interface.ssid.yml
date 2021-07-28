@@ -96,7 +96,7 @@ properties:
       Proxy ARP is the technique in which the host router, answers ARP requests
       intended for another machine.
     type: boolean
-    default: false
+    default: true
   disassoc-low-ack:
     decription:
       Disassociate stations based on excessive transmission failures or other
