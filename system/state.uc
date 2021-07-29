@@ -5,6 +5,8 @@
 	let ubus = require("ubus");
 	let cfgfile = fs.open("/etc/ucentral/ucentral.active", "r");
 	let cfg = json(cfgfile.read("all"));
+	let capabfile = fs.open("/etc/ucentral/capabilities.json", "r");
+	let capab = json(capabfile.read("all"));
 
 	/* set up basic functionality */
 	if (!cursor)
@@ -334,6 +336,38 @@
 			longitude: gps.longitude,
 			elevation: gps.elevation
 		};
+
+	function sysfs_net(iface, prop) {
+		let f = fs.open(sprintf("/sys/class/net/%s/%s", iface, prop), "r");
+		let val = false;
+
+		if (f) {
+			val = replace(f.read("all"), '\n', '');
+			f.close();
+		}
+
+		return val;
+	}
+
+	if (length(capab.network)) {
+		let link = {};
+
+		for (let name, net in capab.network) {
+			link[name] = {};
+
+			for (let iface in capab.network[name]) {
+				let state = {};
+
+				state.carrier = +sysfs_net(iface, "carrier");
+				if (state.carrier) {
+					state.speed = +sysfs_net(iface, "speed");
+					state.duplex = sysfs_net(iface, "duplex");
+				}
+				link[name][iface] = state;
+			}
+		}
+		state["link-state"] = link;
+	}
 
 	printf("%s\n", state);
 
