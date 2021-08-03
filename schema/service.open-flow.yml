@@ -8,3 +8,15 @@ properties:
     type: string
     uc-format: cidr
     example: 192.168.10.1
+  ca-certificate:
+    description:
+       The local servers CA bundle.
+    type: string
+  server-certificate:
+    description:
+       The local servers certificate.
+    type: string
+  private-key:
+    description:
+      The local servers private key/
+    type: string

@@ -13,6 +13,8 @@ let conn = ubus ? ubus.connect() : null;
 let capabfile = fs.open("/etc/ucentral/capabilities.json", "r");
 let capab = capabfile ? json(capabfile.read("all")) : null;
 
+let serial = cursor.get("ucentral", "config", "serial");
+
 assert(cursor, "Unable to instantiate uci");
 assert(conn, "Unable to connect to ubus");
 assert(capab, "Unable to load capabilities");
@@ -661,6 +663,7 @@ return {
 			files,
 			shell,
 			routing_table,
+			serial,
 
 			warn: (fmt, ...args) => push(logs, sprintf("[W] (In %s) ", location || '/') + sprintf(fmt, ...args)),
 			info: (fmt, ...args) => push(logs, sprintf("[!] (In %s) ", location || '/') + sprintf(fmt, ...args))

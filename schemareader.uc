@@ -4339,6 +4339,39 @@ function instantiateServiceOpenFlow(location, value, errors) {
 			obj.controller = parseController(location + "/controller", value["controller"], errors);
 		}
 
+		function parseCaCertificate(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "ca-certificate")) {
+			obj.ca_certificate = parseCaCertificate(location + "/ca-certificate", value["ca-certificate"], errors);
+		}
+
+		function parseServerCertificate(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "server-certificate")) {
+			obj.server_certificate = parseServerCertificate(location + "/server-certificate", value["server-certificate"], errors);
+		}
+
+		function parsePrivateKey(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "private-key")) {
+			obj.private_key = parsePrivateKey(location + "/private-key", value["private-key"], errors);
+		}
+
 		return obj;
 	}
 

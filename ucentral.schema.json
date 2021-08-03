@@ -1644,6 +1644,15 @@
                     "type": "string",
                     "uc-format": "cidr",
                     "example": "192.168.10.1"
+                },
+                "ca-certificate": {
+                    "type": "string"
+                },
+                "server-certificate": {
+                    "type": "string"
+                },
+                "private-key": {
+                    "type": "string"
                 }
             }
         },
