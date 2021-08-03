@@ -13,6 +13,10 @@ properties:
     $ref: "https://ucentral.io/schema/v1/globals/"
   definitions:
     $ref: "https://ucentral.io/schema/v1/definitions/"
+  ethernet:
+    type: array
+    items:
+      $ref: "https://ucentral.io/schema/v1/ethernet/"
   radios:
     type: array
     items:

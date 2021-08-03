@@ -1,0 +1,40 @@
+description:
+  This section defines the linkk speed and duplex mode of the physical copper/fiber
+  ports of the device.
+type: object
+properties:
+  select-ports:
+    description:
+      The list of physical network devices that shall be configured.
+      The names are logical ones and wildcardable.
+    type: array
+    items:
+      type: string
+      examples:
+      - LAN1
+      - LAN2
+      - LAN3
+      - LAN4
+      - LAN*
+      - WAN*
+      - "*"
+  speed:
+    description:
+      The link speed that shall be forced.
+    type: integer
+    enum:
+    - 10
+    - 100
+    - 1000
+    - 2500
+    - 5000
+    - 10000
+    default: 1000
+  duplex:
+    description:
+      The duplex mode that shall be forced.
+    type: string
+    enum:
+    - half
+    - full
+    default: full

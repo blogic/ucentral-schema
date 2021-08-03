@@ -15,6 +15,12 @@
         "definitions": {
             "$ref": "#/$defs/definitions"
         },
+        "ethernet": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/ethernet"
+            }
+        },
         "radios": {
             "type": "array",
             "items": {
@@ -95,6 +101,46 @@
                             "additionalProperties": false
                         }
                     }
+                }
+            }
+        },
+        "ethernet": {
+            "type": "object",
+            "properties": {
+                "select-ports": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "examples": [
+                            "LAN1",
+                            "LAN2",
+                            "LAN3",
+                            "LAN4",
+                            "LAN*",
+                            "WAN*",
+                            "*"
+                        ]
+                    }
+                },
+                "speed": {
+                    "type": "integer",
+                    "enum": [
+                        10,
+                        100,
+                        1000,
+                        2500,
+                        5000,
+                        10000
+                    ],
+                    "default": 1000
+                },
+                "duplex": {
+                    "type": "string",
+                    "enum": [
+                        "half",
+                        "full"
+                    ],
+                    "default": "full"
                 }
             }
         },

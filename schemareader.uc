@@ -213,6 +213,75 @@ function instantiateDefinitions(location, value, errors) {
 	return value;
 }
 
+function instantiateEthernet(location, value, errors) {
+	if (type(value) == "object") {
+		let obj = {};
+
+		function parseSelectPorts(location, value, errors) {
+			if (type(value) == "array") {
+				function parseItem(location, value, errors) {
+					if (type(value) != "string")
+						push(errors, [ location, "must be of type string" ]);
+
+					return value;
+				}
+
+				return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
+			}
+
+			if (type(value) != "array")
+				push(errors, [ location, "must be of type array" ]);
+
+			return value;
+		}
+
+		if (exists(value, "select-ports")) {
+			obj.select_ports = parseSelectPorts(location + "/select-ports", value["select-ports"], errors);
+		}
+
+		function parseSpeed(location, value, errors) {
+			if (type(value) != "int")
+				push(errors, [ location, "must be of type integer" ]);
+
+			if (!(value in [ 10, 100, 1000, 2500, 5000, 10000 ]))
+				push(errors, [ location, "must be one of 10, 100, 1000, 2500, 5000 or 10000" ]);
+
+			return value;
+		}
+
+		if (exists(value, "speed")) {
+			obj.speed = parseSpeed(location + "/speed", value["speed"], errors);
+		}
+		else {
+			obj.speed = 1000;
+		}
+
+		function parseDuplex(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			if (!(value in [ "half", "full" ]))
+				push(errors, [ location, "must be one of \"half\" or \"full\"" ]);
+
+			return value;
+		}
+
+		if (exists(value, "duplex")) {
+			obj.duplex = parseDuplex(location + "/duplex", value["duplex"], errors);
+		}
+		else {
+			obj.duplex = "full";
+		}
+
+		return obj;
+	}
+
+	if (type(value) != "object")
+		push(errors, [ location, "must be of type object" ]);
+
+	return value;
+}
+
 function instantiateRadioRates(location, value, errors) {
 	if (type(value) == "object") {
 		let obj = {};
@@ -4871,6 +4940,21 @@ function newUCentralState(location, value, errors) {
 
 		if (exists(value, "definitions")) {
 			obj.definitions = instantiateDefinitions(location + "/definitions", value["definitions"], errors);
+		}
+
+		function parseEthernet(location, value, errors) {
+			if (type(value) == "array") {
+				return map(value, (item, i) => instantiateEthernet(location + "/" + i, item, errors));
+			}
+
+			if (type(value) != "array")
+				push(errors, [ location, "must be of type array" ]);
+
+			return value;
+		}
+
+		if (exists(value, "ethernet")) {
+			obj.ethernet = parseEthernet(location + "/ethernet", value["ethernet"], errors);
 		}
 
 		function parseRadios(location, value, errors) {

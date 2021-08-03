@@ -207,14 +207,7 @@ let wiphy = {
 let ethernet = {
 	ports: discover_ports(),
 
-	lookup_by_interface_spec: function(interface) {
-		// Gather the glob patterns in all `ethernet: [ { select-ports: ... }]` specs,
-		// dedup them and turn them into one global regular expression pattern, then
-		// match this pattern against all known system ethernet ports, remember the
-		// related netdevs and return them as sorted, deduplicated array.
-		let globs = {};
-		map(interface.ethernet, eth => map(eth.select_ports, glob => globs[glob] = true));
-
+	lookup: function(globs) {
 		let re = regexp('^(' + join('|', map(keys(globs), glob => {
 			replace(glob, /[].*+?^${}()|[\\]/g, m => {
 				(m == '*') ? '.*' : ((m == '?') ? '.' : '\\' + m)
@@ -233,6 +226,24 @@ let ethernet = {
 		}
 
 		return sort(keys(matched));
+	},
+
+	lookup_by_interface_spec: function(interface) {
+		// Gather the glob patterns in all `ethernet: [ { select-ports: ... }]` specs,
+		// dedup them and turn them into one global regular expression pattern, then
+		// match this pattern against all known system ethernet ports, remember the
+		// related netdevs and return them as sorted, deduplicated array.
+		let globs = {};
+		map(interface.ethernet, eth => map(eth.select_ports, glob => globs[glob] = true));
+
+		return this.lookup(globs);
+	},
+
+	lookup_by_select_ports: function(select_ports) {
+		let globs = {};
+		map(select_ports, glob => globs[glob] = true);
+
+		return this.lookup(globs);
 	},
 
 	is_single_config: function(interface) {
