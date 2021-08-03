@@ -258,7 +258,7 @@ set wireless.{{ section }}.identity='uCentral'
 
 # AP specific setings
 {%   if (bss_mode == 'ap'): %}
-set wireless.{{ section }}.proxy_arp={{ b(ssid.proxy_arp) }}
+set wireless.{{ section }}.proxy_arp={{ b(length(network) ? ssid.proxy_arp : false) }}
 set wireless.{{ section }}.hidden={{ b(ssid.hidden_ssid) }}
 set wireless.{{ section }}.time_advertisement={{ ssid.broadcast_time }}
 set wireless.{{ section }}.isolate={{ b(ssid.isolate_clients) }}
