@@ -4693,6 +4693,55 @@ function instantiateServiceWifiSteering(location, value, errors) {
 	return value;
 }
 
+function instantiateServiceAirtimePolicies(location, value, errors) {
+	if (type(value) == "object") {
+		let obj = {};
+
+		function parseDnsMatch(location, value, errors) {
+			if (type(value) == "array") {
+				function parseItem(location, value, errors) {
+					if (type(value) != "string")
+						push(errors, [ location, "must be of type string" ]);
+
+					return value;
+				}
+
+				return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
+			}
+
+			if (type(value) != "array")
+				push(errors, [ location, "must be of type array" ]);
+
+			return value;
+		}
+
+		if (exists(value, "dns-match")) {
+			obj.dns_match = parseDnsMatch(location + "/dns-match", value["dns-match"], errors);
+		}
+
+		function parseDnsWeight(location, value, errors) {
+			if (type(value) != "int")
+				push(errors, [ location, "must be of type integer" ]);
+
+			return value;
+		}
+
+		if (exists(value, "dns-weight")) {
+			obj.dns_weight = parseDnsWeight(location + "/dns-weight", value["dns-weight"], errors);
+		}
+		else {
+			obj.dns_weight = 256;
+		}
+
+		return obj;
+	}
+
+	if (type(value) != "object")
+		push(errors, [ location, "must be of type object" ]);
+
+	return value;
+}
+
 function instantiateService(location, value, errors) {
 	if (type(value) == "object") {
 		let obj = {};
@@ -4751,6 +4800,10 @@ function instantiateService(location, value, errors) {
 
 		if (exists(value, "wifi-steering")) {
 			obj.wifi_steering = instantiateServiceWifiSteering(location + "/wifi-steering", value["wifi-steering"], errors);
+		}
+
+		if (exists(value, "airtime-policies")) {
+			obj.airtime_policies = instantiateServiceAirtimePolicies(location + "/airtime-policies", value["airtime-policies"], errors);
 		}
 
 		return obj;

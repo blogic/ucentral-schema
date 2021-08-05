@@ -31,3 +31,5 @@ properties:
     $ref: "https://ucentral.io/schema/v1/service/data-plane/"
   wifi-steering:
     $ref: "https://ucentral.io/schema/v1/service/wifi-steering/"
+  airtime-policies:
+    $ref: "https://ucentral.io/schema/v1/service/airtime-policies/"

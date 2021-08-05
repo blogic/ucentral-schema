@@ -1783,6 +1783,24 @@
                 }
             }
         },
+        "service.airtime-policies": {
+            "type": "object",
+            "properties": {
+                "dns-match": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "examples": [
+                            "*.voice.example.com"
+                        ]
+                    }
+                },
+                "dns-weight": {
+                    "type": "integer",
+                    "default": 256
+                }
+            }
+        },
         "service": {
             "type": "object",
             "properties": {
@@ -1827,6 +1845,9 @@
                 },
                 "wifi-steering": {
                     "$ref": "#/$defs/service.wifi-steering"
+                },
+                "airtime-policies": {
+                    "$ref": "#/$defs/service.airtime-policies"
                 }
             }
         },
