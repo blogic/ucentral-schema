@@ -71,6 +71,11 @@
 			[metric]: state.metrics[metric] || {}
 		});
 
+	if (state.switch)
+		tryinclude('switch.uc', {
+			location: '/switch/'
+		});
+
 	for (let i, ports in state.ethernet)
 		include('ethernet.uc', { location: '/ethernet/' + i, ports });
 
