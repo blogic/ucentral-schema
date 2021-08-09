@@ -21,6 +21,9 @@
                 "$ref": "#/$defs/ethernet"
             }
         },
+        "switch": {
+            "$ref": "#/$defs/switch"
+        },
         "radios": {
             "type": "array",
             "items": {
@@ -141,6 +144,25 @@
                         "full"
                     ],
                     "default": "full"
+                }
+            }
+        },
+        "switch": {
+            "type": "object",
+            "properties": {
+                "port-mirror": {
+                    "type": "object",
+                    "properties": {
+                        "monitor-ports": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "analysis-port": {
+                            "type": "string"
+                        }
+                    }
                 }
             }
         },
