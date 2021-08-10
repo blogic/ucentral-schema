@@ -23,12 +23,15 @@ function set_service_state(state) {
 		printf("%s %s\n", service, enable ? "starting" : "stopping");
 		system(sprintf("/etc/init.d/%s %s", service, enable ? "start" : "stop"));
 	}
-	system(sprintf("/etc/init.d/ucentral-wifi restart"));
+	system("/etc/init.d/ucentral-wifi restart");
+	system("/etc/init.d/dnsmasq restart");
 }
 
 try {
 	for (let cmd in [ 'rm -rf /tmp/ucentral',
-			  'mkdir /tmp/ucentral' ])
+			  'mkdir /tmp/ucentral',
+			  'rm /tmp/dnsmasq.conf',
+			  'touch /tmp/dnsmasq.conf' ])
 		system(cmd);
 
 	let state = schemareader.validate(inputjson, logs);
