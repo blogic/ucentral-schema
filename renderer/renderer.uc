@@ -246,6 +246,10 @@ let ethernet = {
 		return this.lookup(globs);
 	},
 
+	reserve_port: function(port) {
+		delete this.ports[port];
+	},
+
 	is_single_config: function(interface) {
 		let ipv4_mode = interface.ipv4 ? interface.ipv4.addressing : 'none';
 		let ipv6_mode = interface.ipv6 ? interface.ipv6.addressing : 'none';
