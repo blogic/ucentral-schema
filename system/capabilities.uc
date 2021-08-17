@@ -26,9 +26,12 @@ else
 
 capa.network = {};
 for (let k, v in board.network) {
-	if (!v.ifname)
-		continue;
-	capa.network[k] = split(replace(v.ifname, /^ */, ''), " ");
+	if (v.ports)
+		capa.network[k] = v.ports;
+	if (v.device)
+		capa.network[k] = [v.device];
+	if (v.ifname)
+		capa.network[k] = split(replace(v.ifname, /^ */, ''), " ");
 }
 
 if (board.switch)
