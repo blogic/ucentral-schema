@@ -1,4 +1,3 @@
-{% warn("airtime") %}
 {% if (!services.is_present("airtime-policy")) return %}
 {% let enable = b(length(airtime_policies.dns_match)) %}
 {% services.set_enabled("airtime-policy", enable) %}
