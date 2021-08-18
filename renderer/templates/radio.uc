@@ -7,7 +7,9 @@
 		return;
 	}
 
-	function match_htmode(phy, channel_mode, channel_width) {
+	function match_htmode(phy, radio) {
+		let channel_mode = radio.channel_mode;
+		let channel_width = radio.channel_width;
 		let fallback_modes = { HE: /^(HE|VHT|HT)/, VHT: /^(VHT|HT)/, HT: /^HT/ };
 		let mode_weight = { HT: 1, VHT: 10, HE: 100 };
 		let wanted_mode = channel_mode + (channel_width == 8080 ? "80+80" : channel_width);
@@ -26,7 +28,7 @@
 			if (match(supported_mode, fallback_modes[channel_mode])) {
 				warn("Selected radio does not support requested HT mode %s, falling back to %s",
 					wanted_mode, supported_mode);
-
+				delete radio.channel;
 				return supported_mode;
 			}
 		}
@@ -95,13 +97,11 @@
 
 # Wireless Configuration
 {% for (let phy in phys): %}
-{%  let htmode = match_htmode(phy, radio.channel_mode, radio.channel_width) %}
+{%  let htmode = match_htmode(phy, radio) %}
 set wireless.{{ phy.section }}.disabled=0
 set wireless.{{ phy.section }}.ucentral_path={{ s(location) }}
 set wireless.{{ phy.section }}.htmode={{ htmode }}
-{%  if (radio.channel): %}
 set wireless.{{ phy.section }}.channel={{ match_channel(phy, radio.channel) }}
-{%  endif %}
 set wireless.{{ phy.section }}.txantenna={{ match_mimo(phy.tx_ant, radio.mimo) }}
 set wireless.{{ phy.section }}.rxantenna={{ match_mimo(phy.rx_ant, radio.mimo) }}
 set wireless.{{ phy.section }}.beacon_int={{ radio.beacon_interval }}
