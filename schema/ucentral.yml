@@ -33,3 +33,6 @@ properties:
     $ref: "https://ucentral.io/schema/v1/metrics/"
   config-raw:
     $ref: "https://ucentral.io/schema/v1/config-raw/"
+  third-party:
+    type: object
+    additionalProperties: true
