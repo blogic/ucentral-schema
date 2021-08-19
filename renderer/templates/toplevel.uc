@@ -96,7 +96,7 @@
 	for (let name, config in state.third_party)
 		tryinclude('third-party/' + name + '.uc', {
 			location: '/third-party/' + name,
-			[name]: config
+			[replace(name, '-', '_')]: config
 		});
 
 	if (state.config_raw)
