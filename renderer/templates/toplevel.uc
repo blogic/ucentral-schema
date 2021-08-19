@@ -93,6 +93,12 @@
 	iterate_interfaces("upstream");
 	iterate_interfaces("downstream");
 
+	for (let name, config in state.third_party)
+		tryinclude('third-party/' + name + '.uc', {
+			location: '/third-party/' + name,
+			[name]: config
+		});
+
 	if (state.config_raw)
 		include("config_raw.uc", { location: '/config_raw', config_raw: state.config_raw });
 %}
