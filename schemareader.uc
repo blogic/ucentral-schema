@@ -966,6 +966,23 @@ function instantiateInterfaceEthernet(location, value, errors) {
 			obj.reverse_path_filter = false;
 		}
 
+		function parseVlanTag(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			if (!(value in [ "tagged", "un-tagged", "auto" ]))
+				push(errors, [ location, "must be one of \"tagged\", \"un-tagged\" or \"auto\"" ]);
+
+			return value;
+		}
+
+		if (exists(value, "vlan-tag")) {
+			obj.vlan_tag = parseVlanTag(location + "/vlan-tag", value["vlan-tag"], errors);
+		}
+		else {
+			obj.vlan_tag = "auto";
+		}
+
 		return obj;
 	}
 

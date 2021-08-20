@@ -208,42 +208,42 @@ let ethernet = {
 	ports: discover_ports(),
 
 	lookup: function(globs) {
-		let re = regexp('^(' + join('|', map(keys(globs), glob => {
-			replace(glob, /[].*+?^${}()|[\\]/g, m => {
-				(m == '*') ? '.*' : ((m == '?') ? '.' : '\\' + m)
-			})
-		})) + ')$');
-
 		let matched = {};
 
-		for (let name, spec in this.ports) {
-			if (match(name, re)) {
-				if (spec.netdev)
-					matched[spec.netdev] = true;
-				else
-					warn("Not implemented yet: mapping switch port to netdev");
+		for (let glob, tag_state in globs) {
+			for (let name, spec in this.ports) {
+				if (wildcard(name, glob)) {
+					if (spec.netdev)
+						matched[spec.netdev] = tag_state;
+					else
+						warn("Not implemented yet: mapping switch port to netdev");
+				}
 			}
 		}
 
-		return sort(keys(matched));
+		return matched;
 	},
 
-	lookup_by_interface_spec: function(interface) {
+	lookup_by_interface_vlan: function(interface) {
 		// Gather the glob patterns in all `ethernet: [ { select-ports: ... }]` specs,
 		// dedup them and turn them into one global regular expression pattern, then
 		// match this pattern against all known system ethernet ports, remember the
-		// related netdevs and return them as sorted, deduplicated array.
+		// related netdevs and return them.
 		let globs = {};
-		map(interface.ethernet, eth => map(eth.select_ports, glob => globs[glob] = true));
+		map(interface.ethernet, eth => map(eth.select_ports, glob => globs[glob] = eth.vlan_tag));
 
 		return this.lookup(globs);
+	},
+
+	lookup_by_interface_spec: function(interface) {
+		return sort(keys(lookup_by_interface_vlan(interface)));
 	},
 
 	lookup_by_select_ports: function(select_ports) {
 		let globs = {};
 		map(select_ports, glob => globs[glob] = true);
 
-		return this.lookup(globs);
+		return sort(keys(this.lookup(globs)));
 	},
 
 	reserve_port: function(port) {
@@ -286,6 +286,14 @@ let ethernet = {
 
 	has_vlan: function(interface) {
 		return interface.vlan && interface.vlan.id;
+	},
+
+	port_vlan: function(interface, port) {
+		if (port == "tagged")
+			return ':t';
+		if (port == "un-tagged")
+			return '';
+		return ((interface.role == 'upstream') && this.has_vlan(interface)) ? ':t' : '';
 	},
 
 	find_interface: function(role, vid) {

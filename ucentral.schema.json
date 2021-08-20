@@ -440,6 +440,15 @@
                 "reverse-path-filter": {
                     "type": "boolean",
                     "default": false
+                },
+                "vlan-tag": {
+                    "type": "string",
+                    "enum": [
+                        "tagged",
+                        "un-tagged",
+                        "auto"
+                    ],
+                    "default": "auto"
                 }
             }
         },

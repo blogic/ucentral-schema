@@ -1,8 +1,8 @@
 add network bridge-vlan
 set network.@bridge-vlan[-1].device={{ bridgedev }}
 set network.@bridge-vlan[-1].vlan={{ this_vid }}
-{%  for (let port in eth_ports): %}
-add_list network.@bridge-vlan[-1].ports={{ port }}{{ ((interface.role == 'upstream') && ethernet.has_vlan(interface)) ? ':t' : '' }}
+{%  for (let port in keys(eth_ports)): %}
+add_list network.@bridge-vlan[-1].ports={{ port }}{{ ethernet.port_vlan(interface, eth_ports[port]) }}
 {%  endfor %}
 {% if (interface.tunnel && interface.tunnel.proto == "mesh"): %}
 add_list network.@bridge-vlan[-1].ports=batman{{ ethernet.has_vlan(interface) ? "." + this_vid + ":t" : '' }}

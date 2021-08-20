@@ -48,3 +48,12 @@ properties:
       prevent attacks used by Spoofing IP Addresses.
     type: boolean
     default: false
+  vlan-tag:
+    description:
+      Shall the port have a vlan tag.
+    type: string
+    enum:
+    - tagged
+    - un-tagged
+    - auto
+    default: auto

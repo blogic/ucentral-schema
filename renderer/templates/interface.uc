@@ -67,7 +67,7 @@
 
 	// Gather related BSS modes and ethernet ports.
 	let bss_modes = map(interface.ssids, ssid => ssid.bss_mode);
-	let eth_ports = ethernet.lookup_by_interface_spec(interface);
+	let eth_ports = ethernet.lookup_by_interface_vlan(interface);
 
 	// If at least one station mode SSID is part of this interface then we must
 	// not bridge at all. Having any other SSID or any number of matching ethernet
