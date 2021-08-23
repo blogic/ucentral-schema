@@ -4710,6 +4710,58 @@ function instantiateServiceWifiSteering(location, value, errors) {
 	return value;
 }
 
+function instantiateServiceQualityOfService(location, value, errors) {
+	if (type(value) == "object") {
+		let obj = {};
+
+		function parseSelectPort(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "select-port")) {
+			obj.select_port = parseSelectPort(location + "/select-port", value["select-port"], errors);
+		}
+
+		function parseUploadRate(location, value, errors) {
+			if (type(value) != "int")
+				push(errors, [ location, "must be of type integer" ]);
+
+			return value;
+		}
+
+		if (exists(value, "upload-rate")) {
+			obj.upload_rate = parseUploadRate(location + "/upload-rate", value["upload-rate"], errors);
+		}
+		else {
+			obj.upload_rate = 0;
+		}
+
+		function parseDownloadRate(location, value, errors) {
+			if (type(value) != "int")
+				push(errors, [ location, "must be of type integer" ]);
+
+			return value;
+		}
+
+		if (exists(value, "download-rate")) {
+			obj.download_rate = parseDownloadRate(location + "/download-rate", value["download-rate"], errors);
+		}
+		else {
+			obj.download_rate = 0;
+		}
+
+		return obj;
+	}
+
+	if (type(value) != "object")
+		push(errors, [ location, "must be of type object" ]);
+
+	return value;
+}
+
 function instantiateServiceAirtimePolicies(location, value, errors) {
 	if (type(value) == "object") {
 		let obj = {};
@@ -4817,6 +4869,10 @@ function instantiateService(location, value, errors) {
 
 		if (exists(value, "wifi-steering")) {
 			obj.wifi_steering = instantiateServiceWifiSteering(location + "/wifi-steering", value["wifi-steering"], errors);
+		}
+
+		if (exists(value, "quality-of-service")) {
+			obj.quality_of_service = instantiateServiceQualityOfService(location + "/quality-of-service", value["quality-of-service"], errors);
 		}
 
 		if (exists(value, "airtime-policies")) {
