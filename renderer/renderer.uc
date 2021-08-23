@@ -236,7 +236,7 @@ let ethernet = {
 	},
 
 	lookup_by_interface_spec: function(interface) {
-		return sort(keys(lookup_by_interface_vlan(interface)));
+		return sort(keys(this.lookup_by_interface_vlan(interface)));
 	},
 
 	lookup_by_select_ports: function(select_ports) {
