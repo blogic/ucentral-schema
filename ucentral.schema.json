@@ -1815,6 +1815,20 @@
                 }
             }
         },
+        "service.facebook-wifi": {
+            "type": "object",
+            "properties": {
+                "vendor-id": {
+                    "type": "string"
+                },
+                "gateway-id": {
+                    "type": "string"
+                },
+                "secret": {
+                    "type": "string"
+                }
+            }
+        },
         "service.airtime-policies": {
             "type": "object",
             "properties": {
@@ -1880,6 +1894,9 @@
                 },
                 "quality-of-service": {
                     "$ref": "#/$defs/service.quality-of-service"
+                },
+                "facebook-wifi": {
+                    "$ref": "#/$defs/service.facebook-wifi"
                 },
                 "airtime-policies": {
                     "$ref": "#/$defs/service.airtime-policies"

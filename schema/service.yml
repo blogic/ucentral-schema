@@ -33,5 +33,7 @@ properties:
     $ref: "https://ucentral.io/schema/v1/service/wifi-steering/"
   quality-of-service:
     $ref: "https://ucentral.io/schema/v1/service/quality-of-service/"
+  facebook-wifi:
+    $ref: "https://ucentral.io/schema/v1/service/facebook-wifi/"
   airtime-policies:
     $ref: "https://ucentral.io/schema/v1/service/airtime-policies/"
