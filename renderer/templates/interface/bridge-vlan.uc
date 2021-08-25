@@ -8,9 +8,9 @@ add_list network.@bridge-vlan[-1].ports={{ port }}{{ ethernet.port_vlan(interfac
 add_list network.@bridge-vlan[-1].ports=batman{{ ethernet.has_vlan(interface) ? "." + this_vid + ":t" : '' }}
 {% endif %}
 {% if (interface.bridge): %}
-network.@bridge-vlan[-1].txqueuelen={{ interface.bridge.tx_queue_len }}
-network.@bridge-vlan[-1].isolate={{interface.bridge.isolate_ports }}
-network.@bridge-vlan[-1].mtu={{ interface.bridge.mtu }}
+set network.@bridge-vlan[-1].txqueuelen={{ interface.bridge.tx_queue_len }}
+set network.@bridge-vlan[-1].isolate={{interface.bridge.isolate_ports }}
+set network.@bridge-vlan[-1].mtu={{ interface.bridge.mtu }}
 {% endif %}
 
 add network device
