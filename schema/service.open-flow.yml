@@ -1,5 +1,5 @@
 description:
-  This section can be used to configure and upstream OpenFlow controller.
+  This section can be used to configure an upstream OpenFlow controller.
 type: object
 properties:
   controller:
