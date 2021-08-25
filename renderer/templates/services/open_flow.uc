@@ -3,6 +3,15 @@
 {% let enable = length(interfaces) %}
 {% services.set_enabled("openvswitch", enable) %}
 {% if (!enable) return %}
+{% if (open_flow.mode in ['pssl', 'ssl'] &&
+       !(open_flow.ca_certificate &&
+	 open_flow.private_key &&
+	 open_flow.ssl_certificate)) {
+		warn("mode requires SSL CA, certificate and private key");
+		return;
+	}
+%}
+
 
 
 # OpenFlow service configuration
@@ -16,7 +25,7 @@ set openvswitch.ovs.key={{ s(files.add_anonymous(location, 'key', b64dec(open_fl
 
 delete openvswitch.@ovs_bridge[0]
 add openvswitch ovs_bridge
-set openvswitch.@ovs_bridge[-1].controller="ssl:{{ open_flow.controller }}"
+set openvswitch.@ovs_bridge[-1].controller="{{ open_flow.target_protocol }}:{{ open_flow.controller }}"
 set openvswitch.@ovs_bridge[-1].datapath_id="0x{{ serial }}"
 set openvswitch.@ovs_bridge[-1].name="br-ovs"
 
