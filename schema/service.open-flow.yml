@@ -10,13 +10,13 @@ properties:
     example: 192.168.10.1
   ca-certificate:
     description:
-       The local servers CA bundle.
+       The CA certificate.
     type: string
-  server-certificate:
+  ssl-certificate:
     description:
-       The local servers certificate.
+       The SSL certificate.
     type: string
   private-key:
     description:
-      The local servers private key/
+      The SSL private key.
     type: string

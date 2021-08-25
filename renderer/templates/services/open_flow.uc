@@ -11,7 +11,7 @@ set openvswitch.ovs.disabled=0
 
 set openvswitch.ovs.disabled="0"
 set openvswitch.ovs.ca={{ s(files.add_anonymous(location, 'ca', b64dec(open_flow.ca_certificate))) }}
-set openvswitch.ovs.cert={{ s(files.add_anonymous(location, 'cert', b64dec(open_flow.server_certificate))) }}
+set openvswitch.ovs.cert={{ s(files.add_anonymous(location, 'cert', b64dec(open_flow.ssl_certificate))) }}
 set openvswitch.ovs.key={{ s(files.add_anonymous(location, 'key', b64dec(open_flow.private_key))) }}
 
 delete openvswitch.@ovs_bridge[0]

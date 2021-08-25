@@ -1729,7 +1729,7 @@
                 "ca-certificate": {
                     "type": "string"
                 },
-                "server-certificate": {
+                "ssl-certificate": {
                     "type": "string"
                 },
                 "private-key": {
