@@ -1,13 +1,22 @@
 description:
-  This section can be used to configure an upstream OpenFlow controller.
+  This section can be used to configure an OpenFlow controller target.
 type: object
 properties:
   controller:
     description:
-      The CIDR of the upstream OpenFlow controller.
+      The CIDR of the OpenFlow controller target.
     type: string
     uc-format: cidr
     example: 192.168.10.1
+  mode:
+    description:
+      The mode to use for the OpenFlow controller target.
+    type: string
+    enum:
+      - pssl
+      - ptcp
+      - ssl
+      - tcp
   ca-certificate:
     description:
        The CA certificate.

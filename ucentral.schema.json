@@ -1726,6 +1726,15 @@
                     "uc-format": "cidr",
                     "example": "192.168.10.1"
                 },
+                "mode": {
+                    "type": "string",
+                    "enum": [
+                        "pssl",
+                        "ptcp",
+                        "ssl",
+                        "tcp"
+                    ]
+                },
                 "ca-certificate": {
                     "type": "string"
                 },
