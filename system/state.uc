@@ -127,6 +127,8 @@
 	state.unit.load = system.load;
 	state.unit.memory.total = system.memory.total;
 	state.unit.memory.free = system.memory.free;
+	state.unit.memory.cached = system.memory.cached;
+	state.unit.memory.buffered = system.memory.buffered;
 
 	for (let l = 0; l < 3; l++)
 		state.unit.load[l] /= 65535.0;
