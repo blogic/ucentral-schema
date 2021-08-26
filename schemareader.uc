@@ -4488,6 +4488,20 @@ function instantiateServiceOpenFlow(location, value, errors) {
 			obj.controller = parseController(location + "/controller", value["controller"], errors);
 		}
 
+		function parseMode(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			if (!(value in [ "pssl", "ptcp", "ssl", "tcp" ]))
+				push(errors, [ location, "must be one of \"pssl\", \"ptcp\", \"ssl\" or \"tcp\"" ]);
+
+			return value;
+		}
+
+		if (exists(value, "mode")) {
+			obj.mode = parseMode(location + "/mode", value["mode"], errors);
+		}
+
 		function parseCaCertificate(location, value, errors) {
 			if (type(value) != "string")
 				push(errors, [ location, "must be of type string" ]);
@@ -4499,15 +4513,15 @@ function instantiateServiceOpenFlow(location, value, errors) {
 			obj.ca_certificate = parseCaCertificate(location + "/ca-certificate", value["ca-certificate"], errors);
 		}
 
-		function parseServerCertificate(location, value, errors) {
+		function parseSslCertificate(location, value, errors) {
 			if (type(value) != "string")
 				push(errors, [ location, "must be of type string" ]);
 
 			return value;
 		}
 
-		if (exists(value, "server-certificate")) {
-			obj.server_certificate = parseServerCertificate(location + "/server-certificate", value["server-certificate"], errors);
+		if (exists(value, "ssl-certificate")) {
+			obj.ssl_certificate = parseSslCertificate(location + "/ssl-certificate", value["ssl-certificate"], errors);
 		}
 
 		function parsePrivateKey(location, value, errors) {
