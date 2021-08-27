@@ -17,3 +17,24 @@ properties:
         description:
           The port that mirror'ed packets should be sent to.
         type: string
+  loop-detection:
+    description:
+      Enable loop detection on the L2 switches/bridge.
+    type: object
+    properties:
+      protocol:
+        description:
+          Define which protocol shall be used for loop detection.
+        type: string
+        enum:
+        - rstp
+        default: rstp
+      roles:
+        description:
+          Define on which logical switches/bridges we want to provide loop-detection.
+        type: array
+        items:
+          type: string
+          enum:
+          - upstream
+          - downstream

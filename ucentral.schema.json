@@ -167,6 +167,28 @@
                             "type": "string"
                         }
                     }
+                },
+                "loop-detection": {
+                    "type": "object",
+                    "properties": {
+                        "protocol": {
+                            "type": "string",
+                            "enum": [
+                                "rstp"
+                            ],
+                            "default": "rstp"
+                        },
+                        "roles": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "upstream",
+                                    "downstream"
+                                ]
+                            }
+                        }
+                    }
                 }
             }
         },
