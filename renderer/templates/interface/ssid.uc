@@ -201,7 +201,7 @@ set wireless.{{ section }}.ssid={{ s(ssid.name) }}
 set wireless.{{ section }}.mode={{ s(bss_mode) }}
 set wireless.{{ section }}.bssid={{ ssid.bssid }}
 set wireless.{{ section }}.wds='{{ b(match_wds()) }}'
-set wireless.{{ section }}.wpa_disable_eapol_key_retries=1
+set wireless.{{ section }}.wpa_disable_eapol_key_retries='{{ b(ssid.wpa_disable_eapol_key_retries) }}'
 set wireless.{{ section }}.vendor_elements='{{ ssid.vendor_elements }}'
 set wireless.{{ section }}.disassoc_low_ack='{{ b(ssid.disassoc_low_ack) }}'
 {%   endif %}
