@@ -203,7 +203,7 @@ set wireless.{{ section }}.bssid={{ ssid.bssid }}
 set wireless.{{ section }}.wds='{{ b(match_wds()) }}'
 set wireless.{{ section }}.wpa_disable_eapol_key_retries=1
 set wireless.{{ section }}.vendor_elements='{{ ssid.vendor_elements }}'
-set wireless.{{ section }}.disassoc_low_ack='{{ ssid.disassoc_low_ack }}'
+set wireless.{{ section }}.disassoc_low_ack='{{ b(ssid.disassoc_low_ack) }}'
 {%   endif %}
 
 # Crypto settings

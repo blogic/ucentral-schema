@@ -61,7 +61,7 @@
 
 	// Captive Portal is only supported on downstream interfaces
 	if (interface.captive && interface.role != 'downstream') {
-		warn("Trying to create a Cpative Portal on a none downstream interface.");
+		warn("Trying to create a Captive Portal on a none downstream interface.");
 		return;
 	}
 
