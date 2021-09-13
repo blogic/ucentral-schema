@@ -1,6 +1,12 @@
 #!/usr/bin/ucode
 {%
 	let fs = require("fs");
+
+	/* if we are actively streaming telemetry then the state handler does not need to run
+	   independently */
+	if (!telemetry && fs.stat("/tmp/ucentral.telemetry"))
+		return 0;
+
 	let uci = require("uci");
 	let ubus = require("ubus");
 	let cfgfile = fs.open("/etc/ucentral/ucentral.active", "r");
@@ -297,6 +303,12 @@
 					if (length(stations[vap.ifname]))
 						ssid.associations = stations[vap.ifname];
 
+
+					ssid.iface = vap.ifname;
+					ssid.counters = ports[vap.ifname].stats;
+					if (!ssid.counters)
+						delete ssid.counters;
+
 					push(ssids, ssid);
 				}
 				counter++;
@@ -379,6 +391,9 @@
 		state
 	};
 	ctx.call("ucentral", "stats", msg);
+
+	if (telemetry)
+		ctx.call("ucentral", "event", { "event": "state", "payload": msg });
 
 	let f = fs.open("/tmp/ucentral.state", "w");
 	if (f) {
