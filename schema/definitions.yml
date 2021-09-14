@@ -11,5 +11,5 @@ properties:
       by the corresponding property name.
     patternProperties:
       ".+":
-        $ref: "#/interface/ssid/encryption"
+        $ref: "#/$defs/interface.ssid.encryption"
         additionalProperties: false
