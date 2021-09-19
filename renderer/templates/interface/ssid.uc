@@ -129,7 +129,10 @@
 		if (!ssid.encryption)
 			return 0;
 
-		if (ssid.encryption.proto in [ "sae", "sae-mixed", "wpa3", "wpa3-mixed" ])
+		if (ssid.encryption.proto in [ "sae-mixed", "wpa3-mixed" ])
+			return 2;
+
+		if (ssid.encryption.proto in [ "sae", "wpa3" ])
 			return 2;
 
 		return index([ "disabled", "optional", "required" ], ssid.encryption.ieee80211w);
