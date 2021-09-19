@@ -87,6 +87,62 @@ properties:
     type: array
     items:
       type: string
+  access-network-type:
+    description:
+      Indicate the type of network. This is part of the interworking IE.
+    type: integer
+    maximum: 15
+    default: 0
+  internet:
+    description:
+      Whether the network provides connectivity to the Internet
+    type: boolean
+    default: true
+  asra:
+    description:
+      Additional Step Required for Access.
+    type: boolean
+    default: false
+  esr:
+    description:
+      Emergency services reachable.
+    type: boolean
+    default: false
+  uesa:
+    description:
+      Unauthenticated emergency service accessible.
+    type: boolean
+    default: false
+  hessid:
+    description:
+      Homogeneous ESS identifier
+    type: string
+    example: 00:11:22:33:44:55
+  roaming-consortium:
+    description:
+      Roaming Consortium OIs can be configured here. Each OI is between 3 and 15
+      octets and is configured as a hexstring.
+    type: array
+    items:
+      type: string
+  disable-dgaf:
+    description:
+      Disable Downstream Group-Addressed Forwarding. This can be used to configure
+      a network where no group-addressed frames are allowed.
+    type: boolean
+    default: false
+  ipaddr-type-available:
+    description:
+      IP Address Type Availability.
+    type: integer
+    maximum: 255
+  connection-capability:
+    description:
+      This can be used to advertise what type of IP traffic can be sent through the
+      hotspot.
+    type: array
+    items:
+      type: string
   icons:
     description:
       The operator icons.

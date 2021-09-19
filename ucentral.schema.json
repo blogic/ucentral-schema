@@ -104,7 +104,7 @@
                     "type": "object",
                     "patternProperties": {
                         ".+": {
-                            "$ref": "#/interface/ssid/encryption",
+                            "$ref": "#/$defs/interface.ssid.encryption",
                             "additionalProperties": false
                         }
                     }
@@ -1142,6 +1142,51 @@
                     }
                 },
                 "friendly-name": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "access-network-type": {
+                    "type": "integer",
+                    "maximum": 15,
+                    "default": 0
+                },
+                "internet": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "asra": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "esr": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "uesa": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "hessid": {
+                    "type": "string",
+                    "example": "00:11:22:33:44:55"
+                },
+                "roaming-consortium": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "disable-dgaf": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "ipaddr-type-available": {
+                    "type": "integer",
+                    "maximum": 255
+                },
+                "connection-capability": {
                     "type": "array",
                     "items": {
                         "type": "string"

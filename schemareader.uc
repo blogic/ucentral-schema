@@ -2941,6 +2941,168 @@ function instantiateInterfaceSsidPassPoint(location, value, errors) {
 			obj.friendly_name = parseFriendlyName(location + "/friendly-name", value["friendly-name"], errors);
 		}
 
+		function parseAccessNetworkType(location, value, errors) {
+			if (type(value) in [ "int", "double" ]) {
+				if (value > 15)
+					push(errors, [ location, "must be lower than or equal to 15" ]);
+
+			}
+
+			if (type(value) != "int")
+				push(errors, [ location, "must be of type integer" ]);
+
+			return value;
+		}
+
+		if (exists(value, "access-network-type")) {
+			obj.access_network_type = parseAccessNetworkType(location + "/access-network-type", value["access-network-type"], errors);
+		}
+		else {
+			obj.access_network_type = 0;
+		}
+
+		function parseInternet(location, value, errors) {
+			if (type(value) != "bool")
+				push(errors, [ location, "must be of type boolean" ]);
+
+			return value;
+		}
+
+		if (exists(value, "internet")) {
+			obj.internet = parseInternet(location + "/internet", value["internet"], errors);
+		}
+		else {
+			obj.internet = true;
+		}
+
+		function parseAsra(location, value, errors) {
+			if (type(value) != "bool")
+				push(errors, [ location, "must be of type boolean" ]);
+
+			return value;
+		}
+
+		if (exists(value, "asra")) {
+			obj.asra = parseAsra(location + "/asra", value["asra"], errors);
+		}
+		else {
+			obj.asra = false;
+		}
+
+		function parseEsr(location, value, errors) {
+			if (type(value) != "bool")
+				push(errors, [ location, "must be of type boolean" ]);
+
+			return value;
+		}
+
+		if (exists(value, "esr")) {
+			obj.esr = parseEsr(location + "/esr", value["esr"], errors);
+		}
+		else {
+			obj.esr = false;
+		}
+
+		function parseUesa(location, value, errors) {
+			if (type(value) != "bool")
+				push(errors, [ location, "must be of type boolean" ]);
+
+			return value;
+		}
+
+		if (exists(value, "uesa")) {
+			obj.uesa = parseUesa(location + "/uesa", value["uesa"], errors);
+		}
+		else {
+			obj.uesa = false;
+		}
+
+		function parseHessid(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "hessid")) {
+			obj.hessid = parseHessid(location + "/hessid", value["hessid"], errors);
+		}
+
+		function parseRoamingConsortium(location, value, errors) {
+			if (type(value) == "array") {
+				function parseItem(location, value, errors) {
+					if (type(value) != "string")
+						push(errors, [ location, "must be of type string" ]);
+
+					return value;
+				}
+
+				return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
+			}
+
+			if (type(value) != "array")
+				push(errors, [ location, "must be of type array" ]);
+
+			return value;
+		}
+
+		if (exists(value, "roaming-consortium")) {
+			obj.roaming_consortium = parseRoamingConsortium(location + "/roaming-consortium", value["roaming-consortium"], errors);
+		}
+
+		function parseDisableDgaf(location, value, errors) {
+			if (type(value) != "bool")
+				push(errors, [ location, "must be of type boolean" ]);
+
+			return value;
+		}
+
+		if (exists(value, "disable-dgaf")) {
+			obj.disable_dgaf = parseDisableDgaf(location + "/disable-dgaf", value["disable-dgaf"], errors);
+		}
+		else {
+			obj.disable_dgaf = false;
+		}
+
+		function parseIpaddrTypeAvailable(location, value, errors) {
+			if (type(value) in [ "int", "double" ]) {
+				if (value > 255)
+					push(errors, [ location, "must be lower than or equal to 255" ]);
+
+			}
+
+			if (type(value) != "int")
+				push(errors, [ location, "must be of type integer" ]);
+
+			return value;
+		}
+
+		if (exists(value, "ipaddr-type-available")) {
+			obj.ipaddr_type_available = parseIpaddrTypeAvailable(location + "/ipaddr-type-available", value["ipaddr-type-available"], errors);
+		}
+
+		function parseConnectionCapability(location, value, errors) {
+			if (type(value) == "array") {
+				function parseItem(location, value, errors) {
+					if (type(value) != "string")
+						push(errors, [ location, "must be of type string" ]);
+
+					return value;
+				}
+
+				return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
+			}
+
+			if (type(value) != "array")
+				push(errors, [ location, "must be of type array" ]);
+
+			return value;
+		}
+
+		if (exists(value, "connection-capability")) {
+			obj.connection_capability = parseConnectionCapability(location + "/connection-capability", value["connection-capability"], errors);
+		}
+
 		function parseIcons(location, value, errors) {
 			if (type(value) == "array") {
 				function parseItem(location, value, errors) {
