@@ -320,6 +320,21 @@ add_list wireless.{{ section }}.iw_anqp_3gpp_cell_net='{{ s(cell_net) }}'
 {%       for (let name in ssid.pass_point.friendly_name): %}
 add_list wireless.{{ section }}.hs20_oper_friendly_name={{ s(name) }}
 {%       endfor %}
+set wireless.{{ section }}.iw_access_network_type='{{ ssid.pass_point.access_network_type }}'
+set wireless.{{ section }}.iw_internet={{ b(ssid.pass_point.internet) }}
+set wireless.{{ section }}.iw_asra={{ b(ssid.pass_point.asra) }}
+set wireless.{{ section }}.iw_esr={{ b(ssid.pass_point.esr) }}
+set wireless.{{ section }}.iw_uesa={{ b(ssid.pass_point.uesa) }}
+set wireless.{{ section }}.iw_hessid={{ s(ssid.pass_point.hessid) }}
+{%       for (let name in ssid.pass_point.roaming_consortium): %}
+add_list wireless.{{ section }}.iw_roaming_consortium={{ s(name) }}
+{%       endfor %}
+set wireless.{{ section }}.disable_dgaf={{ b(ssid.pass_point.disable_dgaf) }}
+set wireless.{{ section }}.hs20_release='1'
+set wireless.{{ section }}.iw_ipaddr_type_availability={{ s(sprintf("%02x", ssid.pass_point.ipaddr_type_availability)) }}
+{%       for (let name in ssid.pass_point.connection_capability): %}
+add_list wireless.{{ section }}.hs20_conn_capab={{ s(name) }}
+{%       endfor %}
 {%     endif %}
 
 {%     if (ssid.pass_point): %}
