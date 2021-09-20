@@ -4515,58 +4515,166 @@ function instantiateServiceRadiusProxy(location, value, errors) {
 	if (type(value) == "object") {
 		let obj = {};
 
-		function parseHost(location, value, errors) {
-			if (type(value) == "string") {
-				if (!matchUcHost(value))
-					push(errors, [ location, "must be a valid hostname or IP address" ]);
+		function parseRealms(location, value, errors) {
+			if (type(value) == "array") {
+				function parseItem(location, value, errors) {
+					if (type(value) == "object") {
+						let obj = {};
 
+						function parseRealm(location, value, errors) {
+							if (type(value) != "string")
+								push(errors, [ location, "must be of type string" ]);
+
+							return value;
+						}
+
+						if (exists(value, "realm")) {
+							obj.realm = parseRealm(location + "/realm", value["realm"], errors);
+						}
+						else {
+							obj.realm = "*";
+						}
+
+						function parseAutoDiscover(location, value, errors) {
+							if (type(value) != "bool")
+								push(errors, [ location, "must be of type boolean" ]);
+
+							return value;
+						}
+
+						if (exists(value, "auto-discover")) {
+							obj.auto_discover = parseAutoDiscover(location + "/auto-discover", value["auto-discover"], errors);
+						}
+						else {
+							obj.auto_discover = false;
+						}
+
+						function parseHost(location, value, errors) {
+							if (type(value) == "string") {
+								if (!matchUcHost(value))
+									push(errors, [ location, "must be a valid hostname or IP address" ]);
+
+							}
+
+							if (type(value) != "string")
+								push(errors, [ location, "must be of type string" ]);
+
+							return value;
+						}
+
+						if (exists(value, "host")) {
+							obj.host = parseHost(location + "/host", value["host"], errors);
+						}
+
+						function parsePort(location, value, errors) {
+							if (type(value) in [ "int", "double" ]) {
+								if (value > 65535)
+									push(errors, [ location, "must be lower than or equal to 65535" ]);
+
+							}
+
+							if (type(value) != "int")
+								push(errors, [ location, "must be of type integer" ]);
+
+							return value;
+						}
+
+						if (exists(value, "port")) {
+							obj.port = parsePort(location + "/port", value["port"], errors);
+						}
+						else {
+							obj.port = 2083;
+						}
+
+						function parseSecret(location, value, errors) {
+							if (type(value) != "string")
+								push(errors, [ location, "must be of type string" ]);
+
+							return value;
+						}
+
+						if (exists(value, "secret")) {
+							obj.secret = parseSecret(location + "/secret", value["secret"], errors);
+						}
+
+						function parseUseLocalCertificates(location, value, errors) {
+							if (type(value) != "bool")
+								push(errors, [ location, "must be of type boolean" ]);
+
+							return value;
+						}
+
+						if (exists(value, "use-local-certificates")) {
+							obj.use_local_certificates = parseUseLocalCertificates(location + "/use-local-certificates", value["use-local-certificates"], errors);
+						}
+						else {
+							obj.use_local_certificates = false;
+						}
+
+						function parseCaCertificate(location, value, errors) {
+							if (type(value) != "string")
+								push(errors, [ location, "must be of type string" ]);
+
+							return value;
+						}
+
+						if (exists(value, "ca-certificate")) {
+							obj.ca_certificate = parseCaCertificate(location + "/ca-certificate", value["ca-certificate"], errors);
+						}
+
+						function parseCertificate(location, value, errors) {
+							if (type(value) != "string")
+								push(errors, [ location, "must be of type string" ]);
+
+							return value;
+						}
+
+						if (exists(value, "certificate")) {
+							obj.certificate = parseCertificate(location + "/certificate", value["certificate"], errors);
+						}
+
+						function parsePrivateKey(location, value, errors) {
+							if (type(value) != "string")
+								push(errors, [ location, "must be of type string" ]);
+
+							return value;
+						}
+
+						if (exists(value, "private-key")) {
+							obj.private_key = parsePrivateKey(location + "/private-key", value["private-key"], errors);
+						}
+
+						function parsePrivateKeyPassword(location, value, errors) {
+							if (type(value) != "string")
+								push(errors, [ location, "must be of type string" ]);
+
+							return value;
+						}
+
+						if (exists(value, "private-key-password")) {
+							obj.private_key_password = parsePrivateKeyPassword(location + "/private-key-password", value["private-key-password"], errors);
+						}
+
+						return obj;
+					}
+
+					if (type(value) != "object")
+						push(errors, [ location, "must be of type object" ]);
+
+					return value;
+				}
+
+				return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
 			}
 
-			if (type(value) != "string")
-				push(errors, [ location, "must be of type string" ]);
+			if (type(value) != "array")
+				push(errors, [ location, "must be of type array" ]);
 
 			return value;
 		}
 
-		if (exists(value, "host")) {
-			obj.host = parseHost(location + "/host", value["host"], errors);
-		}
-		else {
-			push(errors, [ location, "is required" ]);
-		}
-
-		function parsePort(location, value, errors) {
-			if (type(value) in [ "int", "double" ]) {
-				if (value > 65535)
-					push(errors, [ location, "must be lower than or equal to 65535" ]);
-
-			}
-
-			if (type(value) != "int")
-				push(errors, [ location, "must be of type integer" ]);
-
-			return value;
-		}
-
-		if (exists(value, "port")) {
-			obj.port = parsePort(location + "/port", value["port"], errors);
-		}
-		else {
-			obj.port = 2083;
-		}
-
-		function parseSecret(location, value, errors) {
-			if (type(value) != "string")
-				push(errors, [ location, "must be of type string" ]);
-
-			return value;
-		}
-
-		if (exists(value, "secret")) {
-			obj.secret = parseSecret(location + "/secret", value["secret"], errors);
-		}
-		else {
-			push(errors, [ location, "is required" ]);
+		if (exists(value, "realms")) {
+			obj.realms = parseRealms(location + "/realms", value["realms"], errors);
 		}
 
 		return obj;

@@ -1720,26 +1720,53 @@
         },
         "service.radius-proxy": {
             "type": "object",
-            "required": [
-                "host",
-                "port",
-                "secret"
-            ],
             "properties": {
-                "host": {
-                    "type": "string",
-                    "format": "uc-host",
-                    "examples": [
-                        "192.168.1.10"
-                    ]
-                },
-                "port": {
-                    "type": "integer",
-                    "maximum": 65535,
-                    "default": 2083
-                },
-                "secret": {
-                    "type": "string"
+                "realms": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "realm": {
+                                "type": "string",
+                                "default": "*"
+                            },
+                            "auto-discover": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "host": {
+                                "type": "string",
+                                "format": "uc-host",
+                                "examples": [
+                                    "192.168.1.10"
+                                ]
+                            },
+                            "port": {
+                                "type": "integer",
+                                "maximum": 65535,
+                                "default": 2083
+                            },
+                            "secret": {
+                                "type": "string"
+                            },
+                            "use-local-certificates": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "ca-certificate": {
+                                "type": "string"
+                            },
+                            "certificate": {
+                                "type": "string"
+                            },
+                            "private-key": {
+                                "type": "string"
+                            },
+                            "private-key-password": {
+                                "type": "string"
+                            }
+                        }
+                    }
                 }
             }
         },
