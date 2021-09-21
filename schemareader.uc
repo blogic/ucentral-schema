@@ -273,6 +273,28 @@ function instantiateEthernet(location, value, errors) {
 			obj.duplex = "full";
 		}
 
+		function parseServices(location, value, errors) {
+			if (type(value) == "array") {
+				function parseItem(location, value, errors) {
+					if (type(value) != "string")
+						push(errors, [ location, "must be of type string" ]);
+
+					return value;
+				}
+
+				return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
+			}
+
+			if (type(value) != "array")
+				push(errors, [ location, "must be of type array" ]);
+
+			return value;
+		}
+
+		if (exists(value, "services")) {
+			obj.services = parseServices(location + "/services", value["services"], errors);
+		}
+
 		return obj;
 	}
 
@@ -5056,17 +5078,6 @@ function instantiateServiceWifiSteering(location, value, errors) {
 function instantiateServiceQualityOfService(location, value, errors) {
 	if (type(value) == "object") {
 		let obj = {};
-
-		function parseSelectPort(location, value, errors) {
-			if (type(value) != "string")
-				push(errors, [ location, "must be of type string" ]);
-
-			return value;
-		}
-
-		if (exists(value, "select-port")) {
-			obj.select_port = parseSelectPort(location + "/select-port", value["select-port"], errors);
-		}
 
 		function parseUploadRate(location, value, errors) {
 			if (type(value) != "int")

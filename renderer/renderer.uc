@@ -246,6 +246,14 @@ let ethernet = {
 		return sort(keys(this.lookup(globs)));
 	},
 
+	lookup_by_ethernet: function(ethernets) {
+		let result = [];
+
+		for (let ethernet in ethernets)
+			result = [ ...result,  ...this.lookup_by_select_ports(ethernet.select_ports) ];
+		return result;
+	},
+
 	reserve_port: function(port) {
 		delete this.ports[port];
 	},
@@ -310,6 +318,15 @@ let ethernet = {
 			    interface.vlan.id == vid)
 				return interface;
 		return null;
+	},
+
+	get_speed: function(dev) {
+		let fp = fs.open(sprintf("/sys/class/net/%s/speed", dev));
+		if (!fp)
+			return 1000;
+		let speed = fp.read("all");
+		fp.close();
+		return +speed;
 	}
 };
 
@@ -452,6 +469,18 @@ let services = {
 		}
 
 		return ssids;
+	},
+
+	lookup_ethernet: function(service) {
+		let ethernets = [];
+
+		for (let ethernet in state.ethernet) {
+			if (!ethernet.services || index(ethernet.services, service) < 0)
+				continue;
+			push(ethernets, ethernet);
+		}
+
+		return ethernets;
 	},
 
 	lookup_services: function() {

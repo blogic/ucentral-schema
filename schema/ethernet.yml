@@ -29,7 +29,6 @@ properties:
     - 2500
     - 5000
     - 10000
-    default: 1000
   duplex:
     description:
       The duplex mode that shall be forced.
@@ -37,4 +36,11 @@ properties:
     enum:
     - half
     - full
-    default: full
+  services:
+    description:
+      The services that shall be offered on this L2 interface.
+    type: array
+    items:
+      type: string
+      examples:
+      - quality-of-service

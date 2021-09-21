@@ -148,6 +148,15 @@
                         "full"
                     ],
                     "default": "full"
+                },
+                "services": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "examples": [
+                            "quality-of-service"
+                        ]
+                    }
                 }
             }
         },
@@ -1902,12 +1911,6 @@
         "service.quality-of-service": {
             "type": "object",
             "properties": {
-                "select-port": {
-                    "type": "string",
-                    "examples": [
-                        "WAN"
-                    ]
-                },
                 "upload-rate": {
                     "type": "integer",
                     "default": 0
