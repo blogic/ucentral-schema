@@ -22,6 +22,7 @@ properties:
       - ptcp
       - ssl
       - tcp
+    default: ssl
   ca-certificate:
     description:
        The CA certificate.
