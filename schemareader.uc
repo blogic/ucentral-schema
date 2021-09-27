@@ -252,9 +252,6 @@ function instantiateEthernet(location, value, errors) {
 		if (exists(value, "speed")) {
 			obj.speed = parseSpeed(location + "/speed", value["speed"], errors);
 		}
-		else {
-			obj.speed = 1000;
-		}
 
 		function parseDuplex(location, value, errors) {
 			if (type(value) != "string")
@@ -268,9 +265,6 @@ function instantiateEthernet(location, value, errors) {
 
 		if (exists(value, "duplex")) {
 			obj.duplex = parseDuplex(location + "/duplex", value["duplex"], errors);
-		}
-		else {
-			obj.duplex = "full";
 		}
 
 		function parseServices(location, value, errors) {

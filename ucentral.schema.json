@@ -138,16 +138,14 @@
                         2500,
                         5000,
                         10000
-                    ],
-                    "default": 1000
+                    ]
                 },
                 "duplex": {
                     "type": "string",
                     "enum": [
                         "half",
                         "full"
-                    ],
-                    "default": "full"
+                    ]
                 },
                 "services": {
                     "type": "array",
