@@ -1,8 +1,7 @@
 {%
 if (!quality_of_service)
 	quality_of_service = {};
-let eth = services.lookup_ethernet("quality-of-service");
-let egress = ethernet.lookup_by_ethernet(eth);
+let egress = ethernet.lookup_by_select_ports([quality_of_service.select_port]);
 let enable = length(egress);
 services.set_enabled("sqm", enable);
 if (!enable)
@@ -17,6 +16,11 @@ function get_speed(dev, speed) {
 	if (!speed)
 		speed = ethernet.get_speed(dev);
 	return speed * 1000;
+}
+
+function dscp_map(dscp) {
+	let map = { "CS1": 8, "CS2": 16, "CS3": 24, "CS4": 32, "CS5": 40, "CS6": 48, "CS7": 56 };
+	return map[dscp] ? map[dscp] : 0;
 }
 
 %}
@@ -41,4 +45,18 @@ set sqm.@queue[-1].linklayer='ethernet'
 set sqm.@queue[-1].overhead='44'
 set sqm.@queue[-1].eqdisc_opts='diffserv4 no-split-gso'
 set sqm.@queue[-1].iqdisc_opts='diffserv4 no-split-gso'
+{% endfor %}
+
+{% for (let class in quality_of_service.classifier): %}
+{%   if (!length(class.ports) && !length(class.dns)) continue; %}
+{%   let dscp = dscp_map(class.dscp); %}
+add sqm classifier
+set sqm.@classifier[-1].dscp={{ dscp }}
+{%   for (let fqdn in class.dns): %}
+add_list sqm.@classifier[-1].dns={{ s(fqdn) }}
+{%   endfor %}
+{%   for (let port in class.ports): %}
+{%     if (!port.protocol || !port.port) continue; %}
+add_list sqm.@classifier[-1].ports='{{ port.protocol }}:{{ port.port }}{{ port.range_end ? ":" + port.range_end : "" }}'
+{%   endfor %}
 {% endfor %}
