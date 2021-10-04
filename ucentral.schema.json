@@ -1850,6 +1850,10 @@
                     "format": "uc-cidr",
                     "example": "192.168.10.1"
                 },
+                "datapath-description": {
+                    "type": "string",
+                    "example": "Building 2, Floor 6, AP 2"
+                },
                 "mode": {
                     "type": "string",
                     "enum": [
