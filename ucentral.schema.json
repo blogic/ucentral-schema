@@ -1824,7 +1824,7 @@
             "properties": {
                 "controller": {
                     "type": "string",
-                    "uc-format": "cidr",
+                    "format": "uc-cidr",
                     "example": "192.168.10.1"
                 },
                 "mode": {
@@ -1909,6 +1909,10 @@
         "service.quality-of-service": {
             "type": "object",
             "properties": {
+                "select-port": {
+                    "type": "string",
+                    "default": "WAN1"
+                },
                 "upload-rate": {
                     "type": "integer",
                     "default": 0
@@ -1916,6 +1920,59 @@
                 "download-rate": {
                     "type": "integer",
                     "default": 0
+                },
+                "reclassify-ingress": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "classifier": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "dscp": {
+                                "type": "string",
+                                "enum": [
+                                    "CS0",
+                                    "CS1",
+                                    "CS2",
+                                    "CS3",
+                                    "CS4",
+                                    "CS5",
+                                    "CS6",
+                                    "CS7"
+                                ],
+                                "default": "CS1"
+                            },
+                            "ports": {
+                                "type": "object",
+                                "properties": {
+                                    "protocol": {
+                                        "type": "string",
+                                        "enum": [
+                                            "any",
+                                            "tcp",
+                                            "udp"
+                                        ],
+                                        "default": "any"
+                                    },
+                                    "port": {
+                                        "type": "integer"
+                                    },
+                                    "range-end": {
+                                        "type": "integer"
+                                    }
+                                }
+                            },
+                            "dns": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "format": "fqdn"
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },

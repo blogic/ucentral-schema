@@ -2,6 +2,12 @@ description:
   This section describes the QoS behaviour of the unit.
 type: object
 properties:
+  select-port:
+    description:
+      The physical network devices that shall be considered the primary uplink interface.
+      All classification and shaping will happen on this device.
+    type: string
+    default: WAN1
   upload-rate:
     description:
       Defines the upload rate of this device. If it is not known or the device is
@@ -14,3 +20,61 @@ properties:
       attached to a shared medium, this value needs to be 0.
     type: integer
     default: 0
+  reclassify-ingress:
+    description:
+      Ignore the ToS/DSCP of incoming packets and reclassify them.
+    type: boolean
+    default: true
+  classifier:
+    description:
+      A list of classifiers. Each classifier will map certain traffic to specific ToS/DSCP
+      values based upon the defined constraints.
+    type: array
+    items:
+      type: object
+      properties:
+        dscp:
+          description:
+            The differentiated services code point that shall be assigned to packet that match
+            the rules of this entry.
+          type: string
+          enum:
+          - CS0
+          - CS1
+          - CS2
+          - CS3
+          - CS4
+          - CS5
+          - CS6
+          - CS7
+          default: CS1
+        ports:
+          description:
+            Each entry defines a layer3 protocol and a port(range) that will be used to match packets.
+          type: object
+          properties:
+            protocol:
+              description:
+                The port match can apply for TCP, UDP or any IP protocol.
+              type: string
+              enum:
+              - any
+              - tcp
+              - udp
+              default: any
+            port:
+              description:
+                The port of this match rule.
+              type: integer
+            range-end:
+              description:
+                The last port of this match rule if it is a port range.
+              type: integer
+        dns:
+          description:
+            Each entry defines a wildcard FQDN. The IP that this resolves to will be used to match packets.
+          type: array
+          items:
+            type: string
+            format: fqdn
+

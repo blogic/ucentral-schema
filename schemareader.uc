@@ -4823,6 +4823,12 @@ function instantiateServiceOpenFlow(location, value, errors) {
 		let obj = {};
 
 		function parseController(location, value, errors) {
+			if (type(value) == "string") {
+				if (!matchUcCidr(value))
+					push(errors, [ location, "must be a valid IPv4 or IPv6 CIDR" ]);
+
+			}
+
 			if (type(value) != "string")
 				push(errors, [ location, "must be of type string" ]);
 
@@ -5073,6 +5079,20 @@ function instantiateServiceQualityOfService(location, value, errors) {
 	if (type(value) == "object") {
 		let obj = {};
 
+		function parseSelectPort(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "select-port")) {
+			obj.select_port = parseSelectPort(location + "/select-port", value["select-port"], errors);
+		}
+		else {
+			obj.select_port = "WAN1";
+		}
+
 		function parseUploadRate(location, value, errors) {
 			if (type(value) != "int")
 				push(errors, [ location, "must be of type integer" ]);
@@ -5099,6 +5119,149 @@ function instantiateServiceQualityOfService(location, value, errors) {
 		}
 		else {
 			obj.download_rate = 0;
+		}
+
+		function parseReclassifyIngress(location, value, errors) {
+			if (type(value) != "bool")
+				push(errors, [ location, "must be of type boolean" ]);
+
+			return value;
+		}
+
+		if (exists(value, "reclassify-ingress")) {
+			obj.reclassify_ingress = parseReclassifyIngress(location + "/reclassify-ingress", value["reclassify-ingress"], errors);
+		}
+		else {
+			obj.reclassify_ingress = true;
+		}
+
+		function parseClassifier(location, value, errors) {
+			if (type(value) == "array") {
+				function parseItem(location, value, errors) {
+					if (type(value) == "object") {
+						let obj = {};
+
+						function parseDscp(location, value, errors) {
+							if (type(value) != "string")
+								push(errors, [ location, "must be of type string" ]);
+
+							if (!(value in [ "CS0", "CS1", "CS2", "CS3", "CS4", "CS5", "CS6", "CS7" ]))
+								push(errors, [ location, "must be one of \"CS0\", \"CS1\", \"CS2\", \"CS3\", \"CS4\", \"CS5\", \"CS6\" or \"CS7\"" ]);
+
+							return value;
+						}
+
+						if (exists(value, "dscp")) {
+							obj.dscp = parseDscp(location + "/dscp", value["dscp"], errors);
+						}
+						else {
+							obj.dscp = "CS1";
+						}
+
+						function parsePorts(location, value, errors) {
+							if (type(value) == "object") {
+								let obj = {};
+
+								function parseProtocol(location, value, errors) {
+									if (type(value) != "string")
+										push(errors, [ location, "must be of type string" ]);
+
+									if (!(value in [ "any", "tcp", "udp" ]))
+										push(errors, [ location, "must be one of \"any\", \"tcp\" or \"udp\"" ]);
+
+									return value;
+								}
+
+								if (exists(value, "protocol")) {
+									obj.protocol = parseProtocol(location + "/protocol", value["protocol"], errors);
+								}
+								else {
+									obj.protocol = "any";
+								}
+
+								function parsePort(location, value, errors) {
+									if (type(value) != "int")
+										push(errors, [ location, "must be of type integer" ]);
+
+									return value;
+								}
+
+								if (exists(value, "port")) {
+									obj.port = parsePort(location + "/port", value["port"], errors);
+								}
+
+								function parseRangeEnd(location, value, errors) {
+									if (type(value) != "int")
+										push(errors, [ location, "must be of type integer" ]);
+
+									return value;
+								}
+
+								if (exists(value, "range-end")) {
+									obj.range_end = parseRangeEnd(location + "/range-end", value["range-end"], errors);
+								}
+
+								return obj;
+							}
+
+							if (type(value) != "object")
+								push(errors, [ location, "must be of type object" ]);
+
+							return value;
+						}
+
+						if (exists(value, "ports")) {
+							obj.ports = parsePorts(location + "/ports", value["ports"], errors);
+						}
+
+						function parseDns(location, value, errors) {
+							if (type(value) == "array") {
+								function parseItem(location, value, errors) {
+									if (type(value) == "string") {
+										if (!matchFqdn(value))
+											push(errors, [ location, "must be a valid fully qualified domain name" ]);
+
+									}
+
+									if (type(value) != "string")
+										push(errors, [ location, "must be of type string" ]);
+
+									return value;
+								}
+
+								return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
+							}
+
+							if (type(value) != "array")
+								push(errors, [ location, "must be of type array" ]);
+
+							return value;
+						}
+
+						if (exists(value, "dns")) {
+							obj.dns = parseDns(location + "/dns", value["dns"], errors);
+						}
+
+						return obj;
+					}
+
+					if (type(value) != "object")
+						push(errors, [ location, "must be of type object" ]);
+
+					return value;
+				}
+
+				return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
+			}
+
+			if (type(value) != "array")
+				push(errors, [ location, "must be of type array" ]);
+
+			return value;
+		}
+
+		if (exists(value, "classifier")) {
+			obj.classifier = parseClassifier(location + "/classifier", value["classifier"], errors);
 		}
 
 		return obj;
