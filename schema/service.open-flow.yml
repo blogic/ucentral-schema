@@ -8,6 +8,11 @@ properties:
     type: string
     format: uc-cidr
     example: 192.168.10.1
+  datapath-description:
+    description:
+      Set a human-readable description for the bridge.
+    type: string
+    example: Building 2, Floor 6, AP 2
   mode:
     description:
       The mode to use for the OpenFlow controller target.
