@@ -789,6 +789,7 @@
                         "sae",
                         "sae-mixed",
                         "wpa3",
+                        "wpa3-192",
                         "wpa3-mixed"
                     ],
                     "examples": [

@@ -63,7 +63,7 @@
 	}
 
 	function validate_encryption_ap() {
-		if (ssid.encryption.proto in [ "wpa", "wpa2", "wpa-mixed", "wpa3", "wpa3-mixed" ] &&
+		if (ssid.encryption.proto in [ "wpa", "wpa2", "wpa-mixed", "wpa3", "wpa3-mixed", "wpa3-192" ] &&
 		    ssid.radius && ssid.radius.local &&
 		    length(certificates))
 			return {
@@ -73,7 +73,7 @@
 			};
 
 
-		if (ssid.encryption.proto in [ "wpa", "wpa2", "wpa-mixed", "wpa3", "wpa3-mixed" ] &&
+		if (ssid.encryption.proto in [ "wpa", "wpa2", "wpa-mixed", "wpa3", "wpa3-mixed", "wpa3-192" ] &&
 		    ssid.radius && ssid.radius.authentication &&
 		    ssid.radius.authentication.host &&
 		    ssid.radius.authentication.port &&
@@ -89,7 +89,7 @@
 	}
 
 	function validate_encryption_sta() {
-		if (ssid.encryption.proto in [ "wpa", "wpa2", "wpa-mixed", "wpa3", "wpa3-mixed" ] &&
+		if (ssid.encryption.proto in [ "wpa", "wpa2", "wpa-mixed", "wpa3", "wpa3-mixed", "wpa3-192" ] &&
 		    length(certificates))
 			return {
 				proto: ssid.encryption.proto,
@@ -130,21 +130,12 @@
 			return 0;
 
 		if (ssid.encryption.proto in [ "sae-mixed", "wpa3-mixed" ])
-			return 2;
+			return 1;
 
-		if (ssid.encryption.proto in [ "sae", "wpa3" ])
+		if (ssid.encryption.proto in [ "sae", "wpa3", "wpa3-192" ])
 			return 2;
 
 		return index([ "disabled", "optional", "required" ], ssid.encryption.ieee80211w);
-	}
-
-	function match_proto(proto) {
-		let protos = {
-			"wpa3": "eap256",
-			"wpa3-mixed": "eap-eap192"
-		};
-
-		return protos[proto] || proto;
 	}
 
 	function match_wds() {
