@@ -312,7 +312,7 @@ add_list wireless.{{ section }}.iw_venue_url={{ s((n + 1) + ":" +url) }}
 set wireless.{{ section }}.iw_network_auth_type='{{ match_hs20_auth_type(ssid.pass_point.auth_type) }}'
 set wireless.{{ section }}.iw_domain_name={{ s(ssid.pass_point.domain_name) }}
 {%       for (let realm in ssid.pass_point.nai_realm): %}
-set wireless.{{ section }}.iw_nai_realm='{{ realm }}'
+add_list wireless.{{ section }}.iw_nai_realm='{{ realm }}'
 {%       endfor %}
 set wireless.{{ section }}.osen={{ b(ssid.pass_point.osen) }}
 set wireless.{{ section }}.anqp_domain_id='{{ ssid.pass_point.anqp_domain }}'
