@@ -3214,6 +3214,59 @@ function instantiateInterfaceSsidPassPoint(location, value, errors) {
 			obj.icons = parseIcons(location + "/icons", value["icons"], errors);
 		}
 
+		function parseWanMetrics(location, value, errors) {
+			if (type(value) == "object") {
+				let obj = {};
+
+				function parseInfo(location, value, errors) {
+					if (type(value) != "string")
+						push(errors, [ location, "must be of type string" ]);
+
+					if (!(value in [ "up", "down", "testing" ]))
+						push(errors, [ location, "must be one of \"up\", \"down\" or \"testing\"" ]);
+
+					return value;
+				}
+
+				if (exists(value, "info")) {
+					obj.info = parseInfo(location + "/info", value["info"], errors);
+				}
+
+				function parseDownlink(location, value, errors) {
+					if (type(value) != "int")
+						push(errors, [ location, "must be of type integer" ]);
+
+					return value;
+				}
+
+				if (exists(value, "downlink")) {
+					obj.downlink = parseDownlink(location + "/downlink", value["downlink"], errors);
+				}
+
+				function parseUplink(location, value, errors) {
+					if (type(value) != "int")
+						push(errors, [ location, "must be of type integer" ]);
+
+					return value;
+				}
+
+				if (exists(value, "uplink")) {
+					obj.uplink = parseUplink(location + "/uplink", value["uplink"], errors);
+				}
+
+				return obj;
+			}
+
+			if (type(value) != "object")
+				push(errors, [ location, "must be of type object" ]);
+
+			return value;
+		}
+
+		if (exists(value, "wan-metrics")) {
+			obj.wan_metrics = parseWanMetrics(location + "/wan-metrics", value["wan-metrics"], errors);
+		}
+
 		return obj;
 	}
 

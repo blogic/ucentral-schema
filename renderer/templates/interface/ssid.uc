@@ -152,6 +152,17 @@
 		return (auth_type && auth_type.type) ? types[auth_type.type] : '';
 	}
 
+	function get_hs20_wan_metrics() {
+		if (!ssid.pass_point.wan_metrics ||
+		    !ssid.pass_point.wan_metrics.info ||
+		    !ssid.pass_point.wan_metrics.downlink ||
+		    ! ssid.pass_point.wan_metrics.uplink)
+			return '';
+		let map = {"up": 1, "down": 2, "testing": 3};
+		let info = map[ssid.pass_point.wan_metrics.info] ? map[ssid.pass_point.wan_metrics.info] : 1;
+		return sprintf("%02d:%d:%d:0:0:0", info, ssid.pass_point.wan_metrics.downlink, ssid.pass_point.wan_metrics.uplink);
+	}
+
 	function openflow_ifname(n, count) {
 		if (!length(openflow_prefix))
 			return '';
@@ -326,6 +337,7 @@ set wireless.{{ section }}.iw_ipaddr_type_availability={{ s(sprintf("%02x", ssid
 {%       for (let name in ssid.pass_point.connection_capability): %}
 add_list wireless.{{ section }}.hs20_conn_capab={{ s(name) }}
 {%       endfor %}
+set wireless.{{ section }}.hs20_wan_metrics={{ s(get_hs20_wan_metrics()) }}
 {%     endif %}
 
 {%     if (ssid.pass_point): %}

@@ -184,3 +184,24 @@ properties:
         type: image/png
         language: eng
         icon: R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7
+  wan-metrics:
+    description:
+      A description of the wan metric offered by this device.
+    type: object
+    properties:
+      info:
+        description:
+          The state of the devices uplink
+        type: string
+        enum:
+        - up
+        - down
+        - testing
+      downlink:
+        description:
+          Estimate of WAN backhaul link current downlink speed in kbps.
+        type: integer
+      uplink:
+        description:
+          Estimate of WAN backhaul link current uplink speed in kbps.
+        type: integer

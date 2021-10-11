@@ -1248,6 +1248,25 @@
                             }
                         ]
                     }
+                },
+                "wan-metrics": {
+                    "type": "object",
+                    "properties": {
+                        "info": {
+                            "type": "string",
+                            "enum": [
+                                "up",
+                                "down",
+                                "testing"
+                            ]
+                        },
+                        "downlink": {
+                            "type": "integer"
+                        },
+                        "uplink": {
+                            "type": "integer"
+                        }
+                    }
                 }
             }
         },
