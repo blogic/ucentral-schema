@@ -55,8 +55,10 @@ properties:
   domain-name:
     description:
       The IEEE 802.11u Domain Name.
-    type: string
-    format: hostname
+    type: array
+    items:
+      type: string
+      format: hostname
   nai-realm:
     description:
       NAI Realm information

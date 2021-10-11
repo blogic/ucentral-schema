@@ -2844,14 +2844,25 @@ function instantiateInterfaceSsidPassPoint(location, value, errors) {
 		}
 
 		function parseDomainName(location, value, errors) {
-			if (type(value) == "string") {
-				if (!matchHostname(value))
-					push(errors, [ location, "must be a valid hostname" ]);
+			if (type(value) == "array") {
+				function parseItem(location, value, errors) {
+					if (type(value) == "string") {
+						if (!matchHostname(value))
+							push(errors, [ location, "must be a valid hostname" ]);
 
+					}
+
+					if (type(value) != "string")
+						push(errors, [ location, "must be of type string" ]);
+
+					return value;
+				}
+
+				return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
 			}
 
-			if (type(value) != "string")
-				push(errors, [ location, "must be of type string" ]);
+			if (type(value) != "array")
+				push(errors, [ location, "must be of type array" ]);
 
 			return value;
 		}

@@ -310,7 +310,7 @@ set wireless.{{ section }}.iw_venue_type='{{ ssid.pass_point.venue_type }}'
 add_list wireless.{{ section }}.iw_venue_url={{ s((n + 1) + ":" +url) }}
 {%       endfor %}
 set wireless.{{ section }}.iw_network_auth_type='{{ match_hs20_auth_type(ssid.pass_point.auth_type) }}'
-set wireless.{{ section }}.iw_domain_name={{ s(ssid.pass_point.domain_name) }}
+set wireless.{{ section }}.iw_domain_name={{ s(join(":", ssid.pass_point.domain_name)) }}
 {%       for (let realm in ssid.pass_point.nai_realm): %}
 add_list wireless.{{ section }}.iw_nai_realm='{{ realm }}'
 {%       endfor %}

@@ -1126,8 +1126,11 @@
                     "maxLength": 2
                 },
                 "domain-name": {
-                    "type": "string",
-                    "format": "hostname"
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "format": "hostname"
+                    }
                 },
                 "nai-realm": {
                     "type": "array",
