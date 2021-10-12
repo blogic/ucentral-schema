@@ -128,16 +128,18 @@
 		interface.type = 'bridge';
 		netdev = '';
 		delete interface.ipv6;
-	} else if ("open-flow" in interface.services) {
+	} else if ("open-flow" in interface.services && interface.role == "downstream") {
 		netdev = "gw0";
 		network = "";
-		openflow_prefix = "ofwlan";
 	} else if (!interface.ethernet && length(interface.ssids) == 1 && !tunnel_proto)
 		// interfaces with a single ssid and no tunnel do not need a bridge
 		netdev = ''
 	else
 		// anything else requires a bridge-vlan
 		include("interface/bridge-vlan.uc", { interface, name, eth_ports, this_vid, bridgedev });
+
+	if ("open-flow" in interface.services)
+		openflow_prefix = "ofwlan";
 
 	include("interface/common.uc", {
 		name, this_vid, netdev,
