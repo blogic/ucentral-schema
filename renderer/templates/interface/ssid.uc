@@ -197,7 +197,9 @@ set wireless.{{ section }}.mode={{ bss_mode }}
 set wireless.{{ section }}.mesh_id={{ s(ssid.name) }}
 set wireless.{{ section }}.mesh_fwding=0
 set wireless.{{ section }}.network=batman_mesh
+set wireless.{{ section }}.mcast_rate=24000
 {%   endif %}
+
 {%   if (index([ 'ap', 'sta' ], bss_mode) >= 0): %}
 {%     for (let i, name in ethernet.calculate_names(interface)): %}
 {{ i ? 'add_list' : 'set' }} wireless.{{ section }}.network={{ network }}
@@ -289,17 +291,13 @@ set wireless.{{ section }}.r0kh={{ s(ssid.roaming.pmk_r0_key_holder) }}
 set wireless.{{ section }}.r1kh={{ s(ssid.roaming.pmk_r1_key_holder) }}
 {%     endif %}
 
-{%     if (bss_mode == "mesh"): %}
-set wireless.{{ section }}.mcast_rate=24000
-{%     endif %}
-
 {%     if (ssid.quality_thresholds): %}
 set wireless.{{ section }}.rssi_reject_assoc_rssi={{ ssid.quality_thresholds.association_request_rssi }}
 set wireless.{{ section }}.rssi_ignore_probe_request={{ ssid.quality_thresholds.probe_request_rssi }}
 {%     endif %}
 
 {%  for (let raw in ssid.hostapd_bss_raw): %}
-set wireless.{{ section }}.hostapd_bss_options={{ s(raw) }}
+add_list wireless.{{ section }}.hostapd_bss_options={{ s(raw) }}
 {%  endfor %}
 
 {%     if (ssid.pass_point): %}

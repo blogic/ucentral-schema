@@ -121,6 +121,6 @@ set wireless.{{ phy.section }}.ema={{ b(radio.he_settings.ema) }}
 set wireless.{{ phy.section }}.basic_rate={{ radio.rates.multicast }}
 {%  endif %}
 {%  for (let raw in radio.hostapd_iface_raw): %}
-set wireless.{{ phy.section }}.hostapd_options={{ s(raw) }}
+add_list wireless.{{ phy.section }}.hostapd_options={{ s(raw) }}
 {%  endfor %}
 {% endfor %}
