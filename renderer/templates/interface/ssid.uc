@@ -298,6 +298,10 @@ set wireless.{{ section }}.rssi_reject_assoc_rssi={{ ssid.quality_thresholds.ass
 set wireless.{{ section }}.rssi_ignore_probe_request={{ ssid.quality_thresholds.probe_request_rssi }}
 {%     endif %}
 
+{%  for (let raw in ssid.hostapd_bss_raw): %}
+set wireless.{{ section }}.hostapd_bss_options={{ s(raw) }}
+{%  endfor %}
+
 {%     if (ssid.pass_point): %}
 set wireless.{{ section }}.iw_enabled=1
 set wireless.{{ section }}.hs20=1
