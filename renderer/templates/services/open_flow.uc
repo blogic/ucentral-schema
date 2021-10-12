@@ -32,6 +32,23 @@ set openvswitch.@ovs_bridge[-1].name="br-ovs"
 
 add openvswitch ovs_port
 set openvswitch.@ovs_port[-1].bridge="br-ovs"
-set openvswitch.@ovs_port[-1].port="gw0"
 set openvswitch.@ovs_port[-1].ofport="1"
+{% if (interfaces[0].role == "downstream"): %}
+set openvswitch.@ovs_port[-1].port="gw0"
 set openvswitch.@ovs_port[-1].type="internal"
+{% else %}
+set openvswitch.@ovs_port[-1].port="oflow_ovs"
+
+add network device
+set network.@device[-1].name="oflow_lbr"
+set network.@device[-1].type="veth"
+set network.@device[-1].peer_name="oflow_ovs"
+
+set network.oflow_lbr="interface"
+set network.oflow_lbr.device="oflow_lbr"
+set network.oflow_lbr.proto="none"
+
+set network.oflow_ovs="interface"
+set network.oflow_ovs.device="oflow_ovs"
+set network.oflow_ovs.proto="none"
+{% endif %}
