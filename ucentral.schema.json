@@ -1486,10 +1486,6 @@
                     "type": "string",
                     "format": "ipv4",
                     "example": "192.168.100.1"
-                },
-                "vlan-id": {
-                    "type": "integer",
-                    "maximum": 4096
                 }
             }
         },

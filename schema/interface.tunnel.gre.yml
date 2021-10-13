@@ -14,9 +14,3 @@ properties:
     type: string
     format: ipv4
     example: '192.168.100.1'
-  vlan-id:
-    description:
-      This is the id of the vlan that shall be assigned to the interface.
-    type: integer
-    maximum: 4096
-

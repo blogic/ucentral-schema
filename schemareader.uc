@@ -3843,23 +3843,6 @@ function instantiateInterfaceTunnelGre(location, value, errors) {
 			obj.peer_address = parsePeerAddress(location + "/peer-address", value["peer-address"], errors);
 		}
 
-		function parseVlanId(location, value, errors) {
-			if (type(value) in [ "int", "double" ]) {
-				if (value > 4096)
-					push(errors, [ location, "must be lower than or equal to 4096" ]);
-
-			}
-
-			if (type(value) != "int")
-				push(errors, [ location, "must be of type integer" ]);
-
-			return value;
-		}
-
-		if (exists(value, "vlan-id")) {
-			obj.vlan_id = parseVlanId(location + "/vlan-id", value["vlan-id"], errors);
-		}
-
 		return obj;
 	}
 
