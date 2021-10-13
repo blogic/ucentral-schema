@@ -1847,7 +1847,7 @@
             "properties": {
                 "controller": {
                     "type": "string",
-                    "format": "uc-cidr",
+                    "format": "ip",
                     "example": "192.168.10.1"
                 },
                 "datapath-description": {
