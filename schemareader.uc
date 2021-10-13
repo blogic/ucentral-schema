@@ -4892,8 +4892,8 @@ function instantiateServiceOpenFlow(location, value, errors) {
 
 		function parseController(location, value, errors) {
 			if (type(value) == "string") {
-				if (!matchUcCidr(value))
-					push(errors, [ location, "must be a valid IPv4 or IPv6 CIDR" ]);
+				if (!matchIp(value))
+					push(errors, [ location, "must be a valid IPv4 or IPv6 address" ]);
 
 			}
 
