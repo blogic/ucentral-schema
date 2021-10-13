@@ -4903,6 +4903,17 @@ function instantiateServiceOpenFlow(location, value, errors) {
 			obj.controller = parseController(location + "/controller", value["controller"], errors);
 		}
 
+		function parseDatapathDescription(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "datapath-description")) {
+			obj.datapath_description = parseDatapathDescription(location + "/datapath-description", value["datapath-description"], errors);
+		}
+
 		function parseMode(location, value, errors) {
 			if (type(value) != "string")
 				push(errors, [ location, "must be of type string" ]);
@@ -4915,6 +4926,9 @@ function instantiateServiceOpenFlow(location, value, errors) {
 
 		if (exists(value, "mode")) {
 			obj.mode = parseMode(location + "/mode", value["mode"], errors);
+		}
+		else {
+			obj.mode = "ssl";
 		}
 
 		function parseCaCertificate(location, value, errors) {

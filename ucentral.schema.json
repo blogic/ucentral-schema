@@ -1861,7 +1861,8 @@
                         "ptcp",
                         "ssl",
                         "tcp"
-                    ]
+                    ],
+                    "default": "ssl"
                 },
                 "ca-certificate": {
                     "type": "string"
