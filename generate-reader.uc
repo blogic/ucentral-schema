@@ -113,6 +113,12 @@ let GeneratorProto = {
 				'return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 1);'
 			]
 		},
+		"ip": {
+			desc: 'IPv4 or IPv6 address',
+			code: [
+				'return (length(iptoarr(value)) == 4 || length(iptoarr(value)) == 16);'
+			]
+		},
 		"ipv4": {
 			desc: 'IPv4 address',
 			code: [
