@@ -62,7 +62,8 @@ try {
 		for (let cmd in [ 'uci -c /tmp/config-shadow commit',
 				  'cp /tmp/config-shadow/* /etc/config/',
 				  'rm -rf /tmp/config-shadow',
-				  'reload_config'])
+				  'reload_config',
+				  '/etc/init.d/dnsmasq restart'])
 			system(cmd);
 
 		let old_config = fs.readlink("/etc/ucentral/ucentral.active");
