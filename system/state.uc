@@ -299,6 +299,7 @@
 
 					ssid.ssid = iface.ssid;
 					ssid.mode = iface.mode;
+					ssid.bssid = iface.bssid;
 
 					if (length(stations[vap.ifname]))
 						ssid.associations = stations[vap.ifname];
