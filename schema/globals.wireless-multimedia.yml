@@ -1,0 +1,22 @@
+description:
+  Define the default WMM behaviour of all SSIDs on the device. Each access
+  category can be assigned a default class selector that gets used for packet
+  matching.
+type: object
+properties:
+  UP0:
+    $ref: 'https://ucentral.io/schema/v1/globals/wireless-multimedia/class-selector/'
+  UP1:
+    $ref: 'https://ucentral.io/schema/v1/globals/wireless-multimedia/class-selector/'
+  UP2:
+    $ref: 'https://ucentral.io/schema/v1/globals/wireless-multimedia/class-selector/'
+  UP3:
+    $ref: 'https://ucentral.io/schema/v1/globals/wireless-multimedia/class-selector/'
+  UP4:
+    $ref: 'https://ucentral.io/schema/v1/globals/wireless-multimedia/class-selector/'
+  UP5:
+    $ref: 'https://ucentral.io/schema/v1/globals/wireless-multimedia/class-selector/'
+  UP6:
+    $ref: 'https://ucentral.io/schema/v1/globals/wireless-multimedia/class-selector/'
+  UP7:
+    $ref: 'https://ucentral.io/schema/v1/globals/wireless-multimedia/class-selector/'

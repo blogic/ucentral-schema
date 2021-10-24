@@ -78,6 +78,69 @@
                 }
             }
         },
+        "globals.wireless-multimedia.class-selector": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "enum": [
+                    "CS1",
+                    "CS2",
+                    "CS3",
+                    "CS4",
+                    "CS5",
+                    "CS6",
+                    "AF11",
+                    "AF12",
+                    "AF13",
+                    "AF21",
+                    "AF22",
+                    "AF23",
+                    "AF31",
+                    "AF32",
+                    "AF33",
+                    "AF41",
+                    "AF42",
+                    "AF43",
+                    "DF",
+                    "EF"
+                ]
+            }
+        },
+        "globals.wireless-multimedia": {
+            "type": "object",
+            "properties": {
+                "UP0": {
+                    "$ref": "#/$defs/globals.wireless-multimedia.class-selector"
+                },
+                "UP1": {
+                    "$ref": "#/$defs/globals.wireless-multimedia.class-selector"
+                },
+                "UP2": {
+                    "$ref": "#/$defs/globals.wireless-multimedia.class-selector"
+                },
+                "UP3": {
+                    "$ref": "#/$defs/globals.wireless-multimedia.class-selector"
+                },
+                "UP4": {
+                    "$ref": "#/$defs/globals.wireless-multimedia.class-selector"
+                },
+                "UP5": {
+                    "$ref": "#/$defs/globals.wireless-multimedia.class-selector"
+                },
+                "UP6": {
+                    "$ref": "#/$defs/globals.wireless-multimedia.class-selector"
+                },
+                "UP7": {
+                    "$ref": "#/$defs/globals.wireless-multimedia.class-selector"
+                }
+            }
+        },
+        "globals.wireless-multimedia-profile": {
+            "type": "string",
+            "enum": [
+                "enterprise"
+            ]
+        },
         "globals": {
             "type": "object",
             "properties": {
@@ -93,6 +156,16 @@
                     "format": "uc-cidr6",
                     "examples": [
                         "fdca:1234:4567::/48"
+                    ]
+                },
+                "wireless-multimedia": {
+                    "oneOf": [
+                        {
+                            "$ref": "#/$defs/globals.wireless-multimedia"
+                        },
+                        {
+                            "$ref": "#/$defs/globals.wireless-multimedia-profile"
+                        }
                     ]
                 }
             }
@@ -1933,21 +2006,20 @@
         "service.quality-of-service": {
             "type": "object",
             "properties": {
-                "select-port": {
-                    "type": "string",
-                    "default": "WAN1"
+                "select-ports": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "default": "WAN"
+                    }
                 },
-                "upload-rate": {
+                "bandwidth-up": {
                     "type": "integer",
                     "default": 0
                 },
-                "download-rate": {
+                "bandwidth-down": {
                     "type": "integer",
                     "default": 0
-                },
-                "reclassify-ingress": {
-                    "type": "boolean",
-                    "default": true
                 },
                 "classifier": {
                     "type": "array",
@@ -1969,30 +2041,37 @@
                                 "default": "CS1"
                             },
                             "ports": {
-                                "type": "object",
-                                "properties": {
-                                    "protocol": {
-                                        "type": "string",
-                                        "enum": [
-                                            "any",
-                                            "tcp",
-                                            "udp"
-                                        ],
-                                        "default": "any"
-                                    },
-                                    "port": {
-                                        "type": "integer"
-                                    },
-                                    "range-end": {
-                                        "type": "integer"
-                                    }
-                                }
-                            },
-                            "dns": {
                                 "type": "array",
                                 "items": {
-                                    "type": "string",
-                                    "format": "fqdn"
+                                    "type": "object",
+                                    "properties": {
+                                        "protocol": {
+                                            "type": "string",
+                                            "enum": [
+                                                "any",
+                                                "tcp",
+                                                "udp"
+                                            ],
+                                            "default": "any"
+                                        },
+                                        "port": {
+                                            "type": "integer"
+                                        },
+                                        "range-end": {
+                                            "type": "integer"
+                                        },
+                                        "reclassify": {
+                                            "type": "boolean",
+                                            "default": true
+                                        }
+                                    }
+                                },
+                                "dns": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "format": "fqdn"
+                                    }
                                 }
                             }
                         }

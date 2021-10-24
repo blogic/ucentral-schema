@@ -2,29 +2,26 @@ description:
   This section describes the QoS behaviour of the unit.
 type: object
 properties:
-  select-port:
+  select-ports:
     description:
       The physical network devices that shall be considered the primary uplink interface.
       All classification and shaping will happen on this device.
-    type: string
-    default: WAN1
-  upload-rate:
+    type: array
+    items:
+      type: string
+      default: WAN
+  bandwidth-up:
     description:
-      Defines the upload rate of this device. If it is not known or the device is
+      Defines the upload bandwidth of this device. If it is not known or the device is
       attached to a shared medium, this value needs to be 0.
     type: integer
     default: 0
-  download-rate:
+  bandwidth-down:
     description:
-      Defines the download rate of this device. If it is not known or the device is
+      Defines the download bandwidth of this device. If it is not known or the device is
       attached to a shared medium, this value needs to be 0.
     type: integer
     default: 0
-  reclassify-ingress:
-    description:
-      Ignore the ToS/DSCP of incoming packets and reclassify them.
-    type: boolean
-    default: true
   classifier:
     description:
       A list of classifiers. Each classifier will map certain traffic to specific ToS/DSCP
@@ -51,30 +48,36 @@ properties:
         ports:
           description:
             Each entry defines a layer3 protocol and a port(range) that will be used to match packets.
-          type: object
-          properties:
-            protocol:
-              description:
-                The port match can apply for TCP, UDP or any IP protocol.
-              type: string
-              enum:
-              - any
-              - tcp
-              - udp
-              default: any
-            port:
-              description:
-                The port of this match rule.
-              type: integer
-            range-end:
-              description:
-                The last port of this match rule if it is a port range.
-              type: integer
-        dns:
-          description:
-            Each entry defines a wildcard FQDN. The IP that this resolves to will be used to match packets.
           type: array
           items:
-            type: string
-            format: fqdn
-
+            type: object
+            properties:
+              protocol:
+                description:
+                  The port match can apply for TCP, UDP or any IP protocol.
+                type: string
+                enum:
+                - any
+                - tcp
+                - udp
+                default: any
+              port:
+                description:
+                  The port of this match rule.
+                type: integer
+              range-end:
+                description:
+                  The last port of this match rule if it is a port range.
+                type: integer
+              reclassify:
+                description:
+                  Ignore the ToS/DSCP of packets and reclassify them.
+                type: boolean
+                default: true
+          dns:
+            description:
+              Each entry defines a wildcard FQDN. The IP that this resolves to will be used to match packets.
+            type: array
+            items:
+              type: string
+              format: fqdn

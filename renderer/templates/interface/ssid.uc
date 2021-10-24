@@ -342,6 +342,9 @@ add_list wireless.{{ section }}.hs20_conn_capab={{ s(name) }}
 set wireless.{{ section }}.hs20_wan_metrics={{ s(get_hs20_wan_metrics()) }}
 {%     endif %}
 
+{% include("wmm.uc", { section }); %}
+
+
 {%     if (ssid.pass_point): %}
 {%       for (let id, icon in ssid.pass_point.icons): %}
 add wireless hs20-icon
@@ -351,6 +354,9 @@ set wireless.@hs20-icon[-1].type={{ s(icon.type) }}
 set wireless.@hs20-icon[-1].lang={{ s(icon.language) }}
 set wireless.@hs20-icon[-1].path={{ s(files.add_anonymous(location, 'hs20_icon_' + id, b64dec(icon.icon))) }}
 {%       endfor %}
+
+
+
 {%     endif %}
 
 add wireless wifi-vlan

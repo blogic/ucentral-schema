@@ -19,3 +19,7 @@ properties:
     format: uc-cidr6
     examples:
     - fdca:1234:4567::/48
+  wireless-multimedia:
+    oneOf:
+     - $ref: 'https://ucentral.io/schema/v1/globals/wireless-multimedia/'
+     - $ref: 'https://ucentral.io/schema/v1/globals/wireless-multimedia-profile/'
