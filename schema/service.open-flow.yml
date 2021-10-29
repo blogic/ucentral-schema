@@ -6,7 +6,7 @@ properties:
     description:
       The CIDR of the OpenFlow controller target.
     type: string
-    format: ip
+    format: uc-ip
     example: 192.168.10.1
   datapath-description:
     description:

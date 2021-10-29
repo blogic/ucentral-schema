@@ -50,7 +50,7 @@ function matchFqdn(value) {
 	return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 1);
 }
 
-function matchIp(value) {
+function matchUcIp(value) {
 	return (length(iptoarr(value)) == 4 || length(iptoarr(value)) == 16);
 }
 
@@ -5008,7 +5008,7 @@ function instantiateServiceOpenFlow(location, value, errors) {
 
 		function parseController(location, value, errors) {
 			if (type(value) == "string") {
-				if (!matchIp(value))
+				if (!matchUcIp(value))
 					push(errors, [ location, "must be a valid IPv4 or IPv6 address" ]);
 
 			}
