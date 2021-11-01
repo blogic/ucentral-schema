@@ -1,4 +1,12 @@
 {% let afnames = ethernet.calculate_names(interface) %}
+{% if (length(afnames) >= 2): %}
+set network.{{ netdev }}=interface
+set network.{{ netdev }}.ucentral_name={{ s(interface.name) }}
+set network.{{ netdev }}.ucentral_path={{ s(location) }}
+set network.{{ netdev }}.ifname={{ netdev }}
+set network.{{ netdev }}.metric={{ interface.metric }}
+set network.{{ netdev }}.proto=none
+{% endif %}
 {% for (let afidx, afname in afnames): %}
 set network.{{ afname }}=interface
 set network.{{ afname }}.ucentral_name={{ s(interface.name) }}

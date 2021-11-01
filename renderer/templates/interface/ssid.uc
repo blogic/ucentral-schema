@@ -201,9 +201,7 @@ set wireless.{{ section }}.mcast_rate=24000
 {%   endif %}
 
 {%   if (index([ 'ap', 'sta' ], bss_mode) >= 0): %}
-{%     for (let i, name in ethernet.calculate_names(interface)): %}
-{{ i ? 'add_list' : 'set' }} wireless.{{ section }}.network={{ network }}
-{%     endfor %}
+set wireless.{{ section }}.network={{ network }}
 set wireless.{{ section }}.ssid={{ s(ssid.name) }}
 set wireless.{{ section }}.mode={{ s(bss_mode) }}
 set wireless.{{ section }}.bssid={{ ssid.bssid }}
