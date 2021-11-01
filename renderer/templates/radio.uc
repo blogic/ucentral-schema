@@ -19,8 +19,9 @@
 			return [ mode, mode_weight[m[1]] * (m[2] == "80+80" ? 159 : +m[2]) ];
 		}), (a, b) => (b[1] - a[1])), i => i[0]);
 		supported_phy_modes = filter(supported_phy_modes, mode =>
-			!((index(phy.band, "2G") >= 0 && mode == "VHT80") || (index(phy.band, "5G") >= 0 && (mode == "VHT160" || mode == "VHT80+80"))));
-
+			!((index(phy.band, "2G") >= 0 && mode == "VHT80") ||
+			(index(phy.band, "5G") >= 0 && (mode == "VHT160" || mode == "VHT80+80")) ||
+			(index(phy.band, "5G") >= 0 && (mode == "HE160" || mode == "HE80+80"))));
 		if (wanted_mode in supported_phy_modes)
 			return wanted_mode;
 
