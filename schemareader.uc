@@ -5431,6 +5431,79 @@ function instantiateServiceQualityOfService(location, value, errors) {
 							obj.ports = parsePorts(location + "/ports", value["ports"], errors);
 						}
 
+						function parseDns(location, value, errors) {
+							if (type(value) == "array") {
+								function parseItem(location, value, errors) {
+									if (type(value) == "object") {
+										let obj = {};
+
+										function parseFqdn(location, value, errors) {
+											if (type(value) == "string") {
+												if (!matchFqdn(value))
+													push(errors, [ location, "must be a valid fully qualified domain name" ]);
+
+											}
+
+											if (type(value) != "string")
+												push(errors, [ location, "must be of type string" ]);
+
+											return value;
+										}
+
+										if (exists(value, "fqdn")) {
+											obj.fqdn = parseFqdn(location + "/fqdn", value["fqdn"], errors);
+										}
+
+										function parseSuffixMatching(location, value, errors) {
+											if (type(value) != "bool")
+												push(errors, [ location, "must be of type boolean" ]);
+
+											return value;
+										}
+
+										if (exists(value, "suffix-matching")) {
+											obj.suffix_matching = parseSuffixMatching(location + "/suffix-matching", value["suffix-matching"], errors);
+										}
+										else {
+											obj.suffix_matching = true;
+										}
+
+										function parseReclassify(location, value, errors) {
+											if (type(value) != "bool")
+												push(errors, [ location, "must be of type boolean" ]);
+
+											return value;
+										}
+
+										if (exists(value, "reclassify")) {
+											obj.reclassify = parseReclassify(location + "/reclassify", value["reclassify"], errors);
+										}
+										else {
+											obj.reclassify = true;
+										}
+
+										return obj;
+									}
+
+									if (type(value) != "object")
+										push(errors, [ location, "must be of type object" ]);
+
+									return value;
+								}
+
+								return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
+							}
+
+							if (type(value) != "array")
+								push(errors, [ location, "must be of type array" ]);
+
+							return value;
+						}
+
+						if (exists(value, "dns")) {
+							obj.dns = parseDns(location + "/dns", value["dns"], errors);
+						}
+
 						return obj;
 					}
 

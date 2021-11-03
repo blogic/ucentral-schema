@@ -34,6 +34,11 @@ for (let class in quality_of_service.classifier) {
 			file.write(sprintf("%s:%d%s %s%s\n", proto, port.port,
 					   port.range_end ? sprintf("-%d", port.range_end) : "",
 					   port.reclassify ? "" : "+", class.dscp));
+	for (let fqdn in class.dns)
+		file.write(sprintf("dns:%s%s$ %s%s\n",
+				   fqdn.suffix_matching ? ".*\\." : "",
+				   replace(fqdn.fqdn, ".", "\\."),
+				   fqdn.reclassify ? "" : "+", class.dscp));
 }
 file.close();
 %}

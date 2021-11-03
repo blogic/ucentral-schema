@@ -74,10 +74,24 @@ properties:
                   Ignore the ToS/DSCP of packets and reclassify them.
                 type: boolean
                 default: true
-          dns:
-            description:
-              Each entry defines a wildcard FQDN. The IP that this resolves to will be used to match packets.
-            type: array
-            items:
-              type: string
-              format: fqdn
+        dns:
+          description:
+            Each entry defines a wildcard FQDN. The IP that this resolves to will be used to match packets.
+          type: array
+          items:
+            type: object
+            properties:
+              fqdn:
+                type: string
+                format: fqdn
+              suffix-matching:
+                description:
+                  Match for all suffixes of the FQDN.
+                type: boolean
+                default: true
+              reclassify:
+                description:
+                  Ignore the ToS/DSCP of packets and reclassify them.
+                type: boolean
+                default: true
+

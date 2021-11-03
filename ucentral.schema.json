@@ -2065,12 +2065,25 @@
                                             "default": true
                                         }
                                     }
-                                },
-                                "dns": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string",
-                                        "format": "fqdn"
+                                }
+                            },
+                            "dns": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "fqdn": {
+                                            "type": "string",
+                                            "format": "fqdn"
+                                        },
+                                        "suffix-matching": {
+                                            "type": "boolean",
+                                            "default": true
+                                        },
+                                        "reclassify": {
+                                            "type": "boolean",
+                                            "default": true
+                                        }
                                     }
                                 }
                             }
