@@ -27,8 +27,6 @@ function get_range(port) {
 let fs = require("fs");
 let file = fs.open("/tmp/qosify.conf", "w");
 for (let class in quality_of_service.classifier) {
-	if (!length(class.ports))
-		continue;
 	for (let port in class.ports)
 		for (let proto in get_proto(port.protocol))
 			file.write(sprintf("%s:%d%s %s%s\n", proto, port.port,
@@ -43,8 +41,8 @@ for (let class in quality_of_service.classifier) {
 file.close();
 %}
 
-set qosify.@defaults[0].bulk_trigger_pps={{ quality_of_service.bulk_detection.packets_per_second }}
-set qosify.@defaults[0].dscp_bulk={{ quality_of_service.bulk_detection.dscp }}
+set qosify.@defaults[0].bulk_trigger_pps={{ quality_of_service?.bulk_detection?.packets_per_second || 0}}
+set qosify.@defaults[0].dscp_bulk={{ quality_of_service?.bulk_detection?.dscp }}
 
 {% for (let dev in egress): %}
 set qosify.{{ dev }}=device

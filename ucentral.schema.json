@@ -83,12 +83,14 @@
             "items": {
                 "type": "string",
                 "enum": [
+                    "CS0",
                     "CS1",
                     "CS2",
                     "CS3",
                     "CS4",
                     "CS5",
                     "CS6",
+                    "CS7",
                     "AF11",
                     "AF12",
                     "AF13",
@@ -102,7 +104,9 @@
                     "AF42",
                     "AF43",
                     "DF",
-                    "EF"
+                    "EF",
+                    "VA",
+                    "LE"
                 ]
             }
         },
@@ -2006,12 +2010,14 @@
         "service.quality-of-service.class-selector": {
             "type": "string",
             "enum": [
+                "CS0",
                 "CS1",
                 "CS2",
                 "CS3",
                 "CS4",
                 "CS5",
                 "CS6",
+                "CS7",
                 "AF11",
                 "AF12",
                 "AF13",
@@ -2025,7 +2031,9 @@
                 "AF42",
                 "AF43",
                 "DF",
-                "EF"
+                "EF",
+                "VA",
+                "LE"
             ]
         },
         "service.quality-of-service": {

@@ -6,6 +6,7 @@ if (!length(wmm))
 	return;
 
 let class = {
+	"CS0": 0,
 	"CS1": 8,
 	"CS2": 16,
 	"CS3": 24,
@@ -26,6 +27,8 @@ let class = {
 	"AF42": 36,
 	"AF43": 38,
 	"EF": 46,
+	"VA": 44,
+	"LE" 1,
 	"DF": 0,
 };
 
