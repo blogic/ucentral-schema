@@ -64,11 +64,13 @@ function qos_map() {
 	for (let prio = 0; prio < 8; prio++) {
 		let up = wmm["UP" + prio];
 
-		if (length(up))
+		if (length(up)) {
 			push(up_map, class[up[0]]);
-		else
+			push(up_map, class[up[0]]);
+		} else {
 			push(up_map, 255);
-		push(up_map, 255);
+			push(up_map, 255);
+		}
 	}
 	let qos_map = join(",", up_map);
 
