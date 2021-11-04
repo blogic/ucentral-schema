@@ -5327,6 +5327,54 @@ function instantiateServiceQualityOfService(location, value, errors) {
 			obj.bandwidth_down = 0;
 		}
 
+		function parseBulkDetection(location, value, errors) {
+			if (type(value) == "object") {
+				let obj = {};
+
+				function parseDscp(location, value, errors) {
+					if (type(value) != "string")
+						push(errors, [ location, "must be of type string" ]);
+
+					if (!(value in [ "CS0", "CS1", "CS2", "CS3", "CS4", "CS5", "CS6", "CS7" ]))
+						push(errors, [ location, "must be one of \"CS0\", \"CS1\", \"CS2\", \"CS3\", \"CS4\", \"CS5\", \"CS6\" or \"CS7\"" ]);
+
+					return value;
+				}
+
+				if (exists(value, "dscp")) {
+					obj.dscp = parseDscp(location + "/dscp", value["dscp"], errors);
+				}
+				else {
+					obj.dscp = "CS0";
+				}
+
+				function parsePacketsPerSecond(location, value, errors) {
+					if (!(type(value) in [ "int", "double" ]))
+						push(errors, [ location, "must be of type number" ]);
+
+					return value;
+				}
+
+				if (exists(value, "packets-per-second")) {
+					obj.packets_per_second = parsePacketsPerSecond(location + "/packets-per-second", value["packets-per-second"], errors);
+				}
+				else {
+					obj.packets_per_second = 0;
+				}
+
+				return obj;
+			}
+
+			if (type(value) != "object")
+				push(errors, [ location, "must be of type object" ]);
+
+			return value;
+		}
+
+		if (exists(value, "bulk-detection")) {
+			obj.bulk_detection = parseBulkDetection(location + "/bulk-detection", value["bulk-detection"], errors);
+		}
+
 		function parseClassifier(location, value, errors) {
 			if (type(value) == "array") {
 				function parseItem(location, value, errors) {

@@ -43,6 +43,9 @@ for (let class in quality_of_service.classifier) {
 file.close();
 %}
 
+set qosify.@defaults[0].bulk_trigger_pps={{ quality_of_service.bulk_detection.packets_per_second }}
+set qosify.@defaults[0].dscp_bulk={{ quality_of_service.bulk_detection.dscp }}
+
 {% for (let dev in egress): %}
 set qosify.{{ dev }}=device
 set qosify.{{ dev }}.name={{ s(dev) }}

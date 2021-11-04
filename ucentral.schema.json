@@ -2021,6 +2021,29 @@
                     "type": "integer",
                     "default": 0
                 },
+                "bulk-detection": {
+                    "type": "object",
+                    "properties": {
+                        "dscp": {
+                            "type": "string",
+                            "enum": [
+                                "CS0",
+                                "CS1",
+                                "CS2",
+                                "CS3",
+                                "CS4",
+                                "CS5",
+                                "CS6",
+                                "CS7"
+                            ],
+                            "default": "CS0"
+                        },
+                        "packets-per-second": {
+                            "type": "number",
+                            "default": 0
+                        }
+                    }
+                },
                 "classifier": {
                     "type": "array",
                     "items": {

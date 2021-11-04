@@ -22,6 +22,32 @@ properties:
       attached to a shared medium, this value needs to be 0.
     type: integer
     default: 0
+  bulk-detection:
+    description:
+      The QoS feature can automatically detect and classify bulk flows. This is based on average
+      packet size and PPS.
+    type: object
+    properties:
+      dscp:
+        description:
+          The differentiated services code point that shall be assigned to packets that belong
+          to a bulk flow.
+        type: string
+        enum:
+        - CS0
+        - CS1
+        - CS2
+        - CS3
+        - CS4
+        - CS5
+        - CS6
+        - CS7
+        default: CS0
+      packets-per-second:
+        description:
+          The required PPS rate that will cause a flow to be classified as bulk.
+        type: number
+        default: 0
   classifier:
     description:
       A list of classifiers. Each classifier will map certain traffic to specific ToS/DSCP
