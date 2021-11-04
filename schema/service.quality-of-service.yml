@@ -32,16 +32,7 @@ properties:
         description:
           The differentiated services code point that shall be assigned to packets that belong
           to a bulk flow.
-        type: string
-        enum:
-        - CS0
-        - CS1
-        - CS2
-        - CS3
-        - CS4
-        - CS5
-        - CS6
-        - CS7
+        $ref: 'https://ucentral.io/schema/v1/service/quality-of-service/class-selector/'
         default: CS0
       packets-per-second:
         description:
@@ -60,16 +51,7 @@ properties:
           description:
             The differentiated services code point that shall be assigned to packet that match
             the rules of this entry.
-          type: string
-          enum:
-          - CS0
-          - CS1
-          - CS2
-          - CS3
-          - CS4
-          - CS5
-          - CS6
-          - CS7
+          $ref: 'https://ucentral.io/schema/v1/service/quality-of-service/class-selector/'
           default: CS1
         ports:
           description:
