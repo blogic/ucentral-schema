@@ -169,6 +169,8 @@
 		let name = d[".name"];
 		if (name == "loopback")
 			return;
+		if (index(name, "_") >= 0)
+			return;
 		if (!d.ucentral_path)
 			return;
 
