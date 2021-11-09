@@ -6,7 +6,7 @@ set network.{{ name }}.ipaddr={{ ipv4.subnet }}
 set network.{{ name }}.gateway={{ ipv4.gateway }}
 {% else %}
 set network.{{ name }}.peerdns={{ b(!length(ipv4.use_dns)) }}
+{% endif %}
 {%  for (let dns in ipv4.use_dns): %}
 add_list network.{{ name }}.dns={{ dns }}
 {%  endfor %}
-{% endif %}
