@@ -23,6 +23,12 @@ properties:
       - ssl
       - tcp
     default: ssl
+  port:
+    description:
+      The port to use for the OpenFlow controller target.
+    type: integer
+    maximum: 65535
+    default: 6653
   ca-certificate:
     description:
        The CA certificate.
