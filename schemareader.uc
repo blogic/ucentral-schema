@@ -5051,6 +5051,26 @@ function instantiateServiceOpenFlow(location, value, errors) {
 			obj.mode = "ssl";
 		}
 
+		function parsePort(location, value, errors) {
+			if (type(value) in [ "int", "double" ]) {
+				if (value > 65535)
+					push(errors, [ location, "must be lower than or equal to 65535" ]);
+
+			}
+
+			if (type(value) != "int")
+				push(errors, [ location, "must be of type integer" ]);
+
+			return value;
+		}
+
+		if (exists(value, "port")) {
+			obj.port = parsePort(location + "/port", value["port"], errors);
+		}
+		else {
+			obj.port = 6653;
+		}
+
 		function parseCaCertificate(location, value, errors) {
 			if (type(value) != "string")
 				push(errors, [ location, "must be of type string" ]);

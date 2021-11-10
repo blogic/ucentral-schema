@@ -23,7 +23,7 @@ set openvswitch.ovs.key={{ s(files.add_anonymous(location, 'key', b64dec(open_fl
 
 delete openvswitch.@ovs_bridge[0]
 add openvswitch ovs_bridge
-set openvswitch.@ovs_bridge[-1].controller="{{ open_flow.mode }}:{{ open_flow.controller }}"
+set openvswitch.@ovs_bridge[-1].controller="{{ open_flow.mode }}:{{ open_flow.controller }}:{{ open_flow.port }}"
 {% if (length(open_flow.datapath_description)): %}
 	set openvswitch.@ovs_bridge[-1].datapath_desc="{{ s(open_flow.datapath_description) }}"
 {% endif %}

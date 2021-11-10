@@ -1937,6 +1937,11 @@
                     ],
                     "default": "ssl"
                 },
+                "port": {
+                    "type": "integer",
+                    "maximum": 65535,
+                    "default": 6653
+                },
                 "ca-certificate": {
                     "type": "string"
                 },
