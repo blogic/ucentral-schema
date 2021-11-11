@@ -272,6 +272,10 @@ set wireless.{{ section }}.rts_threshold={{ ssid.rts_threshold }}
 set wireless.{{ section }}.multicast_to_unicast={{ b(ssid.unicast_conversion) }}
 set wireless.{{ section }}.maxassoc={{ ssid.maximum_clients }}
 
+{%     if (ssid.rate_limit): %}
+set wireless.{{ section }}.ratelimit=1
+{%     endif %}
+
 {%     if (ssid.rrm): %}
 set wireless.{{ section }}.ieee80211k={{ b(ssid.rrm.neighbor_reporting) }}
 set wireless.{{ section }}.ftm_responder={{ b(ssid.rrm.ftm_responder) }}
