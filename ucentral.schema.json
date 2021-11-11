@@ -110,8 +110,9 @@
                 ]
             }
         },
-        "globals.wireless-multimedia": {
+        "globals.wireless-multimedia.table": {
             "type": "object",
+            "additionalProperties": false,
             "properties": {
                 "UP0": {
                     "$ref": "#/$defs/globals.wireless-multimedia.class-selector"
@@ -139,11 +140,19 @@
                 }
             }
         },
-        "globals.wireless-multimedia-profile": {
-            "type": "string",
-            "enum": [
-                "enterprise"
-            ]
+        "globals.wireless-multimedia.profile": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "profile": {
+                    "type": "string",
+                    "enum": [
+                        "enterprise",
+                        "rfc8325",
+                        "3gpp"
+                    ]
+                }
+            }
         },
         "globals": {
             "type": "object",
@@ -163,12 +172,12 @@
                     ]
                 },
                 "wireless-multimedia": {
-                    "oneOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/$defs/globals.wireless-multimedia"
+                            "$ref": "#/$defs/globals.wireless-multimedia.table"
                         },
                         {
-                            "$ref": "#/$defs/globals.wireless-multimedia-profile"
+                            "$ref": "#/$defs/globals.wireless-multimedia.profile"
                         }
                     ]
                 }
@@ -2147,21 +2156,36 @@
                 }
             }
         },
-        "service.airtime-policies": {
+        "service.airtime-fairness": {
             "type": "object",
             "properties": {
-                "dns-match": {
-                    "type": "array",
-                    "items": {
-                        "type": "string",
-                        "examples": [
-                            "*.voice.example.com"
-                        ]
-                    }
+                "voice-weight": {
+                    "type": "number",
+                    "default": 4
                 },
-                "dns-weight": {
-                    "type": "integer",
+                "packet-threshold": {
+                    "type": "number",
+                    "default": 100
+                },
+                "bulk-threshold": {
+                    "type": "number",
+                    "default": 50
+                },
+                "priority-threshold": {
+                    "type": "number",
+                    "default": 30
+                },
+                "weight-normal": {
+                    "type": "number",
                     "default": 256
+                },
+                "weight-priority": {
+                    "type": "number",
+                    "default": 394
+                },
+                "weight-bulk": {
+                    "type": "number",
+                    "default": 128
                 }
             }
         },
@@ -2216,8 +2240,8 @@
                 "facebook-wifi": {
                     "$ref": "#/$defs/service.facebook-wifi"
                 },
-                "airtime-policies": {
-                    "$ref": "#/$defs/service.airtime-policies"
+                "airtime-fairness": {
+                    "$ref": "#/$defs/service.airtime-fairness"
                 }
             }
         },

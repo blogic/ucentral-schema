@@ -167,7 +167,7 @@ function instantiateGlobalsWirelessMultimediaClassSelector(location, value, erro
 	return value;
 }
 
-function instantiateGlobalsWirelessMultimedia(location, value, errors) {
+function instantiateGlobalsWirelessMultimediaTable(location, value, errors) {
 	if (type(value) == "object") {
 		let obj = {};
 
@@ -213,11 +213,28 @@ function instantiateGlobalsWirelessMultimedia(location, value, errors) {
 }
 
 function instantiateGlobalsWirelessMultimediaProfile(location, value, errors) {
-	if (type(value) != "string")
-		push(errors, [ location, "must be of type string" ]);
+	if (type(value) == "object") {
+		let obj = {};
 
-	if (!(value in [ "enterprise" ]))
-		push(errors, [ location, "must be one of \"enterprise\"" ]);
+		function parseProfile(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			if (!(value in [ "enterprise", "rfc8325", "3gpp" ]))
+				push(errors, [ location, "must be one of \"enterprise\", \"rfc8325\" or \"3gpp\"" ]);
+
+			return value;
+		}
+
+		if (exists(value, "profile")) {
+			obj.profile = parseProfile(location + "/profile", value["profile"], errors);
+		}
+
+		return obj;
+	}
+
+	if (type(value) != "object")
+		push(errors, [ location, "must be of type object" ]);
 
 	return value;
 }
@@ -262,7 +279,7 @@ function instantiateGlobals(location, value, errors) {
 
 		function parseWirelessMultimedia(location, value, errors) {
 			function parseVariant0(location, value, errors) {
-				value = instantiateGlobalsWirelessMultimedia(location, value, errors);
+				value = instantiateGlobalsWirelessMultimediaTable(location, value, errors);
 
 				return value;
 			}
@@ -303,8 +320,11 @@ function instantiateGlobals(location, value, errors) {
 				push(verrors, join(" and\n", map(tryerr, err => "\t - " + err[1])));
 			}
 
-			if (success != 1) {
-				push(errors, [ location, "must match exactly one of the following constraints:\n" + join("\n- or -\n", verrors) ]);
+			if (success == 0) {
+				if (length(verrors))
+					push(errors, [ location, "must match at least one of the following constraints:\n" + join("\n- or -\n", verrors) ]);
+				else
+					push(errors, [ location, "must match only one variant" ]);
 				return null;
 			}
 
@@ -749,7 +769,10 @@ function instantiateRadio(location, value, errors) {
 			}
 
 			if (success != 1) {
-				push(errors, [ location, "must match exactly one of the following constraints:\n" + join("\n- or -\n", verrors) ]);
+				if (length(verrors))
+					push(errors, [ location, "must match exactly one of the following constraints:\n" + join("\n- or -\n", verrors) ]);
+				else
+					push(errors, [ location, "must match only one variant" ]);
 				return null;
 			}
 
@@ -1867,7 +1890,10 @@ function instantiateInterfaceBroadBand(location, value, errors) {
 	}
 
 	if (success != 1) {
-		push(errors, [ location, "must match exactly one of the following constraints:\n" + join("\n- or -\n", verrors) ]);
+		if (length(verrors))
+			push(errors, [ location, "must match exactly one of the following constraints:\n" + join("\n- or -\n", verrors) ]);
+		else
+			push(errors, [ location, "must match only one variant" ]);
 		return null;
 	}
 
@@ -2587,7 +2613,10 @@ function instantiateInterfaceSsidRadiusServer(location, value, errors) {
 							}
 
 							if (success == 0) {
-								push(errors, [ location, "must match at least one of the following constraints:\n" + join("\n- or -\n", verrors) ]);
+								if (length(verrors))
+									push(errors, [ location, "must match at least one of the following constraints:\n" + join("\n- or -\n", verrors) ]);
+								else
+									push(errors, [ location, "must match only one variant" ]);
 								return null;
 							}
 
@@ -2742,7 +2771,10 @@ function instantiateInterfaceSsidRadius(location, value, errors) {
 			}
 
 			if (success != 2) {
-				push(errors, [ location, "must match all of the following constraints:\n" + join("\n- or -\n", verrors) ]);
+				if (length(verrors))
+					push(errors, [ location, "must match all of the following constraints:\n" + join("\n- or -\n", verrors) ]);
+				else
+					push(errors, [ location, "must match only one variant" ]);
 				return null;
 			}
 
@@ -4069,7 +4101,10 @@ function instantiateInterfaceTunnel(location, value, errors) {
 	}
 
 	if (success != 1) {
-		push(errors, [ location, "must match exactly one of the following constraints:\n" + join("\n- or -\n", verrors) ]);
+		if (length(verrors))
+			push(errors, [ location, "must match exactly one of the following constraints:\n" + join("\n- or -\n", verrors) ]);
+		else
+			push(errors, [ location, "must match only one variant" ]);
 		return null;
 	}
 
@@ -5639,44 +5674,106 @@ function instantiateServiceFacebookWifi(location, value, errors) {
 	return value;
 }
 
-function instantiateServiceAirtimePolicies(location, value, errors) {
+function instantiateServiceAirtimeFairness(location, value, errors) {
 	if (type(value) == "object") {
 		let obj = {};
 
-		function parseDnsMatch(location, value, errors) {
-			if (type(value) == "array") {
-				function parseItem(location, value, errors) {
-					if (type(value) != "string")
-						push(errors, [ location, "must be of type string" ]);
-
-					return value;
-				}
-
-				return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
-			}
-
-			if (type(value) != "array")
-				push(errors, [ location, "must be of type array" ]);
+		function parseVoiceWeight(location, value, errors) {
+			if (!(type(value) in [ "int", "double" ]))
+				push(errors, [ location, "must be of type number" ]);
 
 			return value;
 		}
 
-		if (exists(value, "dns-match")) {
-			obj.dns_match = parseDnsMatch(location + "/dns-match", value["dns-match"], errors);
-		}
-
-		function parseDnsWeight(location, value, errors) {
-			if (type(value) != "int")
-				push(errors, [ location, "must be of type integer" ]);
-
-			return value;
-		}
-
-		if (exists(value, "dns-weight")) {
-			obj.dns_weight = parseDnsWeight(location + "/dns-weight", value["dns-weight"], errors);
+		if (exists(value, "voice-weight")) {
+			obj.voice_weight = parseVoiceWeight(location + "/voice-weight", value["voice-weight"], errors);
 		}
 		else {
-			obj.dns_weight = 256;
+			obj.voice_weight = 4;
+		}
+
+		function parsePacketThreshold(location, value, errors) {
+			if (!(type(value) in [ "int", "double" ]))
+				push(errors, [ location, "must be of type number" ]);
+
+			return value;
+		}
+
+		if (exists(value, "packet-threshold")) {
+			obj.packet_threshold = parsePacketThreshold(location + "/packet-threshold", value["packet-threshold"], errors);
+		}
+		else {
+			obj.packet_threshold = 100;
+		}
+
+		function parseBulkThreshold(location, value, errors) {
+			if (!(type(value) in [ "int", "double" ]))
+				push(errors, [ location, "must be of type number" ]);
+
+			return value;
+		}
+
+		if (exists(value, "bulk-threshold")) {
+			obj.bulk_threshold = parseBulkThreshold(location + "/bulk-threshold", value["bulk-threshold"], errors);
+		}
+		else {
+			obj.bulk_threshold = 50;
+		}
+
+		function parsePriorityThreshold(location, value, errors) {
+			if (!(type(value) in [ "int", "double" ]))
+				push(errors, [ location, "must be of type number" ]);
+
+			return value;
+		}
+
+		if (exists(value, "priority-threshold")) {
+			obj.priority_threshold = parsePriorityThreshold(location + "/priority-threshold", value["priority-threshold"], errors);
+		}
+		else {
+			obj.priority_threshold = 30;
+		}
+
+		function parseWeightNormal(location, value, errors) {
+			if (!(type(value) in [ "int", "double" ]))
+				push(errors, [ location, "must be of type number" ]);
+
+			return value;
+		}
+
+		if (exists(value, "weight-normal")) {
+			obj.weight_normal = parseWeightNormal(location + "/weight-normal", value["weight-normal"], errors);
+		}
+		else {
+			obj.weight_normal = 256;
+		}
+
+		function parseWeightPriority(location, value, errors) {
+			if (!(type(value) in [ "int", "double" ]))
+				push(errors, [ location, "must be of type number" ]);
+
+			return value;
+		}
+
+		if (exists(value, "weight-priority")) {
+			obj.weight_priority = parseWeightPriority(location + "/weight-priority", value["weight-priority"], errors);
+		}
+		else {
+			obj.weight_priority = 394;
+		}
+
+		function parseWeightBulk(location, value, errors) {
+			if (!(type(value) in [ "int", "double" ]))
+				push(errors, [ location, "must be of type number" ]);
+
+			return value;
+		}
+
+		if (exists(value, "weight-bulk")) {
+			obj.weight_bulk = parseWeightBulk(location + "/weight-bulk", value["weight-bulk"], errors);
+		}
+		else {
+			obj.weight_bulk = 128;
 		}
 
 		return obj;
@@ -5756,8 +5853,8 @@ function instantiateService(location, value, errors) {
 			obj.facebook_wifi = instantiateServiceFacebookWifi(location + "/facebook-wifi", value["facebook-wifi"], errors);
 		}
 
-		if (exists(value, "airtime-policies")) {
-			obj.airtime_policies = instantiateServiceAirtimePolicies(location + "/airtime-policies", value["airtime-policies"], errors);
+		if (exists(value, "airtime-fairness")) {
+			obj.airtime_fairness = instantiateServiceAirtimeFairness(location + "/airtime-fairness", value["airtime-fairness"], errors);
 		}
 
 		return obj;

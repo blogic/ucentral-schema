@@ -1,0 +1,12 @@
+type: object
+additionalProperties: false
+properties:
+  profile:
+    description:
+      Define a default profile that shall be used for the WMM behaviour of all SSIDs on
+      the device.
+    type: string
+    enum:
+    - enterprise
+    - rfc8325
+    - 3gpp

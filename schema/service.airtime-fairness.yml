@@ -1,0 +1,46 @@
+description:
+  This section describes the vlan behaviour of a logical network interface.
+type: object
+properties:
+  voice-weight:
+    description:
+      Voice traffic does not get aggregated. As voice and video are both considered
+      priotity voice is considered to have a heavier weight when calculation priority
+      average.
+    type: number
+    default: 4
+  packet-threshold:
+    description:
+      The amount of packets that need to be received for a specific type of traffic
+      before new averageg is calculated.
+    type: number
+    default: 100
+  bulk-threshold:
+    description:
+      This option is a percentual value. If more the X% of the traffic is bulk, we assign
+      the bulk weight.
+    type: number
+    default: 50
+  priority-threshold:
+    description:
+      This option is a percentual value. If more the X% of the traffic is priority, we assign
+      the priority weight. Priority classification will take precedence over bulk.
+    type: number
+    default: 30
+  weight-normal:
+    description:
+      The default ATF weight that UEs get assigned.
+    type: number
+    default: 256
+  weight-priority:
+    description:
+      The default ATF weight that UEs get assigned when priority traffic above the configured
+      percentage is detected.
+    type: number
+    default: 394
+  weight-bulk:
+    description:
+      The default ATF weight that UEs get assigned when bulk traffic above the configured
+      percentage is detected.
+    type: number
+    default: 128

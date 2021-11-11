@@ -20,6 +20,6 @@ properties:
     examples:
     - fdca:1234:4567::/48
   wireless-multimedia:
-    oneOf:
-     - $ref: 'https://ucentral.io/schema/v1/globals/wireless-multimedia/'
-     - $ref: 'https://ucentral.io/schema/v1/globals/wireless-multimedia-profile/'
+    anyOf:
+     - $ref: 'https://ucentral.io/schema/v1/globals/wireless-multimedia/table/'
+     - $ref: 'https://ucentral.io/schema/v1/globals/wireless-multimedia/profile/'

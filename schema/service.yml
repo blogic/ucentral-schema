@@ -35,5 +35,5 @@ properties:
     $ref: "https://ucentral.io/schema/v1/service/quality-of-service/"
   facebook-wifi:
     $ref: "https://ucentral.io/schema/v1/service/facebook-wifi/"
-  airtime-policies:
-    $ref: "https://ucentral.io/schema/v1/service/airtime-policies/"
+  airtime-fairness:
+    $ref: "https://ucentral.io/schema/v1/service/airtime-fairness/"

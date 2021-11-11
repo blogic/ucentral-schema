@@ -3,6 +3,7 @@ description:
   category can be assigned a default class selector that gets used for packet
   matching.
 type: object
+additionalProperties: false
 properties:
   UP0:
     $ref: 'https://ucentral.io/schema/v1/globals/wireless-multimedia/class-selector/'
