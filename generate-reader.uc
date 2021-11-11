@@ -510,7 +510,10 @@ let GeneratorProto = {
 			}
 
 			this.print(indent, 'if (success %s) {', variantErrorCond);
-			this.print(indent, '	push(errors, [ location, "must match %s of the following constraints:\\n" + join("\\n- or -\\n", verrors) ]);', variantErrorMsg);
+			this.print(indent, '	if (length(verrors))');
+			this.print(indent, '		push(errors, [ location, "must match %s of the following constraints:\\n" + join("\\n- or -\\n", verrors) ]);', variantErrorMsg);
+			this.print(indent, '	else');
+			this.print(indent, '		push(errors, [ location, "must match only one variant" ]);');
 			this.print(indent, '	return null;');
 			this.print(indent, '}\n');
 			this.print(indent, 'value = vvalue;\n');
