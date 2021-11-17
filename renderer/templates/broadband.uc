@@ -5,7 +5,7 @@ let uplink = ethernet.get_interface("upstream", 0);
 if (!uplink)
 	return;
 
-if (index([ "wwan", "pppoe", "static", "dhcp" ], broadband.protocol) < 0)
+if (index([ "wwan", "pppoe", "static", "dhcp", "wds" ], broadband.protocol) < 0)
 	return;
 
 for (let k, v in uplink)
@@ -71,6 +71,30 @@ if (broadband.protocol == "dhcp") {
 	uplink.ipv4 = {
 		addressing: "dynamic",
 	};
+}
+
+if (broadband.protocol == "wds") {
+	uplink.ipv4 = {
+		addressing: "dynamic",
+	};
+
+	local wds = {
+		"name": broadband.ssid,
+		"wifi_bands": [
+			"2G", "5G"
+		],
+		"bss_mode": "wds-sta",
+		"encryption": {
+			"proto": broadband.encryption,
+			"key": broadband.passphrase,
+			"ieee80211w": "optional"
+		}
+	};
+
+	if (!uplink.ssids)
+		uplink.ssids = [ wds ];
+	else
+		push(uplink.ssids, wds);
 }
 
 %}
