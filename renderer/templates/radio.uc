@@ -113,6 +113,9 @@ set wireless.{{ phy.section }}.txpower={{ radio.tx_power }}
 set wireless.{{ phy.section }}.legacy_rates={{ b(radio.legacy_rates) }}
 set wireless.{{ phy.section }}.chan_bw={{ radio.bandwidth }}
 set wireless.{{ phy.section }}.maxassoc={{ radio.maximum_clients }}
+{%  if (index(phy.band, "5G") >= 0): %}
+set wireless.{{ phy.section }}.channels='36 44 52 60 100 108 116 124 132 149 157 165 173 184 192'
+{%  endif %}
 {%  if (radio.he_settings && phy.he_mac_capa && match(htmode, /HE.*/)): %}
 set wireless.{{ phy.section }}.he_bss_color={{ radio.he_settings.bss_color }}
 set wireless.{{ phy.section }}.multiple_bssid={{ b(radio.he_settings.multiple_bssid) }}
