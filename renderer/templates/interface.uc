@@ -177,7 +177,7 @@
 		include('interface/captive.uc', { name });
 %}
 
-{% if ("open-flow" in interface.services): %}
+{% if (interface.role == "downstream" && "open-flow" in interface.services): %}
 {% for (let port in keys(eth_ports)): %}
 add openvswitch ovs_port;
 set openvswitch.@ovs_port[-1].bridge="br-ovs";
