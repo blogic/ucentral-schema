@@ -28,6 +28,7 @@ set openvswitch.@ovs_bridge[-1].controller="{{ open_flow.mode }}:{{ open_flow.co
 	set openvswitch.@ovs_bridge[-1].datapath_desc="{{ s(open_flow.datapath_description) }}"
 {% endif %}
 set openvswitch.@ovs_bridge[-1].datapath_id="0x{{ serial }}"
+set openvswitch.@ovs_bridge[-1].drop_unknown_ports="1"
 set openvswitch.@ovs_bridge[-1].name="br-ovs"
 
 add openvswitch ovs_port
