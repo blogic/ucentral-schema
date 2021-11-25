@@ -1,6 +1,16 @@
 {%
 // UCI batch output master template
 
+/**
+ * @name uCentral
+ * @type class
+ * @classdesc
+ *
+ * This is the uCentral base class containing all relevant helper functions.
+ * It is automatically instantiated and there is no global accessor.
+ * foo
+ */
+
 "use strict";
 
 let uci = require("uci");
@@ -93,9 +103,39 @@ function discover_ports() {
 }
 
 
+/**
+ * @name wiphy
+ * @type class
+ * @hideconstructor
+ * @classdesc
+ *
+ * This is the wireless PHY base class. It is automatically instantiated and
+ * accessible using the global 'wiphy' variable.
+ */
+
 let wiphy = {
+	/**
+	 * @name phys
+	 * @instance
+	 * @memberof wiphy
+	 * This function returns a list of all available PHYs including
+	 * the relevant data describing their properties and capabilities
+	 * such as HT Modes, channels, ...
+	 *
+	 * @returns {Array}
+	 * Returns an array of all available PHYs.
+	 */
 	phys: conn.call("wifi", "phy"),
 
+	/**
+	 * Lookup up the range of valid frequencies for a specific wireless band
+	 *
+	 * @param {string} wireless band
+	 *
+	 * @returns {(number|Array)}
+	 * Returns and array containing the lowest and highest valid frequency
+	 * for a specific wireless band.
+	 */
 	band_freqs: {
 		'2G':       [  2412,  2484 ],
 		'5G':       [  5160,  5885 ],
@@ -105,6 +145,15 @@ let wiphy = {
 		'60G':		[ 58320, 69120 ]
 	},
 
+	/**
+	 * Lookup up the range of valid channels for a specific wireless band
+	 *
+	 * @param {string} wireless band
+	 *
+	 * @returns {(number|Array)}
+	 * Returns and array containing the lowest and highest valid channel
+	 * for a specific wireless band.
+	 */
 	band_channels: {
 		'2G': [ 1, 14 ],
 		'5G': [ 7, 196 ],
@@ -114,6 +163,16 @@ let wiphy = {
 		'60G': [ 1, 6 ]
 	},
 
+	/**
+	 * Convert a wireless channel to a wireless frequency
+	 *
+	 * @param {string} wireless band
+	 * @param {number} channel
+	 *
+	 * @returns {number}
+	 * Returns the coverted wireless frequency for this specific
+	 * channel.
+	 */
 	channel_to_freq: function(band, channel) {
 		if (band == '2G' && channel >= 1 && channel <= 13)
 			return 2407 + channel * 5;
@@ -129,6 +188,15 @@ let wiphy = {
 		return null;
 	},
 
+	/**
+	 * Convert the unique sysfs path describing a wireless PHY to
+	 * the corresponding UCI section name
+	 *
+	 * @param {string} path
+	 *
+	 * @returns {string}
+	 * Returns the UCI section name of a specific PHY
+	 */
 	path_to_section: function(path) {
 		let sid = null;
 
@@ -144,6 +212,15 @@ let wiphy = {
 		return sid;
 	},
 
+	/**
+	 * Get a list of all wireless PHYs for a specific wireless band
+	 *
+	 * @param {string} band
+	 *
+	 * @returns {(string|Array}}
+	 * Returns an array of all wireless PHYs for a specific wireless
+	 * band.
+	 */
 	lookup_by_band: function(band) {
 		let baseband = band;
 		let phys = [];
@@ -204,9 +281,28 @@ let wiphy = {
 	}
 };
 
+/**
+ * @name ethernet
+ * @type class
+ * @hideconstructor
+ * @classdesc
+ *
+ * This is the ethernet base class. It is automatically instantiated and
+ * accessible using the global 'ethernet' variable.
+ */
+
 let ethernet = {
 	ports: discover_ports(),
 
+	/**
+	 * Get a list of all wireless PHYs for a specific wireless band
+	 *
+	 * @param {string} band
+	 *
+	 * @returns {(string|Array}}
+	 * Returns an array of all wireless PHYs for a specific wireless
+	 * band.
+	 */
 	lookup: function(globs) {
 		let matched = {};
 

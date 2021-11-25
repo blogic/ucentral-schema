@@ -1,0 +1,26 @@
+{
+    "tags": {
+        "allowUnknownTags": true,
+        "dictionaries": ["jsdoc","closure"]
+    },
+    "source": {
+        "include": ["renderer/"],
+        "includePattern": "renderer.uc"
+    },
+    "plugins": [
+        "plugins/markdown",
+	"jsondoc/commentOnly"
+    ],
+    "templates": {
+        "cleverLinks": true,
+        "monospaceLinks": true,
+        "default": {
+                "outputSourceFiles": true
+        }
+    },
+    "opts": {
+        "destination": "docs/",
+        "recurse": true,
+        "_readme": "docs/jsapi/README.md"
+    }
+}
