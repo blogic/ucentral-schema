@@ -5,17 +5,17 @@
     },
     "source": {
         "include": ["renderer/"],
-        "includePattern": "renderer.uc"
+        "includePattern": "\\.uc$"
     },
     "plugins": [
         "plugins/markdown",
-	"jsondoc/commentOnly"
+        "jsdoc/ucode-transpiler"
     ],
     "templates": {
         "cleverLinks": true,
         "monospaceLinks": true,
         "default": {
-                "outputSourceFiles": true
+            "outputSourceFiles": true
         }
     },
     "opts": {
