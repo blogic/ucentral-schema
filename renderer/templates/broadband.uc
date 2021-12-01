@@ -78,7 +78,7 @@ if (broadband.protocol == "wds") {
 		addressing: "dynamic",
 	};
 
-	local wds = {
+	let wds = {
 		"name": broadband.ssid,
 		"wifi_bands": [
 			"2G", "5G"
