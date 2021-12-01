@@ -37,9 +37,31 @@
 		die("Selected radio does not support any HT modes");
 	}
 
-	function match_channel(phy, wanted_channel) {
+	let channel_list = {
+		"80": [ 36,  52, 100, 116, 132, 149 ],
+		"40": [ 36, 44, 52, 60, 100, 108,
+			116, 124, 132, 149, 157, 165, 173,
+			184, 192 ]
+	};
+
+	function allowed_channel(radio) {
+		if (!channel_list[radio.channel_width])
+			return true;
+		if (radio.channel in channel_list[radio.channel_width])
+			return true;
+		return false;
+	}
+
+	function match_channel(phy, radio) {
+		let wanted_channel = radio.channel;
 		if (!wanted_channel || wanted_channel == "auto")
 			return 0;
+
+		if (index(phy.band, "5G") >= 0 && !allowed_channel(radio)) {
+			warn("Selected radio does not support requested channel %d, falling back to ACS",
+				wanted_channel);
+			return 0;
+		}
 
 		if (wanted_channel in phy.channels)
 			return wanted_channel;
@@ -102,7 +124,7 @@
 set wireless.{{ phy.section }}.disabled=0
 set wireless.{{ phy.section }}.ucentral_path={{ s(location) }}
 set wireless.{{ phy.section }}.htmode={{ htmode }}
-set wireless.{{ phy.section }}.channel={{ match_channel(phy, radio.channel) }}
+set wireless.{{ phy.section }}.channel={{ match_channel(phy, radio) }}
 set wireless.{{ phy.section }}.txantenna={{ match_mimo(phy.tx_ant, radio.mimo) }}
 set wireless.{{ phy.section }}.rxantenna={{ match_mimo(phy.rx_ant, radio.mimo) }}
 set wireless.{{ phy.section }}.beacon_int={{ radio.beacon_interval }}
