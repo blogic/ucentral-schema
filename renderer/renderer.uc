@@ -1,15 +1,6 @@
 {%
-// UCI batch output master template
 
-/**
- * @name uCentral
- * @type class
- * @classdesc
- *
- * This is the uCentral base class containing all relevant helper functions.
- * It is automatically instantiated and there is no global accessor.
- * foo
- */
+// UCI batch output master template
 
 "use strict";
 
@@ -31,13 +22,30 @@ assert(capab, "Unable to load capabilities");
 
 let topdir = sourcepath(0, true);
 
-// Formats a given input value as uci boolean value.
+/**
+ * Formats a given input value as uci boolean value.
+ *
+ * @memberof uCentral.prototype
+ * @param {*} val The value to format
+ * @returns {string}
+ * Returns '1' if the given value is truish (not `false`, `null`, `0`,
+ * `0.0` or an empty string), or `0` in all other cases.
+ */
 function b(val) {
 	return val ? '1' : '0';
 }
 
-// Formats a given input value as single quoted string, honouring uci
-// specific escaping semantics.
+/**
+ * Formats a given input value as single quoted string, honouring uci
+ * specific escaping semantics.
+ *
+ * @memberof uCentral.prototype
+ * @param {*} str The string to format
+ * @returns {string}
+ * Returns an empty string if the given input value is `null` or an
+ * empty string. Returns the escaped and quoted string in all other
+ * cases.
+ */
 function s(str) {
 	if (str === null || str === '')
 		return '';
@@ -45,7 +53,22 @@ function s(str) {
 	return sprintf("'%s'", replace(str, /'/g, "'\\''"));
 }
 
-// Attempts to include a file, catching potential exceptions
+/**
+ * Attempt to include a file, catching potential exceptions.
+ *
+ * Try to include the given file path in a safe manner. The
+ * path is resolved relative to the path of the currently
+ * executed template and may only contain the character `A-Z`,
+ * `a-z`, `0-9`, `_`, `/` and `-` as must contain a final
+ * `.uc` file extension.
+ *
+ * Exception occuring while including the file are catched
+ * and a warning is emitted instead.
+ *
+ * @memberof uCentral.prototype
+ * @param {string} path Path of the file to include
+ * @param {object} scope The scope to pass to the include file
+ */
 function tryinclude(path, scope) {
 	if (!match(path, /^[A-Za-z0-9_\/-]+\.uc$/)) {
 		warn("Refusing to handle invalid include path '%s'", path);
@@ -104,38 +127,31 @@ function discover_ports() {
 
 
 /**
- * @name wiphy
- * @type class
- * @hideconstructor
+ * @class uCentral.wiphy
  * @classdesc
  *
- * This is the wireless PHY base class. It is automatically instantiated and
- * accessible using the global 'wiphy' variable.
+ * This is the wireless PHY base class. It is automatically instantiated and accessible
+  * using the global 'wiphy' variable.
  */
+
+/** @lends uCentral.wiphy.prototype */
 
 let wiphy = {
 	/**
-	 * @name phys
-	 * @instance
-	 * @memberof wiphy
+	 * Return a list of PHY information structures
+     *
 	 * This function returns a list of all available PHYs including
 	 * the relevant data describing their properties and capabilities
 	 * such as HT Modes, channels, ...
+	 *
+	 * @method
 	 *
 	 * @returns {Array}
 	 * Returns an array of all available PHYs.
 	 */
 	phys: conn.call("wifi", "phy"),
 
-	/**
-	 * Lookup up the range of valid frequencies for a specific wireless band
-	 *
-	 * @param {string} wireless band
-	 *
-	 * @returns {(number|Array)}
-	 * Returns and array containing the lowest and highest valid frequency
-	 * for a specific wireless band.
-	 */
+	/** @private */
 	band_freqs: {
 		'2G':       [  2412,  2484 ],
 		'5G':       [  5160,  5885 ],
@@ -145,15 +161,7 @@ let wiphy = {
 		'60G':		[ 58320, 69120 ]
 	},
 
-	/**
-	 * Lookup up the range of valid channels for a specific wireless band
-	 *
-	 * @param {string} wireless band
-	 *
-	 * @returns {(number|Array)}
-	 * Returns and array containing the lowest and highest valid channel
-	 * for a specific wireless band.
-	 */
+	/** @private */
 	band_channels: {
 		'2G': [ 1, 14 ],
 		'5G': [ 7, 196 ],
@@ -169,7 +177,7 @@ let wiphy = {
 	 * @param {string} wireless band
 	 * @param {number} channel
 	 *
-	 * @returns {number}
+	 * @returns {?number}
 	 * Returns the coverted wireless frequency for this specific
 	 * channel.
 	 */
@@ -194,7 +202,7 @@ let wiphy = {
 	 *
 	 * @param {string} path
 	 *
-	 * @returns {string}
+	 * @returns {string|false}
 	 * Returns the UCI section name of a specific PHY
 	 */
 	path_to_section: function(path) {
@@ -217,7 +225,7 @@ let wiphy = {
 	 *
 	 * @param {string} band
 	 *
-	 * @returns {(string|Array}}
+	 * @returns {object[]}
 	 * Returns an array of all wireless PHYs for a specific wireless
 	 * band.
 	 */
@@ -282,14 +290,14 @@ let wiphy = {
 };
 
 /**
- * @name ethernet
- * @type class
- * @hideconstructor
+ * @class uCentral.ethernet
  * @classdesc
  *
  * This is the ethernet base class. It is automatically instantiated and
  * accessible using the global 'ethernet' variable.
  */
+
+/** @lends uCentral.ethernet.prototype */
 
 let ethernet = {
 	ports: discover_ports(),
@@ -299,7 +307,7 @@ let ethernet = {
 	 *
 	 * @param {string} band
 	 *
-	 * @returns {(string|Array}}
+	 * @returns {object}
 	 * Returns an array of all wireless PHYs for a specific wireless
 	 * band.
 	 */
@@ -426,9 +434,32 @@ let ethernet = {
 	}
 };
 
+/**
+ * @class uCentral.ipcalc
+ * @classdesc
+ *
+ * The ipcalc utility class provides methods for manipulating and testing
+ * IP address ranges.
+ */
+
+/** @lends uCentral.ipcalc.prototype */
+
 let ipcalc = {
 	used_prefixes: [],
 
+	/**
+	 * Convert the given amount of prefix bits to a network mask in IP address
+	 * notation.
+	 *
+	 * @param {number} bits  The amounts of prefix bits
+	 * @param {?boolean} v6  If true, produce an IPv6 mask, otherwise use IPv4
+	 *
+	 * @returns {string}
+	 * Returns a string containing the corresponding netmask.
+	 *
+	 * @throws
+	 * Throws an exception when the amount of bits is not representable as netmask.
+	 */
 	convert_bits_to_mask: function(bits, v6) {
 		let width = v6 ? 128 : 32,
 		    mask = [];
@@ -528,6 +559,16 @@ let ipcalc = {
 	}
 };
 
+/**
+ * @class uCentral.services
+ * @classdesc
+ *
+ * The services utility class provides methods for managing and querying
+ * service states.
+ */
+
+/** @lends uCentral.services.prototype */
+
 let services = {
 	state: {},
 
@@ -606,6 +647,16 @@ let services = {
 	}
 };
 
+/**
+ * @class uCentral.dhcp_relay
+ * @classdesc
+ *
+ * The DHCP relay utility class encapsulates logic required for configuring
+ * DHCP relay information.
+ */
+
+/** @lends uCentral.dhcp_relay.prototype */
+
 let dhcp_relay = {
 	state: {
 		"AP-MAC": "%a",
@@ -636,7 +687,26 @@ let dhcp_relay = {
 	}
 };
 
+/**
+ * @class uCentral.local_profile
+ * @classdesc
+ *
+ * The local profile utility class provides access to the uCentral runtome
+ * profile information.
+ */
+
+/** @lends uCentral.local_profile.prototype */
+
 let local_profile = {
+	/**
+	 * Retrieve the local uCentral profile data.
+	 *
+	 * Parses the local uCentral profile JSON data and returns the
+	 * resulting object.
+	 *
+	 * @return {?object}
+	 * Returns an object containing the profile data or `null` on error.
+	 */
 	get: function() {
 		let profile_file = fs.open("/etc/ucentral/profile.json");
 
@@ -651,14 +721,49 @@ let local_profile = {
 	}
 };
 
+/**
+ * @class uCentral.files
+ * @classdesc
+ *
+ * The files utility class manages non-uci file attachments which are
+ * produced during schema rendering.
+ */
+
+/** @lends uCentral.files.prototype */
+
 let files = {
+	/** @private */
 	files: {},
+
+	/**
+	 * The base directory for file attachments.
+	 *
+	 * @readonly
+	 */
 	basedir: '/tmp/ucentral',
 
+	/**
+	 * Escape the given string.
+	 *
+	 * Escape any slash and tilde characters in the given string to allow
+	 * using it as part of a JSON pointer expression.
+	 *
+	 * @param {string} s  The string to escape
+	 * @returns {string}  The escaped string
+	 */
 	escape: function(s) {
 		return replace(s, /[~\/]/g, m => (m == '~' ? '~0' : '~1'));
 	},
 
+	/**
+	 * Add a named file attachment.
+	 *
+	 * Stores the given content in a file at the given path. Expands the
+	 * path relative to the `basedir` if it is not absolute.
+	 *
+	 * @param {string} path  The file path
+	 * @param {*} content    The content to store
+	 */
 	add_named: function(path, content) {
 		if (index(path, '/') != 0)
 			path = this.basedir + '/' + path;
@@ -666,6 +771,19 @@ let files = {
 		this.files[path] = content;
 	},
 
+	/**
+	 * Add an anonymous file attachment.
+	 *
+	 * Stores the given content in a file with a random name derived from
+	 * the given location pointer and name hint.
+	 *
+	 * @param {string} location  The current location within the state we're traversing
+	 * @param {string} name      The name hint
+	 * @param {*} content        The content to store
+	 *
+	 * @returns {string}
+	 * Returns the generated random file path.
+	 */
 	add_anonymous: function(location, name, content) {
 		let path = this.basedir + '/' + this.escape(location) + '/' + this.escape(name);
 
@@ -674,6 +792,14 @@ let files = {
 		return path;
 	},
 
+	/**
+	 * Purge the file attachment storage.
+	 *
+	 * Recursively deletes the file attachment storage and places any error
+	 * messages in the given logs array.
+	 *
+	 * @param {array} logs  The array to store log messages into
+	 */
 	purge: function(logs, dir) {
 		if (dir == null)
 			dir = this.basedir;
@@ -707,6 +833,18 @@ let files = {
 		}
 	},
 
+	/**
+	 * Recursively create the parent directories of the given path.
+	 *
+	 * Recursively creates the parent directory structure of the given
+	 * path and places any error messages in the given logs array.
+	 *
+	 * @param {array} logs   The array to store log messages into
+	 * @param {string} path  The path to create directories for
+	 * @return {boolean}
+	 * Returns `true` if the parent directories were successfully created
+	 * or did already exist, returns `false` in case an error occurred.
+	 */
 	mkdir_path: function(logs, path) {
 		assert(index(path, '/') == 0, "Expecting absolute path");
 
@@ -732,6 +870,18 @@ let files = {
 		return true;
 	},
 
+	/**
+	 * Write the staged file attachement contents to the filesystem.
+	 *
+	 * Writes the staged attachment contents that were gathered during state
+	 * rendering to the file system and places any encountered errors into
+	 * the logs array.
+	 *
+	 * @param {array} logs  The array to store error messages into
+	 * @return {boolean}
+	 * Returns `true` if all attachments were written succefully, returns
+	 * `false` if one or more attachments could not be written.
+	 */
 	write: function(logs) {
 		let success = true;
 
@@ -757,7 +907,24 @@ let files = {
 	}
 };
 
+/**
+ * @class uCentral.shell
+ * @classdesc
+ *
+ * The shell utility class provides high level abstractions for various
+ * shell interaction tasks.
+ */
+
+/** @lends uCentral.shell.prototype */
+
 let shell = {
+	/**
+	 * Set a random root password.
+	 *
+	 * Generate a random passphrase and set it as root password,
+	 * do not change the password if a random password has been
+	 * set already since the last reboot.
+	 */
 	password: function() {
 		if (length(fs.stat("/tmp/ucentral.pwd")))
 			return;
@@ -778,11 +945,26 @@ let shell = {
 	}
 };
 
+/**
+ * @class uCentral.routing_table
+ * @classdesc
+ *
+ * The routing table utility class allows querying system routing tables.
+ */
+
+/** @lends uCentral.routing_table.prototype */
+
 let routing_table = {
 	used_tables: {},
 
 	next: 1,
 
+	/**
+	 * Allocate a route table index for the given ID
+	 *
+	 * @param {string} id  The ID to lookup or reserve
+	 * @returns {number} The table number allocated for the given ID
+	 */
 	get: function(id) {
 		if (!this.used_tables[id])
 			this.used_tables[id] = this.next++;
@@ -790,30 +972,78 @@ let routing_table = {
 	}
 };
 
-return {
+/**
+ * @constructs
+ * @name uCentral
+ * @classdesc
+ *
+ * The uCentral namespace is not an actual class but merely a virtual
+ * namespace for documentation purposes.
+ *
+ * From the perspective of a template author, the uCentral namespace
+ * is the global root level scope available to embedded code, so
+ * methods like `uCentral.b()` or `uCentral.info()` or utlity classes
+ * like `uCentral.files` or `uCentral.wiphy` are available to templates
+ * as `b()`, `info()`, `files` and `wiphy` respectively.
+ */
+return /** @lends uCentral.prototype */ {
 	render: function(state, logs) {
 		logs = logs || [];
 
+		/** @lends uCentral.prototype */
 		return render('templates/toplevel.uc', {
 			b,
 			s,
 			tryinclude,
 			state,
+
+			/** @member {uCentral.wiphy} */
 			wiphy,
+
+			/** @member {uCentral.ethernet} */
 			ethernet,
+
+			/** @member {uCentral.ipcalc} */
 			ipcalc,
+
+			/** @member {uCentral.services} */
 			services,
+
+			/** @member {uCentral.dhcp_relay} */
 			dhcp_relay,
+
+			/** @member {uCentral.local_profile} */
 			local_profile,
 			location: '/',
 			cursor,
 			capab,
+
+			/** @member {uCentral.files} */
 			files,
+
+			/** @member {uCentral.shell} */
 			shell,
+
+			/** @member {uCentral.routing_table} */
 			routing_table,
 			serial,
 
+			/**
+			 * Emit a warning message.
+			 *
+			 * @memberof uCentral.prototype
+			 * @param {string} fmt  The warning message format string
+			 * @param {...*} args	Optional format arguments
+			 */
 			warn: (fmt, ...args) => push(logs, sprintf("[W] (In %s) ", location || '/') + sprintf(fmt, ...args)),
+
+			/**
+			 * Emit an informational message.
+			 *
+			 * @memberof uCentral.prototype
+			 * @param {string} fmt  The information message format string
+			 * @param {...*} args	Optional format arguments
+			 */
 			info: (fmt, ...args) => push(logs, sprintf("[!] (In %s) ", location || '/') + sprintf(fmt, ...args))
 		});
 	},
