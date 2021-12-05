@@ -210,7 +210,7 @@ let wiphy = {
 
 		cursor.load("wireless");
 		cursor.foreach("wireless", "wifi-device", (s) => {
-			if (s.path == path) {
+			if (s.path == path && s.scanning != 1) {
 				sid = s['.name'];
 
 				return false;
