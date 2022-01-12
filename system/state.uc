@@ -2,11 +2,6 @@
 {%
 	let fs = require("fs");
 
-	/* if we are actively streaming telemetry then the state handler does not need to run
-	   independently */
-	if (!telemetry && fs.stat("/tmp/ucentral.telemetry"))
-		return 0;
-
 	let uci = require("uci");
 	let ubus = require("ubus");
 	let cfgfile = fs.open("/etc/ucentral/ucentral.active", "r");
@@ -33,14 +28,18 @@
 		stats = cursor.get_all("ustats", "stats");
 	}
 
+	let delta = 1;
+	if (telemetry)
+		delta = 0;
+
 	/* load state data */
 	let ipv6leases = ctx.call("dhcp", "ipv6leases");
 	let topology = ctx.call("topology", "mac");
 	let wifistatus = ctx.call("network.wireless", "status");
 	let wifiphy = ctx.call("wifi", "phy");
 	let wifiiface = ctx.call("wifi", "iface");
-	let stations = ctx.call("wifi", "station");
-	let ports = ctx.call("topology", "port");
+	let stations = ctx.call("wifi", "station",  { delta });
+	let ports = ctx.call("topology", "port", { delta });
 	let poe = ctx.call("poe", "info");
 	let gps = ctx.call("gps", "info");
 	let lldp = [];
@@ -393,11 +392,18 @@
 		serial: cursor.get("ucentral", "config", "serial"),
 		state
 	};
-	ctx.call("ucentral", "stats", msg);
 
-	if (telemetry)
+	if (telemetry) {
 		ctx.call("ucentral", "event", { "event": "state", "payload": msg });
+		let f = fs.open("/tmp/ucentral.telemetry", "w");
+		if (f) {
+			f.write(msg);
+			f.close();
+		}
+		return;
+	}
 
+	ctx.call("ucentral", "stats", msg);
 	let f = fs.open("/tmp/ucentral.state", "w");
 	if (f) {
 		f.write(msg);
