@@ -102,7 +102,7 @@ let GeneratorProto = {
 			code: [
 				'if (length(value) > 255) return false;',
 				'let labels = split(value, ".");',
-				'return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);'
+				'return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]{1,2}|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);'
 			]
 		},
 		"fqdn": {
@@ -110,7 +110,7 @@ let GeneratorProto = {
 			code: [
 				'if (length(value) > 255) return false;',
 				'let labels = split(value, ".");',
-				'return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 1);'
+				'return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]{1,2}|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 1);'
 			]
 		},
 		"uc-ip": {
