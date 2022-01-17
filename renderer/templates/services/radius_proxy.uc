@@ -30,7 +30,7 @@ set radsecproxy.@client[-1].secret='secret'
 %}
 
 set radsecproxy.tls{{ idx }}=tls
-set radsecproxy.@tls[-1].name='tls'
+set radsecproxy.@tls[-1].name='tls{{ idx }}'
 set radsecproxy.@tls[-1].CACertificateFile={{ s(certs.ca) }}
 set radsecproxy.@tls[-1].certificateFile={{ s(certs.cert) }}
 set radsecproxy.@tls[-1].certificateKeyFile={{ s(certs.key) }}
@@ -41,9 +41,9 @@ set radsecproxy.@server[-1].name='server{{ idx }}'
 {%   if (realm.auto_discover): %}
 set radsecproxy.@server[-1].dynamicLookupCommand='/usr/libexec/naptr_lookup.sh'
 {% else %}
-set radsecproxy.@server[-1].host={{ s(radius_proxy.host) }}
-set radsecproxy.@server[-1].port='{{ radius_proxy.port }}'
-set radsecproxy.@server[-1].secret={{ s(radius_proxy.secret) }}
+set radsecproxy.@server[-1].host={{ s(realm.host) }}
+set radsecproxy.@server[-1].port={{ s(realm.port) }}
+set radsecproxy.@server[-1].secret={{ s(realm.secret) }}
 {% endif %}
 set radsecproxy.@server[-1].type='tls'
 set radsecproxy.@server[-1].tls='tls{{ idx }}'
