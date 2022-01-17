@@ -8,6 +8,12 @@ properties:
       This is a free text field, stating the administrative name of the
       device. It may contain spaces and special characters.
     type: string
+  hostname:
+    description:
+      The hostname that shall be set on the device. If this field is not set,
+      then the devices serial number is used.
+    type: string
+    format: hostname
   location:
     description:
       This is a free text field, stating the location of the  device. It

@@ -57,6 +57,10 @@
                 "name": {
                     "type": "string"
                 },
+                "hostname": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9]*$"
+                },
                 "location": {
                     "type": "string"
                 },

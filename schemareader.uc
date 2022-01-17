@@ -87,6 +87,23 @@ function instantiateUnit(location, value, errors) {
 			obj.name = parseName(location + "/name", value["name"], errors);
 		}
 
+		function parseHostname(location, value, errors) {
+			if (type(value) == "string") {
+				if (!match(value, regexp("^[a-zA-Z0-9]*$")))
+					push(errors, [ location, "must match regular expression /^[a-zA-Z0-9]*$/" ]);
+
+			}
+
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "hostname")) {
+			obj.hostname = parseHostname(location + "/hostname", value["hostname"], errors);
+		}
+
 		function parseLocation(location, value, errors) {
 			if (type(value) != "string")
 				push(errors, [ location, "must be of type string" ]);
