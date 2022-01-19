@@ -319,12 +319,8 @@
 				iface.ssids = ssids;
 		}
 
-		if (length(ports) && length(ports[name]) && length(ports[name].stats)) {
-			iface.counters = ports[name].stats;
-			for (let key in iface.counters)
-				if (!iface.counters[key])
-					delete iface.counters.key;
-		}
+		if (length(ports) && length(ports[name]) && length(ports[name].counters))
+			iface.counters = ports[name].counters;
 		if (!length(iface.ipv4))
 			delete iface.ipv4;
 		if (!length(iface.ipv6))
