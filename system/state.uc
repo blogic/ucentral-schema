@@ -381,6 +381,7 @@
 		state["link-state"] = link;
 	}
 
+	state.version = 1;
 	printf("%s\n", state);
 
 	let msg = {
