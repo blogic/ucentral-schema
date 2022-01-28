@@ -351,7 +351,7 @@
 
 	function sysfs_net(iface, prop) {
 		let f = fs.open(sprintf("/sys/class/net/%s/%s", iface, prop), "r");
-		let val = false;
+		let val = 0;
 
 		if (f) {
 			val = replace(f.read("all"), '\n', '');
