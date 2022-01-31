@@ -33,3 +33,10 @@ properties:
     type: integer
     minimum: 32
     default: 1000
+  priority:
+    description:
+      Filter messages by their log priority. the value maps directly to the 0-7
+      range used by syslog.
+    type: integer
+    minimum: 0
+    default: 7
