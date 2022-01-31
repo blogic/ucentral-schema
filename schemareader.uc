@@ -41,13 +41,13 @@ function matchUcBase64(value) {
 function matchHostname(value) {
 	if (length(value) > 255) return false;
 	let labels = split(value, ".");
-	return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);
+	return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]{1,2}|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);
 }
 
 function matchFqdn(value) {
 	if (length(value) > 255) return false;
 	let labels = split(value, ".");
-	return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 1);
+	return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]{1,2}|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 1);
 }
 
 function matchUcIp(value) {
@@ -89,8 +89,8 @@ function instantiateUnit(location, value, errors) {
 
 		function parseHostname(location, value, errors) {
 			if (type(value) == "string") {
-				if (!match(value, regexp("^[a-zA-Z0-9]*$")))
-					push(errors, [ location, "must match regular expression /^[a-zA-Z0-9]*$/" ]);
+				if (!matchHostname(value))
+					push(errors, [ location, "must be a valid hostname" ]);
 
 			}
 
@@ -2706,6 +2706,20 @@ function instantiateInterfaceSsidRadius(location, value, errors) {
 			obj.chargeable_user_id = false;
 		}
 
+		function parseMacFilter(location, value, errors) {
+			if (type(value) != "bool")
+				push(errors, [ location, "must be of type boolean" ]);
+
+			return value;
+		}
+
+		if (exists(value, "mac-filter")) {
+			obj.mac_filter = parseMacFilter(location + "/mac-filter", value["mac-filter"], errors);
+		}
+		else {
+			obj.mac_filter = false;
+		}
+
 		if (exists(value, "local")) {
 			obj.local = instantiateInterfaceSsidRadiusLocal(location + "/local", value["local"], errors);
 		}
@@ -4614,6 +4628,26 @@ function instantiateServiceLog(location, value, errors) {
 		}
 		else {
 			obj.size = 1000;
+		}
+
+		function parsePriority(location, value, errors) {
+			if (type(value) in [ "int", "double" ]) {
+				if (value < 0)
+					push(errors, [ location, "must be bigger than or equal to 0" ]);
+
+			}
+
+			if (type(value) != "int")
+				push(errors, [ location, "must be of type integer" ]);
+
+			return value;
+		}
+
+		if (exists(value, "priority")) {
+			obj.priority = parsePriority(location + "/priority", value["priority"], errors);
+		}
+		else {
+			obj.priority = 7;
 		}
 
 		return obj;

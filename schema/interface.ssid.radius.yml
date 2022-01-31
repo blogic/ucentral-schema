@@ -13,6 +13,11 @@ properties:
       This will enable support for Chargeable-User-Identity (RFC 4372).
     type: boolean
     default: false
+  mac-filter:
+    description:
+      Should the radius server be used for MAC address ACL.
+    type: boolean
+    default: false
   local:
     $ref: "https://ucentral.io/schema/v1/interface/ssid/radius/local/"
   authentication:

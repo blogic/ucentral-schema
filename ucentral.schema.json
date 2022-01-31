@@ -59,7 +59,7 @@
                 },
                 "hostname": {
                     "type": "string",
-                    "pattern": "^[a-zA-Z0-9]*$"
+                    "format": "hostname"
                 },
                 "location": {
                     "type": "string"
@@ -1120,6 +1120,10 @@
                     "type": "boolean",
                     "default": false
                 },
+                "mac-filter": {
+                    "type": "boolean",
+                    "default": false
+                },
                 "local": {
                     "$ref": "#/$defs/interface.ssid.radius.local"
                 },
@@ -1787,6 +1791,11 @@
                     "type": "integer",
                     "minimum": 32,
                     "default": 1000
+                },
+                "priority": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 7
                 }
             }
         },
