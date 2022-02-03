@@ -3,6 +3,7 @@ let verbose = args?.verbose ? true : false;
 let active = args?.active ? true : false;
 let ies = args?.ies || [];
 let nl = require("nl80211");
+let rtnl = require("rtnl");
 let def = nl.const;
 
 const SCAN_FLAG_AP = (1<<2);
@@ -23,6 +24,26 @@ const frequency_width = { '80': 3, '40': 20, '20': 1 };
 const IFTYPE_STATION = 2;
 const IFTYPE_AP = 3;
 const IFTYPE_MESH = 7;
+const IFF_UP = 1;
+
+function frequency_to_channel(freq) {
+	/* see 802.11-2007 17.3.8.3.2 and Annex J */
+	if (freq == 2484)
+		return 14;
+	else if (freq < 2484)
+		return (freq - 2407) / 5;
+	else if (freq >= 4910 && freq <= 4980)
+		return (freq - 4000) / 5;
+	else if (freq < 5935) /* DMG band lower limit */
+		return (freq - 5000) / 5;
+	else if (freq == 5935)
+		return 2;
+	else if (freq >= 5955 && freq <= 7115)
+		return ((freq - 5955) / 5) + 1;
+	else if (freq >= 58320 && freq <= 64800)
+		return (freq - 56160) / 2160;
+	return 0;
+}
 
 function iface_get(wdev) {
 	let params = { dev: wdev };
@@ -121,19 +142,20 @@ function wifi_scan() {
 	for (let phy in phys) {
 		let iface = iface_find(phy.wiphy, [ IFTYPE_STATION, IFTYPE_AP ], ifaces);
 		let scan_iface = false;
-
 		if (!iface) {
 			warn('no valid interface found for phy' + phy.wiphy + '\n');
 			nl.request(def.NL80211_CMD_NEW_INTERFACE, 0, { wiphy: phy.wiphy, ifname: 'scan', iftype: IFTYPE_STATION });
-			scan_iface = nl.waitfor([ def.NL80211_CMD_NEW_INTERFACE ], 1000);
-			if (!scan_iface)
-				continue;
+			nl.waitfor([ def.NL80211_CMD_NEW_INTERFACE ], 1000);
+			scan_iface = true;
 			iface = {
 				dev: 'scan',
-				channel_width: 20,
+				channel_width: 1,
 			};
-			system("ifconfig scan up");
+			rtnl.request(rtnl.const.RTM_NEWLINK, 0, { dev: 'scan', flags: IFF_UP, change: 1});
+			sleep(1000);
 		}
+
+		printf("scanning on phy%d\n", phy.wiphy);
 
 		let freqs = phy_get_frequencies(phy);
 		if (length(intersect(freqs, frequency_list_2g)))
@@ -149,6 +171,7 @@ function wifi_scan() {
 				bssid: bss.bssid,
 				tsf: +bss.tsf,
 				frequency: +bss.frequency,
+				channel: frequency_to_channel(+bss.frequency),
 				signal: +bss.signal_mbm / 100,
 				last_seen: +bss.seen_ms_ago,
 				capability: +bss.capability,
@@ -158,8 +181,10 @@ function wifi_scan() {
 			for (let ie in bss.beacon_ies) {
 				switch (ie.type) {
 				case 0:
-				case 114:
 					res.ssid = ie.data;
+					break;
+				case 114:
+					res.meshid = ie.data;
 					break;
 				case 0x3d:
 					res.ht_oper = b64enc(ie.data);
@@ -177,11 +202,8 @@ function wifi_scan() {
 		}
 		if (scan_iface) {
 			warn('removing temporary interface\n');
-			system("ifconfig scan down; iw dev scan del");
-//			nl.request(def.NL80211_CMD_DEL_INTERFACE, 0, { ifname: 'scan' });
+			nl.request(def.NL80211_CMD_DEL_INTERFACE, 0, { dev: 'scan' });
 		}
-
-		// printf("%.J\n", nl.request(def.NL80211_CMD_GET_SCAN, def.NLM_F_DUMP, { dev: iface.dev }));
 	}
 	printf("%.J\n", scan);
 	return scan;
