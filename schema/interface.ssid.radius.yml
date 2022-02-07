@@ -15,6 +15,32 @@ properties:
     default: false
   local:
     $ref: "https://ucentral.io/schema/v1/interface/ssid/radius/local/"
+  dynamic-authorization:
+    description:
+      Dynamic Authorization Extensions (DAE) is an extension to Radius.
+    type: object
+    properties:
+      host:
+        description:
+           The IP of the DAE client.
+        type: string
+        format: uc-ip
+        examples:
+        - 192.168.1.10
+      port:
+        description:
+          The network port that the DAE client can connet on.
+        type: integer
+        maximum: 65535
+        minimum: 1024
+        examples:
+        - 1812
+      secret:
+        description:
+          The shared DAE authentication secret.
+        type: string
+        examples:
+        - secret
   authentication:
     allOf:
       - $ref: "https://ucentral.io/schema/v1/interface/ssid/radius/server/"

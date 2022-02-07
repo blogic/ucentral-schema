@@ -1123,6 +1123,32 @@
                 "local": {
                     "$ref": "#/$defs/interface.ssid.radius.local"
                 },
+                "dynamic-authorization": {
+                    "type": "object",
+                    "properties": {
+                        "host": {
+                            "type": "string",
+                            "format": "uc-ip",
+                            "examples": [
+                                "192.168.1.10"
+                            ]
+                        },
+                        "port": {
+                            "type": "integer",
+                            "maximum": 65535,
+                            "minimum": 1024,
+                            "examples": [
+                                1812
+                            ]
+                        },
+                        "secret": {
+                            "type": "string",
+                            "examples": [
+                                "secret"
+                            ]
+                        }
+                    }
+                },
                 "authentication": {
                     "allOf": [
                         {

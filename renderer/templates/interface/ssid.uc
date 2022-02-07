@@ -82,6 +82,7 @@
 				proto: ssid.encryption.proto,
 				auth: ssid.radius.authentication,
 				acct: ssid.radius.accounting,
+				dyn_auth: ssid.radius?.dynamic_authorization,
 				radius: ssid.radius
 			};
 		warn("Can't find any valid encryption settings");
@@ -109,6 +110,7 @@
 					proto: 'none',
 					auth: ssid.radius.authentication,
 					acct: ssid.radius.accounting,
+					dyn_auth: ssid.radius?.dynamic_authorization,
 					radius: ssid.radius
 				};
 			return {
@@ -255,6 +257,12 @@ set wireless.{{ section }}.acct_interval={{ crypto.acct.interval }}
 {%     for (let request in crypto.acct.request_attribute): %}
 add_list wireless.{{ section }}.radius_acct_req_attr={{ s(request.id + ':' + request.value) }}
 {%     endfor %}
+{%   endif %}
+
+{%   if (crypto.dyn_auth): %}
+set wireless.{{ section }}.dae_client={{ crypto.dyn_auth.host }}
+set wireless.{{ section }}.dae_port={{ crypto.dyn_auth.port }}
+set wireless.{{ section }}.dae_secret={{ crypto.dyn_auth.secret }}
 {%   endif %}
 
 {%   if (crypto.radius): %}
