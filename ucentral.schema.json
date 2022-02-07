@@ -1120,15 +1120,24 @@
                     "type": "boolean",
                     "default": false
                 },
-                "mac-filter": {
-                    "type": "boolean",
-                    "default": false
-                },
                 "local": {
                     "$ref": "#/$defs/interface.ssid.radius.local"
                 },
                 "authentication": {
-                    "$ref": "#/$defs/interface.ssid.radius.server"
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/interface.ssid.radius.server"
+                        },
+                        {
+                            "type": "object",
+                            "properties": {
+                                "mac-filter": {
+                                    "type": "boolean",
+                                    "default": false
+                                }
+                            }
+                        }
+                    ]
                 },
                 "accounting": {
                     "allOf": [

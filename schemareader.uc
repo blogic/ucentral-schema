@@ -2706,26 +2706,89 @@ function instantiateInterfaceSsidRadius(location, value, errors) {
 			obj.chargeable_user_id = false;
 		}
 
-		function parseMacFilter(location, value, errors) {
-			if (type(value) != "bool")
-				push(errors, [ location, "must be of type boolean" ]);
-
-			return value;
-		}
-
-		if (exists(value, "mac-filter")) {
-			obj.mac_filter = parseMacFilter(location + "/mac-filter", value["mac-filter"], errors);
-		}
-		else {
-			obj.mac_filter = false;
-		}
-
 		if (exists(value, "local")) {
 			obj.local = instantiateInterfaceSsidRadiusLocal(location + "/local", value["local"], errors);
 		}
 
+		function parseAuthentication(location, value, errors) {
+			function parseVariant0(location, value, errors) {
+				value = instantiateInterfaceSsidRadiusServer(location, value, errors);
+
+				return value;
+			}
+
+			function parseVariant1(location, value, errors) {
+				if (type(value) == "object") {
+					let obj = {};
+
+					function parseMacFilter(location, value, errors) {
+						if (type(value) != "bool")
+							push(errors, [ location, "must be of type boolean" ]);
+
+						return value;
+					}
+
+					if (exists(value, "mac-filter")) {
+						obj.mac_filter = parseMacFilter(location + "/mac-filter", value["mac-filter"], errors);
+					}
+					else {
+						obj.mac_filter = false;
+					}
+
+					return obj;
+				}
+
+				if (type(value) != "object")
+					push(errors, [ location, "must be of type object" ]);
+
+				return value;
+			}
+
+			let success = 0, tryval, tryerr, vvalue = null, verrors = [];
+
+			tryerr = [];
+			tryval = parseVariant0(location, value, tryerr);
+			if (!length(tryerr)) {
+				if (type(vvalue) == "object" && type(tryval) == "object")
+					vvalue = { ...vvalue, ...tryval };
+				else
+					vvalue = tryval;
+
+				success++;
+			}
+			else {
+				push(verrors, join(" and\n", map(tryerr, err => "\t - " + err[1])));
+			}
+
+			tryerr = [];
+			tryval = parseVariant1(location, value, tryerr);
+			if (!length(tryerr)) {
+				if (type(vvalue) == "object" && type(tryval) == "object")
+					vvalue = { ...vvalue, ...tryval };
+				else
+					vvalue = tryval;
+
+				success++;
+			}
+			else {
+				push(verrors, join(" and\n", map(tryerr, err => "\t - " + err[1])));
+			}
+
+			if (success != 2) {
+				if (length(verrors))
+					push(errors, [ location, "must match all of the following constraints:\n" + join("\n- or -\n", verrors) ]);
+				else
+					push(errors, [ location, "must match only one variant" ]);
+				return null;
+			}
+
+			value = vvalue;
+
+			return value;
+		}
+
 		if (exists(value, "authentication")) {
-			obj.authentication = instantiateInterfaceSsidRadiusServer(location + "/authentication", value["authentication"], errors);
+			obj.authentication = parseAuthentication(location + "/authentication", value["authentication"], errors);
 		}
 
 		function parseAccounting(location, value, errors) {

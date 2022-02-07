@@ -101,7 +101,7 @@
 
 	function validate_encryption() {
 		if (!ssid.encryption || ssid.encryption.proto in [ "none" ]) {
-			if (ssid.radius?.mac_filter &&
+			if (ssid.radius?.authentication?.mac_filter &&
 			    ssid.radius.authentication?.host &&
 			    ssid.radius.authentication?.port &&
 			    ssid.radius.authentication?.secret)
@@ -261,7 +261,7 @@ add_list wireless.{{ section }}.radius_acct_req_attr={{ s(request.id + ':' + req
 set wireless.{{ section }}.request_cui={{ b(crypto.radius.chargeable_user_id) }}
 set wireless.{{ section }}.nasid={{ s(crypto.radius.nas_identifier) }}
 set wireless.{{ section }}.dynamic_vlan=1
-{%     if (crypto.radius.mac_filter): %}
+{%     if (crypto.radius?.authentication?.mac_filter): %}
 set wireless.{{ section }}.macfilter=radius
 {%     endif %}
 {%   endif %}
