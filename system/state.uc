@@ -357,7 +357,8 @@
 			val = replace(f.read("all"), '\n', '');
 			f.close();
 		}
-
+		if (v != 1)
+			val = 0;
 		return val;
 	}
 
