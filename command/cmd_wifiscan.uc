@@ -2,9 +2,15 @@
 let verbose = args?.verbose ? true : false;
 let active = args?.active ? true : false;
 let ies = args?.ies || [];
+let override_dfs = args?.override_dfs ? true : false;
 let nl = require("nl80211");
 let rtnl = require("rtnl");
 let def = nl.const;
+
+if (!ctx) {
+        ubus = require("ubus");
+        ctx = ubus.connect();
+}
 
 const SCAN_FLAG_AP = (1<<2);
 const frequency_list_2g = [ 2412, 2417, 2422, 2427, 2432, 2437, 2442,
@@ -87,10 +93,11 @@ function scan_trigger(wdev, frequency, width) {
 	if (res === false)
 		die("Unable to trigger scan: " + nl.error() + "\n");
 
-	res = nl.waitfor([
-		def.NL80211_CMD_NEW_SCAN_RESULTS,
-		def.NL80211_CMD_SCAN_ABORTED
-	], (frequency && width) ? 500 : 5000);
+	else
+		res = nl.waitfor([
+			def.NL80211_CMD_NEW_SCAN_RESULTS,
+			def.NL80211_CMD_SCAN_ABORTED
+		], (frequency && width) ? 500 : 5000);
 
 	if (!res)
 		warn("Netlink error while awaiting scan results: " + nl.error() + "\n");
@@ -122,6 +129,17 @@ function phy_get_frequencies(phy) {
 				push(freqs, freq.freq);
 	}
 	return freqs;
+}
+
+function phy_frequency_dfs(phy, curr) {
+	let freqs = [];
+
+	for (let band in phy.wiphy_bands) {
+		for (let freq in band?.freqs || [])
+			if (freq.freq == curr && freq.dfs_state >= 0)
+				return true;
+	}
+	return false;
 }
 
 let phys = phy_get();
@@ -162,8 +180,13 @@ function wifi_scan() {
 			scan_trigger(iface.dev, frequency_list_2g);
 
 		let freqs_5g = intersect(freqs, frequency_list_5g[iface.channel_width]);
-		if (length(freqs_5g))
+		if (length(freqs_5g)) {
+			if (override_dfs && !scan_iface && phy_frequency_dfs(phy, iface.wiphy_freq)) {
+				ctx.call(sprintf('hostapd.%s', iface.dev), 'switch_chan', { freq: 5180, bcn_count: 10 });
+				sleep(2000)
+			}
 			trigger_scan_width(iface.dev, freqs_5g, iface.channel_width);
+		}
 		let res = nl.request(def.NL80211_CMD_GET_SCAN, def.NLM_F_DUMP, { dev: iface.dev });
 		for (let bss in res) {
 			bss = bss.bss;
