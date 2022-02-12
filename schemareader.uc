@@ -731,8 +731,8 @@ function instantiateRadio(location, value, errors) {
 		function parseChannel(location, value, errors) {
 			function parseVariant0(location, value, errors) {
 				if (type(value) in [ "int", "double" ]) {
-					if (value > 171)
-						push(errors, [ location, "must be lower than or equal to 171" ]);
+					if (value > 196)
+						push(errors, [ location, "must be lower than or equal to 196" ]);
 
 					if (value < 1)
 						push(errors, [ location, "must be bigger than or equal to 1" ]);
@@ -802,6 +802,37 @@ function instantiateRadio(location, value, errors) {
 			obj.channel = parseChannel(location + "/channel", value["channel"], errors);
 		}
 
+		function parseValidChannels(location, value, errors) {
+			if (type(value) == "array") {
+				function parseItem(location, value, errors) {
+					if (type(value) in [ "int", "double" ]) {
+						if (value > 196)
+							push(errors, [ location, "must be lower than or equal to 196" ]);
+
+						if (value < 1)
+							push(errors, [ location, "must be bigger than or equal to 1" ]);
+
+					}
+
+					if (type(value) != "int")
+						push(errors, [ location, "must be of type integer" ]);
+
+					return value;
+				}
+
+				return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
+			}
+
+			if (type(value) != "array")
+				push(errors, [ location, "must be of type array" ]);
+
+			return value;
+		}
+
+		if (exists(value, "valid-channels")) {
+			obj.valid_channels = parseValidChannels(location + "/valid-channels", value["valid-channels"], errors);
+		}
+
 		function parseCountry(location, value, errors) {
 			if (type(value) == "string") {
 				if (length(value) > 2)
@@ -820,6 +851,20 @@ function instantiateRadio(location, value, errors) {
 
 		if (exists(value, "country")) {
 			obj.country = parseCountry(location + "/country", value["country"], errors);
+		}
+
+		function parseAllowDfs(location, value, errors) {
+			if (type(value) != "bool")
+				push(errors, [ location, "must be of type boolean" ]);
+
+			return value;
+		}
+
+		if (exists(value, "allow-dfs")) {
+			obj.allow_dfs = parseAllowDfs(location + "/allow-dfs", value["allow-dfs"], errors);
+		}
+		else {
+			obj.allow_dfs = false;
 		}
 
 		function parseChannelMode(location, value, errors) {

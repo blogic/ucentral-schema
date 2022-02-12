@@ -30,10 +30,18 @@ properties:
       algorithm.
     oneOf:
       - type: integer
-        maximum: 171
+        maximum: 196
         minimum: 1
       - type: string
         const: auto
+  valid-channels:
+    description:
+      Pass a list of valid-channels that can be used during ACS.
+    type: array
+    items:
+      type: integer
+      maximum: 196
+      minimum: 1
   country:
     description:
       Specifies the country code, affects the available channels and
@@ -43,6 +51,11 @@ properties:
     minLength: 2
     examples:
     - US
+  allow-dfs:
+    description:
+      This property defines whether a radio may use DFS channels.
+    type: boolean
+    default: false
   channel-mode:
     description:
       Define the ideal channel mode that the radio shall use. This can be 802.11n, 802.11ac

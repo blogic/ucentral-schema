@@ -374,7 +374,7 @@
                     "oneOf": [
                         {
                             "type": "integer",
-                            "maximum": 171,
+                            "maximum": 196,
                             "minimum": 1
                         },
                         {
@@ -383,6 +383,14 @@
                         }
                     ]
                 },
+                "valid-channels": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer",
+                        "maximum": 196,
+                        "minimum": 1
+                    }
+                },
                 "country": {
                     "type": "string",
                     "maxLength": 2,
@@ -390,6 +398,10 @@
                     "examples": [
                         "US"
                     ]
+                },
+                "allow-dfs": {
+                    "type": "boolean",
+                    "default": false
                 },
                 "channel-mode": {
                     "type": "string",

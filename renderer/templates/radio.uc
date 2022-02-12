@@ -44,12 +44,17 @@
 			184, 192 ]
 	};
 
+	if (!length(radio.valid_channels) && radio.band == "5G")
+		radio.valid_channels = [ 36, 44, 52, 60, 100, 108, 116, 124, 132, 149, 157, 165, 173, 184, 192 ];
+
 	function allowed_channel(radio) {
 		if (!channel_list[radio.channel_width])
-			return true;
-		if (radio.channel in channel_list[radio.channel_width])
-			return true;
-		return false;
+			return false;
+		if (!(radio.channel in channel_list[radio.channel_width]))
+			return false;
+		if (radio.valid_channels && !(radio.channel in radio.valid_channels))
+			return false;
+		return true;
 	}
 
 	function match_channel(phy, radio) {
@@ -135,9 +140,10 @@ set wireless.{{ phy.section }}.txpower={{ radio.tx_power }}
 set wireless.{{ phy.section }}.legacy_rates={{ b(radio.legacy_rates) }}
 set wireless.{{ phy.section }}.chan_bw={{ radio.bandwidth }}
 set wireless.{{ phy.section }}.maxassoc={{ radio.maximum_clients }}
-{%  if (index(phy.band, "5G") >= 0): %}
-set wireless.{{ phy.section }}.channels='36 44 52 60 100 108 116 124 132 149 157 165 173 184 192'
-{%  endif %}
+set wireless.{{ phy.section }}.acs_exclude_dfs={{ b(!radio.allow_dfs) }}
+{% for (let channel in radio.valid_channels): %}
+add_list wireless.{{ phy.section }}.channels={{ channel }}
+{% endfor %}
 {%  if (radio.he_settings && phy.he_mac_capa && match(htmode, /HE.*/)): %}
 set wireless.{{ phy.section }}.he_bss_color={{ radio.he_settings.bss_color }}
 set wireless.{{ phy.section }}.multiple_bssid={{ b(radio.he_settings.multiple_bssid) }}
