@@ -287,7 +287,7 @@ set wireless.{{ section }}.identity='uCentral'
 {%   if (bss_mode == 'ap'): %}
 set wireless.{{ section }}.proxy_arp={{ b(length(network) ? ssid.proxy_arp : false) }}
 set wireless.{{ section }}.hidden={{ b(ssid.hidden_ssid) }}
-set wireless.{{ section }}.time_advertisement={{ ssid.broadcast_time }}
+set wireless.{{ section }}.time_advertisement={{ ssid.broadcast_time ? 2 : 0 }}
 set wireless.{{ section }}.isolate={{ b(ssid.isolate_clients) }}
 set wireless.{{ section }}.uapsd={{ b(ssid.power_save) }}
 set wireless.{{ section }}.rts_threshold={{ ssid.rts_threshold }}
