@@ -141,7 +141,7 @@ set wireless.{{ phy.section }}.legacy_rates={{ b(radio.legacy_rates) }}
 set wireless.{{ phy.section }}.chan_bw={{ radio.bandwidth }}
 set wireless.{{ phy.section }}.maxassoc={{ radio.maximum_clients }}
 set wireless.{{ phy.section }}.acs_exclude_dfs={{ b(!radio.allow_dfs) }}
-{% for (let channel in radio.valid_channels): %}
+{% if (radio.allow_dfs) for (let channel in radio.valid_channels): %}
 add_list wireless.{{ phy.section }}.channels={{ channel }}
 {% endfor %}
 {%  if (radio.he_settings && phy.he_mac_capa && match(htmode, /HE.*/)): %}
