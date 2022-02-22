@@ -25,18 +25,23 @@
 		return;
 	}
 
-	let duration = +args.duration || 30;
-	let packets = +args.packets || 1000;
+	let duration = +args.duration || 0;
+	let packets = +args.packets || 0;
 	let filename = sprintf("/tmp/pcap-%s-%d", serial, time());
 
-	let rc = system([
-		'tcpdump',
-		'-c', packets,
+	let command =	[
+		'tcpdump_timeout',
+		duration,
 		'-W', '1',
-		'-G', duration,
 		'-w', filename,
 		'-i', args.interface
-	]);
+	];
+
+	if (!duration) {
+		push(command, '-c');
+		push(command, packets);
+	}
+	let rc = system(command);
 
 	if (rc != 0) {
 		result_json({
