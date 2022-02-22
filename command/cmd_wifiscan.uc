@@ -1,6 +1,7 @@
 {%
 let verbose = args?.verbose ? true : false;
 let active = args?.active ? true : false;
+let bandwidth = args?.bandwidth || 0;
 let ies = args?.ies || [];
 let override_dfs = args?.override_dfs ? true : false;
 let nl = require("nl80211");
@@ -179,13 +180,16 @@ function wifi_scan() {
 		if (length(intersect(freqs, frequency_list_2g)))
 			scan_trigger(iface.dev, frequency_list_2g);
 
-		let freqs_5g = intersect(freqs, frequency_list_5g[iface.channel_width]);
+		let ch_width = iface.channel_width;
+		if (frequency_width[bandwith])
+			ch_width = frequency_width[bandwith];
+		let freqs_5g = intersect(freqs, frequency_list_5g[ch_width]);
 		if (length(freqs_5g)) {
 			if (override_dfs && !scan_iface && phy_frequency_dfs(phy, iface.wiphy_freq)) {
 				ctx.call(sprintf('hostapd.%s', iface.dev), 'switch_chan', { freq: 5180, bcn_count: 10 });
 				sleep(2000)
 			}
-			trigger_scan_width(iface.dev, freqs_5g, iface.channel_width);
+			trigger_scan_width(iface.dev, freqs_5g, ch_width);
 		}
 		let res = nl.request(def.NL80211_CMD_GET_SCAN, def.NLM_F_DUMP, { dev: iface.dev });
 		for (let bss in res) {
