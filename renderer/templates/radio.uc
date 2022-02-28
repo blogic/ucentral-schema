@@ -48,6 +48,8 @@
 		radio.valid_channels = [ 36, 44, 52, 60, 100, 108, 116, 124, 132, 149, 157, 165, 173, 184, 192 ];
 
 	function allowed_channel(radio) {
+		if (radio.channel_width == 20)
+			return true;
 		if (!channel_list[radio.channel_width])
 			return false;
 		if (!(radio.channel in channel_list[radio.channel_width]))
