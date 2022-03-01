@@ -55,7 +55,7 @@ properties:
     description:
       This property defines whether a radio may use DFS channels.
     type: boolean
-    default: false
+    default: true
   channel-mode:
     description:
       Define the ideal channel mode that the radio shall use. This can be 802.11n, 802.11ac
