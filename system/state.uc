@@ -359,7 +359,7 @@
 			val = replace(f.read("all"), '\n', '');
 			f.close();
 		}
-		if (v != 1)
+		if (val != +val)
 			val = 0;
 		return val;
 	}
