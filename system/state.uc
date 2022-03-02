@@ -214,8 +214,10 @@
 		if (length(status.data) && status.data.ntpserver)
 			iface.ntp_server = status.data.ntpserver;
 
-		if (length(status.data) && status.data.leasetime && status.proto == "dhcp")
+		if (length(status.data) && status.data.leasetime && status.proto == "dhcp") {
 			iface.ipv4.leasetime = status.data.leasetime;
+			iface.ipv4.dhcp_server = status.data.dhcpserver;
+		}
 
 		if (length(ipv6leases) &&
 		    length(ipv6leases.device) &&
