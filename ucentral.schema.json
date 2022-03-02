@@ -401,7 +401,7 @@
                 },
                 "allow-dfs": {
                     "type": "boolean",
-                    "default": false
+                    "default": true
                 },
                 "channel-mode": {
                     "type": "string",

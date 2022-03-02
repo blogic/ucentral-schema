@@ -864,7 +864,7 @@ function instantiateRadio(location, value, errors) {
 			obj.allow_dfs = parseAllowDfs(location + "/allow-dfs", value["allow-dfs"], errors);
 		}
 		else {
-			obj.allow_dfs = false;
+			obj.allow_dfs = true;
 		}
 
 		function parseChannelMode(location, value, errors) {
