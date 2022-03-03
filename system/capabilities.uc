@@ -34,6 +34,9 @@ for (let k, v in board.network) {
 		capa.network[k] = split(replace(v.ifname, /^ */, ''), " ");
 }
 
+if (board.system?.label_macaddr)
+	capa.label_macaddr = board.system?.label_macaddr;
+
 if (board.switch)
 	capa.switch = board.switch;
 if (length(wifi))
