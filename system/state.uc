@@ -43,6 +43,7 @@
 	let poe = ctx.call("poe", "info");
 	let gps = ctx.call("gps", "info");
 	let lldp = [];
+	let wireless = cursor.get_all("wireless");
 
 	/* prepare dhcp leases cache */
 	let ip4leases = {};
@@ -299,7 +300,7 @@
 						radio:{"$ref": sprintf("#/radios/%d", counter)},
 						phy: data.config.path
 					};
-
+					ssid.location = wireless[vap.section]?.ucentral_path || '';
 					ssid.ssid = iface.ssid;
 					ssid.mode = iface.mode;
 					ssid.bssid = iface.bssid;
@@ -359,16 +360,25 @@
 			val = replace(f.read("all"), '\n', '');
 			f.close();
 		}
-		if (val != +val)
+		if (val === null)
 			val = 0;
 		return val;
+	}
+
+	function link_state_name(name) {
+		let names = {
+			'wan': 'upstream',
+			'lan': 'downstream'
+		};
+		return names[name] || name;
 	}
 
 	if (length(capab.network)) {
 		let link = {};
 
 		for (let name, net in capab.network) {
-			link[name] = {};
+			let link_name = link_state_name(name);
+			link[link_name] = {};
 
 			for (let iface in capab.network[name]) {
 				let state = {};
@@ -378,7 +388,7 @@
 					state.speed = +sysfs_net(iface, "speed");
 					state.duplex = sysfs_net(iface, "duplex");
 				}
-				link[name][iface] = state;
+				link[link_name][iface] = state;
 			}
 		}
 		state["link-state"] = link;
