@@ -76,9 +76,13 @@ try {
 	} else {
 		error = 1;
 	}
+	if (!length(batch))
+		error = 2;
+	else if (length(logs))
+		error = 1;
 }
 catch (e) {
-	error = 1;
+	error = 2;
 	warn("Fatal error while generating UCI: ", e, "\n", e.stacktrace[0].context, "\n");
 }
 
@@ -86,7 +90,7 @@ let ubus = require("ubus").connect();
 
 if (inputjson.uuid && inputjson.uuid > 1) {
 	let status = {
-		error: length(logs) ? 1 : error,
+		error,
 		text: error ? "Failed" : "Success",
 	};
 	if (length(logs))
