@@ -15,4 +15,5 @@ set system.@system[-1].timezone={{ s(unit.timezone) }}
 set system.@system[-1].leds_off={{ b(!unit.leds_active) }}
 {%
 shell.password(unit.random_password);
+services.set_enabled("led", true);
 %}
