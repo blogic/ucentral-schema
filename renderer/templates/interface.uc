@@ -131,10 +131,10 @@
 	} else if ("open-flow" in interface.services && interface.role == "downstream") {
 		netdev = "gw0";
 		network = "";
-	} else if (!interface.ethernet && length(interface.ssids) == 1 && !tunnel_proto)
-		// interfaces with a single ssid and no tunnel do not need a bridge
+	} else if (!interface.ethernet && length(interface.ssids) == 1 && !tunnel_proto) {
+		interface.type = 'bridge';
 		netdev = '';
-	else
+	} else
 		// anything else requires a bridge-vlan
 		include("interface/bridge-vlan.uc", { interface, name, eth_ports, this_vid, bridgedev });
 
