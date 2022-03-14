@@ -40,12 +40,12 @@
 	let channel_list = {
 		"80": [ 36,  52, 100, 116, 132, 149 ],
 		"40": [ 36, 44, 52, 60, 100, 108,
-			116, 124, 132, 149, 157, 165, 173,
+			116, 124, 132, 140, 149, 157, 165, 173,
 			184, 192 ]
 	};
 
 	if (!length(radio.valid_channels) && radio.band == "5G")
-		radio.valid_channels = [ 36, 44, 52, 60, 100, 108, 116, 124, 132, 149, 157, 165, 173, 184, 192 ];
+		radio.valid_channels = [ 36, 44, 52, 60, 100, 108, 116, 124, 132, 140, 149, 157, 165, 173, 184, 192 ];
 
 	function allowed_channel(radio) {
 		if (radio.channel_width == 20)
