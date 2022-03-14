@@ -1,5 +1,6 @@
 #!/usr/bin/ucode
 {%
+push(REQUIRE_SEARCH_PATH, '/usr/share/ucentral/wifi/*.uc');
 let fs = require("fs");
 let uci = require("uci");
 let ubus = require("ubus");
@@ -17,7 +18,7 @@ cursor.load("network");
 cursor.load("wireless");
 let dhcp = cursor.get_all("dhcp");
 let wifi_config = cursor.get_all("wireless");
-let wifi_state = ctx.call("wifi", "iface");
+let wifi_state = require('iface');
 let count = 0;
 
 function find_ssid(ssid) {

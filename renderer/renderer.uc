@@ -139,7 +139,7 @@ function discover_ports() {
 let wiphy = {
 	/**
 	 * Return a list of PHY information structures
-     *
+	 *
 	 * This function returns a list of all available PHYs including
 	 * the relevant data describing their properties and capabilities
 	 * such as HT Modes, channels, ...
@@ -149,7 +149,7 @@ let wiphy = {
 	 * @returns {Array}
 	 * Returns an array of all available PHYs.
 	 */
-	phys: conn.call("wifi", "phy"),
+	phys: require("phy"),
 
 	/** @private */
 	band_freqs: {

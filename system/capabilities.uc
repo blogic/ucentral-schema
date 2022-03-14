@@ -13,7 +13,7 @@ boardfile.close();
 
 capa = {};
 ctx = ubus.connect();
-let wifi = ctx.call("wifi", "phy");
+let wifi = require("phy");
 capa.compatible = replace(board.model.id, ',', '_');
 capa.model = board.model.name;
 
