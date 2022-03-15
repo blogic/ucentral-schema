@@ -53,6 +53,11 @@
 		return;
 	}
 
+	if (ssid.roaming && ssid.encryption.proto in [ "wpa", "psk", "none" ]) {
+		delete ssid.roaming;
+		warn("Roaming requires wpa2 or later");
+	}
+
 	let certificates = ssid.certificates || {};
 	if (certificates.use_local_certificates) {
 		cursor.load("system");
