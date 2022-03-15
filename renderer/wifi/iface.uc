@@ -69,8 +69,7 @@ function lookup_wifs() {
 			w.ch_width = chwidth[wif.channel_width];
 		rv[wif.ifname] = w;
 	}
-//	printf("r -> %.J\n", rv);
-	return;
+	return rv;
 }
 
 return lookup_wifs();

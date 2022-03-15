@@ -149,7 +149,7 @@ let wiphy = {
 	 * @returns {Array}
 	 * Returns an array of all available PHYs.
 	 */
-	phys: require("phy"),
+	phys: require("wifi.phy"),
 
 	/** @private */
 	band_freqs: {

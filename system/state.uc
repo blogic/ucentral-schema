@@ -1,6 +1,6 @@
 #!/usr/bin/ucode
 {%
-	push(REQUIRE_SEARCH_PATH, '/usr/share/ucentral/wifi/*.uc');
+	push(REQUIRE_SEARCH_PATH, '/usr/share/ucentral/*.uc');
 	let fs = require("fs");
 
 	let uci = require("uci");
@@ -37,9 +37,9 @@
 	let ipv6leases = ctx.call("dhcp", "ipv6leases");
 	let topology = ctx.call("topology", "mac");
 	let wifistatus = ctx.call("network.wireless", "status");
-	let wifiphy = require('phy');
-	let wifiiface = require('iface');
-	let stations = require('station');
+	let wifiphy = require('wifi.phy');
+	let wifiiface = require('wifi.iface');
+	let stations = require('wifi.station');
 	let ports = ctx.call("topology", "port", { delta });
 	let poe = ctx.call("poe", "info");
 	let gps = ctx.call("gps", "info");

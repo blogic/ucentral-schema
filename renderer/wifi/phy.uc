@@ -77,9 +77,9 @@ function lookup_phys() {
 				if (freq.disabled)
 					continue;
 				push(p.frequencies, freq.freq);
-				push(p.channels, frequency.freq2channel(freq.freq));
+				push(p.channels, freq2channel(freq.freq));
 				if (freq.radar)
-					push(p.dfs_channels, frequency.freq2channel(freq.freq));
+					push(p.dfs_channels, freq2channel(freq.freq));
 				if (freq.freq >= 6000)
 					push(p.band, '6G');
 				else if (freq.freq <= 2484)
