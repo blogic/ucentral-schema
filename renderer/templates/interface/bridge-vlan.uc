@@ -7,8 +7,11 @@ add_list network.@bridge-vlan[-1].ports={{ port }}{{ ethernet.port_vlan(interfac
 {% if ("open-flow" in interface.services): %}
 add_list network.@bridge-vlan[-1].ports="oflow_lbr"
 {% endif %}
-{% if (interface.tunnel && interface.tunnel.proto == "mesh"): %}
+{% if (interface.tunnel?.proto == "mesh"): %}
 add_list network.@bridge-vlan[-1].ports=batman{{ ethernet.has_vlan(interface) ? "." + this_vid + ":t" : '' }}
+{% endif %}
+{% if (interface.tunnel?.proto == "vxlan"): %}
+add_list network.@bridge-vlan[-1].ports={{ name }}_vx
 {% endif %}
 {% if (interface.bridge): %}
 set network.@bridge-vlan[-1].txqueuelen={{ interface.bridge.tx_queue_len }}

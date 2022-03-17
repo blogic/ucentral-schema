@@ -109,7 +109,7 @@
 	//
 
 	// Some tunnels do not need the normal bridge-vlan setup
-	if (tunnel_proto in [ "vxlan", 'gre' ]) {
+	if (tunnel_proto in [ 'gre' ]) {
 		include("interface/" + tunnel_proto + ".uc", { interface, name, location, netdev, ipv4_mode, ipv6_mode });
 		include('interface/firewall.uc', { name, "ipv4_mode": true, "ipv6_mode": false });
 		return;
@@ -120,8 +120,8 @@
 		return;
 	}
 
-	// Mesh requires the 2 additional interface sections
-	if (tunnel_proto in [ "mesh", "l2tp" ])
+	// tunnel interfaces need additional sections
+	if (tunnel_proto in [ "mesh", "l2tp", "vxlan" ])
 		include("interface/" + tunnel_proto + ".uc", { interface, name, eth_ports, location, netdev, ipv4_mode, ipv6_mode, this_vid });
 
 	if (interface.captive) {

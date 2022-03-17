@@ -20,16 +20,16 @@ set network.{{ name }}_vx.peeraddr={{ s(interface.tunnel.peer_address) }}
 set network.{{ name }}_vx.port={{ interface.tunnel.peer_port }}
 set network.{{ name }}_vx.vid={{ interface.vlan.id }}
 
-set network.{{ name }}_vx_l2=interface
-set network.{{ name }}_vx_l2.proto='static'
-set network.{{ name }}_vx_l2.ifname='@{{ name }}_vx'
-set network.{{ name }}_vx_l2.ipaddr={{ ipcalc.generate_prefix(state, interface.ipv4.subnet) }}
-set network.{{ name }}_vx_l2.layer=2
-set network.{{ name }}_vx_l2.type='bridge'
+set network.{{ name }}=interface
+set network.{{ name }}.proto='static'
+set network.{{ name }}.ifname='@{{ name }}_vx'
+set network.{{ name }}.ipaddr={{ ipcalc.generate_prefix(state, interface.ipv4.subnet) }}
+set network.{{ name }}.layer=2
+set network.{{ name }}.type='bridge'
 
 add firewall rule
 set firewall.@rule[-1].name='Allow-VXLAN'
 set firewall.@rule[-1].src='{{ s(ethernet.find_interface("upstream", 0)) }}'
 set firewall.@rule[-1].proto='udp'
 set firewall.@rule[-1].target='ACCEPT'
-set firewall.@rule[-1].port={{ interface.tunnel.peer_port }}
+set firewall.@rule[-1].dest_port={{ interface.tunnel.peer_port }}
