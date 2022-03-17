@@ -45,6 +45,8 @@ function lookup_paths() {
 			continue;
 		let phys = fs.glob(sprintf('/sys/devices/%s/ieee80211/phy*', section.path));
 		if (!length(phys))
+			phys = fs.glob(sprintf('/sys/devices/platform/%s/ieee80211/phy*', section.path));
+		if (!length(phys))
 			continue;
 		sort(phys);
 		let index = 0;
