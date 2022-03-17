@@ -16,7 +16,6 @@ set network.gre.type='gre'
 set network.gre.peeraddr='{{ interface.tunnel.peer_address }}'
 
 {%
-interface.type = 'bridge';
 include("common.uc", {
 	name: 'gretun_' + interface.vlan.id,
 	netdev: 'gre4t-gre.' + interface.vlan.id,

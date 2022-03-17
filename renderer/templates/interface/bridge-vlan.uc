@@ -13,6 +13,9 @@ add_list network.@bridge-vlan[-1].ports=batman{{ ethernet.has_vlan(interface) ? 
 {% if (interface.tunnel?.proto == "vxlan"): %}
 add_list network.@bridge-vlan[-1].ports={{ name }}_vx
 {% endif %}
+{% if (interface.tunnel?.proto == "gre"): %}
+add_list network.@bridge-vlan[-1].ports=gre4t-gre.{{ interface.vlan.id }}
+{% endif %}
 {% if (interface.bridge): %}
 set network.@bridge-vlan[-1].txqueuelen={{ interface.bridge.tx_queue_len }}
 set network.@bridge-vlan[-1].isolate={{interface.bridge.isolate_ports }}

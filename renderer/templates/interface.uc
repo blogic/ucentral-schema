@@ -108,20 +108,13 @@
 	// Create the actual UCI sections
 	//
 
-	// Some tunnels do not need the normal bridge-vlan setup
-	if (tunnel_proto in [ 'gre' ]) {
-		include("interface/" + tunnel_proto + ".uc", { interface, name, location, netdev, ipv4_mode, ipv6_mode });
-		include('interface/firewall.uc', { name, "ipv4_mode": true, "ipv6_mode": false });
-		return;
-	}
-
 	if (interface.broad_band) {
 		include("interface/broadband.uc", { interface, name, location, eth_ports });
 		return;
 	}
 
 	// tunnel interfaces need additional sections
-	if (tunnel_proto in [ "mesh", "l2tp", "vxlan" ])
+	if (tunnel_proto in [ "mesh", "l2tp", "vxlan", "gre" ])
 		include("interface/" + tunnel_proto + ".uc", { interface, name, eth_ports, location, netdev, ipv4_mode, ipv6_mode, this_vid });
 
 	if (interface.captive) {
