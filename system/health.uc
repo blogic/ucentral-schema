@@ -60,11 +60,14 @@ for (let iface in interfaces) {
 	let ssid = {};
 	let radius = {};
 	let device = iface.l3_device;
+	let warnings = [];
 
 	if (dhcp[name] || (iface.data && iface.data.leasetime)) {
 		let rc = system(['/usr/sbin/dhcpdiscover', '-i', device, '-t', '5']);
-		if (rc)
+		if (rc) {
 			health.dhcp = false;
+			push(warnings, "DHCP did not offer any leases");
+		}
 	}
 
 	let dns = iface["dns-server"];
@@ -74,8 +77,10 @@ for (let iface in interfaces) {
 	for (let ip in dns) {
 		let rc = system(['/usr/sbin/dnsprobe', '-s', ip]);
 
-		if (rc)
-			health.dns = false
+		if (rc) {
+			health.dns = false;
+			push(warnings, sprintf("DNS %s is not reachable", ip));
+		}
 	}
 
 
@@ -85,8 +90,10 @@ for (let iface in interfaces) {
 		if (find_ssid(iface.ssid))
 			ssid[iface.ssid] = false;
 		if (iface.auth_server && iface.auth_port && iface.auth_secret)
-			if (radius_probe(iface.auth_server, iface.auth_port, iface.auth_secret))
+			if (radius_probe(iface.auth_server, iface.auth_port, iface.auth_secret)) {
 				radius[iface.ssid] = false;
+				push(warnings, sprintf("Radius %s:%s is not reachable", iface.auth_server, iface.auth_port));
+			}
 	}
 
 	if (length(ssid))
@@ -97,6 +104,8 @@ for (let iface in interfaces) {
 
 	if (length(health)) {
 		health.location= cursor.get("network", name, "ucentral_path");
+		if (length(warnings))
+			health.warning = warnings;
 		state.interfaces[name] = health;
 	}
 }
