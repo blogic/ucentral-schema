@@ -31,6 +31,8 @@ try {
 	for (let cmd in [ 'rm -rf /tmp/ucentral',
 			  'mkdir /tmp/ucentral',
 			  'rm /tmp/dnsmasq.conf',
+			  'cp /etc/config-shadow/wireless /etc/config/wireless',
+			  '/etc/init.d/wpad restart',
 			  'touch /tmp/dnsmasq.conf' ])
 		system(cmd);
 
