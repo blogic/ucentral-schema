@@ -33,6 +33,8 @@ try {
 			  'rm /tmp/dnsmasq.conf',
 			  'cp /etc/config-shadow/wireless /etc/config/wireless',
 			  '/etc/init.d/wpad restart',
+			  '/etc/init.d/uhealth stop',
+			  'touch /tmp/ucentral.health',
 			  'touch /tmp/dnsmasq.conf' ])
 		system(cmd);
 
