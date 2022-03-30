@@ -38,6 +38,8 @@ try {
 			  'touch /tmp/dnsmasq.conf' ])
 		system(cmd);
 
+	sleep(5000);
+
 	let state = schemareader.validate(inputjson, logs);
 
 	let batch = state ? renderer.render(state, logs) : "";
