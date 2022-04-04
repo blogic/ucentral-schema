@@ -31,7 +31,7 @@ try {
 	for (let cmd in [ 'rm -rf /tmp/ucentral',
 			  'mkdir /tmp/ucentral',
 			  'rm /tmp/dnsmasq.conf',
-			  'cp /etc/config-shadow/wireless /etc/config/wireless',
+			  '/etc/init.d/uhealth stop',
 			  'touch /tmp/ucentral.health',
 			  'touch /tmp/dnsmasq.conf' ])
 		system(cmd);
@@ -64,6 +64,7 @@ try {
 		for (let cmd in [ 'uci -c /tmp/config-shadow commit',
 				  'cp /tmp/config-shadow/* /etc/config/',
 				  'rm -rf /tmp/config-shadow',
+				  'wifi',
 				  'reload_config',
 				  '/etc/init.d/dnsmasq restart'])
 			system(cmd);
