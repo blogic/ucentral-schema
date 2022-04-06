@@ -1,4 +1,3 @@
-{%
 let fs = require('fs');
 let uci = require("uci");
 let cursor = uci ? uci.cursor() : null;
@@ -134,4 +133,3 @@ function lookup_phys() {
 }
 
 return lookup_phys();
-%}

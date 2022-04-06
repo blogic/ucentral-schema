@@ -1,8 +1,4 @@
-#!/usr/bin/env ucode
-{%
-
-push(REQUIRE_SEARCH_PATH,
-	"/usr/local/lib/ucode/*.so");
+#!/usr/bin/env -S ucode -R
 
 let fs = require("fs");
 let math = require("math");

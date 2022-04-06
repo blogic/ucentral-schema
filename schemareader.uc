@@ -1,4 +1,3 @@
-{%
 // Automatically generated from ./ucentral.schema.pretty.json - do not edit!
 "use strict";
 

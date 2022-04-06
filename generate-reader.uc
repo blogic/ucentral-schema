@@ -1,6 +1,4 @@
-#!/usr/bin/env ucode
-{%
-
+#!/usr/bin/env -S ucode -R
 "use strict";
 
 let fs = require("fs");
@@ -564,7 +562,6 @@ let GeneratorProto = {
 
 		this.schema = this.read_schema(this.path);
 
-		this.print(indent, '{%');
 		this.print(indent, '// Automatically generated from %s - do not edit!', this.path);
 		this.print(indent, '"use strict";\n');
 

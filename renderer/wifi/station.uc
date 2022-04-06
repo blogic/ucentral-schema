@@ -1,4 +1,3 @@
-{%
 let nl = require("nl80211");
 let def = nl.const;
 
@@ -101,4 +100,3 @@ function lookup_stations() {
 }
 
 return lookup_stations();
-%}
