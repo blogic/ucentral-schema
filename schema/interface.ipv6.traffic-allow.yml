@@ -1,0 +1,49 @@
+description:
+  This section describes an IPv6 traffic accept rule.
+type: object
+properties:
+  protocol:
+    description:
+      The layer 3 protocol to match.
+    type: string
+    default: any
+  source-address:
+    description:
+      The source IP to allow traffic from.
+    type: string
+    format: uc-cidr6
+    example: 2001:db8:1234:abcd::/64
+    default: ::/0
+  source-ports:
+    description:
+      The source port(s) to accept.
+    type: array
+    minItems: 1
+    items:
+      type:
+        - integer
+        - string
+      minimum: 0
+      maximum: 65535
+      format: uc-portrange
+  destination-address:
+    description:
+      The destination IP to allow traffic to. The address will be masked and
+      concatenated with the effective interface subnet.
+    type: string
+    format: ipv6
+    example: ::1000
+  destination-ports:
+    description:
+      The destination ports to accept.
+    type: array
+    minItems: 1
+    items:
+      type:
+        - integer
+        - string
+      minimum: 0
+      maximum: 65535
+      format: uc-portrange
+required:
+  - destination-address

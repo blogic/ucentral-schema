@@ -140,3 +140,32 @@ set firewall.@rule[-1].family='ipv6'
 set firewall.@rule[-1].proto='udp'
 set firewall.@rule[-1].target='ACCEPT'
 {% endif %}
+
+{%
+	for (let forward in interface.ipv4?.port_forward)
+		include('firewall/forward.uc', {
+			forward,
+			family: 'ipv4',
+			source_zone: ethernet.find_interface('upstream', interface.vlan?.id),
+			destination_zone: name,
+			destination_subnet: interface.ipv4.subnet
+		});
+
+	for (let forward in interface.ipv6?.port_forward)
+		include('firewall/forward.uc', {
+			forward,
+			family: 'ipv6',
+			source_zone: ethernet.find_interface('upstream', interface.vlan?.id),
+			destination_zone: name,
+			destination_subnet: interface.ipv6.subnet
+		});
+
+	for (let allow in interface.ipv6?.traffic_allow)
+		include('firewall/allow.uc', {
+			allow,
+			family: 'ipv6',
+			source_zone: ethernet.find_interface('upstream', interface.vlan?.id),
+			destination_zone: name,
+			destination_subnet: interface.ipv6.subnet
+		});
+%}

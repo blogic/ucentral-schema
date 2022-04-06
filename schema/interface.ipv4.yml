@@ -52,3 +52,7 @@ properties:
     type: array
     items:
       $ref: "https://ucentral.io/schema/v1/interface/ipv4/dhcp-lease/"
+  port-forward:
+    type: array
+    items:
+      $ref: "https://ucentral.io/schema/v1/interface/ipv4/port-forward/"
