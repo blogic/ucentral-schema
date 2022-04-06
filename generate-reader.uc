@@ -95,6 +95,15 @@ let GeneratorProto = {
 				'return b64dec(value) != null;'
 			]
 		},
+		"uc-portrange": {
+			desc: 'network port range',
+			code: [
+				'let ports = match(value, /^([0-9]|[1-9][0-9]*)(-([0-9]|[1-9][0-9]*))?$/);',
+				'if (!ports) return false;',
+				'let min = +ports[1], max = ports[2] ? +ports[3] : min;',
+				'return (min <= 65535 && max <= 65535 && max >= min);'
+			]
+		},
 		"hostname": {
 			desc: 'hostname',
 			code: [

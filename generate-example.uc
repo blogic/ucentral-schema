@@ -211,6 +211,14 @@ function random_value(kind, minLength, maxLength) {
 	case 'uc-base64':
 		return b64enc(random_phrase(50, 100));
 
+	case 'uc-portrange':
+		switch (math.rand() % 2) {
+		case 0: return sprintf('%d', math.rand() % 65536);
+		case 1: return join('-', sort([ math.rand() % 65536, math.rand() % 65536 ]));
+		}
+
+		break;
+
 	default:
 		if (minLength <= 15 && maxLength >= 20)
 			return random_phrase(minLength, maxLength);
