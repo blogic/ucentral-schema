@@ -152,6 +152,7 @@ function random_value(kind, minLength, maxLength) {
 
 	case 'hostname':
 	case 'idn-hostname':
+	case 'uc-fqdn':
 		return random_hostname();
 
 	case 'uri':
