@@ -65,6 +65,18 @@
 		return;
 	}
 
+	// Port forwardings are only supported on downstream interfaces
+	if ((interface.ipv4?.port_forward || interface.ipv6?.port_forward) && interface.role != 'downstream') {
+		warn("Port forwardings are only supported on downstream interfaces.");
+		return;
+	}
+
+	// Traffic accept rules are only supported on downstream interfaces
+	if (interface.ipv6?.traffic_allow && interface.role != 'downstream') {
+		warn("Traffic accept rules are only supported on downstream interfaces.");
+		return;
+	}
+
 	// Gather related BSS modes and ethernet ports.
 	let bss_modes = map(interface.ssids, ssid => ssid.bss_mode);
 	let eth_ports = ethernet.lookup_by_interface_vlan(interface);

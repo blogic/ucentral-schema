@@ -50,3 +50,11 @@ properties:
     minimum: 0
   dhcpv6:
     $ref: "https://ucentral.io/schema/v1/interface/ipv6/dhcpv6/"
+  port-forward:
+    type: array
+    items:
+      $ref: "https://ucentral.io/schema/v1/interface/ipv6/port-forward/"
+  traffic-allow:
+    type: array
+    items:
+      $ref: "https://ucentral.io/schema/v1/interface/ipv6/traffic-allow/"

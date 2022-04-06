@@ -37,6 +37,13 @@ function matchUcBase64(value) {
 	return b64dec(value) != null;
 }
 
+function matchUcPortrange(value) {
+	let ports = match(value, /^([0-9]|[1-9][0-9]*)(-([0-9]|[1-9][0-9]*))?$/);
+	if (!ports) return false;
+	let min = +ports[1], max = ports[2] ? +ports[3] : min;
+	return (min <= 65535 && max <= 65535 && max >= min);
+}
+
 function matchHostname(value) {
 	if (length(value) > 255) return false;
 	let labels = split(value, ".");
@@ -1457,6 +1464,111 @@ function instantiateInterfaceIpv4DhcpLease(location, value, errors) {
 	return value;
 }
 
+function instantiateInterfaceIpv4PortForward(location, value, errors) {
+	if (type(value) == "object") {
+		let obj = {};
+
+		function parseProtocol(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			if (!(value in [ "tcp", "udp", "any" ]))
+				push(errors, [ location, "must be one of \"tcp\", \"udp\" or \"any\"" ]);
+
+			return value;
+		}
+
+		if (exists(value, "protocol")) {
+			obj.protocol = parseProtocol(location + "/protocol", value["protocol"], errors);
+		}
+		else {
+			obj.protocol = "any";
+		}
+
+		function parseExternalPort(location, value, errors) {
+			if (type(value) in [ "int", "double" ]) {
+				if (value > 65535)
+					push(errors, [ location, "must be lower than or equal to 65535" ]);
+
+				if (value < 0)
+					push(errors, [ location, "must be bigger than or equal to 0" ]);
+
+			}
+
+			if (type(value) == "string") {
+				if (!matchUcPortrange(value))
+					push(errors, [ location, "must be a valid network port range" ]);
+
+			}
+
+			if (type(value) != "int" && type(value) != "string")
+				push(errors, [ location, "must be of type integer or string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "external-port")) {
+			obj.external_port = parseExternalPort(location + "/external-port", value["external-port"], errors);
+		}
+		else {
+			push(errors, [ location, "is required" ]);
+		}
+
+		function parseInternalAddress(location, value, errors) {
+			if (type(value) == "string") {
+				if (!matchIpv4(value))
+					push(errors, [ location, "must be a valid IPv4 address" ]);
+
+			}
+
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "internal-address")) {
+			obj.internal_address = parseInternalAddress(location + "/internal-address", value["internal-address"], errors);
+		}
+		else {
+			push(errors, [ location, "is required" ]);
+		}
+
+		function parseInternalPort(location, value, errors) {
+			if (type(value) in [ "int", "double" ]) {
+				if (value > 65535)
+					push(errors, [ location, "must be lower than or equal to 65535" ]);
+
+				if (value < 0)
+					push(errors, [ location, "must be bigger than or equal to 0" ]);
+
+			}
+
+			if (type(value) == "string") {
+				if (!matchUcPortrange(value))
+					push(errors, [ location, "must be a valid network port range" ]);
+
+			}
+
+			if (type(value) != "int" && type(value) != "string")
+				push(errors, [ location, "must be of type integer or string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "internal-port")) {
+			obj.internal_port = parseInternalPort(location + "/internal-port", value["internal-port"], errors);
+		}
+
+		return obj;
+	}
+
+	if (type(value) != "object")
+		push(errors, [ location, "must be of type object" ]);
+
+	return value;
+}
+
 function instantiateInterfaceIpv4(location, value, errors) {
 	if (type(value) == "object") {
 		let obj = {};
@@ -1570,6 +1682,21 @@ function instantiateInterfaceIpv4(location, value, errors) {
 			obj.dhcp_leases = parseDhcpLeases(location + "/dhcp-leases", value["dhcp-leases"], errors);
 		}
 
+		function parsePortForward(location, value, errors) {
+			if (type(value) == "array") {
+				return map(value, (item, i) => instantiateInterfaceIpv4PortForward(location + "/" + i, item, errors));
+			}
+
+			if (type(value) != "array")
+				push(errors, [ location, "must be of type array" ]);
+
+			return value;
+		}
+
+		if (exists(value, "port-forward")) {
+			obj.port_forward = parsePortForward(location + "/port-forward", value["port-forward"], errors);
+		}
+
 		return obj;
 	}
 
@@ -1643,6 +1770,258 @@ function instantiateInterfaceIpv6Dhcpv6(location, value, errors) {
 		}
 		else {
 			obj.filter_prefix = "::/0";
+		}
+
+		return obj;
+	}
+
+	if (type(value) != "object")
+		push(errors, [ location, "must be of type object" ]);
+
+	return value;
+}
+
+function instantiateInterfaceIpv6PortForward(location, value, errors) {
+	if (type(value) == "object") {
+		let obj = {};
+
+		function parseProtocol(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			if (!(value in [ "tcp", "udp", "any" ]))
+				push(errors, [ location, "must be one of \"tcp\", \"udp\" or \"any\"" ]);
+
+			return value;
+		}
+
+		if (exists(value, "protocol")) {
+			obj.protocol = parseProtocol(location + "/protocol", value["protocol"], errors);
+		}
+		else {
+			obj.protocol = "any";
+		}
+
+		function parseExternalPort(location, value, errors) {
+			if (type(value) in [ "int", "double" ]) {
+				if (value > 65535)
+					push(errors, [ location, "must be lower than or equal to 65535" ]);
+
+				if (value < 0)
+					push(errors, [ location, "must be bigger than or equal to 0" ]);
+
+			}
+
+			if (type(value) == "string") {
+				if (!matchUcPortrange(value))
+					push(errors, [ location, "must be a valid network port range" ]);
+
+			}
+
+			if (type(value) != "int" && type(value) != "string")
+				push(errors, [ location, "must be of type integer or string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "external-port")) {
+			obj.external_port = parseExternalPort(location + "/external-port", value["external-port"], errors);
+		}
+		else {
+			push(errors, [ location, "is required" ]);
+		}
+
+		function parseInternalAddress(location, value, errors) {
+			if (type(value) == "string") {
+				if (!matchIpv6(value))
+					push(errors, [ location, "must be a valid IPv6 address" ]);
+
+			}
+
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "internal-address")) {
+			obj.internal_address = parseInternalAddress(location + "/internal-address", value["internal-address"], errors);
+		}
+		else {
+			push(errors, [ location, "is required" ]);
+		}
+
+		function parseInternalPort(location, value, errors) {
+			if (type(value) in [ "int", "double" ]) {
+				if (value > 65535)
+					push(errors, [ location, "must be lower than or equal to 65535" ]);
+
+				if (value < 0)
+					push(errors, [ location, "must be bigger than or equal to 0" ]);
+
+			}
+
+			if (type(value) == "string") {
+				if (!matchUcPortrange(value))
+					push(errors, [ location, "must be a valid network port range" ]);
+
+			}
+
+			if (type(value) != "int" && type(value) != "string")
+				push(errors, [ location, "must be of type integer or string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "internal-port")) {
+			obj.internal_port = parseInternalPort(location + "/internal-port", value["internal-port"], errors);
+		}
+
+		return obj;
+	}
+
+	if (type(value) != "object")
+		push(errors, [ location, "must be of type object" ]);
+
+	return value;
+}
+
+function instantiateInterfaceIpv6TrafficAllow(location, value, errors) {
+	if (type(value) == "object") {
+		let obj = {};
+
+		function parseProtocol(location, value, errors) {
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "protocol")) {
+			obj.protocol = parseProtocol(location + "/protocol", value["protocol"], errors);
+		}
+		else {
+			obj.protocol = "any";
+		}
+
+		function parseSourceAddress(location, value, errors) {
+			if (type(value) == "string") {
+				if (!matchUcCidr6(value))
+					push(errors, [ location, "must be a valid IPv6 CIDR" ]);
+
+			}
+
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "source-address")) {
+			obj.source_address = parseSourceAddress(location + "/source-address", value["source-address"], errors);
+		}
+		else {
+			obj.source_address = "::/0";
+		}
+
+		function parseSourcePorts(location, value, errors) {
+			if (type(value) == "array") {
+				if (length(value) < 1)
+					push(errors, [ location, "must have at least 1 items" ]);
+
+				function parseItem(location, value, errors) {
+					if (type(value) in [ "int", "double" ]) {
+						if (value > 65535)
+							push(errors, [ location, "must be lower than or equal to 65535" ]);
+
+						if (value < 0)
+							push(errors, [ location, "must be bigger than or equal to 0" ]);
+
+					}
+
+					if (type(value) == "string") {
+						if (!matchUcPortrange(value))
+							push(errors, [ location, "must be a valid network port range" ]);
+
+					}
+
+					if (type(value) != "int" && type(value) != "string")
+						push(errors, [ location, "must be of type integer or string" ]);
+
+					return value;
+				}
+
+				return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
+			}
+
+			if (type(value) != "array")
+				push(errors, [ location, "must be of type array" ]);
+
+			return value;
+		}
+
+		if (exists(value, "source-ports")) {
+			obj.source_ports = parseSourcePorts(location + "/source-ports", value["source-ports"], errors);
+		}
+
+		function parseDestinationAddress(location, value, errors) {
+			if (type(value) == "string") {
+				if (!matchIpv6(value))
+					push(errors, [ location, "must be a valid IPv6 address" ]);
+
+			}
+
+			if (type(value) != "string")
+				push(errors, [ location, "must be of type string" ]);
+
+			return value;
+		}
+
+		if (exists(value, "destination-address")) {
+			obj.destination_address = parseDestinationAddress(location + "/destination-address", value["destination-address"], errors);
+		}
+		else {
+			push(errors, [ location, "is required" ]);
+		}
+
+		function parseDestinationPorts(location, value, errors) {
+			if (type(value) == "array") {
+				if (length(value) < 1)
+					push(errors, [ location, "must have at least 1 items" ]);
+
+				function parseItem(location, value, errors) {
+					if (type(value) in [ "int", "double" ]) {
+						if (value > 65535)
+							push(errors, [ location, "must be lower than or equal to 65535" ]);
+
+						if (value < 0)
+							push(errors, [ location, "must be bigger than or equal to 0" ]);
+
+					}
+
+					if (type(value) == "string") {
+						if (!matchUcPortrange(value))
+							push(errors, [ location, "must be a valid network port range" ]);
+
+					}
+
+					if (type(value) != "int" && type(value) != "string")
+						push(errors, [ location, "must be of type integer or string" ]);
+
+					return value;
+				}
+
+				return map(value, (item, i) => parseItem(location + "/" + i, item, errors));
+			}
+
+			if (type(value) != "array")
+				push(errors, [ location, "must be of type array" ]);
+
+			return value;
+		}
+
+		if (exists(value, "destination-ports")) {
+			obj.destination_ports = parseDestinationPorts(location + "/destination-ports", value["destination-ports"], errors);
 		}
 
 		return obj;
@@ -1728,6 +2107,36 @@ function instantiateInterfaceIpv6(location, value, errors) {
 
 		if (exists(value, "dhcpv6")) {
 			obj.dhcpv6 = instantiateInterfaceIpv6Dhcpv6(location + "/dhcpv6", value["dhcpv6"], errors);
+		}
+
+		function parsePortForward(location, value, errors) {
+			if (type(value) == "array") {
+				return map(value, (item, i) => instantiateInterfaceIpv6PortForward(location + "/" + i, item, errors));
+			}
+
+			if (type(value) != "array")
+				push(errors, [ location, "must be of type array" ]);
+
+			return value;
+		}
+
+		if (exists(value, "port-forward")) {
+			obj.port_forward = parsePortForward(location + "/port-forward", value["port-forward"], errors);
+		}
+
+		function parseTrafficAllow(location, value, errors) {
+			if (type(value) == "array") {
+				return map(value, (item, i) => instantiateInterfaceIpv6TrafficAllow(location + "/" + i, item, errors));
+			}
+
+			if (type(value) != "array")
+				push(errors, [ location, "must be of type array" ]);
+
+			return value;
+		}
+
+		if (exists(value, "traffic-allow")) {
+			obj.traffic_allow = parseTrafficAllow(location + "/traffic-allow", value["traffic-allow"], errors);
 		}
 
 		return obj;

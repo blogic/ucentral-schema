@@ -1,0 +1,41 @@
+description:
+  This section describes an IPv4 port forwarding.
+type: object
+properties:
+  protocol:
+    description:
+      The layer 3 protocol to match.
+    type: string
+    enum:
+      - tcp
+      - udp
+      - any
+    default: any
+  external-port:
+    description:
+      The external port(s) to forward.
+    type:
+      - integer
+      - string
+    minimum: 0
+    maximum: 65535
+    format: uc-portrange
+  internal-address:
+    description:
+      The internal IP to forward to. The address will be masked and concatenated
+      with the effective interface subnet.
+    type: string
+    format: ipv4
+    example: '0.0.0.120'
+  internal-port:
+    description:
+      The internal port to forward to. Defaults to the external port if omitted.
+    type:
+      - integer
+      - string
+    minimum: 0
+    maximum: 65535
+    format: uc-portrange
+required:
+  - external-port
+  - internal-address

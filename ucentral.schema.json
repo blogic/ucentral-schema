@@ -652,6 +652,47 @@
                 }
             }
         },
+        "interface.ipv4.port-forward": {
+            "type": "object",
+            "properties": {
+                "protocol": {
+                    "type": "string",
+                    "enum": [
+                        "tcp",
+                        "udp",
+                        "any"
+                    ],
+                    "default": "any"
+                },
+                "external-port": {
+                    "type": [
+                        "integer",
+                        "string"
+                    ],
+                    "minimum": 0,
+                    "maximum": 65535,
+                    "format": "uc-portrange"
+                },
+                "internal-address": {
+                    "type": "string",
+                    "format": "ipv4",
+                    "example": "0.0.0.120"
+                },
+                "internal-port": {
+                    "type": [
+                        "integer",
+                        "string"
+                    ],
+                    "minimum": 0,
+                    "maximum": 65535,
+                    "format": "uc-portrange"
+                }
+            },
+            "required": [
+                "external-port",
+                "internal-address"
+            ]
+        },
         "interface.ipv4": {
             "type": "object",
             "properties": {
@@ -705,6 +746,12 @@
                     "items": {
                         "$ref": "#/$defs/interface.ipv4.dhcp-lease"
                     }
+                },
+                "port-forward": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/interface.ipv4.port-forward"
+                    }
                 }
             }
         },
@@ -733,6 +780,96 @@
                     "default": "::/0"
                 }
             }
+        },
+        "interface.ipv6.port-forward": {
+            "type": "object",
+            "properties": {
+                "protocol": {
+                    "type": "string",
+                    "enum": [
+                        "tcp",
+                        "udp",
+                        "any"
+                    ],
+                    "default": "any"
+                },
+                "external-port": {
+                    "type": [
+                        "integer",
+                        "string"
+                    ],
+                    "minimum": 0,
+                    "maximum": 65535,
+                    "format": "uc-portrange"
+                },
+                "internal-address": {
+                    "type": "string",
+                    "format": "ipv6",
+                    "example": "::1234:abcd"
+                },
+                "internal-port": {
+                    "type": [
+                        "integer",
+                        "string"
+                    ],
+                    "minimum": 0,
+                    "maximum": 65535,
+                    "format": "uc-portrange"
+                }
+            },
+            "required": [
+                "external-port",
+                "internal-address"
+            ]
+        },
+        "interface.ipv6.traffic-allow": {
+            "type": "object",
+            "properties": {
+                "protocol": {
+                    "type": "string",
+                    "default": "any"
+                },
+                "source-address": {
+                    "type": "string",
+                    "format": "uc-cidr6",
+                    "example": "2001:db8:1234:abcd::/64",
+                    "default": "::/0"
+                },
+                "source-ports": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": [
+                            "integer",
+                            "string"
+                        ],
+                        "minimum": 0,
+                        "maximum": 65535,
+                        "format": "uc-portrange"
+                    }
+                },
+                "destination-address": {
+                    "type": "string",
+                    "format": "ipv6",
+                    "example": "::1000"
+                },
+                "destination-ports": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": [
+                            "integer",
+                            "string"
+                        ],
+                        "minimum": 0,
+                        "maximum": 65535,
+                        "format": "uc-portrange"
+                    }
+                }
+            },
+            "required": [
+                "destination-address"
+            ]
         },
         "interface.ipv6": {
             "type": "object",
@@ -765,6 +902,18 @@
                 },
                 "dhcpv6": {
                     "$ref": "#/$defs/interface.ipv6.dhcpv6"
+                },
+                "port-forward": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/interface.ipv6.port-forward"
+                    }
+                },
+                "traffic-allow": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/interface.ipv6.traffic-allow"
+                    }
                 }
             }
         },
