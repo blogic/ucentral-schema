@@ -179,6 +179,7 @@ global.mocklib = {
 
 		try {
 			res = require(module);
+			delete global.modules[module];
 		}
 		catch (e) {
 			ex = e;
