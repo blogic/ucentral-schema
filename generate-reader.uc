@@ -105,7 +105,7 @@ let GeneratorProto = {
 				'return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]{1,2}|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);'
 			]
 		},
-		"fqdn": {
+		"uc-fqdn": {
 			desc: 'fully qualified domain name',
 			code: [
 				'if (length(value) > 255) return false;',

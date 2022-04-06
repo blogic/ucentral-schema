@@ -850,7 +850,7 @@
                 },
                 "gateway-fqdn": {
                     "type": "string",
-                    "format": "fqdn",
+                    "format": "uc-fqdn",
                     "default": "ucentral.splash"
                 },
                 "max-clients": {
@@ -2184,7 +2184,7 @@
                                     "properties": {
                                         "fqdn": {
                                             "type": "string",
-                                            "format": "fqdn"
+                                            "format": "uc-fqdn"
                                         },
                                         "suffix-matching": {
                                             "type": "boolean",

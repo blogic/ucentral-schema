@@ -44,7 +44,7 @@ function matchHostname(value) {
 	return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]{1,2}|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 0);
 }
 
-function matchFqdn(value) {
+function matchUcFqdn(value) {
 	if (length(value) > 255) return false;
 	let labels = split(value, ".");
 	return (length(filter(labels, label => !match(label, /^([a-zA-Z0-9]{1,2}|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$/))) == 0 && length(labels) > 1);
@@ -1984,7 +1984,7 @@ function instantiateInterfaceCaptive(location, value, errors) {
 
 		function parseGatewayFqdn(location, value, errors) {
 			if (type(value) == "string") {
-				if (!matchFqdn(value))
+				if (!matchUcFqdn(value))
 					push(errors, [ location, "must be a valid fully qualified domain name" ]);
 
 			}
@@ -5756,7 +5756,7 @@ function instantiateServiceQualityOfService(location, value, errors) {
 
 										function parseFqdn(location, value, errors) {
 											if (type(value) == "string") {
-												if (!matchFqdn(value))
+												if (!matchUcFqdn(value))
 													push(errors, [ location, "must be a valid fully qualified domain name" ]);
 
 											}
