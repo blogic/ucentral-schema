@@ -6,7 +6,7 @@ if [ -n "$1" ]; then
 else
 	./generate-example.uc > input.json
 fi
-ucode -s '{%
+cat <<EOT | ucode -R -
 	push(REQUIRE_SEARCH_PATH,
 		"/usr/local/lib/ucode/*.so",
 		"tests/lib/*.uc",
@@ -42,4 +42,4 @@ ucode -s '{%
 	catch (e) {
 		warn("Fatal error while generating UCI: ", e, "\n", e.stacktrace[0].context, "\n");
 	}
-%}'
+EOT

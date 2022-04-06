@@ -1,5 +1,3 @@
-{%
-
 // UCI batch output master template
 
 "use strict";

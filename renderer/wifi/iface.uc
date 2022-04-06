@@ -1,4 +1,3 @@
-{%
 let nl = require("nl80211");
 let def = nl.const;
 
@@ -73,4 +72,3 @@ function lookup_wifs() {
 }
 
 return lookup_wifs();
-%}

@@ -1,4 +1,3 @@
-{%
 let nl = require("nl80211");
 let def = nl.const;
 let rv = { survey: [] };
@@ -35,4 +34,3 @@ function lookup_survey() {
 lookup_survey();
 //printf('%.J\n', rv);
 return rv;
-%}
