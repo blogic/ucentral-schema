@@ -39,7 +39,7 @@
 	}
 
 	// resolve auto prefixes
-	if (interface.ipv4 && interface.ipv4.subnet) {
+	if (wildcard(interface.ipv4?.subnet, 'auto/*')) {
 		try {
 			interface.ipv4.subnet = ipcalc.generate_prefix(state, interface.ipv4.subnet, false);
 		}
@@ -49,7 +49,7 @@
 		}
 	}
 
-	if (interface.ipv6 && interface.ipv6.subnet) {
+	if (wildcard(interface.ipv6?.subnet, 'auto/*')) {
 		try {
 			interface.ipv6.subnet = ipcalc.generate_prefix(state, interface.ipv6.subnet, true);
 		}
