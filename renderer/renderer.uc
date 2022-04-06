@@ -554,6 +554,30 @@ let ipcalc = {
 		}
 
 		return template;
+	},
+
+	expand_wildcard_address: function(wcaddr, prefix) {
+		let addr = iptoarr(wcaddr),
+		    cidr = match(prefix, /^([0-9a-fA-F:.]+)\/([0-9]+)$/);
+
+		assert(addr, "Invalid wildcard address '" + wcaddr + '"');
+		assert(cidr, "Invalid prefix range '" + prefix + '"');
+
+		let mask = this.convert_bits_to_mask(+cidr[2], length(addr) == 16),
+		    base = this.apply_mask(iptoarr(cidr[1]), mask),
+		    result = [];
+
+		for (let i, b in addr) {
+			if (b & mask[i]) {
+				warn("Wildcard address '" + wcaddr + "' is partially masked by interface subnet mask '" + arrtoip(mask) + '"');
+				break;
+			}
+		}
+
+		for (let i, b in addr)
+			result[i] = base[i] | (b & ~mask[i]);
+
+		return arrtoip(result);
 	}
 };
 
