@@ -68,6 +68,7 @@ function random_item(array)
 
 function random_phrase(min, max) {
 	let str, len;
+	let prefix = '';
 
 	while (true) {
 		let verb = random_item(verbs),
@@ -87,11 +88,18 @@ function random_phrase(min, max) {
 				break;
 		}
 
-		str = verb + '-' + adjective + '-' + noun;
+		str = prefix + verb + '-' + adjective + '-' + noun;
 		len = length(str);
 
-		if (len >= min && len <= max)
-			break;
+		if (len < min) {
+			prefix = str + '-';
+			continue;
+		}
+
+		if (len > max)
+			str = substr(str, 0, max);
+
+		break;
 	}
 
 	return str;
@@ -328,28 +336,26 @@ let GeneratorProto = {
 			if (type(arraySpec.minItems) == "int" && arraySpec.minItems > len)
 				len = arraySpec.minItems;
 
+			if (type(arraySpec.maxItems) == "int" && arraySpec.maxItems < len)
+				len = arraySpec.maxItems;
+
 			if (is_array(arraySpec.items.enum) && length(arraySpec.items.enum) < len)
 				len = length(arraySpec.items.enum);
 
 			let examples = [ ...(is_array(arraySpec.items.examples) ? arraySpec.items.examples : []) ];
 
 			for (let i = 0; i < len; i++) {
-				while (true) {
-					let item;
+				let item;
 
-					if (length(examples)) {
-						item = random_item(examples);
-						examples = filter(examples, (i) => i != item);
-					}
-					else {
-						item = this.emit_spec(arraySpec.items, true);
-					}
-
-					if (arraySpec.items.type != "string" || index(array, item) == -1) {
-						push(array, item);
-						break;
-					}
+				if (length(examples)) {
+					item = random_item(examples);
+					examples = filter(examples, (i) => i != item);
 				}
+				else {
+					item = this.emit_spec(arraySpec.items, true);
+				}
+
+				push(array, item);
 			}
 		}
 
@@ -466,6 +472,7 @@ let GeneratorProto = {
 			return this.emit_string(valueSpec, noExample);
 
 		case "integer":
+		case "number":
 			return this.emit_number(valueSpec);
 
 		case "boolean":
