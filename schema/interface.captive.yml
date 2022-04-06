@@ -11,7 +11,7 @@ properties:
     description:
       The fqdn used for the captive portal IP.
     type: string
-    format: fqdn
+    format: uc-fqdn
     default: ucentral.splash
   max-clients:
     description:
