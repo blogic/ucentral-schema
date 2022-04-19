@@ -105,7 +105,12 @@
 		return false;
 	}
 
-	function validate_encryption() {
+	function validate_encryption(phy) {
+		if ('6G' in phy.band && !(ssid?.encryption.proto in [ "wpa3", "wpa3-mixed", "wpa3-192", "sae", "sae-mixed" ])) {
+			warn("Invalid encryption settings for 6G band");
+			return null;
+		}
+
 		if (!ssid.encryption || ssid.encryption.proto in [ "none" ]) {
 			if (ssid.radius?.authentication?.mac_filter &&
 			    ssid.radius.authentication?.host &&
@@ -143,7 +148,10 @@
 		warn("Can't find any valid encryption settings");
 	}
 
-	function match_ieee80211w() {
+	function match_ieee80211w(phy) {
+		if ('6G' in phy.band)
+			return 2;
+
 		if (!ssid.encryption)
 			return 0;
 
@@ -203,7 +211,7 @@ add_list openvswitch.@ovs_bridge[-1].ports="{{ ifname }}"
 {% for (let n, phy in phys): %}
 {%   let section = name + '_' + n + '_' + count; %}
 {%   let id = wiphy.allocate_ssid_section_id(phy) %}
-{%   let crypto = validate_encryption(); %}
+{%   let crypto = validate_encryption(phy); %}
 {%   let ifname = openflow_ifname(n, count) %}
 {%   if (!crypto) continue; %}
 set wireless.{{ section }}=wifi-iface
@@ -230,7 +238,7 @@ set wireless.{{ section }}.disassoc_low_ack='{{ b(ssid.disassoc_low_ack) }}'
 {%   endif %}
 
 # Crypto settings
-set wireless.{{ section }}.ieee80211w={{ match_ieee80211w() }}
+set wireless.{{ section }}.ieee80211w={{ match_ieee80211w(phy) }}
 set wireless.{{ section }}.encryption={{ crypto.proto }}
 set wireless.{{ section }}.key={{ crypto.key }}
 

@@ -157,4 +157,7 @@ set wireless.{{ phy.section }}.basic_rate={{ radio.rates.multicast }}
 {%  for (let raw in radio.hostapd_iface_raw): %}
 add_list wireless.{{ phy.section }}.hostapd_options={{ s(raw) }}
 {%  endfor %}
+{%  if (radio.band == "6G"): %}
+set wireless.{{ phy.section }}.he_co_locate={{ b(1) }}
+{%  endif %}
 {% endfor %}
