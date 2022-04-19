@@ -125,7 +125,8 @@
 		netdev = "gw0";
 		network = "";
 	} else if (!interface.ethernet && length(interface.ssids) == 1 && !tunnel_proto) {
-		interface.type = 'bridge';
+		if (interface.role == 'downstream')
+			interface.type = 'bridge';
 		netdev = '';
 	} else
 		// anything else requires a bridge-vlan
