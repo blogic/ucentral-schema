@@ -187,7 +187,7 @@ cursor.foreach("network", "interface", function(d) {
 	let device = ctx.call("network.device", "status", { name });
 
 	if (device && length(device["bridge-members"]))
-	iface.ports = device["bridge-members"];
+		iface.ports = device["bridge-members"];
 	iface.uptime = status.uptime || 0;
 
 	if (length(status["ipv4-address"])) {
@@ -271,17 +271,6 @@ cursor.foreach("network", "interface", function(d) {
 
 		if (length(clients))
 			iface.clients = clients;
-	}
-
-	if (index(stats.types, 'lldp') >= 0) {
-		let lldp_neigh = [];
-
-		for (let port in iface.ports)
-			for (let l in lldp)
-				if (l.port == port)
-					push(lldp_neigh, l);
-		if (length(lldp_neigh))
-			iface.lldp = lldp_neigh;
 	}
 
 	if (index(stats.types, 'ssids') >= 0 && length(wifistatus)) {
@@ -375,13 +364,16 @@ function link_state_name(name) {
 
 if (length(capab.network)) {
 	let link = {};
+	let lldp_peers = {};
 
 	for (let name, net in capab.network) {
 		let link_name = link_state_name(name);
 		link[link_name] = {};
+		lldp_peers[link_name] = {};
 
 		for (let iface in capab.network[name]) {
 			let state = {};
+			let lldp_state = {};
 
 			state.carrier = +sysfs_net(iface, "carrier");
 			if (state.carrier) {
@@ -389,9 +381,19 @@ if (length(capab.network)) {
 				state.duplex = sysfs_net(iface, "duplex");
 			}
 			link[link_name][iface] = state;
+
+			let lldp_neigh = [];
+			for (let l in lldp)
+				if (l.port == iface)
+					push(lldp_neigh, l);
+			if (length(lldp_neigh))
+				lldp_peers[link_name][iface] = lldp_neigh;
+
 		}
 	}
 	state["link-state"] = link;
+	if (index(stats.types, 'lldp') >= 0) 
+		state["lldp-peers"] = lldp_peers;
 }
 
 state.version = 1;
