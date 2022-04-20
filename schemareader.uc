@@ -5951,6 +5951,20 @@ function instantiateServiceWifiSteering(location, value, errors) {
 			obj.auto_channel = false;
 		}
 
+		function parseIpv6(location, value, errors) {
+			if (type(value) != "bool")
+				push(errors, [ location, "must be of type boolean" ]);
+
+			return value;
+		}
+
+		if (exists(value, "ipv6")) {
+			obj.ipv6 = parseIpv6(location + "/ipv6", value["ipv6"], errors);
+		}
+		else {
+			obj.ipv6 = false;
+		}
+
 		return obj;
 	}
 

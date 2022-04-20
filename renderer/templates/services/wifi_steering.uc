@@ -8,6 +8,7 @@
 
 add usteer usteer
 set usteer.@usteer[-1].network='{{ s(name) }}'
+set usteer.@usteer[-1].ipv6={{ b(wifi_steering.ipv6) }}
 set usteer.@usteer[-1].key={{ s(wifi_steering.key) }}
 set usteer.@usteer[-1].assoc_steering={{ b(wifi_steering.assoc_steering) }}
 set usteer.@usteer[-1].min_snr={{ wifi_steering.required_snr }}

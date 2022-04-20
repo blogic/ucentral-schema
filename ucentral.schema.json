@@ -2227,6 +2227,10 @@
                 "auto-channel": {
                     "type": "boolean",
                     "default": false
+                },
+                "ipv6": {
+                    "type": "boolean",
+                    "default": false
                 }
             }
         },
