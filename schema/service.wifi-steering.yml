@@ -45,3 +45,9 @@ properties:
       usage amongst eachother.
     type: boolean
     default: false
+  ipv6:
+    description:
+      Use IPv6 multicast to communicate with remote usteerd instances, rather
+      than IPv4 broadcast.
+    type: boolean
+    default: false
