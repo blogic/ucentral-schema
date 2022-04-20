@@ -30,3 +30,9 @@ set network.@device[-1].stp={{ loop_detect("downstream") }}
 set network.up_none=interface
 set network.up_none.ifname=up
 set network.up_none.proto=none
+
+{% for (let k, v in capab.macaddr): %}
+add network device
+set network.@device[-1].name={{ s(k) }}
+set network.@device[-1].macaddr={{ s(v) }}
+{% endfor %}

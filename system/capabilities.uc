@@ -25,6 +25,7 @@ else
 	capa.platform = "unknown";
 
 capa.network = {};
+macs = {};
 for (let k, v in board.network) {
 	if (v.ports)
 		capa.network[k] = v.ports;
@@ -32,7 +33,12 @@ for (let k, v in board.network) {
 		capa.network[k] = [v.device];
 	if (v.ifname)
 		capa.network[k] = split(replace(v.ifname, /^ */, ''), " ");
+	if (v.macaddr)
+		macs[k] = v.macaddr;
 }
+
+if (length(macs))
+	capa.macaddr = macs;
 
 if (board.system?.label_macaddr)
 	capa.label_macaddr = board.system?.label_macaddr;
