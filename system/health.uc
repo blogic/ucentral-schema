@@ -1,5 +1,4 @@
 #!/usr/bin/ucode
-{%
 push(REQUIRE_SEARCH_PATH, '/usr/share/ucentral/*.uc');
 let fs = require("fs");
 let uci = require("uci");
@@ -132,4 +131,3 @@ let sanity = 100 - (errors * 100 / count);
 
 warn(printf("health check reports sanity of %d", sanity));
 ctx.call("ucentral", "health", {sanity: sanity, data: state});
-%}

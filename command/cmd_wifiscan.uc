@@ -1,4 +1,3 @@
-{%
 let verbose = args?.verbose ? true : false;
 let active = args?.active ? true : false;
 let bandwidth = args?.bandwidth || 0;
@@ -244,4 +243,3 @@ result_json({
 	resultCode: 1,
 	scan,
 });
-%}

@@ -1,5 +1,4 @@
 #!/usr/bin/ucode
-{%
 push(REQUIRE_SEARCH_PATH,
 	"/usr/lib/ucode/*.so",
 	"/usr/share/ucentral/*.uc");
@@ -8,7 +7,7 @@ let schemareader = require("schemareader");
 let renderer = require("renderer");
 let fs = require("fs");
 
-let inputfile = fs.open(ARGV[2], "r");
+let inputfile = fs.open(ARGV[0], "r");
 let inputjson = json(inputfile.read("all"));
 
 let error = 0;
@@ -71,7 +70,7 @@ try {
 
 		let old_config = fs.readlink("/etc/ucentral/ucentral.active");
 		fs.unlink('/etc/ucentral/ucentral.active');
-		fs.symlink(ARGV[2], '/etc/ucentral/ucentral.active');
+		fs.symlink(ARGV[0], '/etc/ucentral/ucentral.active');
 
 		set_service_state(true);
 		if (old_config && split(old_config, ".")[1] == "/etc/ucentral/ucentral")
@@ -101,8 +100,7 @@ if (inputjson.uuid && inputjson.uuid > 1) {
 
 	ubus.call("ucentral", "result", {
 		uuid: inputjson.uuid || 0,
-		id: +ARGV[3] || 0,
+		id: +ARGV[1] || 0,
 		status,
 	});
 }
-%}

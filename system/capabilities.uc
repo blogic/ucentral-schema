@@ -1,5 +1,4 @@
 #!/usr/bin/ucode
-{%
 push(REQUIRE_SEARCH_PATH,
 	"/usr/lib/ucode/*.so",
 	"/usr/share/ucentral/*.uc");
@@ -51,4 +50,3 @@ if (length(wifi))
 capafile = fs.open("/etc/ucentral/capabilities.json", "w");
 capafile.write(capa);
 capafile.close();
-%}

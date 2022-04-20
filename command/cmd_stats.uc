@@ -1,3 +1,1 @@
-{%
-	include("./state.uc", { stats: args.stats });
-%}
+include("./state.uc", { stats: args.stats });

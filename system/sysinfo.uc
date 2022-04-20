@@ -1,4 +1,3 @@
-{%
 let fs = require("fs");
 let ubus = require("ubus");
 let ctx = ubus.connect();
@@ -25,4 +24,3 @@ for (let name, service in services) {
 		sysinfo[name] = s;
 }
 printf("%.J\n", sysinfo);
-%}

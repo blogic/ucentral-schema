@@ -1,5 +1,4 @@
 #!/usr/bin/ucode
-{%
 let fs = require("fs");
 let uci = require("uci");
 let cursor = uci.cursor();
@@ -75,4 +74,3 @@ state_file.write(state);
 state_file.close();
 
 
-%}
