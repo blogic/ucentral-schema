@@ -4,7 +4,7 @@ type: object
 properties:
   mode:
     description:
-      Wifi sterring can happen either locally or via the backend gateway.
+      Wifi steering can happen either locally or via the backend gateway.
     type: string
     enum:
       - local
@@ -18,7 +18,7 @@ properties:
     default: false
   required-snr:
     description:
-      Minimum required signal level (dBm) for connected clients. If the client
+      Minimum required signal level (dBm) for connected clients. The client
       will be kicked if the SNR drops below this value.
     type: integer
     default: 0
