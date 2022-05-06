@@ -1670,6 +1670,11 @@
                     "decription": "This option allows embedding custom vendor specific IEs inside the beacons of a BSS in AP mode.",
                     "type": "string"
                 },
+                "fils-discovery-interval": {
+                    "type": "integer",
+                    "default": 20,
+                    "maximum": 10000
+                },
                 "encryption": {
                     "$ref": "#/$defs/interface.ssid.encryption"
                 },

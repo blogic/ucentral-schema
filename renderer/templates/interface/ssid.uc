@@ -243,6 +243,10 @@ set wireless.{{ section }}.vendor_elements='{{ ssid.vendor_elements }}'
 set wireless.{{ section }}.disassoc_low_ack='{{ b(ssid.disassoc_low_ack) }}'
 {%   endif %}
 
+{% if ('6G' in phy.band): %}
+set wireless.{{ section }}.fils_discovery_max_interval={{ ssid.fils_discovery_interval }}
+{%   endif %}
+
 # Crypto settings
 set wireless.{{ section }}.ieee80211w={{ match_ieee80211w(phy) }}
 set wireless.{{ section }}.sae_pwe={{ match_sae_pwe(phy) }}

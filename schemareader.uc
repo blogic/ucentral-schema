@@ -4364,6 +4364,26 @@ function instantiateInterfaceSsid(location, value, errors) {
 			obj.vendor_elements = parseVendorElements(location + "/vendor-elements", value["vendor-elements"], errors);
 		}
 
+		function parseFilsDiscoveryInterval(location, value, errors) {
+			if (type(value) in [ "int", "double" ]) {
+				if (value > 10000)
+					push(errors, [ location, "must be lower than or equal to 10000" ]);
+
+			}
+
+			if (type(value) != "int")
+				push(errors, [ location, "must be of type integer" ]);
+
+			return value;
+		}
+
+		if (exists(value, "fils-discovery-interval")) {
+			obj.fils_discovery_interval = parseFilsDiscoveryInterval(location + "/fils-discovery-interval", value["fils-discovery-interval"], errors);
+		}
+		else {
+			obj.fils_discovery_interval = 20;
+		}
+
 		if (exists(value, "encryption")) {
 			obj.encryption = instantiateInterfaceSsidEncryption(location + "/encryption", value["encryption"], errors);
 		}
