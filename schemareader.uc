@@ -2638,6 +2638,20 @@ function instantiateInterfaceSsidRrm(location, value, errors) {
 			obj.neighbor_reporting = false;
 		}
 
+		function parseReducedNeighborReporting(location, value, errors) {
+			if (type(value) != "bool")
+				push(errors, [ location, "must be of type boolean" ]);
+
+			return value;
+		}
+
+		if (exists(value, "reduced-neighbor-reporting")) {
+			obj.reduced_neighbor_reporting = parseReducedNeighborReporting(location + "/reduced-neighbor-reporting", value["reduced-neighbor-reporting"], errors);
+		}
+		else {
+			obj.reduced_neighbor_reporting = false;
+		}
+
 		function parseLci(location, value, errors) {
 			if (type(value) != "string")
 				push(errors, [ location, "must be of type string" ]);

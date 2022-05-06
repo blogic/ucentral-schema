@@ -7,6 +7,11 @@ properties:
       Enable neighbor report via radio measurements (802.11k).
     type: boolean
     default: false
+  reduced-neighbor-reporting:
+    description:
+      Enable reduced neighbor reports.
+    type: boolean
+    default: false
   lci:
     description:
       The content of a LCI measurement subelement

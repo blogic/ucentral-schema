@@ -164,6 +164,12 @@
 		return index([ "disabled", "optional", "required" ], ssid.encryption.ieee80211w);
 	}
 
+	function match_sae_pwe(phy) {
+		if ('6G' in phy.band)
+			return 1;
+		return 2;
+	}
+
 	function match_wds() {
 		return index([ "wds-ap", "wds-sta", "wds-repeater" ], ssid.bss_mode) >= 0;
 	}
@@ -239,6 +245,7 @@ set wireless.{{ section }}.disassoc_low_ack='{{ b(ssid.disassoc_low_ack) }}'
 
 # Crypto settings
 set wireless.{{ section }}.ieee80211w={{ match_ieee80211w(phy) }}
+set wireless.{{ section }}.sae_pwe={{ match_sae_pwe(phy) }}
 set wireless.{{ section }}.encryption={{ crypto.proto }}
 set wireless.{{ section }}.key={{ crypto.key }}
 
@@ -313,6 +320,7 @@ set wireless.{{ section }}.ratelimit=1
 
 {%     if (ssid.rrm): %}
 set wireless.{{ section }}.ieee80211k={{ b(ssid.rrm.neighbor_reporting) }}
+set wireless.{{ section }}.rnr={{ b(ssid.rrm.reduced_neighbor_reporting) }}
 set wireless.{{ section }}.ftm_responder={{ b(ssid.rrm.ftm_responder) }}
 set wireless.{{ section }}.stationary_ap={{ b(ssid.rrm.stationary_ap) }}
 set wireless.{{ section }}.lci={{ b(ssid.rrm.lci) }}
