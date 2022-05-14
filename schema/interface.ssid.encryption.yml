@@ -12,6 +12,7 @@ properties:
     - psk
     - psk2
     - psk-mixed
+    - psk2-radius
     - wpa
     - wpa2
     - wpa-mixed

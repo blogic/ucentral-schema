@@ -68,7 +68,7 @@
 	}
 
 	function validate_encryption_ap() {
-		if (ssid.encryption.proto in [ "wpa", "wpa2", "wpa-mixed", "wpa3", "wpa3-mixed", "wpa3-192" ] &&
+		if (ssid.encryption.proto in [ "wpa", "wpa2", "wpa-mixed", "wpa3", "wpa3-mixed", "wpa3-192", "psk2-radius" ] &&
 		    ssid.radius && ssid.radius.local &&
 		    length(certificates))
 			return {
@@ -78,7 +78,7 @@
 			};
 
 
-		if (ssid.encryption.proto in [ "wpa", "wpa2", "wpa-mixed", "wpa3", "wpa3-mixed", "wpa3-192" ] &&
+		if (ssid.encryption.proto in [ "wpa", "wpa2", "wpa-mixed", "wpa3", "wpa3-mixed", "wpa3-192", "psk2-radius" ] &&
 		    ssid.radius && ssid.radius.authentication &&
 		    ssid.radius.authentication.host &&
 		    ssid.radius.authentication.port &&
