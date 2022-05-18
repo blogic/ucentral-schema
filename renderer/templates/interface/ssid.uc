@@ -211,6 +211,10 @@ add_list openvswitch.@ovs_bridge[-1].ports="{{ ifname }}"
 		bss_mode =  "ap";
 	if (ssid.bss_mode == "wds-sta")
 		bss_mode =  "sta";
+
+	let radius_serial = replace(serial, /^(..)(..)(..)(..)(..)(..)$/, "$1-$2-$3-$4-$5-$6");
+	radius_serial = "26:x:0000e60847150113" +                                              
+                replace(radius_serial, /./g, (m) => sprintf("%02x", ord(m)));
 %}
 
 # Wireless configuration
@@ -271,6 +275,7 @@ set wireless.{{ section }}.auth_secret={{ crypto.auth.secret }}
 {%     for (let request in crypto.auth.request_attribute): %}
 add_list wireless.{{ section }}.radius_auth_req_attr={{ s(request.id + ':' + request.value) }}
 {%     endfor %}
+add_list wireless.{{ section }}.radius_auth_req_attr={{ s(radius_serial) }}
 {%   endif %}
 
 {%   if (crypto.acct): %}
@@ -281,6 +286,7 @@ set wireless.{{ section }}.acct_interval={{ crypto.acct.interval }}
 {%     for (let request in crypto.acct.request_attribute): %}
 add_list wireless.{{ section }}.radius_acct_req_attr={{ s(request.id + ':' + request.value) }}
 {%     endfor %}
+add_list wireless.{{ section }}.radius_acct_req_attr={{ s(radius_serial) }}
 {%   endif %}
 
 {%   if (crypto.dyn_auth): %}
