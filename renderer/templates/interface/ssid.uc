@@ -212,9 +212,25 @@ add_list openvswitch.@ovs_bridge[-1].ports="{{ ifname }}"
 	if (ssid.bss_mode == "wds-sta")
 		bss_mode =  "sta";
 
-	let radius_serial = replace(serial, /^(..)(..)(..)(..)(..)(..)$/, "$1-$2-$3-$4-$5-$6");
-	radius_serial = "26:x:0000e60847150113" +                                              
-                replace(radius_serial, /./g, (m) => sprintf("%02x", ord(m)));
+	function radius_vendor_tlv_serial() {
+		let radius_serial = replace(serial, /^(..)(..)(..)(..)(..)(..)$/, "$1-$2-$3-$4-$5-$6");
+		let radius_serial_len = length(radius_serial) + 2;
+		let radius_vendor = "26:x:0000e60847" + // vendor element
+			sprintf("%02x", 2 + radius_serial_len) +
+			"0113" + replace(radius_serial, /./g, (m) => sprintf("%02x", ord(m)));
+		return radius_vendor;
+	}
+
+	function radius_vendor_tlv_server(server, port) {
+		let radius_ip = sprintf("%s:%s", server, port);
+		let radius_ip_len = length(radius_ip) + 2;
+		let radius_vendor = "26:x:0000e60847" + // vendor element
+			sprintf("%02x", 2 + radius_ip_len) +
+			"02" + sprintf("%02x", radius_ip_len) + replace(radius_ip, /./g, (m) => sprintf("%02x", ord(m)));
+		return radius_vendor;
+	}
+
+	let radius_gw_proxy = (index(ssid.services, "radius-gw-proxy") >= 0);
 %}
 
 # Wireless configuration
@@ -269,24 +285,26 @@ set wireless.{{ section }}.eap_user_file={{ s(crypto.eap_user) }}
 {%   endif %}
 
 {%   if (crypto.auth): %}
-set wireless.{{ section }}.auth_server={{ crypto.auth.host }}
-set wireless.{{ section }}.auth_port={{ crypto.auth.port }}
+set wireless.{{ section }}.auth_server={{ radius_gw_proxy ? '127.0.0.1' : crypto.auth.host }}
+set wireless.{{ section }}.auth_port={{ radius_gw_proxy ? 1812 : crypto.auth.port }}
 set wireless.{{ section }}.auth_secret={{ crypto.auth.secret }}
 {%     for (let request in crypto.auth.request_attribute): %}
 add_list wireless.{{ section }}.radius_auth_req_attr={{ s(request.id + ':' + request.value) }}
 {%     endfor %}
-add_list wireless.{{ section }}.radius_auth_req_attr={{ s(radius_serial) }}
+add_list wireless.{{ section }}.radius_auth_req_attr={{ s(radius_vendor_tlv_serial()) }}
+add_list wireless.{{ section }}.radius_auth_req_attr={{ s(radius_vendor_tlv_server(crypto.auth.host, crypto.auth.port)) }}
 {%   endif %}
 
 {%   if (crypto.acct): %}
-set wireless.{{ section }}.acct_server={{ crypto.acct.host }}
-set wireless.{{ section }}.acct_port={{ crypto.acct.port }}
+set wireless.{{ section }}.acct_server={{ radius_gw_proxy ? '127.0.0.1' : crypto.acct.host }}
+set wireless.{{ section }}.acct_port={{ radius_gw_proxy ? 1813 : crypto.acct.port }}
 set wireless.{{ section }}.acct_secret={{ crypto.acct.secret }}
 set wireless.{{ section }}.acct_interval={{ crypto.acct.interval }}
 {%     for (let request in crypto.acct.request_attribute): %}
 add_list wireless.{{ section }}.radius_acct_req_attr={{ s(request.id + ':' + request.value) }}
 {%     endfor %}
-add_list wireless.{{ section }}.radius_acct_req_attr={{ s(radius_serial) }}
+add_list wireless.{{ section }}.radius_acct_req_attr={{ s(radius_vendor_tlv_serial()) }}
+add_list wireless.{{ section }}.radius_acct_req_attr={{ s(radius_vendor_tlv_server(crypto.acct.host, crypto.acct.port)) }}
 {%   endif %}
 
 {%   if (crypto.dyn_auth): %}
