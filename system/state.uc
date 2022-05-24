@@ -294,8 +294,12 @@ cursor.foreach("network", "interface", function(d) {
 				ssid.mode = iface.mode;
 				ssid.bssid = iface.bssid;
 
-				if (length(stations[vap.ifname]))
+				if (length(stations[vap.ifname])) {
 					ssid.associations = stations[vap.ifname];
+					for (let assoc in ssid.associations)
+						if (length(ip4leases[assic.station]))
+			                                assoc.ipaddr_v4 = ip4leases[mac];
+				}
 
 
 				ssid.iface = vap.ifname;
