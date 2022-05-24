@@ -93,11 +93,15 @@
 	iterate_interfaces("upstream");
 	iterate_interfaces("downstream");
 
-	for (let name, config in state.third_party)
+	let fs = require('fs');
+	for (let name in fs.glob('/usr/share/ucentral/templates/third-party/*.uc')) {
+		name = split(fs.basename(name), '.')[0];
+		let config = state.third_party ? state.third_party[name] : {};
 		tryinclude('third-party/' + name + '.uc', {
 			location: '/third-party/' + name,
 			[replace(name, '-', '_')]: config
 		});
+	}
 
 	if (state.config_raw)
 		include("config_raw.uc", { location: '/config_raw', config_raw: state.config_raw });
