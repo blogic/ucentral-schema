@@ -1,7 +1,6 @@
 let verbose = args?.verbose ? true : false;
 let active = args?.active ? true : false;
 let bandwidth = args?.bandwidth || 0;
-let ies = args?.ies || [];
 let override_dfs = args?.override_dfs ? true : false;
 let nl = require("nl80211");
 let rtnl = require("rtnl");
@@ -219,8 +218,8 @@ function wifi_scan() {
 					res.vht_oper = b64enc(ie.data);
 					break;
 				default:
-					if (ie.type in ies)
-						push(res.ies, { type: ie.type, data: b64enc(ie.data) });
+					push(res.ies, { type: ie.type, data: b64enc(ie.data) });
+					break;
 				}
 			}
 
