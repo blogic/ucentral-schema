@@ -285,6 +285,9 @@ set wireless.{{ section }}.eap_user_file={{ s(crypto.eap_user) }}
 {%   endif %}
 
 {%   if (crypto.auth): %}
+{%     if (radius_gw_proxy): %}
+set wireless.{{ section }}.radius_gw_proxy=1
+{%     endif %}
 set wireless.{{ section }}.auth_server={{ radius_gw_proxy ? '127.0.0.1' : crypto.auth.host }}
 set wireless.{{ section }}.auth_port={{ radius_gw_proxy ? 1812 : crypto.auth.port }}
 set wireless.{{ section }}.auth_secret={{ crypto.auth.secret }}

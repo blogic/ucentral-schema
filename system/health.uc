@@ -93,7 +93,7 @@ for (let iface in interfaces) {
 			continue;
 		if (find_ssid(iface.ssid))
 			ssid[iface.ssid] = false;
-		if (iface.auth_server && iface.auth_port && iface.auth_secret)
+		if (iface.auth_server && iface.auth_port && iface.auth_secret && !iface.radius_gw_proxy)
 			if (radius_probe(iface.auth_server, iface.auth_port, iface.auth_secret)) {
 				radius[iface.ssid] = false;
 				push(warnings, sprintf("Radius %s:%s is not reachable", iface.auth_server, iface.auth_port));
