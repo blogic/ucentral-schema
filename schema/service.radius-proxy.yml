@@ -7,143 +7,54 @@ properties:
       The various realms that we can proxy to.
     type: array
     items:
-      anyOf:
-      - type: object
-        properties:
-          protocol:
-            description:
-              Defines whether the real should use radsec or normal radius.
-            type: string
-            enum:
-            - radsec
-            default: radsec
-          realm:
-            description:
-              The realm that that this server shall be used for.
-            type: array
-            items:
-              type: string
-              default: '*'
-          auto-discover:
-            description:
-              Auto discover radsec server address via realm DNS NAPTR record.
-            type: boolean
-            default: false
-          host:
-            description:
-              The remote proxy server that the device shall connect to.
-            type: string
-            format: uc-host
-            examples:
-            - 192.168.1.10
-          port:
-            description:
-              The remote proxy port that the device shall connect to.
-            type: integer
-            maximum: 65535
-            default: 2083
-          secret:
-            description:
-              The radius secret that will be used for the connection.
-            type: string
-          use-local-certificates:
-            description:
-              The device will use its local certificate bundle for the TLS setup and
-              ignores all other certificate options in this section.
-            type: boolean
-            default: false
-          ca-certificate:
-            description:
-               The local servers CA bundle.
-            type: string
-          certificate:
-            description:
-               The local servers certificate.
-            type: string
-          private-key:
-            description:
-              The local servers private key/
-            type: string
-          private-key-password:
-            description:
-              The password required to read the private key.
-            type: string
-      - type: object
-        properties:
-          protocol:
-            description:
-              Defines whether the real should use radsec or normal radius.
-            type: string
-            enum:
-            - radius
-          realm:
-            description:
-              The realm that that this server shall be used for.
-            type: array
-            items:
-              type: string
-              default: '*'
-          auth-server:
-            description:
-              The URI of our Radius server.
-            type: string
-            format: uc-host
-            examples:
-            - 192.168.1.10
-          auth-port:
-            description:
-              The network port of our Radius server.
-            type: integer
-            maximum: 65535
-            minimum: 1024
-            examples:
-            - 1812
-          auth-secret:
-            description:
-              The shared Radius authentication secret.
-            type: string
-            examples:
-            - secret
-          acct-server:
-            description:
-              The URI of our Radius server.
-            type: string
-            format: uc-host
-            examples:
-            - 192.168.1.10
-          acct-port:
-            description:
-              The network port of our Radius server.
-            type: integer
-            maximum: 65535
-            minimum: 1024
-            examples:
-            - 1812
-          acct-secret:
-            description:
-              The shared Radius authentication secret.
-            type: string
-            examples:
-            - secret
-      - type: object
-        properties:
-          protocol:
-            description:
-              Defines whether the real should use radsec or normal radius.
-            type: string
-            enum:
-            - block
-          realm:
-            description:
-              The realm that that this server shall be used for.
-            type: array
-            items:
-              type: string
-              default: '*'
-          message:
-            description:
-              The message that is sent when a realm is blocked.
-            type: string
-            items:
-              type: string
-              default: 'blocked'
+      type: object
+      properties:
+        realm:
+          description:
+            The realm that that this server shall be used for.
+          type: string
+          default: '*'
+        auto-discover:
+          description:
+            Auto discover radsec server address via realm DNS NAPTR record.
+          type: boolean
+          default: false
+        host:
+          description:
+            The remote proxy server that the device shall connect to.
+          type: string
+          format: uc-host
+          examples:
+          - 192.168.1.10
+        port:
+          description:
+            The remote proxy port that the device shall connect to.
+          type: integer
+          maximum: 65535
+          default: 2083
+        secret:
+          description:
+            The radius secret that will be used for the connection.
+          type: string
+        use-local-certificates:
+          description:
+            The device will use its local certificate bundle for the TLS setup and
+            ignores all other certificate options in this section.
+          type: boolean
+          default: false
+        ca-certificate:
+          description:
+             The local servers CA bundle.
+          type: string
+        certificate:
+          description:
+             The local servers certificate.
+          type: string
+        private-key:
+          description:
+            The local servers private key/
+          type: string
+        private-key-password:
+          description:
+            The password required to read the private key.
+          type: string
